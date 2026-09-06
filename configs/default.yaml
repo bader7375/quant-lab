@@ -1,0 +1,56 @@
+# Default configuration: real S&P 500 data via yfinance.
+#   python -m quantlab.cli run --config configs/default.yaml
+data:
+  provider: yfinance
+  universe: sp500
+  start: "2005-01-01"
+  end: null
+  cache_dir: data/cache
+  min_history_days: 400
+  min_dollar_volume: 5000000.0
+  max_abs_daily_return: 0.75
+
+label:
+  # Label 1 when the next-day return exceeds +0.30 x trailing volatility,
+  # 0 when below -0.30 x. The band between them is dropped as noise.
+  threshold_sigma: 0.30
+  vol_halflife: 21
+  drop_neutral: true
+  horizon: 1
+
+split:
+  n_folds: 8
+  purge_days: 5      # must be >= label.horizon
+  embargo_days: 10
+  inner_val_frac: 0.15
+  min_train_days: 1260   # 5 years before the first forecast
+  expanding: true
+
+model:
+  kind: lightgbm
+  calibration: sigmoid
+  early_stopping_rounds: 100
+  seed: 7
+  params:
+    objective: binary
+    learning_rate: 0.02
+    num_leaves: 31
+    max_depth: 6
+    min_child_samples: 500
+    subsample: 0.8
+    subsample_freq: 1
+    colsample_bytree: 0.6
+    reg_alpha: 1.0
+    reg_lambda: 20.0
+    n_estimators: 3000
+    verbose: -1
+
+backtest:
+  top_quantile: 0.10
+  long_short: true
+  cost_bps: 5.0
+  min_probability: null
+  periods_per_year: 252
+
+output_dir: artifacts
+seed: 7

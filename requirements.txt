@@ -1,0 +1,11 @@
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+scikit-learn>=1.4
+lightgbm>=4.1
+yfinance>=0.2.40
+pyarrow>=14.0
+matplotlib>=3.8
+PyYAML>=6.0
+pytest>=7.4
+tabulate>=0.9
