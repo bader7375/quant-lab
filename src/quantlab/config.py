@@ -17,7 +17,12 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 @dataclass
 class DataConfig:
-    provider: Literal["yfinance", "synthetic"] = "yfinance"
+    provider: Literal["yfinance", "synthetic", "files"] = "yfinance"
+    #: Folder (or single file) of user-supplied price history, used when
+    #: provider == "files". Relative paths resolve from the repo root.
+    files_path: str = "uploads"
+    #: Glob applied inside files_path, e.g. "*.csv" to ignore other files.
+    files_pattern: str = "*"
     universe: str = "sp500"
     n_synthetic_tickers: int = 300
     #: Scales the predictable component of the synthetic market.

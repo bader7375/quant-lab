@@ -25,6 +25,27 @@ prices ──▶ features ──▶ vol-adjusted labels ──▶ purged walk-fo
 — click the link, then **Runtime → Run all**. Nothing to install, free, ~10 minutes.
 The notebook explains each step in plain English and interprets the results for you.
 
+### Use your own data instead of Yahoo Finance
+
+Yahoo rate-limits shared hosts hard, and Colab sits squarely in that range. Supplying
+your own history sidesteps it entirely:
+
+```bash
+# put CSV / XLSX / Parquet files in uploads/, then:
+PYTHONPATH=src python -m quantlab.cli run --provider files
+```
+
+Accepts **one combined file** with a `Ticker` column, or **one file per ticker**
+(`AAPL.csv`, `MSFT.csv` — the ticker comes from the filename). The loader is
+deliberately forgiving: `Close/Last`, `$1,234.50`, `03/15/2015` dates, lowercase
+headers, extra columns, and daylight-saving offset changes are all handled, and
+anything it cannot parse is reported by name rather than silently dropped.
+
+Minimum for a meaningful run: **Date, Open, High, Low, Close, Volume**, 50+ tickers,
+4+ years. `quantlab.data.files.describe(panel)` says in plain English whether your
+data clears that bar. Prefer an export with `Adj Close` — without it, splits look
+like real crashes.
+
 ### On your own machine
 
 ```bash
@@ -265,9 +286,11 @@ src/quantlab/
   cli.py               data | features | run | predict
   pipeline.py          orchestration, plus the production scoring path
   labels.py            volatility-adjusted target construction
+  diagnostics.py       version + connectivity report for failure triage
   data/
     universe.py        S&P 500 list + point-in-time membership support
     providers.py       yfinance loader + synthetic market simulator
+    files.py           forgiving loader for user-supplied CSV/Excel/Parquet
     panel.py           caching, cleaning, liquidity and history screens
   features/
     technical.py       51 per-ticker time-series features

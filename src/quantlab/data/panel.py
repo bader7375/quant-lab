@@ -8,11 +8,16 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from ..config import Config
+from ..config import REPO_ROOT, Config
 from . import providers
 from .universe import MARKET_PROXIES, default_universe
 
 log = logging.getLogger(__name__)
+
+
+def _resolve_path(p: str) -> Path:
+    path = Path(p)
+    return path if path.is_absolute() else REPO_ROOT / path
 
 
 def _cache_key(cfg: Config, tickers: list[str]) -> str:
@@ -27,6 +32,14 @@ def _cache_key(cfg: Config, tickers: list[str]) -> str:
 
 def build_panel(cfg: Config, force: bool = False) -> pd.DataFrame:
     """Return the cleaned price panel, downloading and caching as needed."""
+    if cfg.data.provider == "files":
+        # User-supplied data is read fresh each time: the files are the cache,
+        # and re-reading them is cheap next to re-downloading.
+        from .files import load_files
+
+        raw = load_files(_resolve_path(cfg.data.files_path), cfg.data.files_pattern)
+        return clean_panel(raw, cfg)
+
     if cfg.data.provider == "synthetic":
         tickers = [f"SYN{i:03d}" for i in range(cfg.data.n_synthetic_tickers)]
     else:

@@ -1,6 +1,7 @@
 """Assemble the model-ready feature matrix from the price panel."""
 from __future__ import annotations
 
+import hashlib
 import logging
 
 import numpy as np
@@ -79,8 +80,36 @@ def feature_columns(df: pd.DataFrame) -> list[str]:
     return [c for c in df.columns if c not in META_COLS]
 
 
+def panel_fingerprint(panel: pd.DataFrame) -> str:
+    """Short hash identifying this exact panel.
+
+    The feature cache must be keyed on the data, not just the settings.
+    Otherwise uploading a different file, or re-downloading a corrected one,
+    silently reuses features built from the previous data -- a bug that shows
+    up as results that will not change no matter what you feed it.
+    """
+    dates = panel.index.get_level_values("date")
+    tickers = panel.index.get_level_values("ticker")
+    # Checksum every numeric column: OHLC and volume drive range, intraday
+    # and liquidity features, so a change in any of them must invalidate the
+    # cache, not just a change in adj_close.
+    checksums = [
+        f"{col}:{float(np.nan_to_num(panel[col].to_numpy(dtype=float)).sum()):.4f}"
+        for col in sorted(panel.columns)
+        if pd.api.types.is_numeric_dtype(panel[col])
+    ]
+    payload = "|".join([
+        str(len(panel)),
+        str(tickers.nunique()),
+        str(dates.min()), str(dates.max()),
+        *checksums,
+    ])
+    return hashlib.sha1(payload.encode()).hexdigest()[:12]
+
+
 def cached_features(cfg: Config, panel: pd.DataFrame, force: bool = False) -> pd.DataFrame:
-    path = cfg.cache_path / f"features_{cfg.data.provider}_{cfg.label.threshold_sigma}.parquet"
+    key = f"{cfg.data.provider}_{cfg.label.threshold_sigma}_{panel_fingerprint(panel)}"
+    path = cfg.cache_path / f"features_{key}.parquet"
     if path.exists() and not force:
         log.info("loading cached features from %s", path)
         return pd.read_parquet(path)
