@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 from ..config import Config
-from ..evaluation.metrics import classification_metrics
+from ..evaluation.metrics import classification_metrics, mean_daily_auc
 from ..features.build import feature_columns
 from ..validation.splits import Fold, assert_no_leakage, purged_walk_forward, validate_config
 from .base import make_model
@@ -100,6 +100,10 @@ def run_walk_forward(
 
         m_raw = classification_metrics(y_all[fold.test], p_raw)
         m_cal = classification_metrics(y_all[fold.test], p_cal)
+        # Within-date AUC per fold, computed on the raw (untied) scores. This
+        # is the metric the headline uses, so fold-stability checks must use it
+        # too -- judging stability by pooled AUC flags healthy folds as failures.
+        m_daily = mean_daily_auc(dates_all[fold.test], p_raw, y_all[fold.test])
         fold_rows.append(
             {
                 "fold": fold.index,
@@ -110,6 +114,7 @@ def run_walk_forward(
                 "n_train": len(tr),
                 "n_test": int(np.isfinite(y_all[fold.test]).sum()),
                 "best_iter": getattr(model, "best_iteration", None),
+                "daily_auc": m_daily["daily_auc_mean"],
                 "auc": m_cal["auc"],
                 "accuracy": m_cal["accuracy"],
                 "base_rate": m_cal["base_rate"],
@@ -126,10 +131,11 @@ def run_walk_forward(
             importances[f"fold_{fold.index}"] = imp
 
         log.info(
-            "fold %d | test %s->%s | auc=%.4f acc=%.4f base=%.4f ece %.4f->%.4f | %.0fs",
+            "fold %d | test %s->%s | daily-auc=%.4f pooled-auc=%.4f acc=%.4f "
+            "base=%.4f ece %.4f->%.4f | %.0fs",
             fold.index, fold.test_dates[0].date(), fold.test_dates[1].date(),
-            m_cal["auc"], m_cal["accuracy"], m_cal["base_rate"],
-            m_raw["ece"], m_cal["ece"], time.time() - t0,
+            m_daily["daily_auc_mean"], m_cal["auc"], m_cal["accuracy"],
+            m_cal["base_rate"], m_raw["ece"], m_cal["ece"], time.time() - t0,
         )
 
     if not preds:

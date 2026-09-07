@@ -150,7 +150,9 @@ def _markdown(results: dict, fold_metrics: pd.DataFrame, importance: pd.DataFram
         "",
         "## 4. Stability across folds",
         "",
-        "A model whose skill lives in one fold has not found anything durable.",
+        "A model whose skill lives in one fold has not found anything durable. "
+        "`daily_auc` is the within-date score used in \u00a71; `auc` is the pooled "
+        "one, which understates a cross-sectional model.",
         "",
         _fold_table(fold_metrics),
         "",

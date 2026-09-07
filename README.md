@@ -23,7 +23,26 @@ prices ──▶ features ──▶ vol-adjusted labels ──▶ purged walk-fo
 
 [**▶ Open in Google Colab**](https://colab.research.google.com/github/bader7375/quant-lab/blob/claude/stock-prediction-ml-model-ejinfz/notebooks/run_in_colab.ipynb)
 — click the link, then **Runtime → Run all**. Nothing to install, free, ~10 minutes.
-The notebook explains each step in plain English and interprets the results for you.
+
+One notebook covers the whole system. A dropdown picks the data source — **upload**
+your own files, **yahoo** to download automatically, or **simulated** to run with no
+data at all — and every later step is identical whichever you choose. It explains each
+step in plain English and interprets the results for you, including what to distrust.
+
+### One call, from Python
+
+```python
+from quantlab.easy import run_everything, summarize
+
+bundle = run_everything("upload", files_path="uploads", n_folds=4)
+print(summarize(bundle))          # plain-English verdict, costs, and caveats
+bundle["latest"]                  # tomorrow's probability for every stock
+```
+
+`run_everything` also fits a regularised logistic regression on the identical folds as
+a control. That comparison is the cheapest guard against fooling yourself: if gradient
+boosting cannot beat a linear model on the same features and the same splits, its
+extra capacity is fitting noise, and `summarize` says so.
 
 ### Use your own data instead of Yahoo Finance
 
@@ -229,7 +248,7 @@ found nothing durable.
 ## Testing
 
 ```bash
-make test     # 35 tests, ~30s
+make test     # 69 tests, ~100s
 ```
 
 The suite exists to attack the harness, not to confirm it:
@@ -247,6 +266,11 @@ The suite exists to attack the harness, not to confirm it:
   a purge shorter than the label horizon is rejected outright.
 - **`test_backtest.py`** — dollar neutrality, cost monotonicity, and that
   breakeven cost really is where net return crosses zero.
+- **`test_files_provider.py`** — messy real-world exports: currency symbols, alias
+  column names, ticker-from-filename, Excel, and files spanning a daylight-saving
+  change (which breaks naive date parsing outright).
+- **`test_easy_api.py`** — the one-call API, the verdict thresholds, and that fold
+  metrics carry within-date AUC so stability is judged on the headline metric.
 - **`test_yfinance_parsing.py`** — feeds the reshape frames shaped exactly the
   way yfinance returns them (multi-ticker, single-ticker flat, missing
   `Adj Close`), so the parsing is covered without the network.
@@ -285,6 +309,7 @@ src/quantlab/
   config.py            dataclass config tree, YAML-loadable, CLI-overridable
   cli.py               data | features | run | predict
   pipeline.py          orchestration, plus the production scoring path
+  easy.py              one-call API + plain-English verdict and caveats
   labels.py            volatility-adjusted target construction
   diagnostics.py       version + connectivity report for failure triage
   data/
