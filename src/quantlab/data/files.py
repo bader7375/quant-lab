@@ -44,6 +44,30 @@ ALIASES: dict[str, tuple[str, ...]] = {
 REQUIRED = ("date", "open", "high", "low", "close", "volume")
 
 
+#: Market and interval suffixes vendors append to filenames.
+#: Stooq, the source this project recommends, writes "tsla_us_d.csv".
+_MARKETS = ("us", "uk", "de", "jp", "pl", "fr", "hk", "ca", "au")
+_INTERVALS = ("d", "w", "m", "h", "daily", "weekly", "monthly")
+
+
+def ticker_from_filename(stem: str) -> str:
+    """Recover a ticker from a vendor's filename.
+
+    "tsla_us_d" -> "TSLA", "aapl.us" -> "AAPL", "MSFT" -> "MSFT". Suffixes are
+    stripped only when they are recognised market or interval codes, so a
+    genuine ticker is never mangled.
+    """
+    name = stem.strip()
+    if "." in name:
+        head, _, tail = name.partition(".")
+        if tail.lower() in _MARKETS or tail.lower().split(".")[0] in _MARKETS:
+            name = head
+    parts = name.split("_")
+    while len(parts) > 1 and parts[-1].lower() in _MARKETS + _INTERVALS:
+        parts.pop()
+    return "_".join(parts).upper()
+
+
 def _norm(name: object) -> str:
     """Lowercase and strip everything but letters and digits."""
     return "".join(ch for ch in str(name).lower() if ch.isalnum())
@@ -142,9 +166,9 @@ def _tidy_one(raw: pd.DataFrame, default_ticker: str | None, source: str) -> pd.
         _to_numeric(raw[mapping["adj_close"]]) if "adj_close" in mapping else out["close"]
     )
     if "adj_close" not in mapping:
-        log.warning(
-            "%s: no adjusted-close column; using raw close. Stock splits and "
-            "dividends will look like real price moves and will corrupt features.",
+        log.info(
+            "%s: no adjusted-close column; using raw close. Many vendors ship "
+            "already-adjusted prices -- describe() checks for unadjusted splits.",
             source,
         )
 
@@ -190,7 +214,7 @@ def load_files(path: str | Path, pattern: str = "*") -> pd.DataFrame:
             if raw.empty:
                 failures.append(f"{f.name}: file is empty")
                 continue
-            frames.append(_tidy_one(raw, default_ticker=f.stem.strip().upper(), source=f.name))
+            frames.append(_tidy_one(raw, default_ticker=ticker_from_filename(f.stem), source=f.name))
         except Exception as exc:  # noqa: BLE001 - reported, not hidden
             failures.append(f"{f.name}: {type(exc).__name__}: {exc}")
 
@@ -217,6 +241,32 @@ def load_files(path: str | Path, pattern: str = "*") -> pd.DataFrame:
         len(frames), f" ({len(failures)} skipped)" if failures else "",
     )
     return panel[["open", "high", "low", "close", "adj_close", "volume"]]
+
+
+#: Ratios a real stock split produces, forward and reverse.
+_SPLIT_RATIOS = (2, 3, 4, 5, 6, 7, 8, 10, 15, 20)
+
+
+def detect_unadjusted_splits(panel: pd.DataFrame, tol: float = 0.04) -> list[tuple[str, str]]:
+    """Find one-day price jumps that land on a common split ratio.
+
+    A 4-for-1 split drops the raw close to almost exactly a quarter overnight.
+    Genuine market moves of that size essentially never land within a few
+    percent of 1/2, 1/3, 1/4 ... so this separates a missing adjustment from a
+    real crash.
+    """
+    hits: list[tuple[str, str]] = []
+    close = panel["close"].unstack("ticker") if isinstance(panel.index, pd.MultiIndex) else panel[["close"]]
+    ratio = close / close.shift(1)
+    candidates = [float(r) for r in _SPLIT_RATIOS] + [1 / r for r in _SPLIT_RATIOS]
+
+    for ticker in ratio.columns:
+        s = ratio[ticker].dropna()
+        extreme = s[(s < 0.66) | (s > 1.5)]
+        for date, val in extreme.items():
+            if any(abs(val - c) / c < tol for c in candidates):
+                hits.append((str(ticker), str(pd.Timestamp(date).date())))
+    return hits
 
 
 def describe(panel: pd.DataFrame) -> str:
@@ -255,11 +305,25 @@ def describe(panel: pd.DataFrame) -> str:
         notes.append(f"{n_tickers} stocks works, but 100+ gives noticeably better results.")
 
     if panel["adj_close"].equals(panel["close"]):
-        notes.append(
-            "Adjusted close equals close, so your data is probably not split/dividend "
-            "adjusted. Splits will look like huge price crashes. Prefer an export with "
-            "an 'Adj Close' column if you can get one."
-        )
+        # No Adj Close column is not itself a problem -- many vendors (Stooq
+        # among them) ship prices already adjusted. Look for the artefact
+        # itself: a one-day move whose price ratio lands on a common split
+        # ratio is a split that was never applied.
+        splits = detect_unadjusted_splits(panel)
+        if splits:
+            shown = ", ".join(f"{t} on {d}" for t, d in splits[:4])
+            problems.append(
+                f"Your data has no adjusted close AND contains {len(splits)} "
+                f"apparent unadjusted stock split(s) ({shown}). A split looks like "
+                "a huge crash that never happened and will poison every feature. "
+                "Re-export with adjusted prices."
+            )
+        else:
+            notes.append(
+                "There is no 'Adj Close' column, but no unadjusted splits were "
+                "detected either, so these prices look already adjusted. Dividends "
+                "may still be missing, which matters far less at a one-day horizon."
+            )
     if panel["volume"].isna().all():
         notes.append("No volume data, so volume and liquidity features are unavailable.")
 

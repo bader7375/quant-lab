@@ -46,6 +46,13 @@ def run_walk_forward(
     assert_no_leakage(folds, df.index, cfg.split.purge_days + cfg.split.embargo_days)
     log.info("built %d walk-forward folds", len(folds))
 
+    # Row minimums have to scale with the cross-section: 1000 rows is a few
+    # days for a 500-name panel but four years for a single ticker, which
+    # silently skipped the early folds of single-name runs.
+    n_names = max(1, df.index.get_level_values("ticker").nunique())
+    min_train_rows = max(250, min(1000, 40 * n_names))
+    min_val_rows = max(50, min(200, 8 * n_names))
+
     features = feature_columns(df)
     X_all = df[features]
     y_all = df["y"].to_numpy()
@@ -59,9 +66,10 @@ def run_walk_forward(
         t0 = time.time()
         tr = _labelled(fold.train, y_all)
         va = _labelled(fold.inner_val, y_all)
-        if len(tr) < 1000 or len(va) < 200:
-            log.warning("fold %d: too few labelled rows (train=%d val=%d), skipping",
-                        fold.index, len(tr), len(va))
+        if len(tr) < min_train_rows or len(va) < min_val_rows:
+            log.warning(
+                "fold %d: too few labelled rows (train=%d < %d, or val=%d < %d), skipping",
+                fold.index, len(tr), min_train_rows, len(va), min_val_rows)
             continue
 
         w = time_decay_weights(dates_all[tr], weight_halflife_years)

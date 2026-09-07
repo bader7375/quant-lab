@@ -72,8 +72,15 @@ def predict_latest(cfg: Config, n_days: int = 1, force: bool = False) -> pd.Data
     gap = cfg.split.purge_days + cfg.split.embargo_days
     cutoff = unique_dates[max(0, len(unique_dates) - n_days - gap)]
     train_mask = df["y"].notna().to_numpy() & (dates < cutoff)
-    if train_mask.sum() < 5000:
-        raise RuntimeError(f"only {int(train_mask.sum())} labelled training rows available")
+    # Scale the minimum with the cross-section: 5000 rows is ten days for a
+    # 500-name panel but twenty years for a single ticker, which refused to
+    # score perfectly adequate single-name data.
+    n_names = max(1, df.index.get_level_values("ticker").nunique())
+    min_rows = max(500, min(5000, 200 * n_names))
+    if train_mask.sum() < min_rows:
+        raise RuntimeError(
+            f"only {int(train_mask.sum())} labelled training rows available; "
+            f"need at least {min_rows} for {n_names} name(s)")
 
     # Hold out the tail of the training data for early stopping + calibration.
     # Capped at one year: unlike the walk-forward loop, the production fit

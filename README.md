@@ -60,8 +60,13 @@ deliberately forgiving: `Close/Last`, `$1,234.50`, `03/15/2015` dates, lowercase
 headers, extra columns, and daylight-saving offset changes are all handled, and
 anything it cannot parse is reported by name rather than silently dropped.
 
+Filenames follow vendor conventions: `tsla_us_d.csv` becomes `TSLA`.
+
 Minimum for a meaningful run: **Date, Open, High, Low, Close, Volume**, 50+ tickers,
-4+ years. `quantlab.data.files.describe(panel)` says in plain English whether your
+4+ years. **Fewer than 20 tickers switches the pipeline to single-name mode** — the
+cross-sectional model has nothing to rank, so it trains a timing model instead
+(hold it tomorrow, or stand aside?) and scores it against buy-and-hold, which is the
+only honest benchmark for one stock. `quantlab.data.files.describe(panel)` says in plain English whether your
 data clears that bar. Prefer an export with `Adj Close` — without it, splits look
 like real crashes.
 
@@ -248,7 +253,7 @@ found nothing durable.
 ## Testing
 
 ```bash
-make test     # 71 tests, ~85s
+make test     # 87 tests, ~110s
 ```
 
 The suite exists to attack the harness, not to confirm it:
@@ -310,6 +315,7 @@ src/quantlab/
   cli.py               data | features | run | predict
   pipeline.py          orchestration, plus the production scoring path
   easy.py              one-call API + plain-English verdict and caveats
+  timing.py            single-name mode: hold-or-stand-aside, vs buy-and-hold
   labels.py            volatility-adjusted target construction
   diagnostics.py       version + connectivity report for failure triage
   data/

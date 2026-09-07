@@ -18,8 +18,13 @@ import pandas as pd
 from .config import Config
 from .data.panel import build_panel
 from .evaluation.report import evaluate, write_report
-from .features.build import cached_features
+from .features.build import META_COLS, cached_features
+from .evaluation.metrics import classification_metrics
 from .models.train import run_walk_forward
+from .timing import (
+    is_cross_sectional, timing_backtest, timing_feature_columns, timing_summary,
+    timing_verdict,
+)
 from . import pipeline
 
 log = logging.getLogger(__name__)
@@ -101,28 +106,67 @@ def run_everything(
         bundle["data_report"] = describe(panel)
 
     df = cached_features(cfg, panel)
+
+    # One ticker cannot be ranked against a peer group. Rather than run the
+    # cross-sectional machinery on a degenerate panel and return an all-zero
+    # book that looks like a result, switch to a timing model.
+    cross = is_cross_sectional(panel)
+    bundle["mode"] = "cross_sectional" if cross else "timing"
+    if not cross:
+        keep = set(timing_feature_columns(df.columns)) | set(META_COLS)
+        dropped = [c for c in df.columns if c not in keep]
+        df = df[[c for c in df.columns if c in keep]]
+        bundle["dropped_features"] = dropped
+        log.info(
+            "single-name mode: %d names in the panel, so %d cross-sectional "
+            "features were dropped as meaningless here",
+            panel.index.get_level_values("ticker").nunique(), len(dropped),
+        )
+
     bundle["n_rows"] = len(df)
-    bundle["n_features"] = df.shape[1] - 5
+    bundle["n_features"] = len([c for c in df.columns if c not in META_COLS])
 
     preds, fold_metrics, importance = run_walk_forward(df, cfg)
-    results = evaluate(preds, cfg)
-    write_report(results, fold_metrics, importance, cfg)
+    bundle.update(predictions=preds, fold_metrics=fold_metrics,
+                  importance=importance, report_dir=cfg.output_path)
 
-    bundle.update(
-        predictions=preds,
-        fold_metrics=fold_metrics,
-        importance=importance,
-        results=results,
-        report_dir=cfg.output_path,
-    )
+    if cross:
+        results = evaluate(preds, cfg)
+        write_report(results, fold_metrics, importance, cfg)
+    else:
+        bt = timing_backtest(preds, cfg.backtest)
+        summ = timing_summary(bt, cfg.backtest)
+        results = {
+            "classification": classification_metrics(
+                preds["y"].to_numpy(), preds["p"].to_numpy()),
+            # Ranking metrics are undefined with one name per day.
+            "ranking": {"daily_auc_mean": float("nan"), "daily_auc_t_stat": float("nan"),
+                        "ic_mean": float("nan"), "ic_t_stat": float("nan"),
+                        "ic_days": float(len(preds))},
+            "timing": summ, "timing_bt": bt, "timing_verdict": timing_verdict(summ),
+        }
+        cfg.output_path.mkdir(parents=True, exist_ok=True)
+        bt.to_csv(cfg.output_path / "timing_backtest.csv")
+        fold_metrics.to_csv(cfg.output_path / "fold_metrics.csv", index=False)
+
+    bundle["results"] = results
 
     if compare_baseline:
         log.info("fitting the linear control on the same folds for comparison")
         base_cfg = build_config(source, **{**kwargs, "model_kind": "logistic"})
         try:
             base_preds, _, _ = run_walk_forward(df, base_cfg)
-            base_results = evaluate(base_preds, base_cfg)
-            bundle["baseline"] = base_results
+            if cross:
+                bundle["baseline"] = evaluate(base_preds, base_cfg)
+                bundle["baseline_score"] = bundle["baseline"]["ranking"]["daily_auc_mean"]
+                bundle["model_score"] = results["ranking"]["daily_auc_mean"]
+            else:
+                # With one name per day the headline is pooled AUC, so the
+                # control has to be judged on the same metric.
+                bundle["baseline"] = {"classification": classification_metrics(
+                    base_preds["y"].to_numpy(), base_preds["p"].to_numpy())}
+                bundle["baseline_score"] = bundle["baseline"]["classification"]["auc"]
+                bundle["model_score"] = results["classification"]["auc"]
         except Exception as exc:  # noqa: BLE001 - a failed control must not sink the run
             log.warning("linear control failed (%s); continuing without it", exc)
             bundle["baseline"] = None
@@ -165,6 +209,8 @@ def verdict(auc: float, t_stat: float) -> tuple[str, str]:
 
 def summarize(bundle: dict[str, Any]) -> str:
     """A full plain-English readout of a run."""
+    if bundle.get("mode") == "timing":
+        return _summarize_timing(bundle)
     r = bundle["results"]["ranking"]
     c = bundle["results"]["classification"]
     b = bundle["results"]["backtest"]
@@ -183,8 +229,8 @@ def summarize(bundle: dict[str, Any]) -> str:
 
     base = bundle.get("baseline")
     if base:
-        b_auc = base["ranking"].get("daily_auc_mean", np.nan)
-        m_auc = r.get("daily_auc_mean", np.nan)
+        b_auc = bundle.get("baseline_score", np.nan)
+        m_auc = bundle.get("model_score", np.nan)
         L += ["=" * 70, "  2. IS THE COMPLEXITY EARNING ITS KEEP?", "=" * 70,
               f"  Gradient boosting  : {m_auc:.4f}",
               f"  Simple linear model: {b_auc:.4f}", ""]
@@ -253,13 +299,23 @@ def _caveats(bundle: dict[str, Any]) -> list[str]:
             "bias. Supply a point-in-time membership file to remove it."
         )
     if cfg.data.provider == "files" and panel["adj_close"].equals(panel["close"]):
-        out.append(
-            "Your data has no adjusted close, so stock splits look like real crashes "
-            "and corrupt the features."
-        )
+        # Only a warning if an unadjusted split is actually present -- plenty of
+        # vendors ship adjusted prices without an "Adj Close" column.
+        from .data.files import detect_unadjusted_splits
 
-    # Judge stability on within-date AUC, the same metric as the headline.
-    col = "daily_auc" if "daily_auc" in fm else "auc"
+        splits = detect_unadjusted_splits(panel)
+        if splits:
+            out.append(
+                f"Your data contains {len(splits)} apparent unadjusted stock split(s) "
+                f"(first: {splits[0][0]} on {splits[0][1]}). A split looks like a crash "
+                "that never happened and corrupts every feature."
+            )
+
+    # Judge stability on whichever AUC is the headline for this run. Within-date
+    # AUC is undefined for a single name (it needs a cross-section to rank), so
+    # a timing run falls back to the pooled column rather than scoring every
+    # fold against NaN and reporting "0 of N".
+    col = ("daily_auc" if "daily_auc" in fm and fm["daily_auc"].notna().any() else "auc")
     if not fm.empty and col in fm:
         good = int((fm[col] > 0.505).sum())
         if good <= 1 and len(fm) > 1:
@@ -282,3 +338,66 @@ def _caveats(bundle: dict[str, Any]) -> list[str]:
     if n_days < 1500:
         out.append(f"Only {n_days:,} trading days of history. More data would firm this up.")
     return out
+
+
+def _summarize_timing(bundle: dict[str, Any]) -> str:
+    """Readout for a single-name run, where the benchmark is doing nothing."""
+    res = bundle["results"]
+    t, c = res["timing"], res["classification"]
+    tag, note = res["timing_verdict"]
+    ticker = bundle["panel"].index.get_level_values("ticker").unique()[0]
+
+    L = ["=" * 70,
+         f"  SINGLE-NAME MODE — {ticker}",
+         "=" * 70,
+         "  Only one ticker was supplied, so there is no cross-section to rank.",
+         "  The question becomes 'hold it tomorrow, or stand aside?', and the only",
+         f"  benchmark that matters is buying {ticker} and doing nothing.",
+         ""]
+    if bundle.get("dropped_features"):
+        L += [f"  {len(bundle['dropped_features'])} cross-sectional features were dropped as",
+              "  meaningless here (daily ranks against no peers, a 'market' that is just",
+              "  this stock, its beta against itself).", ""]
+
+    L += ["=" * 70, "  1. CAN IT CALL THE NEXT DAY AT ALL?", "=" * 70,
+          f"  AUC          : {c.get('auc', float('nan')):.4f}    0.50 = coin flip",
+          f"  Accuracy     : {c.get('accuracy', float('nan')):.4f}    compare to base rate, not 50%",
+          f"  Base rate    : {c.get('base_rate', float('nan')):.4f}",
+          f"  Brier skill  : {c.get('brier_skill', float('nan')):+.4f}    <= 0 means no better than the base rate",
+          ""]
+
+    base = bundle.get("baseline")
+    if base:
+        b, m = bundle.get("baseline_score", np.nan), bundle.get("model_score", np.nan)
+        L += ["=" * 70, "  2. IS THE COMPLEXITY EARNING ITS KEEP?", "=" * 70,
+              f"  Gradient boosting  : {m:.4f}",
+              f"  Simple linear model: {b:.4f}", ""]
+        L += (["  ⚠️  The simple model matches or beats the complex one — the extra",
+               "     machinery is fitting noise.", ""] if not (np.isfinite(m) and np.isfinite(b) and m > b + 0.002)
+              else [f"  ✅ Boosting adds {m - b:+.4f} over linear.", ""])
+
+    n = 3 if base else 2
+    L += ["=" * 70, f"  {n}. DID TIMING BEAT SIMPLY HOLDING IT?", "=" * 70,
+          f"                        {'strategy':>12}  {'buy & hold':>12}",
+          f"  annual return       {t['strategy_ann_return']*100:>11.1f}% {t['buy_hold_ann_return']*100:>12.1f}%",
+          f"  annual volatility   {t['strategy_ann_vol']*100:>11.1f}% {t['buy_hold_ann_vol']*100:>12.1f}%",
+          f"  sharpe ratio        {t['strategy_sharpe']:>12.2f} {t['buy_hold_sharpe']:>12.2f}",
+          f"  worst drawdown      {t['strategy_max_drawdown']*100:>11.1f}% {t['buy_hold_max_drawdown']*100:>12.1f}%",
+          "",
+          f"  Time held           : {t['time_in_market']*100:.0f}% of days",
+          f"  Trades              : {t['trades']:.0f}",
+          f"  Break-even cost     : {t['breakeven_cost_bps']:.1f} bps",
+          "",
+          f"  VERDICT: {tag}",
+          f"  {note}", ""]
+
+    L += ["=" * 70, f"  {n + 1}. WHAT TO DISTRUST", "=" * 70]
+    warn = _caveats(bundle) + [
+        "A single stock gives one return series, so there is far less to learn from "
+        "than a cross-section of hundreds. Treat any edge here as weak evidence.",
+        "Beating a stock that rose enormously is hard by construction: standing aside "
+        "on any big up day is very costly, and the model must earn that back.",
+    ]
+    L += [f"  - {w}" for w in warn]
+    L += ["", f"  Full output: {bundle['report_dir']}", "=" * 70]
+    return "\n".join(L)
