@@ -46,10 +46,19 @@ def build_panel(cfg: Config, force: bool = False) -> pd.DataFrame:
         tickers = default_universe(cfg.data.universe) + MARKET_PROXIES
 
     cache_file = cfg.cache_path / f"panel_{cfg.data.provider}_{_cache_key(cfg, tickers)}.parquet"
+    raw = None
     if cache_file.exists() and not force:
-        log.info("loading cached panel from %s", cache_file)
-        raw = pd.read_parquet(cache_file)
-    else:
+        try:
+            log.info("loading cached panel from %s", cache_file)
+            raw = pd.read_parquet(cache_file)
+        except Exception as exc:  # noqa: BLE001
+            # A run killed mid-write (a closed Colab tab, an OOM) leaves a
+            # truncated parquet file. Rebuilding is always safe; failing with
+            # a pyarrow "magic bytes not found" error is not helpful.
+            log.warning("cached panel is unreadable (%s); rebuilding", exc)
+            cache_file.unlink(missing_ok=True)
+
+    if raw is None:
         if cfg.data.provider == "synthetic":
             raw = providers.make_synthetic(
                 n_tickers=cfg.data.n_synthetic_tickers,

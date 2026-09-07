@@ -107,3 +107,55 @@ def test_feature_columns_exclude_label_metadata(features):
     cols = feature_columns(features)
     for leaked in ("y", "fwd_ret", "sigma", "threshold", "neutral"):
         assert leaked not in cols, f"{leaked} would be fed to the model as a feature"
+
+
+def test_a_corrupt_panel_cache_rebuilds_itself(tmp_path, cfg):
+    """A run killed mid-write leaves a truncated parquet file.
+
+    This happens routinely on hosted notebooks (a closed tab, an OOM kill).
+    Failing with pyarrow's "magic bytes not found" is useless to the user;
+    rebuilding is always safe because the cache is derived data.
+    """
+    from quantlab.config import Config
+    from quantlab.data.panel import build_panel
+
+    local = Config.load(None, **{
+        "data.provider": "synthetic",
+        "data.n_synthetic_tickers": 12,
+        "data.start": "2018-01-01",
+        "data.end": "2020-01-01",
+        "data.min_dollar_volume": 1e6,
+        "data.cache_dir": str(tmp_path),
+    })
+
+    first = build_panel(local)
+    cached = list(tmp_path.glob("panel_*.parquet"))
+    assert cached, "nothing was cached"
+
+    for f in cached:
+        f.write_bytes(b"truncated, not a parquet file")
+
+    second = build_panel(local)          # must not raise
+    assert second.shape == first.shape
+    pd.testing.assert_frame_equal(first, second)
+
+
+def test_a_corrupt_feature_cache_rebuilds_itself(tmp_path, cfg, panel):
+    from quantlab.config import Config
+    from quantlab.features.build import cached_features
+
+    local = Config.load(None, **{
+        "data.provider": "synthetic",
+        "data.cache_dir": str(tmp_path),
+        "label.threshold_sigma": cfg.label.threshold_sigma,
+    })
+
+    first = cached_features(local, panel)
+    cached = list(tmp_path.glob("features_*.parquet"))
+    assert cached, "nothing was cached"
+
+    for f in cached:
+        f.write_bytes(b"not a parquet file")
+
+    second = cached_features(local, panel)   # must not raise
+    assert second.shape == first.shape

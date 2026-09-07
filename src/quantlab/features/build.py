@@ -111,8 +111,12 @@ def cached_features(cfg: Config, panel: pd.DataFrame, force: bool = False) -> pd
     key = f"{cfg.data.provider}_{cfg.label.threshold_sigma}_{panel_fingerprint(panel)}"
     path = cfg.cache_path / f"features_{key}.parquet"
     if path.exists() and not force:
-        log.info("loading cached features from %s", path)
-        return pd.read_parquet(path)
+        try:
+            log.info("loading cached features from %s", path)
+            return pd.read_parquet(path)
+        except Exception as exc:  # noqa: BLE001 - a bad cache must not be fatal
+            log.warning("cached features are unreadable (%s); rebuilding", exc)
+            path.unlink(missing_ok=True)
     df = build_features(panel, cfg)
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(path)

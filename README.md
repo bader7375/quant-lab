@@ -248,7 +248,7 @@ found nothing durable.
 ## Testing
 
 ```bash
-make test     # 69 tests, ~100s
+make test     # 71 tests, ~85s
 ```
 
 The suite exists to attack the harness, not to confirm it:
