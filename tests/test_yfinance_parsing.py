@@ -18,7 +18,9 @@ def _wide(tickers, n=10):
     """yfinance multi-ticker shape: columns are a (field, ticker) MultiIndex."""
     dates = pd.bdate_range("2024-01-02", periods=n, name="Date")
     rng = np.random.default_rng(0)
-    cols = pd.MultiIndex.from_product([FIELDS, tickers])
+    # yfinance names the column levels; the parser must not depend on that
+    # either way, so the fixture mirrors the real thing.
+    cols = pd.MultiIndex.from_product([FIELDS, tickers], names=["Price", "Ticker"])
     data = rng.uniform(50, 150, size=(n, len(cols)))
     df = pd.DataFrame(data, index=dates, columns=cols)
     for t in tickers:
@@ -93,3 +95,26 @@ def test_tidy_output_feeds_straight_into_the_cleaner(cfg):
     out = _tidy_yfinance(_wide(tickers, n=500), tickers)
     cleaned = clean_panel(out, cfg)
     assert list(cleaned.columns) == COLUMNS
+
+
+def test_parser_ignores_column_level_names():
+    """yfinance labels its column levels ('Price', 'Ticker'); older versions did
+    not. The reshape must not depend on either."""
+    tickers = ["AAPL", "MSFT"]
+    named = _wide(tickers)
+    unnamed = named.copy()
+    unnamed.columns = pd.MultiIndex.from_tuples(named.columns.tolist())
+
+    pd.testing.assert_frame_equal(
+        _tidy_yfinance(named, tickers), _tidy_yfinance(unnamed, tickers)
+    )
+
+
+def test_auto_adjust_true_shape_is_handled():
+    """yfinance 1.x defaults auto_adjust=True, which drops 'Adj Close'. We pass
+    auto_adjust=False, but the parser should survive either response."""
+    tickers = ["AAPL", "MSFT"]
+    raw = _wide(tickers).drop(columns="Adj Close", level=0)
+    out = _tidy_yfinance(raw, tickers)
+    assert out["adj_close"].notna().all()
+    assert len(out) == 10 * len(tickers)

@@ -11,6 +11,7 @@ intraday ranges stay consistent with ``adj_close``.
 from __future__ import annotations
 
 import logging
+import time
 import warnings
 
 import numpy as np
@@ -28,40 +29,93 @@ def fetch_yfinance(
     tickers: list[str],
     start: str,
     end: str | None = None,
-    batch_size: int = 100,
+    batch_size: int = 50,
+    max_retries: int = 3,
+    min_success_frac: float = 0.5,
 ) -> pd.DataFrame:
     """Download daily OHLCV for ``tickers`` and return the tidy panel.
 
     Downloads in batches because yfinance quietly truncates very large
-    multi-ticker requests. Tickers that fail are logged and skipped.
+    multi-ticker requests. Yahoo aggressively rate-limits shared IP ranges --
+    Google Colab and CI runners especially -- so each batch is retried with
+    exponential backoff, and a run continues as long as most tickers came
+    back. Failures are reported by name rather than swallowed.
     """
     import yfinance as yf
 
     frames: list[pd.DataFrame] = []
-    for i in range(0, len(tickers), batch_size):
-        batch = tickers[i : i + batch_size]
-        log.info("downloading %d tickers (%d/%d)", len(batch), i + len(batch), len(tickers))
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            raw = yf.download(
-                batch,
-                start=start,
-                end=end,
-                auto_adjust=False,
-                actions=False,
-                progress=False,
-                group_by="column",
-                threads=True,
-            )
-        if raw is None or raw.empty:
-            log.warning("empty response for batch starting at %s", batch[0])
-            continue
-        frames.append(_tidy_yfinance(raw, batch))
+    got: set[str] = set()
+    errors: list[str] = []
 
-    if not frames:
+    batches = [tickers[i : i + batch_size] for i in range(0, len(tickers), batch_size)]
+    for n, batch in enumerate(batches, 1):
+        raw = None
+        for attempt in range(1, max_retries + 1):
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    raw = yf.download(
+                        batch,
+                        start=start,
+                        end=end,
+                        auto_adjust=False,
+                        actions=False,
+                        progress=False,
+                        group_by="column",
+                        threads=True,
+                    )
+                if raw is not None and not raw.empty:
+                    break
+                raw = None
+            except Exception as exc:  # noqa: BLE001 - reported, not hidden
+                errors.append(f"batch {n} attempt {attempt}: {type(exc).__name__}: {exc}")
+                raw = None
+
+            if attempt < max_retries:
+                delay = 2 ** attempt
+                log.warning(
+                    "batch %d/%d returned nothing (attempt %d/%d); retrying in %ds "
+                    "-- this is usually Yahoo rate-limiting, not a bug",
+                    n, len(batches), attempt, max_retries, delay,
+                )
+                time.sleep(delay)
+
+        if raw is None:
+            log.warning("batch %d/%d failed after %d attempts", n, len(batches), max_retries)
+            continue
+
+        tidy = _tidy_yfinance(raw, batch)
+        frames.append(tidy)
+        got |= set(tidy.index.get_level_values("ticker").unique())
+        log.info(
+            "downloaded batch %d/%d -- %d of %d tickers returned data",
+            n, len(batches), len(set(tidy.index.get_level_values("ticker"))), len(batch),
+        )
+
+    missing = [t for t in tickers if t not in got]
+    success_frac = len(got) / max(len(tickers), 1)
+
+    if not frames or success_frac < min_success_frac:
         raise RuntimeError(
-            "yfinance returned no data for any batch. Check network access to "
-            "query2.finance.yahoo.com, or run with --provider synthetic."
+            f"yfinance returned data for only {len(got)} of {len(tickers)} tickers "
+            f"({success_frac:.0%}).\n\n"
+            "The most common cause is Yahoo Finance rate-limiting your IP address. "
+            "This is very common on Google Colab and other shared hosts, and it is "
+            "not a bug in this code.\n\n"
+            "What to try, in order:\n"
+            "  1. Wait 10-15 minutes and run again -- the limit is temporary.\n"
+            "  2. Use a smaller universe: data.universe='sp100'.\n"
+            "  3. Upgrade the client: pip install --upgrade yfinance curl_cffi\n"
+            "  4. Verify the pipeline meanwhile with data.provider='synthetic', "
+            "which needs no network at all.\n"
+            + (f"\nFirst errors seen:\n  " + "\n  ".join(errors[:5]) if errors else "")
+        )
+
+    if missing:
+        log.warning(
+            "continuing without %d ticker(s) that returned no data: %s%s",
+            len(missing), ", ".join(missing[:10]),
+            " ..." if len(missing) > 10 else "",
         )
 
     panel = pd.concat(frames).sort_index()
