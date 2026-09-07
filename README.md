@@ -19,6 +19,14 @@ prices ──▶ features ──▶ vol-adjusted labels ──▶ purged walk-fo
 
 ## Quickstart
 
+### No install: run it in your browser
+
+[**▶ Open in Google Colab**](https://colab.research.google.com/github/bader7375/quant-lab/blob/claude/stock-prediction-ml-model-ejinfz/notebooks/run_in_colab.ipynb)
+— click the link, then **Runtime → Run all**. Nothing to install, free, ~10 minutes.
+The notebook explains each step in plain English and interprets the results for you.
+
+### On your own machine
+
 ```bash
 pip install -r requirements.txt
 
