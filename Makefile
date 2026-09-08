@@ -1,4 +1,4 @@
-.PHONY: install test smoke run predict clean
+.PHONY: install test smoke run predict clean swing swing-fast swing-audit swing-predict
 
 install:
 	pip install -r requirements.txt
@@ -17,3 +17,16 @@ predict:
 
 clean:
 	rm -rf artifacts data/cache
+
+# ---------------------------------------------------------------- swing engine
+swing:  ## full adaptive swing research run on the uploaded file
+	PYTHONPATH=src python -m quantlab.swing.cli run --config configs/swing.yaml
+
+swing-fast:  ## quicker pass: fewer engines, smaller search
+	PYTHONPATH=src python -m quantlab.swing.cli run --config configs/swing.yaml --fast
+
+swing-audit:  ## data quality report only
+	PYTHONPATH=src python -m quantlab.swing.cli audit --config configs/swing.yaml
+
+swing-predict:  ## next-bar signal
+	PYTHONPATH=src python -m quantlab.swing.cli predict --config configs/swing.yaml

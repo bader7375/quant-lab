@@ -1,11 +1,255 @@
-# quant-lab — next-day probability model for US equities
+# quant-lab — two probability engines for price data
+
+Two pipelines share one repo and one discipline.
+
+| | **swing** | **panel** |
+|---|---|---|
+| question | given one instrument, does a target print before a stop? | across ~500 names, which will beat its own volatility tomorrow? |
+| input | one OHLCV file | a cross-section of them |
+| target | triple-barrier: TP / SL / neither | volatility-adjusted next-day direction |
+| output | calibrated P(TP), P(SL), expected R, a trade decision | a ranked probability per name |
+| entry point | `python -m quantlab.swing.cli run --data uploads/tsla_us_d.csv` | `python -m quantlab.cli run` |
+
+The hard part of both is not the model. It is building a harness honest enough
+that you can believe the number it prints. Most of this repo is that harness.
+
+---
+
+# Part 1 — the swing engine
+
+An adaptive, multi-model research platform for a single instrument. It answers
+whether there is a tradable setup, with what probability the target is reached
+before the stop, what that is worth in expectancy, and — importantly — how much
+of that survives being tested on data it never saw.
+
+```
+OHLCV ─▶ audit ─▶ 184 features ─▶ barrier labels (TP/SL/neither)
+                       │                    │
+                       ├──────────┬─────────┴────────┬──────────────┐
+                  pattern      regime            9 engines,     E[R] head
+                  mining     clustering       each with its
+                (conjunctions)                 own feature set
+                       │          │                 │               │
+                       └──────────┴────────┬────────┴───────────────┘
+                                    out-of-fold stacking
+                                           │
+                             meta-model (logistic, log-odds)
+                                           │
+                       calibration ─▶ threshold ─▶ RL sizing layer
+                                           │
+                    purged walk-forward ─▶ report ─▶ next-bar signal
+```
+
+## Run it
+
+```bash
+pip install -r requirements.txt
+
+# the whole platform, on a file you supply
+PYTHONPATH=src python -m quantlab.swing.cli run --data uploads/tsla_us_d.csv
+
+# just the data audit
+PYTHONPATH=src python -m quantlab.swing.cli audit --data uploads/tsla_us_d.csv
+
+# quicker pass: fewer engines, smaller search
+PYTHONPATH=src python -m quantlab.swing.cli run --fast --folds 5
+
+# override anything in the config tree
+PYTHONPATH=src python -m quantlab.swing.cli run \
+    --set label.tp_multiple=2.5 --set label.risk_mode=swing \
+    --set patterns.max_depth=3 --set decision.cost_bps=15
+```
+
+Output lands in `artifacts/swing/`: `REPORT.md`, `results.json`, nine charts,
+per-bar predictions, the pattern table with in- and out-of-sample statistics,
+the geometry search, the cleaned data, the feature library, and a
+`production_model.joblib` holding every fitted object.
+
+Works on any liquid OHLCV series — TASI, NYSE, NASDAQ, ETFs, international
+equities. Nothing in it is specific to one market; the audit infers the
+timeframe and reports what it found.
+
+## What is actually adaptive about it
+
+**Different models get different features.** A distance-based model in 45
+dimensions has no neighbours — every point is roughly equidistant from every
+other. So KNN gets a handful of decorrelated features and the *number* is chosen
+by validation, not asserted; tree ensembles get a wide decorrelated set; linear
+models get a scaled, low-collinearity set; sequence nets get few short-window
+channels, because each channel is repeated at every timestep. All four sets are
+re-selected inside every training block.
+
+**Patterns are mined, not assumed.** A beam search over conjunctions of
+binarised conditions ("bottom fifth of the Bollinger range AND three lower lows
+AND relative volume in its top decile") up to depth four, scoring thousands of
+candidates per fold. Each survivor reports occurrences, raw and shrunk
+conditional probability, lift, a Wilson interval, an FDR-adjusted q-value, and —
+the number that matters — what it actually did on the unseen block.
+
+**Probabilities are shrunk before they are believed.** 18 occurrences with 16
+targets is not an 89% pattern. A Beta prior worth `prior_strength`
+pseudo-observations pulls every rate toward the base rate, so a probability
+escapes the baseline only in proportion to the evidence behind it.
+
+**Multiple testing is counted, not ignored.** Searching thousands of
+conjunctions guarantees impressive-looking ones. Every candidate scored is
+counted and survivors must clear Benjamini-Hochberg control against that full
+count.
+
+**The ensemble prunes itself.** Engines that rank below chance on the training
+block's out-of-fold rows are dropped from that fold's ensemble. The report names
+them. If deep learning adds nothing, the meta-model weights it to nothing and
+the architecture bake-off table says so.
+
+**Weights are learned per regime.** Two meta specifications compete inside each
+training block — a flat log-odds combination and one with model × regime
+interactions — and the better log loss wins. That is what makes "KNN in quiet
+mean-reverting markets, boosting through transitions" a finding rather than a
+slogan.
+
+**The trade geometry is searched, then stress-tested.** TP multiple, stop
+definition and holding window are chosen on the first fold's training block, and
+the entire walk-forward is then re-run under eight alternative geometries to
+show whether the edge is a property of the market or of one TP choice.
+
+## Leakage controls
+
+Every one of these is enforced in code and checked by the test suite:
+
+- Every feature at bar *t* uses bars ≤ *t*. `tests/test_swing_no_lookahead.py`
+  rebuilds the whole library on a truncated series and asserts no shared row
+  changes — and separately asserts that no feature is a near-monotone function
+  of the bar index, which is how a level feature smuggles "which era is this"
+  into a tree.
+- Purge equal to the full label horizon plus an embargo, between every training
+  block and its test block. A swing label at *t* is still resolving at *t+H*;
+  without the purge, training rows literally contain the test period's outcome.
+- Scalers, imputers, feature ranking, pattern thresholds, regime centroids and
+  hyperparameter searches are all fitted on training rows only.
+- The meta-model sees only out-of-fold base predictions from sequential purged
+  inner folds. Train a stacker on in-sample predictions and it learns that
+  whichever base model overfits hardest is the most trustworthy.
+- Pattern mining runs *separately inside each inner fold*, so meta-training rows
+  never carry evidence mined on themselves.
+- Entry defaults to the next bar's open. Entering at the close that generated
+  the signal assumes you saw the close before it printed; `entry_mode=close` is
+  available and the robustness sweep quantifies exactly what that assumption is
+  worth.
+- Within-bar barrier ambiguity resolves *against* the trade. Daily data cannot
+  say which of the target and the stop a wide bar touched first, and assuming
+  the target inflates every win rate by the frequency of wide bars — which is
+  precisely the population a swing model likes.
+- Rows whose outcome window runs past the end of the data are unlabelled rather
+  than resolved early, so the most recent bars are not silently biased toward
+  fast resolutions.
+
+## How to read the output
+
+Read the report in this order, and stop early if a section fails:
+
+1. **Fold stability.** Skill that lives in one fold is not skill.
+2. **Expectancy against taking every bar.** On a name with a strong secular
+   trend, the unconditional expectancy of a long barrier trade is positive. The
+   bar to clear is that number, not zero.
+3. **The overlap-adjusted t-statistic.** Adjacent setups share bars, so a naive
+   t on overlapping trades is inflated. A Newey-West t and a moving-block
+   bootstrap interval are reported instead.
+4. **Brier skill.** Negative means the probabilities are worse than always
+   predicting the base rate — the model may still rank, but "71%" is then a rank
+   and not a frequency you can bet at.
+5. **Mined versus realised pattern probability.** The gap between the two is the
+   honest measure of how much conjunction mining overfits on your data.
+
+## What it found on the bundled TSLA data
+
+The full run is committed under [`docs/example-run/`](docs/example-run/) — the
+report and all nine charts. The headline, in the system's own words:
+
+> **No edge that survives out-of-sample testing.** 396 trades, net expectancy
+> +0.095R, t = 0.65.
+>
+> The filter does not beat taking every bar with the same geometry (+0.095R vs
+> +0.135R per trade). On a name with a strong secular trend the unconditional
+> number is the bar to clear, not zero.
+
+That is the *correct* output, and the parts of it that are interesting are the
+parts that explain why:
+
+- **The engines rank well and it does not help.** Out-of-sample AUC for
+  P(target) is 0.64 — LightGBM alone reaches 0.71 — and the filter still loses
+  to taking every bar. At a 4R target the expectancy lives in rare large
+  winners; a model can sort the common cases correctly and miss those entirely.
+  Ranking ability and expectancy are different things, and only one of them
+  pays.
+- **The mined edge is negative, and it transfers.** 199 patterns across the
+  folds, 12,630 unseen occurrences, and 97% still point the way they were mined
+  — but what they identify is conditions with a *below*-baseline hit rate
+  (−0.065 mined, −0.056 realised). The conjunction search is reliably finding
+  setups to avoid, not setups to take. Every pattern firing on the last bar is
+  a momentum-extension condition with negative evidence.
+- **Fold stability is the giveaway.** Four of eight folds beat the benchmark.
+  Two folds carry expectancies of +0.83R and +0.87R on 27 and 22 trades; two
+  others are solidly negative. That is what a null result looks like when you
+  chart it.
+- **Buy-and-hold wins, at a price.** 31.6% CAGR against the strategy's −1.2% —
+  with a 73.6% drawdown, against the strategy's 27.7%, and 100% exposure against
+  16%.
+
+The system was asked what is true and it said 40%, not 78%. A version of this
+that reported a beautiful equity curve on one name over one history would be
+easier to look at and worth less.
+
+## The caveat that no statistic covers
+
+Parts of this harness were developed while looking at walk-forward output on the
+bundled series. The meta-model's regularisation, the scale its inputs arrive on,
+the definition of the agreement score and the floor on how selective a threshold
+may be were all fixed *after* seeing results — each on a stated principle rather
+than by nudging a number until the curve looked better, and each documented in
+the code where it lives, but that is still researcher degrees of freedom and no
+statistic in the report accounts for it.
+
+Read the out-of-sample numbers as optimistic by an unknown amount. The only
+clean test left is a series this code has never been run on, which is one
+command:
+
+```bash
+PYTHONPATH=src python -m quantlab.swing.cli run --data path/to/other.csv
+```
+
+## Layout
+
+```
+src/quantlab/swing/
+  config.py            the full parameter tree, YAML-loadable, CLI-overridable
+  data.py              load + audit: timeframe, gaps, dupes, OHLC violations, jumps
+  labels.py            path-dependent barrier simulator, 8 targets
+  splits.py            purged, embargoed walk-forward + inner out-of-fold folds
+  features/core.py     184 strictly-trailing features across 8 families
+  features/interactions.py  tree co-occurrence, SHAP interactions, 2x2 DiD tests
+  patterns.py          beam search, Bayesian shrinkage, Wilson CI, BH-FDR
+  regime.py            k-means regime space (k by silhouette) + Gaussian HMM
+  selection.py         model-specific feature sets
+  models/zoo.py        KNN, RF, ET, XGB, LGBM, CatBoost, logistic, MLP, analog
+  models/sequence.py   GRU / LSTM / TCN / Transformer over bar windows
+  models/meta.py       out-of-fold stacking, regime interactions, log-odds decomposition
+  models/calibration_bridge.py  shared Platt/isotonic calibration and ECE
+  walkforward.py       the orchestration that keeps all of it honest
+  rl.py                tabular Q-learning sizing layer over the probability
+  evaluate.py          expectancy, calibration, portfolio backtest, per-regime
+  explain.py           SHAP + exact log-odds evidence ledger
+  viz.py               candlestick chart and eight diagnostics
+  report.py            the markdown deliverable
+  pipeline.py          end-to-end orchestration
+  cli.py               run | audit | predict | config
+```
+
+---
+
+# Part 2 — the panel engine
 
 A research pipeline that estimates, for each stock in a large US universe,
 the probability that **tomorrow's return exceeds its own recent volatility**.
-
-The hard part of this problem is not the model. It is building a harness
-honest enough that you can believe the number it prints. Most of this repo is
-that harness.
 
 ```
 prices ──▶ features ──▶ vol-adjusted labels ──▶ purged walk-forward CV
@@ -253,10 +497,39 @@ found nothing durable.
 ## Testing
 
 ```bash
-make test     # 87 tests, ~110s
+make test     # 137 tests across both engines, ~2 min
 ```
 
-The suite exists to attack the harness, not to confirm it:
+The suite exists to attack the harness, not to confirm it.
+
+**Swing engine** (`tests/test_swing_*.py`):
+
+- **`test_swing_no_lookahead.py`** — rebuilds all 184 features on a truncated
+  series and asserts nothing changes on shared rows; asserts the same for
+  labels and for mined patterns; and asserts no feature is a near-monotone
+  function of the bar index.
+- **`test_swing_labels.py`** — the barrier simulator against hand-built bars:
+  target-first, stop-first, time exit, the ambiguous bar resolving against the
+  trade, breakeven converting a loser to a scratch, a trail locking in an open
+  gain, `min_hold`, and the gap between entering at the signal's own close and
+  at the next open.
+- **`test_swing_patterns.py`** — a *positive control* (a planted two-way
+  conjunction must be recovered) and a *negative control* (pure noise must
+  yield almost nothing after FDR); that shrinkage refuses to report 18-of-16 as
+  89%; that Benjamini-Hochberg controls the false discovery rate on 2,000 true
+  nulls; and that evidence damping stops correlated patterns compounding.
+- **`test_swing_splits.py`** — no fold straddles train and test, the purge
+  always covers the full label horizon, inner folds never train on their own
+  future, and too little history fails loudly.
+- **`test_swing_pipeline.py`** — end-to-end on a simulated market, with a
+  *negative control* (shuffle the outcomes; within-fold AUC must return to
+  0.50) and a *positive control* (plant a mean-reversion effect; selected
+  trades must beat taking every bar). Also: probabilities form a valid
+  distribution, the portfolio backtest never holds two positions at once, the
+  overlap-adjusted t is smaller than the naive one, cost in R is heavier on a
+  tighter stop, and confidence tiers populate at any base rate.
+
+**Panel engine** (the original suite):
 
 - **`test_no_lookahead.py`** — rebuilds every feature on a truncated panel and
   asserts nothing changes on shared dates. Any difference is a feature that
