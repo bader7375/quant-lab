@@ -72,6 +72,10 @@ timeframe and reports what it found.
 
 ### Many stocks at once
 
+**→ [`docs/QUICKSTART-MULTI-STOCK.md`](docs/QUICKSTART-MULTI-STOCK.md)** walks
+through it end to end: data format, minimums, what to run, and how to read the
+verdict.
+
 Put one file per ticker in a folder and point `scan` at it:
 
 ```bash
