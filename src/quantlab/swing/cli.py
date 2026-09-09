@@ -5,6 +5,12 @@
     python -m quantlab.swing.cli audit --data uploads/tsla_us_d.csv
     python -m quantlab.swing.cli predict --data uploads/tsla_us_d.csv
     python -m quantlab.swing.cli run --set label.tp_multiple=2.5 --set patterns.max_depth=3
+
+Multi-instrument (a folder of one file per ticker):
+
+    python -m quantlab.swing.cli scan --data uploads/universe
+    python -m quantlab.swing.cli scan --data uploads/universe --limit 100 \
+        --score p_tp --set label.primary_rule=reversal
 """
 from __future__ import annotations
 
@@ -42,7 +48,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="quantlab.swing",
                                      description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("command", choices=["run", "audit", "predict", "config"])
+    parser.add_argument("command",
+                        choices=["run", "audit", "predict", "config", "scan"])
     parser.add_argument("--config", help="YAML config file")
     parser.add_argument("--data", help="CSV/XLSX/Parquet file (or a folder holding one)")
     parser.add_argument("--symbol", help="override the symbol inferred from the filename")
@@ -51,6 +58,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-plots", action="store_true")
     parser.add_argument("--fast", action="store_true",
                         help="smaller engine set and search budget, for a quick pass")
+    parser.add_argument("--limit", type=int,
+                        help="scan: cap how many instruments are loaded")
+    parser.add_argument("--score", default="exp_R_hat", choices=["exp_R_hat", "p_tp"],
+                        help="scan: rank candidates by predicted expected R (default) "
+                             "or by P(target)")
+    parser.add_argument("--no-cross-sectional", action="store_true",
+                        help="scan: withhold peer-relative features")
     parser.add_argument("--set", action="append", metavar="section.key=value",
                         help="override any config value; repeatable")
     parser.add_argument("-q", "--quiet", action="store_true")
@@ -71,6 +85,21 @@ def main(argv: list[str] | None = None) -> int:
         from .data import load_and_audit
         _, audit = load_and_audit(cfg.data)
         print(audit.to_markdown())
+        return 0
+
+    if args.command == "scan":
+        from .panel_pipeline import run_scan
+
+        bundle = run_scan(cfg, cfg.data.path, score=args.score, limit=args.limit,
+                          cross_sectional=not args.no_cross_sectional,
+                          out_dir=cfg.output.dir, progress=not args.quiet)
+        head = bundle["report"].split("## 1.")[0]
+        print(head)
+        trade = bundle["scan"][bundle["scan"]["decision"] == "TRADE"]
+        print(f"\nTRADE candidates on the latest bar: {len(trade)}")
+        if len(trade):
+            print(trade.head(15).to_string(index=False))
+        print(f"\nfull report: {bundle['out_dir']}/PANEL_REPORT.md")
         return 0
 
     from .pipeline import run

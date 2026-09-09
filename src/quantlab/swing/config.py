@@ -48,6 +48,10 @@ class LabelConfig:
     breakeven_at_r: float | None = None  # e.g. 1.0 -> move the stop to entry once +1R is touched
     time_exit: bool = True               # close at the last bar if neither barrier is hit
     ambiguous_bar: str = "sl_first"      # both barriers inside one bar: assume the adverse one
+    # Meta-labelling. A primary rule proposes candidate setups and the model only
+    # decides take-or-skip on those, instead of being asked about every bar. See
+    # swing/primary.py for the available rules and why this framing helps.
+    primary_rule: str = "none"
     # The grid the walk-forward engine searches over, inside training only.
     tp_grid: tuple[float, ...] = (1.5, 2.0, 2.5, 3.0, 4.0)
     sl_grid: tuple[float, ...] = (0.75, 1.0, 1.5)
@@ -157,6 +161,11 @@ class DecisionConfig:
     # test block -- too few to say anything with. Both floors bind.
     min_trades: int = 60
     min_trade_frac: float = 0.05
+    # Multi-instrument only: how many names the book may hold at once. Signals
+    # cluster -- when the market gaps, everything fires together -- so an
+    # unconstrained book levers up exactly when its positions are most
+    # correlated. This cap is what makes the panel equity curve tradable.
+    max_positions: int = 5
 
 
 @dataclass

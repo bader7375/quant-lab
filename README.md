@@ -9,6 +9,7 @@ Two pipelines share one repo and one discipline.
 | target | triple-barrier: TP / SL / neither | volatility-adjusted next-day direction |
 | output | calibrated P(TP), P(SL), expected R, a trade decision | a ranked probability per name |
 | entry point | `python -m quantlab.swing.cli run --data uploads/tsla_us_d.csv` | `python -m quantlab.cli run` |
+| many stocks at once | `python -m quantlab.swing.cli scan --data uploads/universe` | (native — it is a panel model) |
 
 The hard part of both is not the model. It is building a harness honest enough
 that you can believe the number it prints. Most of this repo is that harness.
@@ -69,6 +70,42 @@ Works on any liquid OHLCV series — TASI, NYSE, NASDAQ, ETFs, international
 equities. Nothing in it is specific to one market; the audit infers the
 timeframe and reports what it found.
 
+### Many stocks at once
+
+Put one file per ticker in a folder and point `scan` at it:
+
+```bash
+uploads/universe/
+  aapl_us_d.csv   msft_us_d.csv   tsla_us_d.csv   ...
+
+PYTHONPATH=src python -m quantlab.swing.cli scan --data uploads/universe
+PYTHONPATH=src python -m quantlab.swing.cli scan --data uploads/universe \
+    --limit 200 --score p_tp --set label.primary_rule=reversal
+```
+
+This is **not** the single-name engine run in a loop. Running it fifty times
+answers "is there an edge in this stock" fifty times and gives fifty chances to
+be lucky. `scan` pools the whole universe into one model and asks one question,
+which is both far more powerful and far more honest:
+
+- **~500× the training data.** One name gives ~4,000 bars; two hundred give
+  800,000 — the difference between a model that can express an interaction and
+  one that memorises noise.
+- **Cross-sectional features become possible.** Where a name sits relative to
+  its peers *today* is a better-documented one-week signal than anything in its
+  own history, and it cannot be computed from one series at all.
+- **One test, honestly counted.** Per-instrument tables are printed as
+  descriptive, with the number of names stated next to them, because picking
+  the best of fifty is fifty more chances to be wrong.
+- **A portfolio, not a signal list.** At most `decision.max_positions` names are
+  held at once and candidates compete on score, because setups cluster — when
+  the market gaps, everything fires — and an unconstrained book levers up
+  exactly when its positions are most correlated.
+
+Output lands in `artifacts/swing/panel/`: `PANEL_REPORT.md`, a ranked `scan.csv`
+of every instrument's latest bar, per-instrument results, fold table, cost
+sensitivity, selected trades and the fitted model.
+
 ## What is actually adaptive about it
 
 **Different models get different features.** A distance-based model in 45
@@ -111,6 +148,36 @@ slogan.
 definition and holding window are chosen on the first fold's training block, and
 the entire walk-forward is then re-run under eight alternative geometries to
 show whether the edge is a property of the market or of one TP choice.
+
+## The statistics, which is where the last version was wrong
+
+Multi-instrument evaluation broke the significance testing in a way worth
+stating plainly, because it is easy to hit and hard to see.
+
+Every date in a panel contributes one row per instrument — 150 rows driven by
+one market factor. Testing those as independent observations understates the
+standard error by roughly the square root of the cross-section. On this
+project's own data it reported **t = 9.8** for a result whose honest value was
+**t = 1.3**, and the strategy that came with it looked eminently tradable.
+
+Three corrections are now built in, in `swing/stats.py`:
+
+1. **Day-level aggregation.** Nothing is tested on rows. Every result becomes one
+   observation per date first — which is also the number a book that risks the
+   same amount each day actually realises.
+2. **Overlap adjustment.** A five-bar trade shares four bars with the next one,
+   so the daily series is autocorrelated too. Newey-West at the label horizon,
+   plus a moving-block bootstrap for the interval.
+3. **Deflation for the search.** The best of twenty configurations scores about
+   1.9 even when nothing is there. Every run counts the configurations it
+   evaluated and reports `t_deflated = t − E[max of that many draws]` beside the
+   headline. This is what turned "t = 1.32, worth trading" into "t_eff = −0.14,
+   worth nothing".
+
+`tests/test_swing_panel_stats.py` encodes the original bug as a test: a panel of
+pure noise with a common factor must score a row-level t of −7.4 and a day-level
+t of −0.6, and the suite fails if the honest number ever drifts toward the
+flattering one.
 
 ## Leakage controls
 
@@ -159,6 +226,39 @@ Read the report in this order, and stop early if a section fails:
    and not a frequency you can bet at.
 5. **Mined versus realised pattern probability.** The gap between the two is the
    honest measure of how much conjunction mining overfits on your data.
+
+## Did the search find a tradable edge? No — and here is the receipt
+
+The second phase of this project went looking for one across **473 S&P 500
+names, 2013–2018 (619,040 bars)**, testing expected-R selection, cross-sectional
+features, meta-labelling on three primary setup rules, sample-uniqueness
+weighting and eight trade geometries. [`docs/RESEARCH-LOG.md`](docs/RESEARCH-LOG.md)
+records every test in order.
+
+Three results looked tradable along the way. None was:
+
+| what it looked like | what it was |
+|---|---|
+| 1.5R/5-bar setups, **t = 6.97** | row-level standard errors on a panel. Every date contributes 150 correlated rows; the honest day-level t was **1.3** |
+| best of eight geometries, **t = 1.32** | the best of eight draws. Expected max from noise is 1.46, so **t_deflated = −0.14** |
+| reversal + E[R] gate, **t = 2.83**, CI excluding zero | 402 of 418 trades fell in 2015, and it did not replicate through the shipped pipeline: **t = −0.11** |
+
+And the last one, which is the cleanest illustration of the whole problem. With
+the method finally fixed, the full 2013–2018 panel gives **t = +2.35, CI
+[+0.018, +0.186]**, positive in 2016, 2017 and 2018, every fold beating its
+baseline. The identical method on 2013–2016 alone gives **t = −0.15**. The
+difference is the period that had been locked — and therefore the period looked
+at last.
+
+**A result that appears only in the window you examined most recently, and
+vanishes in the window you developed on, is not an effect.**
+
+So the honest answer to "make it tradable" is: this data does not contain a
+daily-horizon edge that survives being measured properly. What was built instead
+is the machinery that will find one if *your* data has it, and will refuse to
+invent one if it does not — day-level statistics, trial counting and deflation,
+a four-gate verdict, cross-sectional features, expected-R selection,
+meta-labelling and a position-capped portfolio. Sections above describe each.
 
 ## What it found on the bundled TSLA data
 
@@ -234,6 +334,12 @@ src/quantlab/swing/
   models/sequence.py   GRU / LSTM / TCN / Transformer over bar windows
   models/meta.py       out-of-fold stacking, regime interactions, log-odds decomposition
   models/calibration_bridge.py  shared Platt/isotonic calibration and ECE
+  stats.py             day-level significance, block bootstrap, trial deflation
+  primary.py           primary setup rules for meta-labelling
+  multi.py             universe loading, pooled folds, uniqueness weights, portfolio
+  panel_pipeline.py    the multi-instrument run, evaluation and scan
+  panel_report.py      the multi-instrument report
+  features/cross_sectional.py  within-date ranks, z-scores and market state
   walkforward.py       the orchestration that keeps all of it honest
   rl.py                tabular Q-learning sizing layer over the probability
   evaluate.py          expectancy, calibration, portfolio backtest, per-regime
@@ -497,7 +603,7 @@ found nothing durable.
 ## Testing
 
 ```bash
-make test     # 137 tests across both engines, ~2 min
+make test     # 172 tests across all three engines, ~2.5 min
 ```
 
 The suite exists to attack the harness, not to confirm it.
@@ -528,6 +634,21 @@ The suite exists to attack the harness, not to confirm it.
   distribution, the portfolio backtest never holds two positions at once, the
   overlap-adjusted t is smaller than the naive one, cost in R is heavier on a
   tighter stop, and confidence tiers populate at any base rate.
+
+**Multi-instrument** (`tests/test_swing_panel_stats.py`,
+`test_swing_multi.py`, `test_swing_panel_pipeline.py`):
+
+- the original bug as a test — a panel of pure noise with a common factor must
+  score a row-level t of −7.4 and a day-level t of −0.6;
+- every verdict gate must be able to fail on its own, and a 58-trade,
+  16-day result must not be called an edge however good its t;
+- cross-sectional features must not look ahead (adding later dates cannot change
+  an earlier row), market-wide columns must be constant within a date, and thin
+  dates must produce no rank at all;
+- uniqueness weights must favour fast-resolving labels ~4x and normalise to one;
+- the portfolio must never exceed its position cap or hold a name twice;
+- a simulated market with no planted signal must **not** be declared an edge;
+- cost curves must be monotone — higher costs cannot improve expectancy.
 
 **Panel engine** (the original suite):
 

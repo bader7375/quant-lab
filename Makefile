@@ -1,4 +1,4 @@
-.PHONY: install test smoke run predict clean swing swing-fast swing-audit swing-predict
+.PHONY: install test smoke run predict clean swing swing-fast swing-audit swing-predict swing-scan
 
 install:
 	pip install -r requirements.txt
@@ -30,3 +30,6 @@ swing-audit:  ## data quality report only
 
 swing-predict:  ## next-bar signal
 	PYTHONPATH=src python -m quantlab.swing.cli predict --config configs/swing.yaml
+
+swing-scan:  ## multi-instrument: pooled model over a folder of per-ticker files
+	PYTHONPATH=src python -m quantlab.swing.cli scan --data uploads/universe

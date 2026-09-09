@@ -15,6 +15,7 @@ label:
   tp_multiple: 3.0
   lookahead: 5
   ambiguous_bar: sl_first
+  primary_rule: none         # none | reversal | pullback | breakout | squeeze
   tp_grid: [1.5, 2.0, 2.5, 3.0, 4.0]
   sl_grid: [0.75, 1.0, 1.5]
   lookahead_grid: [5, 10, 20]
@@ -46,6 +47,7 @@ decision:
   tier_quantiles: [0.98, 0.90, 0.75]   # quantiles of the model's own OOF distribution
   min_trades: 60             # a threshold estimated from fewer is not an estimate
   min_trade_frac: 0.05
+  max_positions: 5           # multi-instrument: concurrent positions in the book
 
 rl:
   enabled: true
