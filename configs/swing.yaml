@@ -1,0 +1,59 @@
+# Adaptive swing research platform -- default configuration.
+# Every value here is a starting point: the walk-forward engine re-searches the
+# ones that matter inside each training block.
+data:
+  path: uploads/tsla_us_d.csv
+  drop_zero_volume: true
+  drop_flat_bars: true
+
+label:
+  entry_mode: next_open      # "close" reproduces the brief's example; see the report
+  direction: long
+  risk_mode: atr             # atr | pct | swing
+  atr_period: 14
+  sl_multiple: 1.0
+  tp_multiple: 3.0
+  lookahead: 5
+  ambiguous_bar: sl_first
+  primary_rule: none         # none | reversal | pullback | breakout | squeeze
+  tp_grid: [1.5, 2.0, 2.5, 3.0, 4.0]
+  sl_grid: [0.75, 1.0, 1.5]
+  lookahead_grid: [5, 10, 20]
+  risk_mode_grid: [atr, swing]
+  min_base_rate: 0.05        # geometries rarer than this are reported, not chosen
+
+split:
+  n_folds: 8
+  min_train_bars: 900
+  embargo_bars: 5
+  expanding: true
+  inner_folds: 4
+
+patterns:
+  max_depth: 4
+  beam_width: 40
+  min_support: 40
+  prior_strength: 30.0
+  fdr_alpha: 0.10
+  max_patterns: 25
+
+models:
+  enabled: [knn, rf, et, xgb, lgbm, cat, mlp, analog, logit]
+  optuna_trials: 20
+  optuna_timeout: 120
+
+decision:
+  cost_bps: 10.0
+  tier_quantiles: [0.98, 0.90, 0.75]   # quantiles of the model's own OOF distribution
+  min_trades: 60             # a threshold estimated from fewer is not an estimate
+  min_trade_frac: 0.05
+  max_positions: 5           # multi-instrument: concurrent positions in the book
+
+rl:
+  enabled: true
+  episodes: 400
+
+output:
+  dir: artifacts/swing
+  save_models: true
+  make_plots: true
