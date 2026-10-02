@@ -1,7 +1,19 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
-<h2 style="font-size:18px">How this system was built, and what the evidence says (v7)</h2>
+<h2 style="font-size:18px">How this system was built, and what the evidence says (v8)</h2>
 <p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>v8: the A+ grade</h2>
+<p><b>Definition.</b> An A+ setup is a top-third reversal setup that also closed in the bottom 13% of the day's range (internal bar strength ≤ 0.13) <i>and</i> has a Momentum Pulse below −0.5σ. The two thresholds are the medians of the setups before 2013. Both conditions were chosen from 14 candidates because they held in both periods. A 200-day-average filter, VIX change, volatility of volatility and longer trends did not.</p>
+<p><b>Per trade it is clearly better.</b> In the engine's own backtest, A+ trades averaged roughly twice the return of the other top-third trades on every long history:</p>
+<table class="t"><tr><th></th><th>A+</th><th>other top-third</th></tr>
+<tr><td>TSLA</td><td>+5.3% (8 trades, 88% won)</td><td>+2.6% (33, 76%)</td></tr><tr><td>MSFT</td><td>+2.4% (33, 76%)</td><td>+1.6% (93, 72%)</td></tr>
+<tr><td>AMZN</td><td>+6.7% (15, 93%)</td><td>+2.6% (55, 76%)</td></tr><tr><td>AAPL</td><td>+3.3% (16, 75%)</td><td>+1.7% (29, 72%)</td></tr>
+<tr><td>F</td><td>+2.3% (45, 67%)</td><td>+0.8% (115, 71%)</td></tr><tr><td>TASI</td><td>+1.6% (8, 75%)</td><td>−1.1% (20, 50%)</td></tr></table>
+<p><b>But as a filter it makes less money.</b> The other top-third trades are still profitable, so skipping them halves total return. On the 6-market portfolio, "A+ only" made +428% (Sharpe 0.58) against +952% (Sharpe 0.63). <b>Putting the two signs into the score did not help either.</b> A refit with 11 signs scored slightly worse out of sample than the current 9 weights, so the score is unchanged.</p>
+<p><b>How to use it: position size</b> (Settings → position size):</p>
+<ul><li><b>A+ double size:</b> on the 6-market portfolio, total +952% → +1,521% and CAGR 4.3% → 5.1%, with the same Sharpe (0.63) and a deeper max drawdown (−16.5% → −18.9%). This is more money, not better risk-adjusted money.</li>
+<li><b>Others half size:</b> on single markets, Sharpe stays the same or improves on all six (TSLA 0.37 → 0.43, TASI 0.63 → 0.67) and drawdowns shrink sharply (F −54% → −31%, TSLA −34% → −17%, TASI −18% → −9%). Total return is lower.</li>
+<li>A+ setups are taken first when several stocks signal on the same day.</li></ul>
 <h2>Momentum Pulse (the pane under the chart)</h2>
 <p>The pulse measures momentum over 5, 10, 20 and 60 days. Each one is the return divided by the move this stock's own volatility would normally produce over that period (Yang-Zhang, 20 days), so +2σ means "a big move for this stock". The thick line is their smoothed average. The ribbon spans the four horizons: teal or red when all four agree, violet when they disagree, and brighter when the path was straight (Kaufman efficiency ratio). Bars show acceleration (the line now vs 3 days ago). The dotted amber lines are this stock's own 5% and 95% momentum levels over the last two years. Amber glowing dots mark exhaustion (momentum at a 2-year extreme and turning), triangles mark thrusts (crossing ±1σ with all horizons agreeing), and dashed violet lines mark divergences on both panes (price makes a new low or high that momentum does not confirm).</p>
 <p><b>What I tested, and what I found.</b> The design sample was the six long series before 2013; the test was 2013 onward plus the 87 stocks. The results contradict some trading folklore, so the advice follows the evidence:</p>

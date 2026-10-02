@@ -197,7 +197,7 @@ function annotate(){
  const c=cur(),date=d.d[c],s=S(),mk=[];
  if(s){const lo=Math.max(s.first,0);
   for(let i=lo;i<=c;i++){
-   if(s.sig[i]===1&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${Math.round(100*s.P[i])}%`,size:1.4})}
+   if(s.sig[i]===1&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${s.aplus&&s.aplus[i]?"A+ ":""}${Math.round(100*s.P[i])}%`,size:s.aplus&&s.aplus[i]?1.9:1.4})}
    else if(s.sig[i]===2&&UI.ov.sys){mk.push({time:d.d[i],position:"belowBar",shape:"arrowUp",color:"#c08cff",text:"MOM",size:1.3})}
    else if(s.setup[i]&&UI.ov.setups)mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:"circle",color:THIRD_COL[thirdOf(s.score[i])],size:.5});
    if(UI.ov.signs){const down=d.c[i]<(i?d.c[i-1]:d.c[i]);

@@ -14,6 +14,7 @@
 .btn.sm{padding:4px 10px;font-size:12px}
 .rp{display:inline-flex;gap:6px;align-items:center;background:rgba(250,178,25,.08);border:1px solid rgba(250,178,25,.4);border-radius:5px;padding:3px 6px}
 .rp .d{font:11px var(--mono);color:var(--warn);white-space:nowrap}.rp select{padding:3px 6px}
+.aplus{color:#fab219}.aplus-b{color:#1a1a19!important;background:#fab219!important;font-weight:700}
 .pulse-hud{position:absolute;z-index:4;pointer-events:none;font:11px/1.6 "JetBrains Mono",monospace;color:var(--ink2,#c3c2b7);background:rgba(26,26,25,.72);backdrop-filter:blur(3px);border:1px solid rgba(195,194,183,.12);border-radius:5px;padding:2px 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 90px)}
 .pulse-hud b{color:#e8e6dc;letter-spacing:.06em}.pulse-hud .pk{opacity:.55}.pulse-hud i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:2px;background:#444;vertical-align:-1px}
 .pulse-hud .st{border:1px solid;border-radius:3px;padding:0 5px;font-weight:600;letter-spacing:.05em}
@@ -56,7 +57,7 @@
 </style>
 
 <div class="hdr">
-  <div class="brand"><b>QUANTLAB</b><span>reversal edge v7 · momentum pulse</span></div>
+  <div class="brand"><b>QUANTLAB</b><span>reversal edge v8 · A+ grade</span></div>
   <div class="f"><label for="sym">symbol</label><select id="sym"></select></div>
   <div class="f"><label>range</label><div class="rng" id="rng"><button data-n="126">6M</button><button data-n="252" class="on">1Y</button><button data-n="504">2Y</button><button data-n="1260">5Y</button><button data-n="0">All</button></div></div>
   <div class="live">LIVE · RUNS IN YOUR BROWSER</div>
@@ -89,6 +90,7 @@
           <div class="h">Setup and score</div>
           <label for="c-trig" title="A setup starts when the 2-day RSI closes below this level (Connors). Lower = deeper oversold, fewer setups.">setup: RSI(2) below</label><input id="c-trig" type="number" min="2" max="30" step="1" value="10">
           <label for="c-scoreThr" title="Only trade setups whose Reversal Edge Score is at least this good. Thirds are from the 87-stock research.">trade setups scoring</label><select id="c-scoreThr"><option value="0.4356">top third (best quality)</option><option value="-1.7889">top two thirds</option><option value="-99">all setups</option></select>
+          <label for="c-apsize" title="A+ = a top-third setup that closed in the bottom 13% of its day range with the Momentum Pulse below -0.5. A+ trades earned about twice as much per trade on all six long histories.">position size: A+ vs other setups</label><select id="c-apsize"><option value="1,1">equal (as v7)</option><option value="2,1">A+ double size (more return, deeper drawdown)</option><option value="1,0.5">others half size (smaller drawdowns)</option><option value="1,0">A+ only</option></select>
           <label for="c-side" title="Research: buying drops worked; shorting rises lost money in every test.">direction</label><select id="c-side"><option value="1">long: buy drops (recommended)</option><option value="-1">short: sell rises (not supported by the research)</option></select>
           <label for="c-adapt" title="Start from the research weights and shift them toward what has worked on your own files as evidence accumulates (walk-forward).">adapt weights to my data</label><select id="c-adapt"><option value="1">yes</option><option value="0">no, keep research weights</option></select>
           <label for="c-n0" title="How many own setups it takes before the stock's own evidence counts as much as the research. Higher = trust the research longer.">research weight (setups)</label><input id="c-n0" type="number" min="0" max="5000" step="50" value="300">
