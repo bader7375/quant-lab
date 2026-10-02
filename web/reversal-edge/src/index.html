@@ -1,0 +1,1044 @@
+<meta charset="utf-8">
+<title>QuantLab Mean-Reversion Terminal</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{color-scheme:dark;--page:#0d0d0d;--panel:#141413;--surface:#1a1a19;--s2:#20201f;--ink:#fff;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;--hair:rgba(255,255,255,.08);--blue:#3987e5;--red:#e66767;--violet:#9085e9;--good:#0ca30c;--warn:#fab219;--crit:#d03b3b;
+--sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box}
+html,body{background:var(--page);color:var(--ink2);font:13px/1.45 var(--sans);margin:0}
+.hdr{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 16px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--hair);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.brand b{display:block;color:var(--ink);letter-spacing:.14em;font-size:13px}.brand span{color:var(--muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.f{display:flex;flex-direction:column;gap:3px}.f label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+select,.rng button{background:var(--s2);color:var(--ink);border:1px solid var(--hair);border-radius:5px;padding:5px 8px;font:12px var(--sans)}
+.rng{display:flex;gap:4px}.rng button{cursor:pointer;color:var(--ink2)}.rng button.on{background:#1c4f8f;border-color:#2a78d6;color:#fff}
+.badge{align-self:center;font-size:10px;letter-spacing:.08em;padding:4px 8px;border-radius:4px;color:var(--warn);border:1px solid rgba(250,178,25,.5)}
+.snap{align-self:center;color:var(--muted);font-size:11px;margin-left:auto}
+.tabs{display:flex;gap:4px;padding:0 16px;border-bottom:1px solid var(--hair);overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:9px 14px;font:13px var(--sans);cursor:pointer;white-space:nowrap}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--blue)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+main{padding:10px 16px 40px}
+.chartwrap{display:flex;gap:12px;align-items:flex-start}.cc{flex:1;min-width:0}
+.ctl{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-bottom:6px;font-size:12px}.ctl label{display:inline-flex;gap:4px;align-items:center;cursor:pointer}
+.ctl input{accent-color:var(--blue)}
+#plot{border:1px solid var(--hair);border-radius:6px;overflow:hidden;background:var(--surface)}
+.scrub{display:flex;align-items:center;gap:10px;padding:8px 2px}.scrub input{flex:1;accent-color:var(--blue)}.scrub span{font:11px var(--mono);color:var(--muted);min-width:90px}
+.insp{width:360px;flex-shrink:0;background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:10px;position:sticky;top:112px;max-height:calc(100vh - 124px);overflow-y:auto}
+.ih{display:flex;gap:10px;align-items:baseline;border-bottom:1px solid var(--hair);padding-bottom:6px;margin-bottom:8px}.ih b{color:var(--ink);font-size:14px}.ih span{font-family:var(--mono)}.pin{margin-left:auto;font-size:9px;letter-spacing:.08em;border:1px solid var(--axis);padding:1px 5px;border-radius:3px;color:var(--muted)}.pin.on{color:var(--warn);border-color:rgba(250,178,25,.5)}
+.top2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lab{color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.06em}
+.bigp{color:var(--ink);font-size:26px;font-weight:500;line-height:1.1}.note{color:var(--muted);font:10px var(--mono)}
+.act{font-size:14px;font-weight:600;margin-top:4px}.act.on{color:var(--good)}
+.gates{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;margin:8px 0;font-size:11px}.ok{color:var(--good);font-weight:700;margin-right:4px}.no{color:var(--crit);font-weight:700;margin-right:4px}
+.sec{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin:12px 0 4px}
+table.t{width:100%;border-collapse:collapse;font-size:11px}table.t td{padding:2px 4px;border-bottom:1px solid var(--grid)}td.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.pill{display:inline-block;min-width:56px;text-align:center;border-radius:3px;padding:1px 4px;font:10px var(--mono)}
+.fb{display:grid;grid-template-columns:84px 1fr 34px;gap:6px;align-items:center;margin:2px 0;font-size:10px}.tr{height:6px;background:var(--s2);border-radius:3px;overflow:hidden}.tr i{display:block;height:100%}
+.sh{display:grid;grid-template-columns:120px 1fr;gap:6px;align-items:center;margin:2px 0;font:10px var(--mono)}.sh .bar{height:10px;position:relative;background:var(--s2)}.sh .bar i{position:absolute;top:0;bottom:0}
+.hind{border-top:1px dashed var(--axis);margin-top:8px;padding-top:6px;font:10px var(--mono);color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px;margin-bottom:10px}
+.k{background:var(--panel);border:1px solid var(--hair);border-radius:5px;padding:6px 8px}.k .v{color:var(--ink);font-size:16px;font-weight:500;margin-top:2px}.k .v.pos{color:#6fd06f}.k .v.neg{color:#f08c8c}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,540px),1fr));gap:10px}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:10px}.card h3{margin:0 0 6px;color:var(--ink);font-size:14px}.card h3 span{color:var(--muted);font-weight:400;font-size:11px;margin-left:8px}
+.kg{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.kg .k .v{font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+h2{color:var(--ink);font-size:13px;font-weight:500;margin:18px 0 8px}
+.tw{overflow-x:auto;border:1px solid var(--hair);border-radius:6px}
+table.bl{border-collapse:collapse;width:100%;font:11px var(--mono);font-variant-numeric:tabular-nums}
+table.bl th{position:sticky;top:0;background:var(--panel);color:var(--muted);font-weight:500;text-transform:uppercase;font-size:10px;text-align:right;padding:6px 8px;cursor:pointer;white-space:nowrap}
+table.bl td{padding:4px 8px;border-top:1px solid #232321;text-align:right;white-space:nowrap}table.bl tr:hover td{background:#242423;cursor:pointer}
+table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
+.about{max-width:70ch;font-size:14px;line-height:1.6}.about p{margin:10px 0}.about code{font:12px var(--mono);background:var(--s2);padding:1px 5px;border-radius:3px}
+.loading{padding:60px 0;text-align:center;color:var(--muted)}
+@media (max-width:1100px){.chartwrap{flex-direction:column}.insp{width:100%;position:static;max-height:none}.two{grid-template-columns:1fr}.kg{grid-template-columns:repeat(3,1fr)}.snap{margin-left:0}}
+</style>
+<style>
+.drop{border:1.5px dashed var(--axis);border-radius:8px;padding:22px;text-align:center;color:var(--muted);background:var(--surface);cursor:pointer}
+.drop.over{border-color:var(--blue);color:var(--ink)}.drop b{color:var(--ink)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.panel{background:var(--surface);border:1px solid var(--hair);border-radius:8px;padding:12px 14px}
+.panel h3{margin:0 0 8px;color:var(--ink);font-size:13px;font-weight:600}
+.ds{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--grid);font-size:12px}
+.ds:last-child{border-bottom:0}.ds b{color:var(--ink)}.ds .note{font-size:10px}
+.x{background:none;border:1px solid var(--hair);color:var(--muted);border-radius:4px;cursor:pointer;padding:2px 8px}
+.set{display:grid;grid-template-columns:1fr 110px;gap:4px 10px;align-items:center;font-size:12px}
+.set label{color:var(--ink2)}.set input,.set select{width:100%;background:var(--page);color:var(--ink);border:1px solid var(--hair);border-radius:4px;padding:4px 6px;font:12px var(--mono)}
+.set .h{grid-column:1/-1;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-top:8px}
+.btn{background:#1c4f8f;border:1px solid #2a78d6;color:#fff;border-radius:5px;padding:7px 14px;font:13px var(--sans);cursor:pointer}
+.btn.ghost{background:var(--s2);border-color:var(--hair);color:var(--ink2)}
+.btn:disabled{opacity:.5;cursor:default}
+.bar{height:4px;background:var(--s2);border-radius:2px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;width:0;background:var(--violet);transition:width .2s}
+.status{font:11px var(--mono);color:var(--muted);margin-top:6px;min-height:14px}
+.err{color:#f08c8c}
+.live{align-self:center;font-size:10px;letter-spacing:.08em;padding:4px 8px;border-radius:4px;color:var(--good);border:1px solid rgba(12,163,12,.5)}
+.empty{padding:40px 0;color:var(--muted);text-align:center}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}}
+</style>
+
+
+<style>
+/* additions: TradingView-style chart, signal strip, order ticket, replay, paper trades, reversal radar, volatility */
+.sigbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px 18px;align-items:center;background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:10px 12px;margin-bottom:8px}
+.sigbar .say{min-width:0;font-size:13px;color:var(--ink2);line-height:1.5}.sigbar .say b{color:var(--ink)}
+.sigbar .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.sigbar .row3{grid-column:1/-1;display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center}
+.gauge{display:grid;justify-items:center;gap:2px;min-width:92px}.gauge svg{display:block}.gauge span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.vp{font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:4px;border:1px solid currentColor;white-space:nowrap;display:inline-block}
+.vp.long{color:#4fd1a5;background:rgba(38,166,154,.16)}.vp.short{color:#f08c8c;background:rgba(230,103,103,.16)}.vp.watch{color:var(--warn);background:rgba(250,178,25,.12)}.vp.none{color:var(--muted)}
+.lvls{display:flex;gap:6px;flex-wrap:wrap}.lvls div{background:var(--s2);border-radius:4px;padding:3px 8px;display:grid}.lvls span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.lvls b{font:500 12px var(--mono);color:var(--ink)}
+.chips{display:flex;gap:4px;flex-wrap:wrap;font-size:11px}.chips span{border:1px solid var(--hair);border-radius:10px;padding:1px 8px;white-space:nowrap}.chips .y{color:#6fd06f;border-color:rgba(12,163,12,.45)}.chips .n{color:#f08c8c;border-color:rgba(208,59,59,.45)}.chips .m{color:var(--muted)}
+.tb{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-bottom:6px;font-size:12px}
+.seg2{display:inline-flex;border:1px solid var(--hair);border-radius:5px;overflow:hidden}.seg2 button{background:var(--s2);border:0;color:var(--ink2);padding:5px 11px;cursor:pointer;font:12px var(--sans)}.seg2 button.on{background:#1c4f8f;color:#fff}
+.btn.sm{padding:4px 10px;font-size:12px}
+.rp{display:inline-flex;gap:6px;align-items:center;background:rgba(250,178,25,.08);border:1px solid rgba(250,178,25,.4);border-radius:5px;padding:3px 6px}
+.rp .d{font:11px var(--mono);color:var(--warn);white-space:nowrap}.rp select{padding:3px 6px}
+#lwc-wrap{position:relative;border:1px solid var(--hair);border-radius:6px;overflow:hidden;background:var(--surface)}
+#lwc{position:absolute;inset:0}
+.legend{position:absolute;left:8px;top:6px;z-index:5;pointer-events:none;font:11.5px/1.5 var(--mono);color:var(--ink2);max-width:calc(100% - 90px)}
+.legend .l1,.legend .l2{display:flex;gap:10px;flex-wrap:wrap}.legend b{color:var(--ink);font:600 13px var(--sans)}.legend .lk{color:var(--muted)}
+.up{color:#26a69a}.down{color:#ef5350}.acc{color:var(--warn)}.you{color:#c08cff}
+.hint{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:6;background:var(--panel);border:1px solid var(--warn);border-radius:6px;padding:7px 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:calc(100% - 20px);font-size:12px;color:var(--ink)}
+.rtag{position:absolute;right:70px;top:6px;z-index:5;font:600 10px var(--sans);letter-spacing:.1em;color:#141008;background:var(--warn);padding:2px 7px;border-radius:3px}
+.pnote{font-size:11px;color:var(--muted);margin-top:4px}
+.tk{background:var(--panel);border:1px solid var(--hair);border-radius:6px;padding:10px;margin-bottom:10px;display:grid;gap:8px}
+.tk .row2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tk .sb{padding:7px;border-radius:5px;border:1px solid var(--hair);background:var(--s2);color:var(--ink2);cursor:pointer;font:600 12px var(--sans)}
+.tk .sb.b.on{background:#1f7a70;border-color:#26a69a;color:#fff}.tk .sb.s.on{background:#a83b39;border-color:#ef5350;color:#fff}
+.tf{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:5px 6px;align-items:center;font-size:12px}
+.tf label{color:var(--muted)}.tf input[type=number],.tf input[type=text]{width:100%;background:var(--page);color:var(--ink);border:1px solid var(--hair);border-radius:4px;padding:4px 6px;font:12px var(--mono)}
+.tf .ic{background:var(--s2);border:1px solid var(--hair);color:var(--muted);border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px}.tf .ic.on{color:var(--warn);border-color:rgba(250,178,25,.6)}
+.tf .ck{grid-column:1/-1;display:flex;gap:6px;align-items:center;color:var(--ink2)}
+.tsum{font:11px/1.6 var(--mono);color:var(--muted);background:var(--s2);border-radius:4px;padding:6px 8px}.tsum b{color:var(--ink);font-weight:500}
+.place{width:100%;padding:9px;border-radius:5px;border:0;font:600 13px var(--sans);cursor:pointer;color:#fff}.place.b{background:#1f8a7e}.place.s{background:#c4423f}.place:disabled{opacity:.45;cursor:default}
+.wn{font-size:11px;color:var(--warn)}.er{font-size:11px;color:#f08c8c}.okm{font-size:11px;color:#6fd06f}
+.tag{font:600 9px var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:var(--s2);color:var(--muted)}.tag.r{color:var(--warn)}.tag.l{color:#c08cff}
+.mine-grid{display:grid;gap:14px}
+.ban{border-radius:6px;padding:9px 12px;font-size:13px;border:1px solid;line-height:1.5}.ban.good{border-color:rgba(12,163,12,.5);background:rgba(12,163,12,.1)}.ban.mid{border-color:rgba(250,178,25,.5);background:rgba(250,178,25,.08)}.ban.bad{border-color:rgba(208,59,59,.55);background:rgba(208,59,59,.1)}
+.radar{display:grid;gap:3px;font-size:11px}
+.radar .rr{display:grid;grid-template-columns:minmax(0,1fr) 54px 92px;gap:6px;align-items:center}
+.radar .rr .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.radar .rr .vv{font-family:var(--mono);text-align:right;color:var(--muted)}
+.radar .cb{height:10px;position:relative;background:var(--s2);border-radius:2px}.radar .cb i{position:absolute;top:0;bottom:0}.radar .cb::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;border-left:1px solid var(--axis)}
+.ztab{width:100%;border-collapse:collapse;font-size:11px}.ztab td{padding:2px 4px;border-bottom:1px solid var(--grid)}.ztab td.n{text-align:right;font-family:var(--mono)}.ztab tr.cur td{background:rgba(250,178,25,.1);color:var(--ink)}
+.fan{width:100%;height:auto;display:block}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,560px),1fr));gap:10px}
+.vtxt{max-width:75ch;font-size:13px;line-height:1.6;color:var(--ink2)}.vtxt b{color:var(--ink)}
+.em{width:100%;border-collapse:collapse;font:12px var(--mono)}.em th,.em td{padding:4px 8px;border-bottom:1px solid var(--grid);text-align:right}.em th{color:var(--muted);font:500 10px var(--sans);text-transform:uppercase}.em td:first-child,.em th:first-child{text-align:left}
+.ref{font-size:13px;line-height:1.6}.ref li{margin:4px 0}
+.xs{font-size:11px;color:var(--muted)}
+@media (max-width:1100px){.sigbar{grid-template-columns:auto minmax(0,1fr)}.sigbar .acts{grid-column:1/-1;justify-content:flex-start}}
+</style>
+
+<div class="hdr">
+  <div class="brand"><b>QUANTLAB</b><span>reversal edge · research terminal</span></div>
+  <div class="f"><label for="sym">symbol</label><select id="sym"></select></div>
+  <div class="f"><label>range</label><div class="rng" id="rng"><button data-n="126">6M</button><button data-n="252" class="on">1Y</button><button data-n="504">2Y</button><button data-n="1260">5Y</button><button data-n="0">All</button></div></div>
+  <div class="live">LIVE · RUNS IN YOUR BROWSER</div>
+  <div class="snap" id="snap">No data yet: upload price history in the Data tab.</div>
+</div>
+<nav class="tabs" id="tabs"><button data-t="data" class="on">Data &amp; settings</button><button data-t="chart">Chart</button><button data-t="scan">Scanner</button><button data-t="mine">My trades</button><button data-t="vol">Volatility</button><button data-t="model">Model</button><button data-t="perf">Performance</button><button data-t="trades">Trades</button><button data-t="about">Research</button></nav>
+<main>
+  <section id="t-data">
+    <div class="grid2">
+      <div>
+        <div class="panel">
+          <h3>1 · Upload daily price history</h3>
+          <label class="drop" id="drop" for="file"><b>Drop CSV files here</b> or click to choose<br><span class="note">One file per stock (AAPL.csv, tsla_us_d.csv…) or one file with a Ticker column. Needs Date, Open, High, Low, Close; Volume and Adj Close are used when present. A file named VIX.csv (or ^VIX) is used as the market fear index instead of a stock.</span></label>
+          <input type="file" id="file" accept=".csv,.txt,text/csv" multiple hidden>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn ghost" id="sample">Load sample: TSLA (real, 2010–2026)</button><button class="btn ghost" id="clear">Remove all</button></div>
+          <div id="dslist" style="margin-top:10px"></div>
+          <div class="status" id="parsemsg"></div>
+          <div class="status" id="fearmsg"></div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h3>2 · Run</h3>
+          <button class="btn" id="run">Run the system</button>
+          <div class="bar"><i id="prog"></i></div>
+          <div class="status" id="runmsg">Trading settings rerun instantly; signal settings refit the model (about a second per symbol).</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Settings</h3>
+        <div class="set" id="settings">
+          <div class="h">Setup and score</div>
+          <label for="c-trig" title="A setup starts when the 2-day RSI closes below this level (Connors). Lower = deeper oversold, fewer setups.">setup: RSI(2) below</label><input id="c-trig" type="number" min="2" max="30" step="1" value="10">
+          <label for="c-scoreThr" title="Only trade setups whose Reversal Edge Score is at least this good. Thirds are from the 87-stock research.">trade setups scoring</label><select id="c-scoreThr"><option value="0.4356">top third (best quality)</option><option value="-1.7889">top two thirds</option><option value="-99">all setups</option></select>
+          <label for="c-side" title="Research: buying drops worked; shorting rises lost money in every test.">direction</label><select id="c-side"><option value="1">long: buy drops (recommended)</option><option value="-1">short: sell rises (not supported by the research)</option></select>
+          <label for="c-adapt" title="Start from the research weights and shift them toward what has worked on your own files as evidence accumulates (walk-forward).">adapt weights to my data</label><select id="c-adapt"><option value="1">yes</option><option value="0">no, keep research weights</option></select>
+          <label for="c-n0" title="How many own setups it takes before the stock's own evidence counts as much as the research. Higher = trust the research longer.">research weight (setups)</label><input id="c-n0" type="number" min="0" max="5000" step="50" value="300">
+          <label for="c-pool" title="Weight on other uploaded symbols' setups when adapting each symbol.">pooling weight</label><input id="c-pool" type="number" step="0.05" min="0" max="1" value="0.5">
+          <label for="c-testDays" title="Bars between refits of the adapted weights.">refit every (bars)</label><input id="c-testDays" type="number" min="5" max="252" value="63">
+          <label for="c-market" title="Optional: a market file such as SPY adds a market-residual fair value for context.">market file (optional)</label><select id="c-market"></select>
+          <div class="h">Exit rules (system and suggested plans)</div>
+          <label for="c-stopATR" title="Protective stop distance from the entry, in ATRs.">stop (ATRs)</label><input id="c-stopATR" type="number" step="0.25" min="0.5" max="10" value="3">
+          <label for="c-maxHold" title="Exit after this many bars if neither the stop nor the 5-day-average exit happened.">max hold (bars)</label><input id="c-maxHold" type="number" min="1" max="60" value="10">
+          <label for="c-slippage" title="Slippage + commission per side.">costs per side (bps)</label><input id="c-slippage" type="number" step="0.5" min="0" max="50" value="5">
+          <div class="h">System sizing (backtest)</div>
+          <label for="c-sizeMode" title="Fixed: each trade uses max position % of equity (split across symbols). Risk-based: size so the stop loses the risk % below.">position sizing</label><select id="c-sizeMode"><option value="fixed">fixed % of equity</option><option value="risk">risk-based (stop distance)</option></select>
+          <label for="c-riskPct" title="Risk-based sizing only: equity lost if the stop is hit.">risk per trade (%)</label><input id="c-riskPct" type="number" step="0.25" min="0.1" max="10" value="2">
+          <label for="c-maxW" title="Largest position as % of equity.">max position (%)</label><input id="c-maxW" type="number" step="5" min="5" max="100" value="100">
+          <label for="c-maxPos" title="Maximum open positions across symbols.">max positions</label><input id="c-maxPos" type="number" min="1" max="20" value="4">
+          <div class="h">Paper trading account</div>
+          <label for="a-start" title="Starting equity for your paper trades.">starting equity ($)</label><input id="a-start" type="number" step="1000" min="1000" value="100000">
+          <label for="a-fill" title="Next bar's open is realistic: you decide after the close.">fill orders at</label><select id="a-fill"><option value="open">next bar's open</option><option value="close">this bar's close</option></select>
+          <label for="a-lev" title="Largest position as a multiple of equity.">max size (× equity)</label><input id="a-lev" type="number" step="0.5" min="0.5" max="4" value="1">
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="t-chart" hidden>
+    <div class="sigbar" id="sigbar"></div>
+    <div class="chartwrap">
+      <div class="cc">
+        <div class="tb">
+          <div class="seg2" role="group" aria-label="Mode"><button id="m-live" class="on">Live</button><button id="m-replay">Bar replay</button></div>
+          <div class="rp" id="rpbar" hidden>
+            <button class="btn ghost sm" id="rp-back" title="Back one bar (←)" aria-label="Back one bar">◀</button>
+            <button class="btn sm" id="rp-play" title="Play / pause (Space)">Play</button>
+            <button class="btn ghost sm" id="rp-fwd" title="Forward one bar (→)" aria-label="Forward one bar">▶</button>
+            <select id="rp-speed" aria-label="Replay speed"><option value="1">1 bar/s</option><option value="3" selected>3 bars/s</option><option value="8">8 bars/s</option><option value="20">20 bars/s</option></select>
+            <span class="d" id="rp-date"></span>
+            <button class="btn ghost sm" id="rp-exit">Exit replay</button>
+          </div>
+          <button class="btn ghost sm" id="hline-btn" title="Click the chart to draw a horizontal price line">Draw line</button>
+          <button class="btn ghost sm" id="clear-lines">Clear lines</button>
+          <span class="note" id="chartnote"></span>
+        </div>
+        <div class="ctl" id="ov"></div>
+        <div class="ctl" id="pn"></div>
+        <div id="lwc-wrap">
+          <div id="lwc"></div>
+          <div class="legend" id="legend"></div>
+          <div class="rtag" id="rtag" hidden>REPLAY</div>
+          <div class="hint" id="pickhint" hidden><span>Click a bar to start the replay there.</span><button class="btn ghost sm" id="rp-year">1 year back</button><button class="btn ghost sm" id="rp-random">Random date</button><button class="btn ghost sm" id="rp-cancel">Cancel</button></div>
+          <div class="hint" id="clickhint" hidden><span id="clicktxt"></span><button class="btn ghost sm" id="click-cancel">Cancel</button></div>
+        </div>
+        <div class="scrub"><span>scrub</span><input type="range" id="scrub" min="0" max="1" value="1" aria-label="Inspect bar"><span id="scrubd"></span></div>
+        <div class="pnote">Markers: green arrow = system signal (with its chance of profit), dots = RSI(2) setups coloured by score third, small amber square = volume climax, grey square = news-like gap, green/red circle = system exit. Shaded zones are this stock's own z-score percentiles (last 3 years): light = 10–25% / 75–90%, strong = 2.5–10% / 90–97.5%. Drag to pan, scroll to zoom. Hover a bar to inspect it; click to pin. Drag the dashed Stop / Target lines to move them.</div>
+      </div>
+      <aside class="insp" id="insp">
+        <div class="tk" id="ticket">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span class="lab">order ticket · paper</span><span class="tag l" id="t-mode">live</span></div>
+          <div class="row2"><button class="sb b on" id="t-buy">Buy / long</button><button class="sb s" id="t-sell">Sell / short</button></div>
+          <div class="tf">
+            <label for="t-entry">Entry</label><input id="t-entry" type="text" readonly tabindex="-1"><span class="note" id="t-fill"></span>
+            <label for="t-stop">Stop</label><input id="t-stop" type="number" step="any"><button class="ic" id="pick-stop" title="Click the chart to set the stop">Pick</button>
+            <label for="t-target">Target</label><input id="t-target" type="number" step="any"><button class="ic" id="pick-target" title="Click the chart to set the target">Pick</button>
+            <label for="t-risk">Risk %</label><input id="t-risk" type="number" step="0.25" min="0.1" max="10" value="1"><span class="note">of equity</span>
+            <label for="t-qty">Shares</label><input id="t-qty" type="number" step="1" min="1"><button class="ic on" id="t-auto" title="Size from risk % automatically">Auto</button>
+            <label for="t-time">Time stop</label><input id="t-time" type="number" step="1" min="0" value="10"><span class="note">bars</span>
+            <label class="ck"><input type="checkbox" id="t-sys" checked> Also exit on the first close back above the 5-day average (system exit)</label>
+            <label for="t-note">Note</label><input id="t-note" type="text" maxlength="140" placeholder="why this trade?" style="grid-column:2/4">
+          </div>
+          <div class="tsum" id="t-sum"></div>
+          <div id="t-msg"></div>
+          <button class="place b" id="t-place">Buy</button>
+          <div class="note" id="t-acct"></div>
+        </div>
+        <div id="inspbody"></div>
+      </aside>
+    </div>
+  </section>
+  <section id="t-scan" hidden>
+    <div class="ban mid" id="scan-note" style="margin-bottom:10px">Every uploaded symbol on its latest bar, best setups first. Click a row to open it on the chart.</div>
+    <div class="tw"><table class="bl" id="scan-t"></table></div>
+  </section>
+  <section id="t-mine" hidden>
+    <div class="mine-grid">
+      <div class="kpis" id="acct-k"></div>
+      <div><h2 style="margin-top:0">Open positions</h2><div class="tw"><table class="bl" id="pos-t"></table></div></div>
+      <div><div class="ctl"><h2 style="margin:0">Journal (closed trades)</h2><button class="btn ghost" id="dl-jour" hidden>Download journal CSV</button><span class="note">click a row to see the trade on the chart</span></div><div class="tw" style="max-height:50vh"><table class="bl" id="jour-t"></table></div></div>
+      <div><h2>My results vs the system</h2><div id="mystats"></div></div>
+      <div class="ctl"><button class="btn ghost" id="reset-replay">Clear replay trades</button><button class="btn ghost" id="reset-all">Clear all paper trades</button><span class="note">Paper trading on your uploaded history. Not financial advice.</span></div>
+    </div>
+  </section>
+  <section id="t-vol" hidden>
+    <div class="kpis" id="vol-k"></div>
+    <div id="vol-say" class="ban mid" style="margin-bottom:10px"></div>
+    <div class="vgrid">
+      <div class="card"><h3>Realised volatility estimators<span>annualised %, 20-day windows, with GARCH and HAR forecasts</span></h3><div id="v-est"></div></div>
+      <div class="card"><h3>Volatility cone<span>where today's volatility sits in this stock's history, by horizon</span></h3><div id="v-cone"></div></div>
+      <div class="card"><h3>GARCH(1,1) forecast term structure<span>average volatility expected over the next h days</span></h3><div id="v-term"></div></div>
+      <div class="card"><h3>Expected move<span>±1σ and ±2σ price ranges from the volatility forecast</span></h3><div id="v-move"></div></div>
+      <div class="card"><h3>Return distribution<span>daily log returns vs a normal with the same volatility</span></h3><div id="v-dist"></div><div id="v-tails"></div></div>
+      <div class="card"><h3>Volatility clustering and leverage<span>autocorrelation of |returns| and of returns; return → future volatility</span></h3><div id="v-acf"></div></div>
+      <div class="card"><h3>Forecast check<span>forecast vs volatility realised over the next 5 days (out of sample)</span></h3><div id="v-fc"></div></div>
+      <div class="card"><h3>How the volatility read feeds the trade</h3><div class="vtxt" id="v-use"></div></div>
+    </div>
+  </section>
+  <section id="t-model" hidden>
+    <h2>Out-of-sample report cards</h2><div class="cards" id="cards"></div><div id="edgebox" style="margin-top:14px"></div>
+    <h2 id="imp-title"></h2>
+    <div class="scrub"><span>retrain step</span><input type="range" id="impstep" min="0" max="1" value="1"><span id="impd"></span></div>
+    <div class="two"><div id="impbars"></div><div id="famarea"></div></div>
+    <div class="two"><div id="calib"></div><div id="roc"></div></div>
+  </section>
+  <section id="t-perf" hidden>
+    <div class="kpis" id="pk"></div>
+    <div id="eqplot"></div>
+    <div class="two"><div id="rhist"></div><div id="exits"></div></div>
+    <div id="monthly"></div>
+    <h2>Per-symbol attribution</h2><div class="tw"><table class="bl" id="attr"></table></div>
+  </section>
+  <section id="t-trades" hidden>
+    <div class="ctl"><label><input type="checkbox" id="trsym">selected symbol only</label><button class="btn ghost" id="dlcsv" hidden>Download trades CSV</button><span class="note">click a row to open the trade on the chart · click a header to sort</span></div>
+    <div class="tw" style="max-height:75vh"><table class="bl" id="trt"></table></div>
+  </section>
+  
+
+  <section id="t-about" hidden><div class="about" id="research"></div></section>
+</main>
+
+<script src="lwc.js"></script>
+<script>
+(async function(){
+"use strict";
+const C={surface:"#1a1a19",ink:"#fff",ink2:"#c3c2b7",muted:"#898781",grid:"#2c2c2a",axis:"#383835",blue:"#3987e5",red:"#e66767",violet:"#9085e9",good:"#0ca30c",warn:"#fab219",crit:"#d03b3b",
+ mean:{primary:"#fff",kalman:"#199e70",ou:"#c98500",trend:"#d55181",sma20:"#008300",ema20:"#6fbf6f",factor:"#d95926"},
+ fam:{volume:"#3987e5",volatility:"#199e70",fear:"#d55181",oversold:"#d95926",news:"#c98500",candle:"#9085e9"}};
+const ML={primary:"traded mean",kalman:"Kalman fair value",ou:"OU mean (price)",trend:"Trend regression",sma20:"SMA 20",ema20:"EMA 20",factor:"Market-residual fair value"};
+const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
+const isF=Number.isFinite, fmt=(v,d=3,suf="")=>v==null||!isF(v)?"—":(+v).toFixed(d)+suf, pct=(v,d=1)=>v==null||!isF(v)?"—":(v*100).toFixed(d)+"%";
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const zc=z=>{if(z==null||!isF(z))return rgba(C.muted,.35);const a=Math.abs(z);if(a<1)return rgba(C.muted,.45);return rgba(z<0?C.blue:C.red,a<2?.55:a<3?.8:1)};
+const base=(h,extra={})=>Object.assign({paper_bgcolor:C.surface,plot_bgcolor:C.surface,height:h,font:{family:"Inter,system-ui,sans-serif",color:C.ink2,size:11},margin:{l:52,r:14,t:28,b:28},
+ hoverlabel:{bgcolor:"#111110",bordercolor:C.axis,font:{family:"JetBrains Mono,monospace",size:11,color:C.ink}},legend:{orientation:"h",x:0,y:1.02,yanchor:"bottom",font:{size:10},bgcolor:"rgba(0,0,0,0)"},
+ xaxis:{gridcolor:C.grid,linecolor:C.axis,tickfont:{color:C.muted,size:10}},yaxis:{gridcolor:C.grid,linecolor:C.axis,zeroline:false,tickfont:{color:C.muted,size:10}}},extra);
+const CFG={displaylogo:false,responsive:true,modeBarButtonsToRemove:["lasso2d","select2d","autoScale2d"]};
+const $=id=>document.getElementById(id);
+const store=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}};
+
+
+const LW=window.LightweightCharts;
+const load=(k,d)=>{try{const v=store(k);return v?JSON.parse(v):d}catch(e){return d}};
+const TV={up:"#26a69a",down:"#ef5350",upV:"rgba(38,166,154,.42)",downV:"rgba(239,83,80,.42)",you:"#c08cff",line:"#d4b06a"};
+const money=(v,d=0)=>isF(v)?(v<0?"−$":"$")+Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}):"—";
+const smoney=v=>isF(v)?(v>=0?"+":"−")+"$"+Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:0}):"—";
+const spct=(v,d=1)=>isF(v)?(v>=0?"+":"−")+Math.abs(v*100).toFixed(d)+"%":"—";
+const sR=v=>isF(v)?(v>=0?"+":"−")+Math.abs(v).toFixed(2)+"R":"—";
+const cl=v=>!isF(v)?"":v>0?"up":v<0?"down":"";
+const pdig=p=>p<1?4:p<20?3:2, fp=v=>isF(v)?v.toFixed(pdig(Math.abs(v))):"—";
+let plotlyP=null;
+const needPlotly=()=>window.Plotly?Promise.resolve():(plotlyP=plotlyP||new Promise((res,rej)=>{const s=document.createElement("script");s.src="plotly.min.js";s.onload=res;s.onerror=()=>rej(new Error("chart library failed to load"));document.head.appendChild(s)}));
+const clr=(id,html="")=>{const el=typeof id==="string"?$(id):id;if(!el)return;if(window.Plotly&&el._fullLayout){try{Plotly.purge(el)}catch(e){}}el.innerHTML=html};
+const THIRDS=[-1.7889,0.4356];
+const thirdOf=s=>!isF(s)?-1:s<=THIRDS[0]?0:s<=THIRDS[1]?1:2;
+const THIRD_NAME=["bottom third","middle third","top third"],THIRD_COL=["#8a8a85","#fab219","#4fd1a5"];
+const RESEARCH_THIRDS={avg87:[-21,3,57],win87:[.61,.65,.71],avgT:[-7,-12,135],winT:[.66,.68,.72]};
+
+// ------------------------------------------------ CSV ingestion
+const ALIAS={date:["date","datetime","time","timestamp","day"],ticker:["ticker","symbol","stock","code"],open:["open","openprice"],high:["high","highprice"],low:["low","lowprice"],
+ close:["close","closelast","last","closeprice","price"],adj:["adjclose","adjustedclose","closeadj"],volume:["volume","vol"]};
+const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
+function tickerFromName(name){const parts=name.replace(/\.[^.]+$/,"").split(/[_.\s-]/).filter(Boolean);while(parts.length>1&&["us","uk","de","d","daily","w","m","historical","data","history","prices"].includes(parts[parts.length-1].toLowerCase()))parts.pop();return parts.join("_").toUpperCase()}
+function toISO(s){s=String(s).trim().replace(/^"|"$/g,"");let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
+ m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return `${m[3]}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`;m=s.match(/^(\d{4})(\d{2})(\d{2})$/);if(m)return `${m[1]}-${m[2]}-${m[3]}`;const t=Date.parse(s);return isNaN(t)?null:new Date(t).toISOString().slice(0,10)}
+const num=v=>{const x=parseFloat(String(v).replace(/[$,\s"]/g,""));return isF(x)?x:NaN};
+function splitLine(l,sep){if(!l.includes('"'))return l.split(sep);const out=[];let cur="",q=false;for(const ch of l){if(ch==='"')q=!q;else if(ch===sep&&!q){out.push(cur);cur=""}else cur+=ch}out.push(cur);return out}
+function parseCSV(text,fname){
+ const lines=text.replace(/\r/g,"").split("\n").filter(l=>l.trim());if(lines.length<2)throw new Error(fname+": the file is empty.");
+ const sep=[",",";","\t"].sort((a,b)=>lines[0].split(b).length-lines[0].split(a).length)[0];
+ const head=splitLine(lines[0],sep).map(norm),col={};
+ for(const [k,al] of Object.entries(ALIAS)){let i=head.findIndex(h=>al.includes(h));if(i<0&&k!=="ticker")i=head.findIndex(h=>al.some(a=>a.length>3&&h.includes(a)));if(i>=0)col[k]=i}
+ const miss=["date","open","high","low","close"].filter(k=>col[k]==null);if(miss.length)throw new Error(`${fname}: missing column ${miss.join(", ")}. The first line reads: ${lines[0].slice(0,100)}`);
+ const out={};let bad=0;
+ for(const l of lines.slice(1)){const r=splitLine(l,sep);const d=toISO(r[col.date]);if(!d){bad++;continue}
+  const tk=col.ticker!=null?String(r[col.ticker]).trim().replace(/"/g,"").toUpperCase():tickerFromName(fname);
+  let o=num(r[col.open]),h=num(r[col.high]),lo=num(r[col.low]),c=num(r[col.close]);const adj=col.adj!=null?num(r[col.adj]):c;const v=col.volume!=null?num(r[col.volume]):NaN;
+  if(!(c>0)||!(adj>0)){bad++;continue}const f=adj/c;o=(o>0?o:c)*f;c=adj;h=Math.max(isF(h)&&h>0?h*f:c,o,c);lo=Math.min(lo>0?lo*f:c,o,c);
+  (out[tk]=out[tk]||[]).push([d,o,h,lo,c,v])}
+ const res={};for(const [tk,rows] of Object.entries(out)){rows.sort((a,b)=>a[0]<b[0]?-1:1);const u=rows.filter((r,i)=>i===0||r[0]!==rows[i-1][0]);
+  res[tk]={d:u.map(r=>r[0]),o:u.map(r=>r[1]),h:u.map(r=>r[2]),l:u.map(r=>r[3]),c:u.map(r=>r[4]),v:u.map(r=>r[5]),src:fname,bad}}
+ if(!Object.keys(res).length)throw new Error(fname+": no rows with a valid date and price.");return res}
+const isFearName=k=>/^\^?VIX(_|$)|^VIX\d*$|^CBOE_?VIX/i.test(k);
+
+let DS=load("qlab-ds",{});for(const k of Object.keys(DS))if(isFearName(k))delete DS[k];
+let FEAR=null,FEAR_SRC="";           // {d:[],c:[]} market fear index (VIX)
+let USERFEAR=load("qlab-fear",null);
+function saveDS(){if(store("qlab-ds",JSON.stringify(DS))===null&&Object.keys(DS).length)$("parsemsg").innerHTML='<span class="err">The browser would not store these files, so they will need reloading next visit.</span>'}
+function mergeFear(a,b){if(!a)return b;if(!b)return a;const m=new Map();a.d.forEach((d,i)=>m.set(d,a.c[i]));b.d.forEach((d,i)=>m.set(d,b.c[i]));const ks=[...m.keys()].sort();return {d:ks,c:ks.map(k=>m.get(k))}}
+async function loadFear(){let base=null;try{const t=await (await fetch("VIX.csv")).text();const r=parseCSV(t,"VIX.csv");base=r[Object.keys(r)[0]];base={d:base.d,c:base.c}}catch(e){}
+ FEAR=mergeFear(base,USERFEAR);FEAR_SRC=USERFEAR?"built-in VIX + your file":"built-in VIX (CBOE via datasets/finance-vix)";renderFear()}
+function renderFear(){const el=$("fearmsg");if(!FEAR){el.innerHTML='<span class="err">No fear index loaded: the fear sign counts as neutral. Upload VIX.csv to add it.</span>';return}
+ const last=FEAR.d[FEAR.d.length-1],lastData=Object.values(DS).reduce((m,d)=>d.d[d.d.length-1]>m?d.d[d.d.length-1]:m,"");
+ el.innerHTML=`Fear index: ${esc(FEAR_SRC)}, ${FEAR.d[0]} → ${last}.`+(lastData&&lastData>last?` <span class="err">Your prices run to ${lastData}; after ${last} the fear sign counts as neutral. Upload a newer VIX.csv to fix that.</span>`:"")}
+function renderDS(){const ks=Object.keys(DS).sort();
+ $("dslist").innerHTML=ks.length?ks.map(k=>{const d=DS[k];return `<div class="ds"><div><b>${esc(k)}</b> <span class="note">${d.d.length.toLocaleString()} bars · ${d.d[0]} → ${d.d[d.d.length-1]} · ${esc(d.src||"")}</span></div><span class="note">${d.d.length<600?'<span class="err">short history</span>':""}</span><button class="x" data-rm="${esc(k)}" aria-label="Remove ${esc(k)}">✕</button></div>`}).join(""):`<div class="note">No files loaded.</div>`;
+ const m=$("c-market"),cur=m.value;m.innerHTML=`<option value="">none</option>`+ks.map(k=>`<option ${k===cur?"selected":""}>${esc(k)}</option>`).join("");renderFear()}
+$("dslist").addEventListener("click",e=>{const k=e.target.dataset.rm;if(k){delete DS[k];saveDS();afterDataChange()}});
+async function addFiles(files){const msgs=[];let first=null,fearHit=false;
+ for(const f of files){try{const r=parseCSV(await f.text(),f.name);
+  for(const [k,v] of Object.entries(r)){if(isFearName(k)||isFearName(tickerFromName(f.name))){USERFEAR=mergeFear(USERFEAR,{d:v.d,c:v.c});store("qlab-fear",JSON.stringify(USERFEAR));fearHit=true;msgs.push(`${esc(f.name)}: fear index (VIX) ${v.d[0]} → ${v.d[v.d.length-1]}`)}
+   else{DS[k]=v;first=first||k;msgs.push(`${esc(f.name)}: ${esc(k)} (${v.d.length.toLocaleString()} bars${v.bad?`, ${v.bad} rows skipped`:""})`)}}}
+  catch(e){msgs.push(`<span class="err">${esc(e.message)}</span>`)}}
+ $("parsemsg").innerHTML=msgs.join("<br>");saveDS();if(fearHit)await loadFear();if(first)st.sym=first;afterDataChange(true)}
+$("file").addEventListener("change",e=>{addFiles([...e.target.files]);e.target.value=""});
+const drop=$("drop");["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over")}));
+drop.addEventListener("drop",e=>addFiles([...e.dataTransfer.files]));
+async function loadSample(){try{const t=await (await fetch("sample_TSLA.csv")).text();Object.assign(DS,parseCSV(t,"tsla_us_d.csv"));st.sym="TSLA";saveDS();$("parsemsg").textContent="Loaded TSLA (real daily prices, split-adjusted, 2010–2026).";afterDataChange(true)}catch(e){$("parsemsg").innerHTML=`<span class="err">${esc(e.message)}</span>`}}
+$("sample").addEventListener("click",loadSample);
+let arm={};function armed(btn,fn){if(arm[btn.id]){clearTimeout(arm[btn.id].t);btn.textContent=arm[btn.id].label;arm[btn.id]=null;fn();return}arm[btn.id]={label:btn.textContent,t:setTimeout(()=>{btn.textContent=arm[btn.id].label;arm[btn.id]=null},3000)};btn.textContent="Click again to confirm"}
+$("clear").addEventListener("click",e=>armed(e.target,()=>{DS={};saveDS();RES=null;afterDataChange()}));
+
+// ------------------------------------------------ settings + worker
+const NUMS=["trig","n0","pool","testDays","stopATR","maxHold","slippage","riskPct","maxW","maxPos"],SELS=["scoreThr","side","adapt","sizeMode"];
+try{const s=JSON.parse(store("qlab-cfg2")||"{}");for(const [k,v] of Object.entries(s)){const el=$("c-"+k);if(el&&k!=="market")el.value=v}}catch(e){}
+(()=>{const a=load("desk-acct",{});if(a.start)$("a-start").value=a.start;if(a.fill)$("a-fill").value=a.fill;if(a.lev)$("a-lev").value=a.lev;if(a.risk)$("t-risk").value=a.risk})();
+function readCfg(){const c={market:$("c-market").value||null};NUMS.forEach(k=>c[k]=+$("c-"+k).value);
+ c.scoreThr=+$("c-scoreThr").value;c.sizeMode=$("c-sizeMode").value;c.side=+$("c-side").value;c.adapt=$("c-adapt").value==="1";c.riskPct/=100;c.maxW/=100;
+ const s={};[...NUMS,...SELS].forEach(k=>s[k]=$("c-"+k).value);store("qlab-cfg2",JSON.stringify(s));return c}
+const ACCT=()=>({start:Math.max(1000,+$("a-start").value||100000),fill:$("a-fill").value,cost:Math.max(0,+$("c-slippage").value||0)/1e4,lev:Math.max(.5,+$("a-lev").value||1)});
+const saveAcct=()=>store("desk-acct",JSON.stringify({start:$("a-start").value,fill:$("a-fill").value,lev:$("a-lev").value,risk:$("t-risk").value}));
+let ECFG=readCfg();
+const worker=new Worker("engine.js");let RES=null,busy=false,queued=false,lastErr=null;
+worker.onmessage=e=>{const m=e.data;
+ if(m.type==="progress"){$("prog").style.width=(m.frac*100).toFixed(0)+"%";$("runmsg").textContent=m.msg;$("snap").textContent=`computing · ${Math.round(m.frac*100)}% · ${m.msg}`;return}
+ busy=false;$("run").disabled=false;
+ if(m.type==="error"){lastErr=m.message.split("\n")[0];$("runmsg").innerHTML=`<span class="err">${esc(lastErr)}</span>`;$("snap").textContent="engine error: see the Data tab";RES=null;refreshOverlays();renderLive();if(queued){queued=false;runNow()}return}
+ lastErr=null;RES=m.res;const ok=RES.syms.filter(s=>RES.symbols[s]);
+ const pm=RES.metrics.portfolio||{};
+ $("runmsg").textContent=`Done: ${ok.length} symbol(s), ${RES.bt.trades.length} system trades (avg ${sR(pm.expectancy_R)}).`+(ok.length<RES.syms.length?` Too little history: ${RES.syms.filter(s=>!RES.symbols[s]).join(", ")}.`:"");
+ $("snap").textContent=ok.length?`${ok.join(", ")} · ${ECFG.side>0?"buy drops":"sell rises"} · setups RSI(2)<${ECFG.trig} · ${$("c-scoreThr").selectedOptions[0].textContent}`+(RES.fearEnd?` · fear index to ${RES.fearEnd}`:" · no fear index"):"Not enough history: load 3+ years of daily data.";
+ if(queued){queued=false;runNow();return}
+ refreshOverlays();renderLive();
+ if(st.tab==="data")show("chart");else show(st.tab)};
+function runNow(){if(!Object.keys(DS).length){$("runmsg").innerHTML='<span class="err">Upload at least one price file first.</span>';return}
+ if(busy){queued=true;return}busy=true;$("run").disabled=true;$("prog").style.width="0%";ECFG=readCfg();worker.postMessage({cmd:"run",datasets:DS,cfg:ECFG,fear:FEAR})}
+$("run").addEventListener("click",runNow);
+document.querySelectorAll("#settings input,#settings select").forEach(el=>el.addEventListener("change",()=>{
+ if(el.id.startsWith("a-")){saveAcct();ticketChanged(false);renderLive();return}
+ if(Object.keys(DS).length)runNow()}));
+
+// ------------------------------------------------ state
+const sel=$("sym");const st={sym:null,n:252,tab:"data",cursor:null,pinned:false};
+const UI=load("qlab-ui2",{});UI.ov=Object.assign({zones:true,mean:true,exit:true,kalman:false,trend:false,ou:false,ema20:false,factor:false,vol:true,sys:true,setups:true,signs:true,mine:true},UI.ov||{});
+UI.pn=Object.assign({edge:true,rsi:true,z:true,vol:true,reg:false,fear:false},UI.pn||{});
+const saveUI=()=>store("qlab-ui2",JSON.stringify(UI));
+let ORDERS=load("desk-orders",[]),HLINES=load("desk-hlines",{}),REPLAY=load("desk-replay",null);
+const saveOrders=()=>store("desk-orders",JSON.stringify(ORDERS));
+const saveReplay=()=>store("desk-replay",REPLAY?JSON.stringify(REPLAY):null);
+const D=()=>DS[st.sym];
+const S=()=>{const s=RES&&RES.symbols&&RES.symbols[st.sym];return s&&D()&&s.d.length===D().d.length?s:null};
+const SY=sym=>{const s=RES&&RES.symbols&&RES.symbols[sym];return s&&DS[sym]&&s.d.length===DS[sym].d.length?s:null};
+const lastIdx=()=>D()?D().d.length-1:-1;
+const cur=()=>REPLAY&&REPLAY.sym===st.sym?REPLAY.idx:lastIdx();
+const mode=()=>REPLAY?"replay":"live";
+const needRun=id=>clr(id,`<div class="empty">${busy?"The engine is computing…":"Run the system in the Data tab to see this view."}</div>`);
+const idxOf=date=>idxIn(st.sym,String(date).slice(0,10));
+function idxIn(sym,date){const d=DS[sym];if(!d)return -1;let lo=0,hi=d.d.length-1;while(lo<=hi){const m=(lo+hi)>>1;if(d.d[m]===date)return m;if(d.d[m]<date)lo=m+1;else hi=m-1}return -1}
+const signLabel=k=>{const s=RES&&RES.signs.find(x=>x[0]===k);return s?s[1]:k};
+const signMeaning=k=>{const s=RES&&RES.signs.find(x=>x[0]===k);return s?s[3]:""};
+const signEvidence=k=>{const s=RES&&RES.signs.find(x=>x[0]===k);return s?s[4]:null};
+
+// ------------------------------------------------ chart (TradingView Lightweight Charts)
+// Adaptive z-zones: shaded bands between this stock's own z-score percentiles, drawn by a custom series.
+class ZoneView{
+ constructor(){this.d=null}
+ renderer(){const me=this;return {draw(target,pc){const d=me.d;if(!d||!d.visibleRange)return;
+  target.useBitmapCoordinateSpace(({context:ctx,horizontalPixelRatio:hr,verticalPixelRatio:vr})=>{
+   const bars=d.bars,from=Math.max(0,d.visibleRange.from-1),to=Math.min(bars.length,d.visibleRange.to+1),half=d.barSpacing/2;
+   const bands=[[0,1,"rgba(57,135,229,.30)"],[1,2,"rgba(57,135,229,.12)"],[3,4,"rgba(230,103,103,.12)"],[4,5,"rgba(230,103,103,.30)"]];
+   for(const [a,b,col] of bands){ctx.fillStyle=col;let seg=[];
+    const flush=()=>{if(seg.length>0){ctx.beginPath();seg.forEach((p,k)=>{const x=(k===0?p.x-half:p.x)*hr,y=pc(p.q[b])*vr;k?ctx.lineTo(x,y):ctx.moveTo(x,y)});const L=seg[seg.length-1];ctx.lineTo((L.x+half)*hr,pc(L.q[b])*vr);ctx.lineTo((L.x+half)*hr,pc(L.q[a])*vr);
+     for(let k=seg.length-1;k>=0;k--){const p=seg[k];ctx.lineTo((k===0?p.x-half:p.x)*hr,pc(p.q[a])*vr)}ctx.closePath();ctx.fill()}seg=[]};
+    for(let i=from;i<to;i++){const bb=bars[i],q=bb.originalData.q;if(q&&isF(q[a])&&isF(q[b])&&pc(q[a])!=null&&pc(q[b])!=null)seg.push({x:bb.x,q});else flush()}flush()}
+   for(const [k,col] of [[0,"rgba(79,150,240,.75)"],[5,"rgba(240,110,110,.75)"]]){ctx.strokeStyle=col;ctx.lineWidth=Math.max(1,hr);ctx.setLineDash([4*hr,3*hr]);ctx.beginPath();let pen=false;
+    for(let i=from;i<to;i++){const bb=bars[i],q=bb.originalData.q;const y=q&&isF(q[k])?pc(q[k]):null;if(y==null){pen=false;continue}const x=bb.x*hr;pen?ctx.lineTo(x,y*vr):ctx.moveTo(x,y*vr);pen=true}ctx.stroke()}
+   ctx.setLineDash([])})}}}
+ update(data){this.d=data}
+ priceValueBuilder(row){return [row.q[1],row.q[4],row.q[2]]}
+ isWhitespace(row){return !row.q}
+ defaultOptions(){return Object.assign({},LW.customSeriesDefaultOptions,{lastValueVisible:false,priceLineVisible:false})}
+}
+let chart=null,SER={},MK=null,PLINES=[],ARR=null,hoverIdx=null;
+const OVL=[["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
+ ["vol","Volume","#5d6b78"],["setups","RSI(2) setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["mine","My trades",TV.you]];
+const PNS=[["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
+$("ov").innerHTML=`<span class="lab">on price</span>`+OVL.map(([k,n,c])=>`<label><input type="checkbox" data-ov="${k}" ${UI.ov[k]?"checked":""}><span style="color:${c}">■</span>${n}</label>`).join("");
+$("pn").innerHTML=`<span class="lab">panels</span>`+PNS.map(([k,n])=>`<label><input type="checkbox" data-pn="${k}" ${UI.pn[k]?"checked":""}>${n}</label>`).join("");
+$("ov").addEventListener("change",e=>{const k=e.target.dataset.ov;if(!k)return;UI.ov[k]=e.target.checked;saveUI();applyVisibility();annotate()});
+$("pn").addEventListener("change",e=>{const k=e.target.dataset.pn;if(!k)return;UI.pn[k]=e.target.checked;saveUI();buildChart(true)});
+
+function buildArrays(){
+ const d=D();if(!d)return null;const s=S(),n=d.d.length,A={n};
+ A.candle=d.d.map((t,i)=>({time:t,open:d.o[i],high:d.h[i],low:d.l[i],close:d.c[i]}));
+ A.vol=d.d.map((t,i)=>isF(d.v[i])?{time:t,value:d.v[i],color:d.c[i]>=d.o[i]?TV.upV:TV.downV}:{time:t});
+ const L=a=>d.d.map((t,i)=>a&&isF(a[i])?{time:t,value:a[i]}:{time:t});
+ const lc=d.c.map(Math.log),m20=new Array(n).fill(NaN),s20=new Array(n).fill(NaN),sma5=new Array(n).fill(NaN);
+ for(let i=19;i<n;i++){let m=0;for(let k=i-19;k<=i;k++)m+=lc[k];m/=20;let v=0;for(let k=i-19;k<=i;k++)v+=(lc[k]-m)**2;m20[i]=m;s20[i]=Math.sqrt(v/19)}
+ for(let i=4;i<n;i++){let m=0;for(let k=i-4;k<=i;k++)m+=d.c[k];sma5[i]=m/5}
+ A.atr=new Array(n).fill(NaN);let a=NaN;for(let i=0;i<n;i++){const tr=i?Math.max(d.h[i]-d.l[i],Math.abs(d.h[i]-d.c[i-1]),Math.abs(d.l[i]-d.c[i-1])):d.h[i]-d.l[i];a=isF(a)?a+(tr-a)/14:tr;A.atr[i]=a}
+ A.meanArr=m20.map(Math.exp);A.sma5Arr=s?s.sma5:sma5;A.zArr=s?s.z20:lc.map((x,i)=>(x-m20[i])/s20[i]);
+ A.mean=L(A.meanArr);A.exit=L(A.sma5Arr);
+ A.zones=d.d.map((t,i)=>{if(!s)return {time:t};const q=s.zq.map(z=>isF(z[i])?Math.exp(s.m20[i]+z[i]*s.s20[i]):NaN);return q.every(isF)?{time:t,q}:{time:t}});
+ A.kalman=L(s&&s.lv_kalman);A.trend=L(s&&s.lv_trend);A.ou=L(s&&s.lv_ou);A.ema20=L(s&&s.lv_ema20);A.factor=L(s&&s.lv_factor);
+ A.edgeH=d.d.map((t,i)=>s&&s.setup[i]&&isF(s.score[i])?{time:t,value:s.score[i],color:THIRD_COL[thirdOf(s.score[i])]}:{time:t});
+ A.edgeL=L(s&&s.score);
+ A.rsi=L(s?s.rsi2:null);
+ A.z=L(A.zArr);for(let k=0;k<6;k++)A["zq"+k]=L(s&&s.zq[k]);
+ A.yz=L(s&&s.yz20);A.garch=L(s&&s.garch);A.har=L(s&&s.har5);A.cc=L(s&&s.cc20);
+ A.hurst=L(s&&s.hurst);A.adf=L(s&&s.adf);A.vr4=L(s&&s.vr4);A.vix=L(s&&s.vix);
+ return A}
+function buildChart(keep){
+ const range=keep&&chart?chart.timeScale().getVisibleLogicalRange():null;
+ if(chart){chart.remove();chart=null}
+ const np=Object.values(UI.pn).filter(Boolean).length;$("lwc-wrap").style.height=(470+np*105)+"px";
+ chart=LW.createChart($("lwc"),{autoSize:true,
+  layout:{background:{type:"solid",color:C.surface},textColor:C.muted,fontFamily:"'JetBrains Mono',ui-monospace,monospace",fontSize:11,attributionLogo:true,panes:{separatorColor:C.axis,separatorHoverColor:"rgba(57,135,229,.3)",enableResize:true}},
+  grid:{vertLines:{color:"#222220"},horzLines:{color:"#222220"}},
+  crosshair:{mode:LW.CrosshairMode.Normal,vertLine:{labelBackgroundColor:"#2a2a28"},horzLine:{labelBackgroundColor:"#2a2a28"}},
+  rightPriceScale:{borderColor:C.axis},timeScale:{borderColor:C.axis,rightOffset:8,barSpacing:7,minBarSpacing:.4}});
+ const line=(color,o={},pane=0)=>chart.addSeries(LW.LineSeries,Object.assign({color,lineWidth:1,lastValueVisible:false,priceLineVisible:false,crosshairMarkerVisible:false},o),pane);
+ SER={};
+ SER.zones=chart.addCustomSeries(new ZoneView(),{},0);
+ SER.candle=chart.addSeries(LW.CandlestickSeries,{upColor:TV.up,downColor:TV.down,borderUpColor:TV.up,borderDownColor:TV.down,wickUpColor:TV.up,wickDownColor:TV.down},0);
+ SER.vol=chart.addSeries(LW.HistogramSeries,{priceScaleId:"vol",priceFormat:{type:"volume"},lastValueVisible:false,priceLineVisible:false},0);SER.vol.priceScale().applyOptions({scaleMargins:{top:.84,bottom:0}});
+ for(const k of ["kalman","trend","ou","ema20","factor"])SER[k]=line(C.mean[k]);
+ SER.exit=line("#fab219",{lineWidth:1,lineStyle:LW.LineStyle.Dashed,title:"5d avg",lastValueVisible:true});
+ SER.mean=line("#ffffff",{lineWidth:2,title:"20d mean",lastValueVisible:true,crosshairMarkerVisible:true});
+ let pane=1;const P={};
+ if(UI.pn.edge){P.edge=pane++;SER.edgeL=line("rgba(195,194,183,.35)",{},P.edge);SER.edgeH=chart.addSeries(LW.HistogramSeries,{lastValueVisible:false,priceLineVisible:false,title:"edge score",priceFormat:{type:"price",precision:1,minMove:.1}},P.edge);
+  SER.edgeL.createPriceLine({price:THIRDS[1],color:"rgba(79,209,165,.6)",lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:"top ⅓"});SER.edgeL.createPriceLine({price:THIRDS[0],color:"rgba(138,138,133,.6)",lineWidth:1,lineStyle:LW.LineStyle.Dotted,axisLabelVisible:false})}
+ if(UI.pn.rsi){P.rsi=pane++;SER.rsi=line("#c3c2b7",{lineWidth:1.5,title:"RSI(2)",lastValueVisible:true,priceFormat:{type:"price",precision:0,minMove:1}},P.rsi)}
+ if(UI.pn.z){P.z=pane++;const zc=["rgba(79,150,240,.9)","rgba(79,150,240,.55)","rgba(79,150,240,.3)","rgba(240,110,110,.3)","rgba(240,110,110,.55)","rgba(240,110,110,.9)"];
+  for(let k=0;k<6;k++)SER["zq"+k]=line(zc[k],{lineStyle:k===0||k===5?LW.LineStyle.Solid:LW.LineStyle.Dashed},P.z);
+  SER.z=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"z20",topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.18)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.18)",priceFormat:{type:"price",precision:2,minMove:.01}},P.z)}
+ if(UI.pn.vol){P.vol=pane++;SER.cc=line("rgba(137,135,129,.6)",{},P.vol);SER.yz=line("#3987e5",{lineWidth:1.5,title:"YZ20",lastValueVisible:true},P.vol);SER.garch=line("#fab219",{lineWidth:1.5,title:"GARCH",lastValueVisible:true},P.vol);SER.har=line("#c08cff",{title:"HAR 5d",lastValueVisible:true},P.vol)}
+ if(UI.pn.reg){P.reg=pane++;SER.hurst=line(C.ink,{lineWidth:1.5,title:"Hurst",lastValueVisible:true},P.reg);SER.adf=line(C.mean.ou,{title:"ADF p",lastValueVisible:true},P.reg);SER.vr4=line(C.mean.kalman,{title:"VR(4)",lastValueVisible:true},P.reg);
+  SER.hurst.createPriceLine({price:.5,color:C.axis,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:false})}
+ if(UI.pn.fear){P.fear=pane++;SER.vix=line("#d55181",{lineWidth:1.5,title:"VIX",lastValueVisible:true},P.fear)}
+ const panes=chart.panes();if(panes.length>1){panes[0].setStretchFactor(3.6);for(let i=1;i<panes.length;i++)panes[i].setStretchFactor(1)}
+ MK=LW.createSeriesMarkers(SER.candle,[]);PLINES=[];
+ chart.subscribeCrosshairMove(onCross);chart.subscribeClick(onChartClick);
+ refreshOverlays(range);if(!range)showRange()}
+const DKEYS=["zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
+function setAllData(upto){if(!ARR)return;for(const k of DKEYS)if(SER[k]&&ARR[k])SER[k].setData(upto>=ARR.n-1?ARR[k]:ARR[k].slice(0,upto+1))}
+function stepData(i){for(const k of DKEYS)if(SER[k]&&ARR[k]&&ARR[k][i])SER[k].update(ARR[k][i])}
+function applyVisibility(){const v=UI.ov,set=(k,on)=>SER[k]&&SER[k].applyOptions({visible:!!on});
+ set("zones",v.zones);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
+function refreshOverlays(range){
+ if(!chart)return;const d=D();
+ if(!d){ARR=null;for(const k of DKEYS)SER[k]&&SER[k].setData([]);annotate();renderLegend();return}
+ ARR=buildArrays();const dg=pdig(d.c[d.c.length-1]),pf={type:"price",precision:dg,minMove:Math.pow(10,-dg)};
+ for(const k of ["candle","mean","exit","kalman","trend","ou","ema20","factor"])SER[k].applyOptions({priceFormat:pf});
+ if(SER.rsi){(SER.rl||[]).forEach(l=>SER.rsi.removePriceLine(l));SER.rl=[ECFG.trig,100-ECFG.trig].map((v,k)=>SER.rsi.createPriceLine({price:v,color:k?"rgba(230,103,103,.5)":"rgba(79,209,165,.7)",lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:k?"":"setup"}))}
+ if(SER.edgeL){SER.thrLine&&SER.edgeL.removePriceLine(SER.thrLine);SER.thrLine=ECFG.scoreThr>-50&&ECFG.scoreThr!==THIRDS[1]?SER.edgeL.createPriceLine({price:ECFG.scoreThr,color:C.warn,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:"your filter"}):null}
+ setAllData(cur());applyVisibility();if(range)chart.timeScale().setVisibleLogicalRange(range);
+ annotate();renderLegend();syncScrub()}
+function showRange(){if(!chart||!D())return;const c=cur();if(!st.n)chart.timeScale().setVisibleLogicalRange({from:0,to:c+8});else chart.timeScale().setVisibleLogicalRange({from:Math.max(0,c-st.n),to:c+8})}
+function annotate(){
+ if(!chart||!SER.candle)return;PLINES.forEach(l=>SER.candle.removePriceLine(l));PLINES=[];
+ const d=D();if(!d){MK.setMarkers([]);return}
+ const c=cur(),date=d.d[c],s=S(),mk=[];
+ if(s){const lo=Math.max(s.first,0);
+  for(let i=lo;i<=c;i++){
+   if(s.sig[i]&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${Math.round(100*s.P[i])}%`,size:1.4})}
+   else if(s.setup[i]&&UI.ov.setups)mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:"circle",color:THIRD_COL[thirdOf(s.score[i])],size:.5});
+   if(UI.ov.signs){const down=d.c[i]<(i?d.c[i-1]:d.c[i]);
+    if(down&&s.volz[i]>1.5&&s.rangex[i]>1.5)mk.push({time:d.d[i],position:"aboveBar",shape:"square",color:"#fab219",size:.45});
+    else if(Math.abs(s.gap[i])>1.5)mk.push({time:d.d[i],position:"aboveBar",shape:"square",color:"#8a8a85",size:.35})}}
+  if(RES&&UI.ov.sys)for(const t of RES.bt.trades){if(t.symbol!==st.sym||t.exit_date>date)continue;mk.push({time:t.exit_date,position:s.side>0?"aboveBar":"belowBar",shape:"circle",color:t.pnl>0?"#3fbf5f":"#e05252",size:.6})}}
+ const sims=simAll();
+ if(UI.ov.mine)for(const r of sims){if(r.o.sym!==st.sym||r.status==="pending"||r.status==="hidden"||r.status==="cancelled")continue;const lg=r.o.side>0;
+  mk.push({time:d.d[r.entryIdx],position:lg?"belowBar":"aboveBar",shape:lg?"arrowUp":"arrowDown",color:TV.you,text:`YOU ${lg?"BUY":"SELL"}`,size:1.2});
+  if(r.status==="closed")mk.push({time:d.d[r.exitIdx],position:lg?"aboveBar":"belowBar",shape:"square",color:TV.you,text:`${r.reason} ${sR(r.R)}`,size:.8})}
+ mk.sort((a,b)=>a.time<b.time?-1:a.time>b.time?1:0);MK.setMarkers(mk);
+ const PL=(price,color,title,style=LW.LineStyle.Dashed,w=1)=>{if(isF(price))PLINES.push(SER.candle.createPriceLine({price,color,lineWidth:w,lineStyle:style,axisLabelVisible:true,title}))};
+ for(const r of sims){if(r.o.sym!==st.sym||(r.status!=="open"&&r.status!=="pending"))continue;const lv=levelsAt(r.o,c+1);
+  PL(r.status==="open"?r.entryPx:NaN,TV.you,`${r.o.side>0?"Long":"Short"} ${r.o.qty}`,LW.LineStyle.Solid,2);PL(lv.stop,TV.down,"Stop");PL(lv.target,TV.up,"Target")}
+ if(draft.show){const t=readTicket();PL(t.stop,TV.down,"Plan stop",LW.LineStyle.LargeDashed);PL(t.target,TV.up,"Plan target",LW.LineStyle.LargeDashed)}
+ for(const h of HLINES[st.sym]||[])PL(h,TV.line,"",LW.LineStyle.Solid)}
+function renderLegend(){
+ const d=D(),el=$("legend");if(!d){el.innerHTML="";return}
+ const c=cur(),i=hoverIdx!=null?Math.max(0,Math.min(c,hoverIdx)):(st.pinned&&st.cursor!=null?Math.min(st.cursor,c):c),s=S(),ch=i>0?d.c[i]/d.c[i-1]-1:NaN;
+ const z=ARR?ARR.zArr[i]:NaN,mu=ARR?ARR.meanArr[i]:NaN;
+ el.innerHTML=`<div class="l1"><b>${esc(st.sym)}</b><span class="lk">1D</span><span class="lk">${d.d[i]}</span><span><span class="lk">O</span> ${fp(d.o[i])}</span><span><span class="lk">H</span> ${fp(d.h[i])}</span><span><span class="lk">L</span> ${fp(d.l[i])}</span><span><span class="lk">C</span> ${fp(d.c[i])}</span><span class="${cl(ch)}">${spct(ch,2)}</span></div>
+  <div class="l2"><span>mean ${fp(mu)}</span><span>z <span style="color:${isF(z)?(z<0?"#4f96f0":"#f08c8c"):"inherit"}">${fmt(z,2)}</span></span>${s?`<span>RSI2 <span class="${s.setup[i]?"up":""}">${fmt(s.rsi2[i],0)}</span></span><span>edge <span style="color:${THIRD_COL[thirdOf(s.score[i])]||"inherit"}">${fmt(s.score[i],1)}</span></span><span>P ${isF(s.P[i])?pct(s.P[i],0):"—"}</span>`:""}${isF(d.v[i])?`<span class="lk">vol ${d.v[i]>=1e6?(d.v[i]/1e6).toFixed(1)+"M":Math.round(d.v[i]).toLocaleString()}${s&&isF(s.volz[i])?` (${s.volz[i]>=0?"+":""}${s.volz[i].toFixed(1)}σ)`:""}</span>`:""}</div>`}
+let raf=0;
+function onCross(p){hoverIdx=p&&p.point&&p.logical!=null?Math.round(p.logical):null;
+ if(raf)return;raf=requestAnimationFrame(()=>{raf=0;renderLegend();if(!st.pinned&&hoverIdx!=null&&hoverIdx>=0&&hoverIdx<=cur()&&hoverIdx!==st.cursor){st.cursor=hoverIdx;syncScrub();inspector(hoverIdx)}})}
+function syncScrub(){const c=cur();const sc=$("scrub");sc.max=Math.max(1,c);if(st.cursor==null||st.cursor>c)st.cursor=c;sc.value=st.cursor;$("scrubd").textContent=D()?D().d[st.cursor]+(st.pinned?" · pinned":""):""}
+$("scrub").addEventListener("input",e=>{if(!D())return;st.pinned=true;st.cursor=+e.target.value;const r=chart.timeScale().getVisibleLogicalRange(),i=st.cursor;
+ if(r&&(i<r.from||i>r.to)){const w=r.to-r.from;chart.timeScale().setVisibleLogicalRange({from:i-w/2,to:i+w/2})}
+ try{chart.setCrosshairPosition(ARR.candle[i].close,ARR.candle[i].time,SER.candle)}catch(err){}syncScrub();inspector(i);renderLegend()});
+
+// drag stop/target lines
+const wrapEl=$("lwc-wrap");let drag=null;
+function dragTargets(){const out=[],c=cur();
+ if(draft.show){const t=readTicket();if(isF(t.stop))out.push({kind:"draft",key:"stop",price:t.stop});if(isF(t.target))out.push({kind:"draft",key:"target",price:t.target})}
+ for(const r of simAll())if(r.o.sym===st.sym&&(r.status==="open"||r.status==="pending")){const lv=levelsAt(r.o,c+1);if(isF(lv.stop))out.push({kind:"order",o:r.o,key:"stop",price:lv.stop});if(isF(lv.target))out.push({kind:"order",o:r.o,key:"target",price:lv.target})}
+ return out}
+function hitLine(y0){if(!SER.candle)return null;const y=y0-$("lwc").getBoundingClientRect().top;let best=null,bd=7;for(const t of dragTargets()){const yy=SER.candle.priceToCoordinate(t.price);if(yy!=null&&Math.abs(yy-y)<bd){bd=Math.abs(yy-y);best=t}}return best}
+wrapEl.addEventListener("pointerdown",e=>{if(clickMode||!$("lwc").contains(e.target))return;const h=hitLine(e.clientY);if(!h)return;drag=h;e.stopPropagation();e.preventDefault();chart.applyOptions({handleScroll:false,handleScale:false});wrapEl.setPointerCapture(e.pointerId)},true);
+for(const ev of ["mousedown","touchstart"])wrapEl.addEventListener(ev,e=>{if(drag)e.stopPropagation()},{capture:true,passive:true});
+wrapEl.addEventListener("pointermove",e=>{
+ if(!drag){if(!clickMode&&$("lwc").contains(e.target))$("lwc").style.cursor=hitLine(e.clientY)?"ns-resize":"";return}
+ const y=e.clientY-$("lwc").getBoundingClientRect().top,pr0=SER.candle.coordinateToPrice(y);if(!isF(pr0)||pr0<=0)return;const pr=+pr0.toFixed(pdig(pr0));
+ if(drag.kind==="draft"){$("t-"+drag.key).value=pr;ticketChanged(false)}else setLevel(drag.o,drag.key,pr,false);annotate()});
+const endDrag=()=>{if(!drag)return;if(drag.kind==="order"){saveOrders();renderLive()}drag=null;chart.applyOptions({handleScroll:true,handleScale:true})};
+wrapEl.addEventListener("pointerup",endDrag);wrapEl.addEventListener("pointercancel",endDrag);
+
+let clickMode=null;
+function setClickMode(m,txt){clickMode=m;$("clickhint").hidden=!m||m==="replay";$("clicktxt").textContent=txt||"";$("pickhint").hidden=m!=="replay";
+ $("pick-stop").classList.toggle("on",m==="stop");$("pick-target").classList.toggle("on",m==="target");$("lwc").style.cursor=m?"crosshair":""}
+$("click-cancel").addEventListener("click",()=>setClickMode(null));
+function onChartClick(p){
+ if(!p||!p.point)return;
+ if(!clickMode){if(p.logical==null)return;const i=Math.round(p.logical);if(i<0||i>cur())return;st.pinned=!st.pinned||st.cursor!==i;st.cursor=i;syncScrub();inspector(i);renderLegend();return}
+ if(clickMode==="replay"){if(p.logical==null)return;const i=Math.max(30,Math.min(lastIdx()-1,Math.round(p.logical)));setClickMode(null);startReplay(i);return}
+ const pr0=SER.candle.coordinateToPrice(p.point.y);if(!isF(pr0))return;const pr=+pr0.toFixed(pdig(pr0));
+ if(clickMode==="stop"||clickMode==="target"){$("t-"+clickMode).value=pr;draft.show=true;ticketChanged(false)}
+ else if(clickMode==="hline"){(HLINES[st.sym]=HLINES[st.sym]||[]).push(pr);store("desk-hlines",JSON.stringify(HLINES))}
+ setClickMode(null);annotate()}
+$("pick-stop").addEventListener("click",()=>{if(st.tab!=="chart")show("chart");setClickMode(clickMode==="stop"?null:"stop","Click the chart at your stop price.")});
+$("pick-target").addEventListener("click",()=>{if(st.tab!=="chart")show("chart");setClickMode(clickMode==="target"?null:"target","Click the chart at your target price.")});
+$("hline-btn").addEventListener("click",()=>setClickMode(clickMode==="hline"?null:"hline","Click the chart to place a horizontal line."));
+$("clear-lines").addEventListener("click",()=>{delete HLINES[st.sym];store("desk-hlines",JSON.stringify(HLINES));annotate()});
+
+// ------------------------------------------------ bar replay
+let playTimer=null;
+function startReplay(i){stopPlay();closeReplayPositions();REPLAY={sym:st.sym,idx:i,startIdx:i,sid:Date.now().toString(36)};saveReplay();st.pinned=false;st.cursor=i;hoverIdx=null;
+ setAllData(i);chart.timeScale().setVisibleLogicalRange({from:i-150,to:i+10});syncMode();draft.show=false;renderLive();annotate();inspector(i)}
+function exitReplay(){stopPlay();closeReplayPositions();REPLAY=null;saveReplay();st.cursor=null;st.pinned=false;setAllData(lastIdx());showRange();syncMode();draft.show=false;renderLive();annotate();inspector(cur())}
+function closeReplayPositions(){if(!REPLAY)return;const d=DS[REPLAY.sym];if(!d)return;
+ for(const r of ORDERS.map(o=>simulate(o,uptoFor(o))))if(r.o.mode==="replay"&&r.o.sid===REPLAY.sid&&(r.status==="open"||r.status==="pending")){if(r.status==="pending")r.o.cancelled=true;else{r.o.closeDate=d.d[REPLAY.idx];r.o.closeFill="close"}}
+ saveOrders()}
+let saveT=null;
+function replayStep(k){if(!REPLAY)return;const n=lastIdx(),ni=Math.max(30,Math.min(n,REPLAY.idx+k));if(ni===REPLAY.idx){stopPlay();return}
+ const fwd=ni===REPLAY.idx+1;REPLAY.idx=ni;if(fwd)stepData(ni);else setAllData(ni);if(ni>=n)stopPlay();
+ clearTimeout(saveT);saveT=setTimeout(saveReplay,400);st.pinned=false;st.cursor=ni;renderLive();annotate();inspector(ni)}
+function stopPlay(){if(playTimer){clearInterval(playTimer);playTimer=null}$("rp-play").textContent="Play"}
+function togglePlay(){if(playTimer)return stopPlay();if(!REPLAY)return;playTimer=setInterval(()=>replayStep(1),1000/+$("rp-speed").value);$("rp-play").textContent="Pause"}
+$("rp-play").addEventListener("click",togglePlay);$("rp-fwd").addEventListener("click",()=>{stopPlay();replayStep(1)});$("rp-back").addEventListener("click",()=>{stopPlay();replayStep(-1)});
+$("rp-speed").addEventListener("change",()=>{if(playTimer){stopPlay();togglePlay()}});$("rp-exit").addEventListener("click",exitReplay);
+$("m-replay").addEventListener("click",()=>{if(!D()||REPLAY)return;setClickMode("replay")});
+$("m-live").addEventListener("click",()=>{setClickMode(null);if(REPLAY)exitReplay()});
+$("rp-cancel").addEventListener("click",()=>setClickMode(null));
+$("rp-year").addEventListener("click",()=>{setClickMode(null);startReplay(Math.max(60,lastIdx()-252))});
+$("rp-random").addEventListener("click",()=>{setClickMode(null);const s=S(),lo=s&&s.first>0?s.first+60:300,hi=lastIdx()-60;startReplay(hi>lo?lo+Math.floor(Math.random()*(hi-lo)):Math.max(30,lastIdx()-252))});
+function syncMode(){const r=!!REPLAY;$("m-live").classList.toggle("on",!r);$("m-replay").classList.toggle("on",r);$("rpbar").hidden=!r;$("rtag").hidden=!r;
+ $("t-mode").textContent=r?"replay":"live";$("t-mode").className="tag "+(r?"r":"l");$("chartnote").textContent=r?"The future is hidden. → next bar, ← back, Space play.":""}
+document.addEventListener("keydown",e=>{if(e.target.closest("input,select,textarea"))return;if(e.key===" "&&e.target.closest("button"))return;
+ if(e.key==="Escape"){setClickMode(null);return}if(!REPLAY||st.tab!=="chart")return;
+ if(e.key==="ArrowRight"){e.preventDefault();stopPlay();replayStep(e.shiftKey?5:1)}else if(e.key==="ArrowLeft"){e.preventDefault();stopPlay();replayStep(e.shiftKey?-5:-1)}else if(e.key===" "){e.preventDefault();togglePlay()}});
+
+// ------------------------------------------------ paper trading simulator
+// Placed on bar p: fills at the open of p+1 (or the close of p). Stops/targets fill at their price,
+// or at the open when price gaps through; if one bar hits both, the stop counts first.
+// Optional system exit: the first close back above (long) / below (short) the 5-day average.
+function levelsAt(o,k){let stop=o.stop,target=o.target;for(const m of o.mods||[]){const mi=idxIn(o.sym,m.date);if(mi>=0&&mi<k){if(m.stop!==undefined)stop=m.stop;if(m.target!==undefined)target=m.target}}return {stop,target}}
+function setLevel(o,key,price,persist=true){const d=DS[o.sym],c=REPLAY&&REPLAY.sym===o.sym?REPLAY.idx:d.d.length-1,date=d.d[c];o.mods=o.mods||[];let m=o.mods.find(x=>x.date===date);if(!m){m={date};o.mods.push(m)}m[key]=price;if(persist)saveOrders()}
+const sma5Cache={};
+function sma5Of(sym){const d=DS[sym];if(!d)return [];const key=sym+d.d.length;if(sma5Cache[sym]&&sma5Cache[sym].key===key)return sma5Cache[sym].a;const a=d.c.map((_,i)=>i<4?NaN:(d.c[i]+d.c[i-1]+d.c[i-2]+d.c[i-3]+d.c[i-4])/5);sma5Cache[sym]={key,a};return a}
+function simulate(o,upto){
+ const d=DS[o.sym];if(!d)return {o,status:"hidden"};const p=idxIn(o.sym,o.date);if(p<0||p>upto)return {o,status:"hidden"};
+ if(o.cancelled)return {o,status:"cancelled"};const cost=o.cost!=null?o.cost:ACCT().cost;let ei,ep;
+ if(o.fill==="close"){ei=p;ep=d.c[p]}else{if(p+1>upto)return {o,status:"pending"};ei=p+1;ep=d.o[p+1]}
+ const sg=o.side,q=o.qty,risk0=isF(o.stop)?Math.abs(ep-o.stop)*q:NaN,ci=o.closeDate?idxIn(o.sym,o.closeDate):-1,cf=o.closeFill||o.fill,s5=o.sysExit?sma5Of(o.sym):null;let xi=-1,xp=NaN,why="";
+ for(let k=p+1;k<=upto;k++){const {stop,target}=levelsAt(o,k),op=d.o[k],hi=d.h[k],lo=d.l[k];
+  if(isF(stop)&&(sg>0?lo<=stop:hi>=stop)){xi=k;xp=(sg>0?op<=stop:op>=stop)?op:stop;why="Stop";break}
+  if(isF(target)&&(sg>0?hi>=target:lo<=target)){xi=k;xp=(sg>0?op>=target:op<=target)?op:target;why="Target";break}
+  if(s5&&k>=ei&&(sg>0?d.c[k]>s5[k]:d.c[k]<s5[k])){xi=k;xp=d.c[k];why="5d avg";break}
+  if(o.time>0&&k-ei>=o.time){xi=k;xp=d.c[k];why="Time";break}
+  if(ci>=ei){if(cf==="close"&&k===ci){xi=k;xp=d.c[k];why="Manual";break}if(cf!=="close"&&k===ci+1){xi=k;xp=op;why="Manual";break}}}
+ if(xi<0&&ci===ei&&ci===p&&cf==="close"){xi=ei;xp=ep;why="Manual"}
+ const fees=(Math.abs(ep*q)+(xi>=0?Math.abs(xp*q):0))*cost;
+ if(xi>=0){const pnl=sg*(xp-ep)*q-fees;return {o,status:"closed",entryIdx:ei,entryPx:ep,exitIdx:xi,exitPx:xp,reason:why,pnl,R:risk0>0?pnl/risk0:NaN,bars:xi-ei}}
+ const mark=d.c[upto],upnl=sg*(mark-ep)*q-fees;return {o,status:"open",entryIdx:ei,entryPx:ep,mark,upnl,R:risk0>0?upnl/risk0:NaN,bars:upto-ei,closing:ci>=0}}
+function uptoFor(o){const d=DS[o.sym];if(!d)return -1;if(o.mode==="replay"){if(REPLAY&&REPLAY.sid===o.sid)return REPLAY.idx;return o.closeDate?Math.min(d.d.length-1,idxIn(o.sym,o.closeDate)+1):d.d.length-1}return d.d.length-1}
+function simAll(){const m=mode();return ORDERS.filter(o=>m==="replay"?o.mode==="replay"&&o.sid===REPLAY.sid:o.mode==="live").map(o=>simulate(o,uptoFor(o)))}
+function account(){const A=ACCT();let real=0,unreal=0,open=0,expo=0;for(const r of simAll()){if(r.status==="closed")real+=r.pnl;if(r.status==="open"){unreal+=r.upnl;open++;expo+=Math.abs(r.mark*r.o.qty)}}return {start:A.start,real,unreal,eq:A.start+real+unreal,open,expo}}
+
+// ------------------------------------------------ order ticket
+let side=1,autoQty=true;const draft={show:false};
+const refPrice=()=>{const d=D();return d?d.c[cur()]:NaN};
+const readTicket=()=>({stop:parseFloat($("t-stop").value),target:parseFloat($("t-target").value),risk:parseFloat($("t-risk").value)/100,qty:parseInt($("t-qty").value,10),time:parseInt($("t-time").value,10)||0});
+function setSide(s){side=s;$("t-buy").classList.toggle("on",s>0);$("t-sell").classList.toggle("on",s<0);$("t-place").className="place "+(s>0?"b":"s");const t=readTicket(),e=refPrice();if(isF(t.stop)&&(s>0?t.stop>=e:t.stop<=e))defaultLevels();else ticketChanged(false)}
+function sysPlan(c){const d=D();if(!d||!ARR)return null;const s=S(),sd=s?s.side:1,e=d.c[c],atr=isF(ARR.atr[c])?ARR.atr[c]:e*.02,k=ECFG.stopATR||3;
+ const exitLine=ARR.sma5Arr[c],mean=ARR.meanArr[c];
+ const stop=e-sd*k*atr,target=isF(exitLine)&&sd*(exitLine-e)>.25*atr?exitLine:isF(mean)&&sd*(mean-e)>.25*atr?mean:e+sd*atr;
+ return {lg:sd>0,e,stop,target,exitLine,mean,atr,rr:Math.abs(target-e)/Math.abs(e-stop)}}
+function defaultLevels(){const d=D();if(!d||!ARR)return;const p=sysPlan(cur());if(!p)return;const c=cur(),e=d.c[c],atr=p.atr,dg=pdig(e);
+ const stop=side>0?Math.min(p.stop,e-.5*atr):Math.max(e+(e-p.stop),e+.5*atr),tg=side*(p.target-e)>0?p.target:e+side*1.5*atr;
+ $("t-stop").value=(side===(p.lg?1:-1)?p.stop:stop).toFixed(dg);$("t-target").value=tg.toFixed(dg);ticketChanged(false)}
+function sizing(){const t=readTicket(),e=refPrice(),A=ACCT(),acc=account(),per=isF(t.stop)?Math.abs(e-t.stop):NaN;let qty=t.qty;
+ if(autoQty){qty=per>0?Math.floor(acc.eq*t.risk/per):0;const cap=Math.floor(acc.eq*A.lev/e);if(qty>cap)qty=cap;qty=Math.max(0,qty)}return {t,e,per,qty,acc,A}}
+function ticketChanged(user=true){if(user)draft.show=true;
+ if(!D()){$("t-sum").textContent="Load a price file to trade.";$("t-place").disabled=true;return}
+ const {t,e,per,qty,acc,A}=sizing();if(autoQty)$("t-qty").value=qty||"";$("t-entry").value=fp(e);$("t-fill").textContent=A.fill==="open"?"≈ next open":"this close";
+ const errs=[],warn=[];
+ if(!isF(t.stop))errs.push("Set a stop so the size can be worked out.");else if(side>0?t.stop>=e:t.stop<=e)errs.push(side>0?"A long stop must be below the entry.":"A short stop must be above the entry.");
+ if(isF(t.target)&&(side>0?t.target<=e:t.target>=e))errs.push(side>0?"A long target must be above the entry.":"A short target must be below the entry.");
+ if(!(qty>0))errs.push("Size is zero. Raise the risk % or move the stop.");
+ if(REPLAY&&REPLAY.sym!==st.sym)errs.push("Replay is running on another symbol.");
+ const risk=per*qty,reward=isF(t.target)?Math.abs(t.target-e)*qty:NaN,notional=e*qty;
+ $("t-sum").innerHTML=`risk <b>${money(risk)}</b> (${pct(risk/acc.eq,2)}) · reward <b>${money(reward)}</b><br>R:R <b>${isF(reward)&&risk>0?(reward/risk).toFixed(2):"—"}</b> · size <b>${money(notional)}</b> (${pct(notional/acc.eq,0)} of equity)`;
+ if(autoQty&&qty>0&&per>0&&Math.floor(acc.eq*t.risk/per)>qty)warn.push(`Size capped at ${A.lev}× equity.`);
+ if($("t-sys").checked&&isF(reward)&&risk>0&&reward/risk<1)warn.push("System-style trade: a near target and a wide stop. The edge comes from winning about 70% of the time, so the reward-to-risk looks small by design.");
+ if(!REPLAY&&A.fill==="open")warn.push("Live: fills at the open of the next bar you upload.");
+ $("t-msg").innerHTML=errs.map(x=>`<div class="er">${esc(x)}</div>`).join("")+warn.map(x=>`<div class="wn">${esc(x)}</div>`).join("");
+ const pl=$("t-place");pl.disabled=errs.length>0;pl.textContent=`${side>0?"Buy":"Sell short"} ${qty>0?qty.toLocaleString():""} ${st.sym||""}`;
+ $("t-acct").innerHTML=`${REPLAY?"replay":"live"} account: <b style="color:var(--ink)">${money(acc.eq)}</b> · open P&amp;L <span class="${cl(acc.unreal)}">${smoney(acc.unreal)}</span> · ${acc.open} open`;
+ if(user)annotate()}
+$("t-buy").addEventListener("click",()=>setSide(1));$("t-sell").addEventListener("click",()=>setSide(-1));
+["t-stop","t-target","t-risk","t-time"].forEach(id=>$(id).addEventListener("input",()=>{if(id==="t-risk")saveAcct();ticketChanged(true)}));
+$("t-qty").addEventListener("input",()=>{autoQty=false;$("t-auto").classList.remove("on");ticketChanged(true)});
+$("t-auto").addEventListener("click",()=>{autoQty=!autoQty;$("t-auto").classList.toggle("on",autoQty);ticketChanged(true)});
+$("t-place").addEventListener("click",()=>{const {t,qty,A}=sizing(),d=D(),c=cur();if(!(qty>0))return;const s=S();
+ ORDERS.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),sym:st.sym,side,qty,stop:t.stop,target:isF(t.target)?t.target:NaN,time:t.time,sysExit:$("t-sys").checked,date:d.d[c],fill:A.fill,cost:A.cost,mode:mode(),sid:REPLAY?REPLAY.sid:null,note:$("t-note").value.trim(),
+  sys:s?{setup:s.setup[c],score:s.score[c],P:s.P[c],sig:s.sig[c]}:null});
+ saveOrders();draft.show=false;$("t-note").value="";renderLive();annotate();
+ $("t-msg").innerHTML=`<div class="okm">${side>0?"Bought":"Sold short"} ${qty} ${esc(st.sym)}: ${A.fill==="open"?"fills at the next open":"filled at "+fp(d.c[c])}. See My trades.</div>`});
+
+// ------------------------------------------------ signal strip (latest bar, or the replay bar)
+function gaugeSvg(p,col){const a=Math.PI*(1-Math.max(0,Math.min(1,p))),R=34,cx=40,cy=40,x=cx+R*Math.cos(a),y=cy-R*Math.sin(a);
+ return `<svg width="80" height="46" viewBox="0 0 80 46" role="img" aria-label="Probability ${Math.round(100*p)}%"><path d="M6 40 A34 34 0 0 1 74 40" fill="none" stroke="#2c2c2a" stroke-width="7" stroke-linecap="round"/><path d="M6 40 A34 34 0 0 1 ${x.toFixed(1)} ${y.toFixed(1)}" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round"/><text x="40" y="38" text-anchor="middle" font-size="15" font-family="JetBrains Mono,monospace" fill="#fff">${isF(p)?Math.round(100*p)+"%":"—"}</text></svg>`}
+function lastStep(s,c){let st0=null;for(const x of s.steps)if(x.i<=c)st0=x;return st0}
+function chipName(k,v){if(k==="gap_size")return v>0?"No news-like gap":"News-like gap";if(k==="lower_wick")return v>0?"No long lower wick":"Long lower wick";return signLabel(k)}
+function topSigns(s,i,n=4){return RES.names.map(k=>[k,s.C[k][i]]).filter(x=>isF(x[1])).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,n)}
+function renderSigbar(){
+ const d=D(),el=$("sigbar");if(!d){el.innerHTML='<span class="note">Load a price file in the Data tab.</span>';return}
+ const c=cur(),s=S(),when=REPLAY?`as of ${d.d[c]} (replay)`:`after the close of ${d.d[c]}`;
+ if(!s){el.innerHTML=`<span class="vp none">${busy?"Computing":"No model"}</span><div class="say">${busy?"The engine is computing on this file; signals appear in a moment.":lastErr?esc(lastErr):"Run the system in the Data tab."}</div><div></div>`;return}
+ if(c<s.first){el.innerHTML=`<span class="vp none">Warm-up</span><div class="say">The score starts on ${s.d[s.first]} (it needs about a year of history for the volatility and volume baselines).</div><div></div>`;return}
+ const sd=s.side,setup=!!s.setup[c],sig=!!s.sig[c],sc=s.score[c],th=thirdOf(sc),P=s.P[c],plan=sysPlan(c),stp=lastStep(s,c);
+ let cls="none",lab="No setup",say;
+ const rsiTxt=`RSI(2) is <b>${fmt(s.rsi2[c],0)}</b>`;
+ if(setup&&sig){cls=sd>0?"long":"short";lab=sd>0?"Buy setup":"Sell setup"}else if(setup){cls="watch";lab="Weak setup"}
+ if(setup){say=`${rsiTxt}: a short-term ${sd>0?"oversold":"overbought"} setup. Its Reversal Edge Score is <b style="color:${THIRD_COL[th]}">${fmt(sc,1)} (${THIRD_NAME[th]})</b>. `;
+  const own=stp&&stp.thirds[th];
+  say+=`Chance this bounce trade is profitable: <b>${pct(P,0)}</b>.`;
+  if(own&&own.n>=8)say+=` On this stock, past setups in the ${THIRD_NAME[th]} averaged <b class="${cl(own.avg)}">${spct(own.avg,2)}</b> per trade (${own.n} trades, ${pct(own.win,0)} won).`;
+  say+=` Across 87 stocks the ${THIRD_NAME[th]} averaged ${(RESEARCH_THIRDS.avg87[th]/100).toFixed(2)}%.`;
+  if(cls==="watch")say+=` Below your filter (${$("c-scoreThr").selectedOptions[0].textContent}), so the system skips it.`;
+  if(sig)say+=` Plan: ${sd>0?"buy":"sell"} at the next open, stop ${fp(plan.stop)} (${ECFG.stopATR} ATR), exit on the first close back ${sd>0?"above":"below"} the 5-day average (now ${fp(plan.exitLine)}) or after ${ECFG.maxHold} days.`}
+ else say=`${rsiTxt}: no ${sd>0?"oversold":"overbought"} setup (needs RSI(2) ${sd>0?"below "+ECFG.trig:"above "+(100-ECFG.trig)}). Price is ${fmt(Math.abs(s.z20[c]),2)}σ ${s.z20[c]<0?"below":"above"} its 20-day mean${s.zone[c]>=0?`, in zone ${["below 2.5%","2.5–10%","10–25%","25–75%","75–90%","90–97.5%","above 97.5%"][s.zone[c]]} of its own history`:""}.`;
+ if(!isF(s.frank[c]))say+=` <span class="acc">No fear-index value for this date; that sign counts as neutral.</span>`;
+ const chips=setup?topSigns(s,c).map(([k,v])=>`<span class="${v>0.05?"y":v<-0.05?"n":"m"}" title="${esc(signMeaning(k))}">${v>0.05?"▲":v<-0.05?"▼":"·"} ${esc(chipName(k,v))}</span>`).join(""):"";
+ el.innerHTML=`<div><span class="vp ${cls}">${lab}</span><div class="note" style="margin-top:4px">${when}</div></div><div class="say">${say}</div>
+  <div class="acts">${setup?`<div class="gauge">${gaugeSvg(P,THIRD_COL[th])}<span>chance of profit</span></div>`:""}<div style="display:grid;gap:6px"><button class="btn sm" id="use-plan">Trade this plan</button>${REPLAY?"":`<div style="display:flex;gap:6px"><button class="btn ghost sm" id="sig-prev">◀ prev</button><button class="btn ghost sm" id="sig-next">next ▶</button></div>`}</div></div>
+  <div class="row3">${plan?`<div class="lvls"><div><span>entry ≈</span><b>${fp(plan.e)}</b></div><div><span>stop</span><b class="down">${fp(plan.stop)}</b></div><div><span>exit line (5d avg)</span><b class="acc">${fp(plan.exitLine)}</b></div><div><span>20-day mean</span><b>${fp(plan.mean)}</b></div><div><span>ATR</span><b>${fp(plan.atr)}</b></div></div>`:""}<div class="chips">${chips}</div></div>`}
+$("sigbar").addEventListener("click",e=>{const id=e.target.id;
+ if(id==="use-plan"){const p=sysPlan(cur());if(!p)return;setSide(p.lg?1:-1);const dg=pdig(p.e);$("t-stop").value=p.stop.toFixed(dg);$("t-target").value=p.target.toFixed(dg);$("t-time").value=ECFG.maxHold;$("t-sys").checked=true;draft.show=true;ticketChanged(true)}
+ if((id==="sig-prev"||id==="sig-next")&&S()){const s=S(),idx=[];for(let i=0;i<s.sig.length;i++)if(s.sig[i])idx.push(i);if(!idx.length)return;
+  const r=chart.timeScale().getVisibleLogicalRange(),mid=st.pinned&&st.cursor!=null?st.cursor:r?(r.from+r.to)/2:lastIdx(),w=r?r.to-r.from:160;
+  const tg=id==="sig-next"?idx.find(i=>i>mid):[...idx].reverse().find(i=>i<mid);if(tg==null)return;
+  chart.timeScale().setVisibleLogicalRange({from:tg-w*.6,to:tg+w*.4});st.pinned=true;st.cursor=tg;syncScrub();inspector(tg);renderLegend()}});
+
+// ------------------------------------------------ inspector: reversal radar, zones, look-alike setups, context
+function analogs(s,i,K=25,H=10){ // nearest past bars by the nine signs + RSI(2), outcomes fully known before bar i
+ const keys=RES.names,cand=[];const lim=i-H;if(lim<300)return null;
+ const want=s.setup[i];
+ for(let j=s.first;j<=lim;j++){if(want&&!s.setup[j])continue;let d2=0;for(const k of keys)d2+=(s.Z[k][j]-s.Z[k][i])**2;d2+=((s.rsi2[j]-s.rsi2[i])/15)**2;if(isF(d2))cand.push([d2,j])}
+ if(cand.length<10)return null;cand.sort((a,b)=>a[0]-b[0]);const pick=cand.slice(0,K).map(x=>x[1]);
+ const paths=pick.map(j=>{const a=[];for(let k=0;k<=H;k++)a.push(s.c[j+k]/s.c[j]-1);return a});
+ const q=(arr,p)=>{const v=arr.slice().sort((a,b)=>a-b);return quantSortedUI(v,p)};
+ const band=[...Array(H+1).keys()].map(k=>{const col=paths.map(p=>p[k]);return [q(col,.1),q(col,.25),q(col,.5),q(col,.75),q(col,.9)]});
+ const tr=pick.map(j=>s.tret[j]).filter(isF);
+ return {pick,paths,band,up5:paths.filter(p=>p[5]>0).length/paths.length,trade:tr.length?tr.reduce((a,b)=>a+b,0)/tr.length:NaN,win:tr.length?tr.filter(x=>x>0).length/tr.length:NaN,dates:pick.map(j=>s.d[j])}}
+function quantSortedUI(a,q){if(!a.length)return NaN;const p=q*(a.length-1),i=Math.floor(p),f=p-i;return i+1<a.length?a[i]+f*(a[i+1]-a[i]):a[i]}
+function fanSvg(A){const W=300,H=150,L=34,B=18,T=6,R=6,n=A.band.length,all=A.band.flat(),lo=Math.min(-.02,...all),hi=Math.max(.02,...all);
+ const x=k=>L+k*(W-L-R)/(n-1),y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
+ const area=(a,b)=>A.band.map((r,k)=>`${x(k).toFixed(1)},${y(r[a]).toFixed(1)}`).join(" ")+" "+A.band.map((r,k)=>[k,r]).reverse().map(([k,r])=>`${x(k).toFixed(1)},${y(r[b]).toFixed(1)}`).join(" ");
+ let g=`<svg class="fan" viewBox="0 0 ${W} ${H}" role="img" aria-label="Paths after similar setups">`;
+ for(const v of [lo,0,hi])g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="${v===0?"#555":"#2c2c2a"}"/><text x="${L-4}" y="${y(v)+3}" font-size="9" text-anchor="end" fill="#898781">${(v*100).toFixed(0)}%</text>`;
+ for(const k of [0,5,10])if(k<n)g+=`<text x="${x(k)}" y="${H-4}" font-size="9" text-anchor="middle" fill="#898781">${k===0?"today":"+"+k+"d"}</text>`;
+ A.paths.forEach(p=>{g+=`<polyline fill="none" stroke="rgba(195,194,183,.12)" points="${p.map((v,k)=>`${x(k).toFixed(1)},${y(v).toFixed(1)}`).join(" ")}"/>`});
+ g+=`<polygon fill="rgba(57,135,229,.16)" points="${area(0,4)}"/><polygon fill="rgba(57,135,229,.3)" points="${area(1,3)}"/>`;
+ g+=`<polyline fill="none" stroke="#4fd1a5" stroke-width="2" points="${A.band.map((r,k)=>`${x(k).toFixed(1)},${y(r[2]).toFixed(1)}`).join(" ")}"/></svg>`;return g}
+function zoneTable(s,i){const names=["below 2.5%","2.5–10%","10–25%","25–75%","75–90%","90–97.5%","above 97.5%"],cnt=new Array(7).fill(0),t=new Array(7).fill(0),f=new Array(7).fill(0);
+ for(let j=0;j<=i-10;j++){const z=s.zone[j];if(z>=0&&isF(s.touch[j])){cnt[z]++;t[z]+=s.touch[j];f[z]+=s.fwd5[j]}}
+ return `<table class="ztab"><tr><td class="lab">zone (own z-percentile)</td><td class="n lab">n</td><td class="n lab">touched mean ≤10d</td><td class="n lab">avg 5d</td></tr>`+names.map((nm,k)=>`<tr class="${s.zone[i]===k?"cur":""}"><td>${s.zone[i]===k?"▶ ":""}${nm}</td><td class="n">${cnt[k]}</td><td class="n">${cnt[k]?pct(t[k]/cnt[k],0):"—"}</td><td class="n ${cl(f[k])}">${cnt[k]?spct(f[k]/cnt[k],1):"—"}</td></tr>`).join("")+`</table>`}
+function inspector(i){const el=$("inspbody"),d=D();if(!d){el.innerHTML="";return}
+ const s=S();let h=`<div class="ih"><b>${esc(st.sym)}</b><span>${d.d[i]}</span><span class="pin ${st.pinned?"on":""}">${st.pinned?"PINNED":"hover"}</span></div>`;
+ if(!s){el.innerHTML=h+`<div class="note">O ${fp(d.o[i])} · H ${fp(d.h[i])} · L ${fp(d.l[i])} · C ${fp(d.c[i])}<br>Reversal details appear once the system has run.</div>`;return}
+ const sc=s.score[i],th=thirdOf(sc),P=s.P[i];
+ h+=`<div class="top2"><div><div class="lab">chance of profit (bounce trade)</div><div class="bigp">${isF(P)?pct(P,0):"—"}</div><div class="note">research weights alone: ${isF(s.Pr[i])?pct(s.Pr[i],0):"—"}</div></div><div><div class="lab">reversal edge score</div><div class="act" style="color:${THIRD_COL[th]||"inherit"}">${fmt(sc,2)} · ${THIRD_NAME[th]||"—"}</div><div class="note">${s.setup[i]?(s.sig[i]?"setup · passes your filter":"setup · below your filter"):"no RSI(2) setup on this bar"}</div></div></div>`;
+ // radar: weighted contributions
+ const mx=Math.max(.5,...RES.names.map(k=>Math.abs(s.C[k][i]||0)));
+ h+=`<div class="sec">reversal radar · what moves the score (weight × how unusual today is)</div><div class="radar">`+RES.names.map(k=>{const v=s.C[k][i],w=Math.abs(v||0)/mx*50,raw=s.X[k][i],ev=signEvidence(k);
+  const shown=k==="fear_rank"||k==="vol_rank"?pct(raw,0):k==="down_streak"?fmt(raw,0):k==="lower_wick"?pct(raw,0):fmt(raw,2);
+  return `<div class="rr" title="${esc(signMeaning(k))} Research: top-vs-bottom-third trade difference ${ev?ev.map(x=>(x>0?"+":"")+x+"bp").join(" / "):""} (87 stocks / TSLA 11-17 / TSLA 18-26)."><span class="nm">${esc(signLabel(k))}</span><span class="vv">${shown}</span><div class="cb"><i style="left:${(v||0)>=0?50:50-w}%;width:${w}%;background:${(v||0)>=0?"#4fd1a5":"#e66767"}"></i></div></div>`}).join("")+`</div>`;
+ const stp=lastStep(s,i);if(stp)h+=`<div class="note" style="margin-top:4px">weights: ${stp.own<30?"research (not enough own setups yet)":`${Math.round(100*(1-stp.lam))}% research, ${Math.round(100*stp.lam)}% this stock (${stp.own} own setups)`} · refit ${stp.d}</div>`;
+ // other quick reads
+ h+=`<div class="sec">quick read</div><table class="t"><tr><td>RSI(2) / RSI(14)</td><td class="n">${fmt(s.rsi2[i],0)} / ${fmt(s.rsi14[i],0)}</td></tr><tr><td>streak · close in range (IBS)</td><td class="n">${fmt(s.streak[i],0)} · ${pct(s.ibs[i],0)}</td></tr>
+  <tr><td>volume vs normal</td><td class="n">${isF(s.volz[i])?(s.volz[i]>=0?"+":"")+s.volz[i].toFixed(1)+"σ":"—"}</td></tr><tr><td>range / gap (ATR)</td><td class="n">${fmt(s.rangex[i],2)} / ${fmt(s.gap[i],2)}</td></tr>
+  <tr><td>Yang-Zhang vol (5/20/60d)</td><td class="n">${fmt(s.yz5[i],0)} / ${fmt(s.yz20[i],0)} / ${fmt(s.yz60[i],0)}%</td></tr><tr><td>GARCH next-day vol</td><td class="n">${fmt(s.garch[i],0)}%</td></tr><tr><td>VIX · rank</td><td class="n">${fmt(s.vix[i],1)} · ${pct(s.frank[i],0)}</td></tr></table>`;
+ h+=`<div class="sec">stock-specific z-zones · what happened next from each zone (data before this bar)</div>`+zoneTable(s,i);
+ const A=analogs(s,i);
+ if(A){h+=`<div class="sec">look-alike setups · ${A.pick.length} most similar past ${s.setup[i]?"setups":"bars"} (signs + RSI(2))</div>${fanSvg(A)}<div class="note">${pct(A.up5,0)} were higher 5 days later · system exit averaged <span class="${cl(A.trade)}">${spct(A.trade,2)}</span> (${pct(A.win,0)} won). Median path green; bands 25–75% and 10–90%. Most recent: ${A.dates.slice().sort().slice(-3).join(", ")}.</div>`}
+ if(!REPLAY&&isF(s.tret[i])&&s.setup[i])h+=`<div class="hind">hindsight (not known at the time): this setup's trade returned ${spct(s.tret[i],2)} after ${s.thold[i]} bars (${esc(s.texit[i])})</div>`;
+ h+=`<div class="sec">fair-value context (earlier system)</div><table class="t">`;
+ [["kalman","Kalman"],["ou","OU mean"],["trend","Trend line"],["factor","Market residual"]].forEach(([m,nm])=>{if(!s["zz_"+m])return;const zz=s["zz_"+m][i];h+=`<tr><td><span style="color:${C.mean[m]}">■</span> ${nm}</td><td><span class="pill" style="background:${zc(zz)};color:#fff">${isF(zz)?(zz>=0?"+":"")+zz.toFixed(2)+"σ":"—"}</span></td><td class="n">${fmt(s["lv_"+m]&&s["lv_"+m][i],2)}</td></tr>`});
+ h+=`</table><div class="note" style="margin-top:4px">Hurst ${fmt(s.hurst[i])} · ADF p ${fmt(s.adf[i])} · VR(4) ${fmt(s.vr4[i])} · OU half-life ${fmt(s.hl[i],1)} bars</div>`;
+ el.innerHTML=h}
+
+// ------------------------------------------------ scanner
+function drawScan(){
+ if(!RES){clr("scan-t",'<tr><td class="empty">Run the system in the Data tab first.</td></tr>');return}
+ const rows=RES.syms.filter(SY).map(sym=>{const s=SY(sym),i=s.d.length-1,stp=lastStep(s,i),th=thirdOf(s.score[i]);return {sym,s,i,th,own:stp&&stp.thirds[th]}});
+ rows.sort((a,b)=>(b.s.sig[b.i]-a.s.sig[a.i])||(b.s.setup[b.i]-a.s.setup[a.i])||(b.s.score[b.i]-a.s.score[a.i]));
+ $("scan-note").innerHTML=`${rows.filter(r=>r.s.sig[r.i]).length} signal(s) and ${rows.filter(r=>r.s.setup[r.i]).length} setup(s) on the latest bar across ${rows.length} symbol(s). Click a row to open it on the chart.`;
+ const zn=["<2.5%","2.5–10%","10–25%","25–75%","75–90%","90–97.5%",">97.5%"];
+ $("scan-t").innerHTML="<tr>"+["symbol","date","close","1d","RSI(2)","state","edge score","chance of profit","this stock, same third","zone","vol rank","vol trend","fear rank","top signs"].map(h=>`<th>${h}</th>`).join("")+"</tr>"+rows.map(({sym,s,i,th,own})=>{
+  const state=s.sig[i]?`<span class="vp long" style="padding:1px 6px">${s.side>0?"buy":"sell"}</span>`:s.setup[i]?'<span class="vp watch" style="padding:1px 6px">weak setup</span>':'<span class="note">—</span>';
+  return `<tr data-s="${esc(sym)}"><td>${esc(sym)}</td><td>${s.d[i]}</td><td>${fp(s.c[i])}</td><td class="${cl(s.c[i]/s.c[i-1]-1)}">${spct(s.c[i]/s.c[i-1]-1,1)}</td><td>${fmt(s.rsi2[i],0)}</td><td>${state}</td><td style="color:${THIRD_COL[th]}">${fmt(s.score[i],1)}</td><td>${pct(s.P[i],0)}</td><td>${own&&own.n?`${spct(own.avg,2)} (n ${own.n})`:"—"}</td><td>${s.zone[i]>=0?zn[s.zone[i]]:"—"}</td><td>${pct(s.vrank[i],0)}</td><td>${isF(s.vterm[i])?(s.vterm[i]>0?"rising":"falling"):"—"}</td><td>${pct(s.frank[i],0)}</td><td style="text-align:left">${topSigns(s,i,3).map(([k,v])=>`<span class="${v>0?"up":"down"}">${v>0?"▲":"▼"}${esc(chipName(k,v))}</span>`).join(" ")}</td></tr>`}).join("")}
+$("scan-t").addEventListener("click",e=>{const tr=e.target.closest("tr[data-s]");if(!tr)return;const sym=tr.dataset.s;focusDate(sym,DS[sym].d[DS[sym].d.length-1])});
+
+// ------------------------------------------------ My trades tab
+async function saveFile(name,text,btn){try{const dl=await window.claude?.use?.("downloads");if(!dl){btn.hidden=true;return}await dl.save({filename:name,data:text})}catch(e){}}
+const csvOf=rows=>rows.map(r=>r.map(v=>{const s=v==null?"":String(v);return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s}).join(",")).join("\n");
+window.claude?.use?.("downloads").then(dl=>{if(dl)$("dl-jour").hidden=false}).catch(()=>{});
+function stats(list){const pn=list.map(r=>r.pnl),Rs=list.map(r=>r.R).filter(isF),w=pn.filter(v=>v>0),sl=pn.filter(v=>v<=0).reduce((a,b)=>a+b,0);
+ return {n:list.length,win:list.length?w.length/list.length:NaN,avgR:Rs.length?Rs.reduce((a,b)=>a+b,0)/Rs.length:NaN,pnl:pn.reduce((a,b)=>a+b,0),pf:sl<0?w.reduce((a,b)=>a+b,0)/-sl:NaN,hold:list.length?list.reduce((a,r)=>a+r.bars,0)/list.length:NaN}}
+function drawMine(){
+ const K=(l,v,n="",c="")=>`<div class="k"><div class="lab">${l}</div><div class="v ${c}">${v}</div><div class="note">${n}</div></div>`,a=account(),ret=a.eq/a.start-1;
+ $("acct-k").innerHTML=K(`${mode()} equity`,money(a.eq),`started ${money(a.start)}`)+K("Return",spct(ret,2),"",ret>0?"pos":ret<0?"neg":"")+K("Open P&L",smoney(a.unreal),"",a.unreal>0?"pos":a.unreal<0?"neg":"")+K("Closed P&L",smoney(a.real),"",a.real>0?"pos":a.real<0?"neg":"")+K("Open positions",a.open)+K("Exposure",pct(a.expo/a.eq,0));
+ const open=simAll().filter(r=>r.status==="open"||r.status==="pending");
+ $("pos-t").innerHTML="<tr>"+["symbol","side","shares","placed","entry","last","stop","target","bars","P&L","R",""].map(h=>`<th>${h}</th>`).join("")+"</tr>"+(open.length?open.map(r=>{const lv=levelsAt(r.o,uptoFor(r.o)+1),dd=DS[r.o.sym];
+  return `<tr><td>${esc(r.o.sym)}</td><td class="${r.o.side>0?"up":"down"}">${r.o.side>0?"long":"short"}</td><td>${r.o.qty.toLocaleString()}</td><td>${r.o.date}</td><td>${r.status==="pending"?'<span class="acc">pending</span>':fp(r.entryPx)}</td><td>${fp(dd.c[uptoFor(r.o)])}</td><td>${fp(lv.stop)}</td><td>${fp(lv.target)}</td><td>${r.bars??"—"}</td><td class="${cl(r.upnl)}">${r.status==="open"?smoney(r.upnl):"—"}</td><td class="${cl(r.R)}">${r.status==="open"?sR(r.R):"—"}</td>
+  <td>${r.status==="open"?`<button class="x" data-be="${r.o.id}" title="Move the stop to the entry price">stop → entry</button> <button class="x" data-close="${r.o.id}">${r.closing?"closing…":"close"}</button>`:`<button class="x" data-cancel="${r.o.id}">cancel</button>`}</td></tr>`}).join(""):`<tr><td colspan="12" class="note" style="text-align:left">No open ${mode()} positions. Use the order ticket next to the chart.</td></tr>`);
+ const jour=ORDERS.map(o=>simulate(o,uptoFor(o))).filter(r=>r.status==="closed").sort((x,y)=>(DS[y.o.sym]?.d[y.exitIdx]||"").localeCompare(DS[x.o.sym]?.d[x.exitIdx]||""));
+ $("jour-t").innerHTML="<tr>"+["symbol","mode","side","shares","entry date","entry","exit date","exit","reason","bars","P&L","R","system said","note"].map(h=>`<th>${h}</th>`).join("")+"</tr>"+(jour.length?jour.map(r=>{const dd=DS[r.o.sym],sy=r.o.sys;
+  return `<tr data-go="${r.o.id}"><td>${esc(r.o.sym)}</td><td><span class="tag ${r.o.mode==="replay"?"r":"l"}">${r.o.mode}</span></td><td class="${r.o.side>0?"up":"down"}">${r.o.side>0?"long":"short"}</td><td>${r.o.qty.toLocaleString()}</td><td>${dd.d[r.entryIdx]}</td><td>${fp(r.entryPx)}</td><td>${dd.d[r.exitIdx]}</td><td>${fp(r.exitPx)}</td><td>${r.reason}</td><td>${r.bars}</td><td class="${cl(r.pnl)}">${smoney(r.pnl)}</td><td class="${cl(r.R)}">${sR(r.R)}</td><td>${sy?(sy.sig?"signal":sy.setup?`setup, ${THIRD_NAME[thirdOf(sy.score)]||""}`:"no setup"):"—"}</td><td style="text-align:left;white-space:normal;min-width:120px">${esc(r.o.note||"")}</td></tr>`}).join(""):`<tr><td colspan="14" class="note" style="text-align:left">Closed paper trades appear here, with results in dollars and in R (multiples of the amount risked).</td></tr>`);
+ $("dl-jour").onclick=e=>saveFile("paper-journal.csv",csvOf([["symbol","mode","side","shares","entry_date","entry","exit_date","exit","reason","bars","pnl","R","note"],...jour.map(r=>[r.o.sym,r.o.mode,r.o.side>0?"long":"short",r.o.qty,DS[r.o.sym].d[r.entryIdx],r.entryPx,DS[r.o.sym].d[r.exitIdx],r.exitPx,r.reason,r.bars,r.pnl.toFixed(2),isF(r.R)?r.R.toFixed(3):"",r.o.note||""])]),e.target);
+ const blk=(t,s)=>`<div class="lab" style="margin:8px 0 4px">${t}</div><div class="kpis">${K("Trades",s.n)}${K("Win rate",pct(s.win,0))}${K("Avg result",sR(s.avgR),"per trade",s.avgR>0?"pos":s.avgR<0?"neg":"")}${K("Net P&L",smoney(s.pnl))}${K("Profit factor",fmt(s.pf,2))}${K("Avg hold",isF(s.hold)?s.hold.toFixed(1)+" bars":"—")}</div>`;
+ const all=stats(jour);const ban=jour.length<30?`<div class="ban mid">${jour.length} closed trade${jour.length===1?"":"s"}. Results start to mean something after about 30.</div>`:`<div class="ban ${all.avgR>.1?"good":all.avgR>0?"mid":"bad"}">Your trades average ${sR(all.avgR)} over ${jour.length} trades.</div>`;
+ const sys=RES?stats(RES.bt.trades.map(t=>({pnl:t.pnl,R:t.R,bars:t.bars_held}))):null;
+ $("mystats").innerHTML=ban+blk("Replay practice",stats(jour.filter(r=>r.o.mode==="replay")))+blk("Live paper trades",stats(jour.filter(r=>r.o.mode==="live")))+(sys?blk("System (walk-forward backtest, all symbols)",sys):"")}
+$("pos-t").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const o=ORDERS.find(x=>x.id===(b.dataset.close||b.dataset.cancel||b.dataset.be));if(!o)return;
+ const d=DS[o.sym],c=REPLAY&&REPLAY.sym===o.sym?REPLAY.idx:d.d.length-1;
+ if(b.dataset.cancel)o.cancelled=true;if(b.dataset.close&&!o.closeDate){o.closeDate=d.d[c];o.closeFill=ACCT().fill}
+ if(b.dataset.be){const r=simulate(o,c);if(r.status==="open")setLevel(o,"stop",r.entryPx,false)}saveOrders();renderLive();annotate()});
+$("jour-t").addEventListener("click",e=>{const tr=e.target.closest("tr[data-go]");if(!tr||REPLAY)return;const o=ORDERS.find(x=>x.id===tr.dataset.go);if(o)focusDate(o.sym,o.date)});
+$("reset-replay").addEventListener("click",e=>armed(e.target,()=>{ORDERS=ORDERS.filter(o=>o.mode!=="replay");saveOrders();renderLive();annotate()}));
+$("reset-all").addEventListener("click",e=>armed(e.target,()=>{ORDERS=[];saveOrders();renderLive();annotate()}));
+
+// ------------------------------------------------ Volatility tab
+function lastGarch(s,i){let g=null;for(const x of s.garchSteps)if(x.i<=i)g=x;return g}
+function garchTerm(s,i,H=60){const g=lastGarch(s,i);if(!g||!isF(s.garch[i]))return null;const s2=s.garch[i]**2/252,VL=g.pers<1?g.omega/(1-g.pers):s2,out=[];let acc=0;
+ for(let h=1;h<=H;h++){acc+=VL+Math.pow(g.pers,h-1)*(s2-VL);out.push(Math.sqrt(acc/h*252))}return {g,term:out,VL:Math.sqrt(VL*252)}}
+function drawVol(){
+ const s=S();if(!s){["vol-k","vol-say"].forEach(id=>$(id).innerHTML="");["v-est","v-cone","v-term","v-move","v-dist","v-tails","v-acf","v-fc","v-use"].forEach(id=>needRun(id));return}
+ if(!$("v-est")._fullLayout)$("v-est").innerHTML="";const i=st.pinned&&st.cursor!=null?Math.min(st.cursor,cur()):cur(),c=s.c[i],K=(l,v,n="",x="")=>`<div class="k"><div class="lab">${l}</div><div class="v ${x}">${v}</div><div class="note">${n}</div></div>`;
+ const GT=garchTerm(s,i),r=s.r.slice(1,i+1).filter(isF),N=r.length;
+ const vov=(()=>{const a=[];for(let k=Math.max(25,i-60);k<=i;k++)if(isF(s.yz20[k])&&isF(s.yz20[k-5]))a.push(Math.log(s.yz20[k]/s.yz20[k-5]));if(a.length<10)return NaN;const m=a.reduce((x,y)=>x+y,0)/a.length;return Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/(a.length-1))})();
+ $("vol-k").innerHTML=K("Yang-Zhang 20d",fmt(s.yz20[i],1)+"%","most efficient OHLC estimator")+K("GARCH next day",fmt(s.garch[i],1)+"%",GT?`long-run ${fmt(GT.VL,1)}%`:"needs 500 bars")+K("HAR 5-day",fmt(s.har5[i],1)+"%","forecast")+
+  K("Vol rank",pct(s.vrank[i],0),"vs this stock's 2 years")+K("Vol trend",isF(s.vterm[i])?(s.vterm[i]>0?"rising":"falling"):"—",`5d ${fmt(s.yz5[i],0)}% vs 60d ${fmt(s.yz60[i],0)}%`)+
+  K("Persistence",GT?fmt(GT.g.pers,3):"—",GT?`shock half-life ${fmt(GT.g.half,0)} days`:"")+K("Vol of vol",isF(vov)?pct(vov,0):"—","std of 5-day log change")+K("VIX",fmt(s.vix[i],1),`rank ${pct(s.frank[i],0)}`)+K("ATR",fp(s.atr[i]),pct(s.atr[i]/c,1)+" of price");
+ const hi=s.vrank[i]>.66,lo=s.vrank[i]<.33,rising=s.vterm[i]>0;
+ $("vol-say").className="ban "+(hi&&rising?"good":lo&&!rising?"bad":"mid");
+ $("vol-say").innerHTML=`<b>${hi?"High":lo?"Low":"Normal"} and ${rising?"rising":"falling"} volatility</b> for ${esc(st.sym)} on ${s.d[i]}. `+(hi||rising?"Within RSI(2) setups, high and rising volatility went with bigger bounces in all three research samples (stress is when liquidity providers are paid most).":"Quiet, falling volatility went with smaller bounces in the research; setups now carry less edge.")+(isF(s.frank[i])?` Market fear is at the ${pct(s.frank[i],0)} rank of its last two years${s.frank[i]>.66?", which historically made reversals pay more (Nagel 2012).":"."}`:"");
+ const lo0=Math.max(0,i-(st.n||i)),x=s.d.slice(lo0,i+1),sl=a=>a.slice(lo0,i+1).map(v=>isF(v)?v:null);
+ const base2=(h,ex={})=>base(h,Object.assign({hovermode:"x unified",legend:{orientation:"h",x:0,y:1.08,font:{size:9}},margin:{l:44,r:44,t:26,b:28}},ex));
+ Plotly.react("v-est",[["cc20","close-close","#898781",1],["park20","Parkinson","#199e70",1],["gk20","Garman-Klass","#c98500",1],["rs20","Rogers-Satchell","#d55181",1],["yz20","Yang-Zhang","#3987e5",2],["garch","GARCH(1,1)","#fab219",1.6],["har5","HAR 5-day","#c08cff",1.3]].map(([k,n,col,w])=>({x,y:sl(s[k]),name:n,mode:"lines",line:{color:col,width:w},hovertemplate:n+" %{y:.1f}%<extra></extra>"}))
+  .concat([{x,y:sl(s.vix),name:"VIX (right)",yaxis:"y2",mode:"lines",line:{color:"rgba(255,255,255,.35)",width:1,dash:"dot"},hovertemplate:"VIX %{y:.1f}<extra></extra>"}]),base2(330,{yaxis:{gridcolor:C.grid,ticksuffix:"%"},yaxis2:{overlaying:"y",side:"right",showgrid:false,tickfont:{color:C.muted,size:9}}}),CFG);
+ // cone from close-close vol by horizon, history up to bar i
+ const Hs=[5,10,20,40,60,120,250],cone=Hs.map(W=>{const v=[];let sm=0,sq=0;for(let k=1;k<=i;k++){const q=s.r[k];if(!isF(q))continue;sm+=q;sq+=q*q;if(k>W){const o=s.r[k-W];if(isF(o)){sm-=o;sq-=o*o}}if(k>=W){const m=sm/W;v.push(Math.sqrt(Math.max(0,(sq-W*m*m)/(W-1))*252)*100)}}const last=v[v.length-1];v.sort((a,b)=>a-b);return {W,last,q:[0,.1,.25,.5,.75,.9,1].map(p=>quantSortedUI(v,p))}});
+ const pcol=["#555","#3987e5","#4fa6ff","#fff","#ff9f9f","#e66767","#555"],pn=["min","10%","25%","median","75%","90%","max"];
+ Plotly.react("v-cone",pn.map((n,k)=>({x:Hs,y:cone.map(c0=>c0.q[k]),name:n,mode:"lines",line:{color:pcol[k],width:k===3?2:1,dash:k===0||k===6?"dot":"solid"},hovertemplate:n+" %{y:.0f}%<extra></extra>"})).concat([{x:Hs,y:cone.map(c0=>c0.last),name:"now",mode:"lines+markers",line:{color:"#fab219",width:2},marker:{size:8},hovertemplate:"now %{y:.0f}%<extra></extra>"}]),
+  base2(330,{xaxis:{type:"log",tickvals:Hs,title:{text:"window (trading days)",font:{size:10}},gridcolor:C.grid},yaxis:{ticksuffix:"%",gridcolor:C.grid},hovermode:"x"}),CFG);
+ if(GT){const hh=[...Array(60).keys()].map(k=>k+1);Plotly.react("v-term",[{x:hh,y:GT.term,name:"GARCH expected avg vol",mode:"lines",line:{color:"#fab219",width:2},hovertemplate:"next %{x} days: %{y:.1f}%<extra></extra>"},{x:[1,60],y:[GT.VL,GT.VL],name:"long-run",mode:"lines",line:{color:"#898781",dash:"dash"}},
+   {x:[1,60],y:[s.yz20[i],s.yz20[i]],name:"Yang-Zhang 20d now",mode:"lines",line:{color:"#3987e5",dash:"dot"}},{x:[5],y:[s.har5[i]],name:"HAR 5-day",mode:"markers",marker:{color:"#c08cff",size:10}}],
+   base2(330,{xaxis:{title:{text:"horizon (trading days)",font:{size:10}},gridcolor:C.grid},yaxis:{ticksuffix:"%",gridcolor:C.grid},hovermode:"x"}),CFG)}
+ else clr("v-term",'<div class="empty">GARCH needs at least 500 daily returns.</div>');
+ // expected move table
+ const sdH=h=>GT?GT.term[h-1]/100*Math.sqrt(h/252):s.yz20[i]/100*Math.sqrt(h/252);
+ const emp=h=>{const a=[];for(let k=h;k<=i;k++)a.push(Math.log(s.c[k]/s.c[k-h]));a.sort((u,v)=>u-v);return [quantSortedUI(a,.05),quantSortedUI(a,.95)]};
+ $("v-move").innerHTML=`<table class="em"><tr><th>horizon</th><th>σ</th><th>−2σ</th><th>−1σ</th><th>+1σ</th><th>+2σ</th><th>history 5%–95%</th></tr>`+[1,5,10,20].map(h=>{const sg=sdH(h),e=emp(h);return `<tr><td>${h} day${h>1?"s":""}</td><td>${pct(sg,1)}</td><td class="down">${fp(c*Math.exp(-2*sg))}</td><td class="down">${fp(c*Math.exp(-sg))}</td><td class="up">${fp(c*Math.exp(sg))}</td><td class="up">${fp(c*Math.exp(2*sg))}</td><td>${spct(Math.exp(e[0])-1,1)} / ${spct(Math.exp(e[1])-1,1)}</td></tr>`}).join("")+
+  `</table><div class="note" style="margin-top:6px">From ${GT?"the GARCH(1,1) term structure":"Yang-Zhang 20-day volatility"} at ${fp(c)}. The system's ${ECFG.stopATR}-ATR stop is ${fp(ECFG.stopATR*s.atr[i])} away, about ${fmt(ECFG.stopATR*s.atr[i]/c/sdH(5),1)}σ of a 5-day move.</div>`;
+ // distribution and tails
+ const rr=r.slice(-2000),m=rr.reduce((a,b)=>a+b,0)/rr.length,sd=Math.sqrt(rr.reduce((a,b)=>a+(b-m)**2,0)/(rr.length-1)),sk=rr.reduce((a,b)=>a+((b-m)/sd)**3,0)/rr.length,ku=rr.reduce((a,b)=>a+((b-m)/sd)**4,0)/rr.length-3;
+ const srt=rr.slice().sort((a,b)=>a-b),hill=(xs)=>{const k=Math.max(10,Math.floor(xs.length*.05)),t=xs.slice(-k-1),u=t[0];return u>0?1/(t.slice(1).reduce((a,b)=>a+Math.log(b/u),0)/k):NaN};
+ const hl=hill(srt.map(v=>-v).filter(v=>v>0).sort((a,b)=>a-b)),hr2=hill(srt.filter(v=>v>0)),q=p=>quantSortedUI(srt,p),es=p=>{const t=srt.slice(0,Math.max(1,Math.floor(p*srt.length)));return t.reduce((a,b)=>a+b,0)/t.length};
+ const xs=[...Array(80).keys()].map(k=>m-5*sd+k*10*sd/79),bw=(srt[srt.length-1]-srt[0])/60;
+ Plotly.react("v-dist",[{type:"histogram",x:rr,histnorm:"probability density",name:"actual",marker:{color:"rgba(57,135,229,.55)"},nbinsx:80},{x:xs,y:xs.map(v=>Math.exp(-0.5*((v-m)/sd)**2)/(sd*Math.sqrt(2*Math.PI))),name:"normal",mode:"lines",line:{color:"#fab219",width:2}}],
+  base2(260,{bargap:0,xaxis:{tickformat:".0%",gridcolor:C.grid},yaxis:{gridcolor:C.grid,title:{text:"density",font:{size:9}}},hovermode:false}),CFG);
+ $("v-tails").innerHTML=`<table class="em"><tr><th>last ${rr.length} days</th><th>value</th><th>reading</th></tr><tr><td>skew</td><td>${fmt(sk,2)}</td><td>${sk<-.2?"crashes larger than spikes":sk>.2?"spikes larger than drops":"roughly symmetric"}</td></tr><tr><td>excess kurtosis</td><td>${fmt(ku,1)}</td><td>${ku>3?"fat tails: big days far more common than a normal model says":"moderate tails"}</td></tr>
+  <tr><td>Hill tail index (down / up)</td><td>${fmt(hl,1)} / ${fmt(hr2,1)}</td><td>lower = fatter tail; below 4 means very fat</td></tr><tr><td>1-day VaR 95% / 99%</td><td>${pct(-q(.05),1)} / ${pct(-q(.01),1)}</td><td>normal model: ${pct(1.645*sd,1)} / ${pct(2.326*sd,1)}</td></tr><tr><td>expected shortfall 95% / 99%</td><td>${pct(-es(.05),1)} / ${pct(-es(.01),1)}</td><td>average loss on the worst days</td></tr></table>`;
+ // clustering + leverage
+ const acf=(a,L)=>{const n=a.length,mm=a.reduce((x,y)=>x+y,0)/n,v=a.reduce((x,y)=>x+(y-mm)**2,0);return [...Array(L).keys()].map(k=>{let s0=0;for(let t=k+1;t<n;t++)s0+=(a[t]-mm)*(a[t-k-1]-mm);return s0/v})};
+ const L=30,ab=rr.map(Math.abs),lag=[...Array(L).keys()].map(k=>k+1),lev=[...Array(10).keys()].map(k=>{const a=[],b=[];for(let t=0;t+k+1<rr.length;t++){a.push(rr[t]);b.push(Math.abs(rr[t+k+1]))}const ma=a.reduce((x,y)=>x+y,0)/a.length,mb=b.reduce((x,y)=>x+y,0)/b.length;let cv=0,va=0,vb=0;a.forEach((v,j)=>{cv+=(v-ma)*(b[j]-mb);va+=(v-ma)**2;vb+=(b[j]-mb)**2});return cv/Math.sqrt(va*vb)});
+ Plotly.react("v-acf",[{x:lag,y:acf(ab,L),name:"|return| (clustering)",type:"bar",marker:{color:"#fab219"}},{x:lag,y:acf(rr,L),name:"return",type:"bar",marker:{color:"#3987e5"}},{x:lag.slice(0,10),y:lev,name:"return → later |return| (leverage)",mode:"lines+markers",line:{color:"#e66767"}},
+  {x:[1,L],y:[2/Math.sqrt(rr.length),2/Math.sqrt(rr.length)],mode:"lines",line:{color:"#555",dash:"dot"},name:"noise band",showlegend:false},{x:[1,L],y:[-2/Math.sqrt(rr.length),-2/Math.sqrt(rr.length)],mode:"lines",line:{color:"#555",dash:"dot"},showlegend:false}],
+  base2(300,{barmode:"group",xaxis:{title:{text:"lag (days)",font:{size:10}},gridcolor:C.grid},yaxis:{gridcolor:C.grid},hovermode:"x"}),CFG);
+ // forecast check: next-5-day realised (OHLC proxy) vs forecasts made at t, only where t+5 <= i
+ const fr=[],fg=[],fh=[],fy=[],fd=[];for(let t=Math.max(s.first,lo0);t+5<=i;t++){let a=0,ok=true;for(let k=1;k<=5;k++){if(!isF(s.rv[t+k]))ok=false;a+=s.rv[t+k]}if(!ok)continue;fr.push(Math.sqrt(a/5*252)*100);fg.push(s.garch[t]);fh.push(s.har5[t]);fy.push(s.yz20[t]);fd.push(s.d[t])}
+ const err=(f)=>{let se=0,n=0;f.forEach((v,k)=>{if(isF(v)&&fr[k]>0&&v>0){se+=(Math.log(v)-Math.log(fr[k]))**2;n++}});return n?Math.sqrt(se/n):NaN};
+ Plotly.react("v-fc",[{x:fd,y:fr,name:"realised next 5 days",mode:"lines",line:{color:"rgba(255,255,255,.55)",width:1}},{x:fd,y:fg,name:`GARCH (log-RMSE ${fmt(err(fg),2)})`,mode:"lines",line:{color:"#fab219",width:1.5}},{x:fd,y:fh,name:`HAR (${fmt(err(fh),2)})`,mode:"lines",line:{color:"#c08cff",width:1.3}},{x:fd,y:fy,name:`YZ20 as forecast (${fmt(err(fy),2)})`,mode:"lines",line:{color:"#3987e5",width:1}}],
+  base2(300,{yaxis:{ticksuffix:"%",gridcolor:C.grid,type:"log"}}),CFG);
+ $("v-use").innerHTML=`<p><b>Stops.</b> The system stop is ${ECFG.stopATR} ATR (${fp(ECFG.stopATR*s.atr[i])}). That is ${fmt(ECFG.stopATR*s.atr[i]/c/sdH(5),1)} five-day standard deviations, so ordinary noise rarely reaches it. When volatility jumps, ATR widens with it, so the stop keeps the same meaning.</p>
+  <p><b>Size.</b> Risking ${$("t-risk").value}% of equity with that stop means about <b>${pct(+$("t-risk").value/100/(ECFG.stopATR*s.atr[i]/c),0)}</b> of equity in the position. Higher volatility automatically means a smaller position.</p>
+  <p><b>Setup quality.</b> Rising volatility (5-day above 60-day) and a high volatility rank both carry positive weight in the Reversal Edge Score. Today they read <b>${isF(s.vterm[i])?(s.vterm[i]>0?"rising":"falling"):"—"}</b> and <b>${pct(s.vrank[i],0)}</b>.</p>
+  <p><b>Which forecast to trust.</b> Lower log-RMSE in the forecast check is better. GARCH reacts fastest to shocks; HAR blends day, week and month and is usually steadiest; Yang-Zhang is the best measure of what already happened.</p>`}
+
+// ------------------------------------------------ Model tab extras: weights, evidence, results by third
+function drawEdge(){const el=$("edgebox");if(!el)return;const s=S();if(!RES||!s){el.innerHTML="";return}
+ const i=cur(),stp=lastStep(s,i),w0=RES.prior.w;
+ el.innerHTML=`<h2>${esc(st.sym)} · Reversal Edge weights and evidence</h2><div class="tw"><table class="bl"><tr><th>sign</th><th>family</th><th>research weight</th><th>weight now</th><th>87 stocks Δ</th><th>TSLA 11-17 Δ</th><th>TSLA 18-26 Δ</th><th style="text-align:left">meaning</th></tr>`+
+  RES.signs.map((g,k)=>`<tr><td>${esc(g[1])}</td><td>${esc(g[2])}</td><td>${fmt(w0[g[0]],2)}</td><td>${stp?fmt(stp.coef[k],2):"—"}</td>${g[4].map(v=>`<td class="${cl(v)}">${v>0?"+":""}${v} bp</td>`).join("")}<td style="text-align:left;white-space:normal;min-width:260px">${esc(g[3])}</td></tr>`).join("")+`</table></div>
+  <div class="note" style="margin:6px 0 14px">Δ = average trade of RSI(2)&lt;10 setups in the top third of that sign minus the bottom third. Every kept sign points the same way in all three samples; signs that flipped (z-score depth, trend, 5-day drop, close location) were left out. Gap and lower wick count against the trade.</div>
+  <h2>Results by score third</h2><div class="tw"><table class="bl"><tr><th>score third</th><th>87 stocks: avg trade</th><th>87 stocks: won</th><th>TSLA (unseen): avg trade</th><th>TSLA: won</th><th>${esc(st.sym)} so far: trades</th><th>avg trade</th><th>won</th></tr>`+
+  [0,1,2].map(k=>`<tr><td style="color:${THIRD_COL[k]}">${THIRD_NAME[k]}</td><td class="${cl(RESEARCH_THIRDS.avg87[k])}">${(RESEARCH_THIRDS.avg87[k]/100).toFixed(2)}%</td><td>${pct(RESEARCH_THIRDS.win87[k],0)}</td><td class="${cl(RESEARCH_THIRDS.avgT[k])}">${(RESEARCH_THIRDS.avgT[k]/100).toFixed(2)}%</td><td>${pct(RESEARCH_THIRDS.winT[k],0)}</td><td>${stp?stp.thirds[k].n:"—"}</td><td class="${cl(stp&&stp.thirds[k].avg)}">${stp?spct(stp.thirds[k].avg,2):"—"}</td><td>${stp?pct(stp.thirds[k].win,0):"—"}</td></tr>`).join("")+`</table></div>
+  <div class="note" style="margin-top:6px">Trades: RSI(2)&lt;10 setup, buy next open, exit on the first close above the 5-day average, 3-ATR stop or 10 bars, 10 bp round-trip cost. The ${esc(st.sym)} column counts only setups resolved before the latest refit.</div>`}
+
+// ------------------------------------------------ model
+function calFig(c,h=260){const T=[{x:[0,1],y:[0,1],mode:"lines",line:{color:C.axis,width:1},hoverinfo:"skip",showlegend:false}];
+ if(c&&c.p_mean)T.push({x:c.p_mean,y:c.y_rate,mode:"lines+markers",line:{color:C.violet,width:2},marker:{size:7,color:C.violet},customdata:c.n,showlegend:false,error_y:{type:"data",symmetric:false,array:c.hi.map((v,k)=>v-c.y_rate[k]),arrayminus:c.lo.map((v,k)=>c.y_rate[k]-v),color:rgba(C.violet,.6),thickness:1,width:0},hovertemplate:"predicted %{x:.3f} · observed %{y:.3f} · n %{customdata}<extra></extra>"});
+ return [T,base(h,{title:{text:"reliability (out of sample)",font:{size:11,color:C.ink2},x:.01},showlegend:false,xaxis:{range:[0,1],gridcolor:C.grid,title:{text:"predicted",font:{size:10}}},yaxis:{range:[0,1],gridcolor:C.grid,title:{text:"observed",font:{size:10}}}})]}
+function famWeights(d){const fams=Object.keys(C.fam),a=1-Math.pow(.5,1/4);let sm=null;const rows=d.steps.map(s=>{const raw=fams.map(f=>RES.names.reduce((acc,n,k)=>{const sp=RES.features.find(x=>x[0]===n);return acc+(sp&&sp[1]===f?Math.abs(s.coef[k]):0)},0));
+  const tot=raw.reduce((x,y)=>x+y,0)||1,sh=raw.map(v=>v/tot);sm=sm?sm.map((v,k)=>v+a*(sh[k]-v)):sh;return sm});return {fams,rows,d:d.steps.map(s=>s.d)}}
+function drawModel(){if(!RES){needRun("cards");["impbars","famarea","calib","roc"].forEach(id=>clr(id));$("imp-title").textContent="";return}
+ const m=RES.metrics.symbols,ok=RES.syms.filter(s=>RES.symbols[s]);
+ $("cards").innerHTML=ok.map(s=>{const c=m[s].classification,t=m[s].trading,K=(l,v,cls="")=>`<div class="k"><div class="lab">${l}</div><div class="v ${cls}">${v}</div></div>`;
+  return `<div class="card"><h3>${esc(s)}<span>${c.n} OOS samples · base rate ${fmt(c.base_rate,2)}</span></h3><div class="kg">${K("ROC AUC",fmt(c.roc_auc))}${K("Brier skill",fmt(c.brier_skill,3),c.brier_skill>0?"pos":"neg")}${K("ECE",fmt(c.ece))}${K("Prec@thr",fmt(c.precision_at_thr))}${K("Signals",m[s].signals)}
+   ${K("Trades",t.n_trades)}${K("Win",pct(t.win_rate,0))}${K("Exp.",fmt(t.expectancy_R,2,"R"))}${K("P&L",Math.round(t.pnl).toLocaleString())}${K("Retrains",RES.symbols[s].steps.length)}</div><div id="cal-${esc(s)}" style="margin-top:6px"></div></div>`}).join("");
+ ok.forEach(s=>Plotly.react("cal-"+s,...calFig(m[s].classification.cal),{displayModeBar:false,responsive:true}));
+ const d=S();if(!d)return;const fw=famWeights(d);$("imp-title").textContent=`${st.sym} · feature weights: |standardised coefficient| by family, EWMA-smoothed across retrains`;
+ const is=$("impstep");is.max=Math.max(0,d.steps.length-1);if(!is.dataset.touched||+is.value>+is.max)is.value=is.max;impBars();
+ Plotly.react("famarea",fw.fams.map((f,k)=>({x:fw.d,y:fw.rows.map(r=>r[k]),name:f,mode:"lines",stackgroup:"one",line:{width:.5,color:C.fam[f]},fillcolor:rgba(C.fam[f],.75),hovertemplate:f+" %{y:.0%}<extra></extra>"})),
+  base(620,{title:{text:"weight share by feature family over retrains",font:{size:11,color:C.ink2},x:.01},hovermode:"x unified",yaxis:{range:[0,1],tickformat:".0%",gridcolor:C.grid},legend:{orientation:"h",x:0,y:-.1,yanchor:"top",font:{size:9}},margin:{l:44,r:10,t:30,b:70}}),CFG);
+ Plotly.react("calib",...calFig(m[st.sym].classification.cal,320),CFG);
+ const pairs=[];d.P.forEach((p,i)=>{if(isF(p)&&d.setup[i]&&isF(d.y[i]))pairs.push([p,d.y[i]])});pairs.sort((a,b)=>b[0]-a[0]);const P=pairs.filter(q=>q[1]===1).length,Nn=pairs.length-P;let tp=0,fp=0;const fx=[0],fy=[0];pairs.forEach(q=>{q[1]?tp++:fp++;fx.push(fp/Nn);fy.push(tp/P)});
+ Plotly.react("roc",[{x:[0,1],y:[0,1],mode:"lines",line:{color:C.axis,width:1},showlegend:false,hoverinfo:"skip"},{x:fx,y:fy,mode:"lines",line:{color:C.violet,width:2},showlegend:false,hovertemplate:"FPR %{x:.2f} TPR %{y:.2f}<extra></extra>"}],
+  base(320,{title:{text:`ROC · AUC ${fmt(m[st.sym].classification.roc_auc)}`,font:{size:11,color:C.ink2},x:.01},showlegend:false,xaxis:{range:[0,1],gridcolor:C.grid},yaxis:{range:[0,1],gridcolor:C.grid}}),CFG)}
+function impBars(){const d=S();if(!d||!d.steps.length)return;const i=+$("impstep").value,s=d.steps[i];$("impd").textContent=s.d;
+ const items=RES.names.map((n,k)=>[n,s.coef[k]]).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).reverse();
+ Plotly.react("impbars",[{type:"bar",orientation:"h",x:items.map(q=>q[1]),y:items.map(q=>q[0]),marker:{color:items.map(q=>C.fam[(RES.features.find(f=>f[0]===q[0])||[])[1]]||C.muted)},
+  customdata:items.map(q=>(RES.features.find(f=>f[0]===q[0])||["","",""]).slice(1)),hovertemplate:"%{y} · %{customdata[0]}<br>%{customdata[1]}<br>coefficient %{x:+.3f}<extra></extra>"}],
+  base(620,{title:{text:`weights at refit ${s.d} (${s.n} setups, ${s.own} own) · bigger = more influence on the score`,font:{size:11,color:C.ink2},x:.01},showlegend:false,margin:{l:130,r:12,t:30,b:28},yaxis:{tickfont:{family:"JetBrains Mono,monospace",size:10,color:C.ink2}}}),CFG)}
+$("impstep").addEventListener("input",e=>{e.target.dataset.touched=1;impBars()});
+
+// ------------------------------------------------ performance
+function drawPerf(){if(!RES){needRun("pk");["eqplot","rhist","exits","monthly"].forEach(id=>clr(id));$("attr").innerHTML="";return}
+ const p=RES.metrics.portfolio,c=RES.metrics.pooled,bt=RES.bt,K=(l,v,n="",cls="")=>`<div class="k"><div class="lab">${l}</div><div class="v ${cls}">${v}</div><div class="note">${n}</div></div>`;
+ $("pk").innerHTML=K("Sharpe",fmt(p.sharpe,2),"buy&hold "+fmt(p.bh_sharpe,2),p.sharpe>0?"pos":"neg")+K("Sortino",fmt(p.sortino,2))+K("CAGR",pct(p.cagr,2))+K("Max DD",pct(p.max_drawdown),"buy&hold "+pct(p.bh_max_drawdown))
+  +K("Trades",p.n_trades,fmt(p.trades_per_year,1)+"/yr")+K("Win rate",pct(p.win_rate))+K("Expectancy",fmt(p.expectancy_R,2,"R"),"",p.expectancy_R>0?"pos":"neg")+K("Profit factor",fmt(p.profit_factor,2))+K("OOS AUC",fmt(c.roc_auc),"Brier skill "+fmt(c.brier_skill,3))+K("All setups, no filter",fmt(RES.metrics.portfolioAll.expectancy_R,2,"R"),"Sharpe "+fmt(RES.metrics.portfolioAll.sharpe,2)+" · "+RES.metrics.portfolioAll.n_trades+" trades")+K("Time in market",pct(RES.bt.exposure,0),"total return "+pct(p.total_return,0));
+ if(!bt.eq.length){clr("eqplot",'<div class="empty">No out-of-sample period to simulate.</div>');return}
+ Plotly.react("eqplot",[{x:bt.d,y:bt.eq,name:"strategy (score filter)",line:{color:C.blue,width:2},hovertemplate:"strategy %{y:,.0f}<extra></extra>"},{x:RES.btAll.d,y:RES.btAll.eq,name:"all RSI(2) setups",line:{color:"#8a8a85",width:1.2,dash:"dot"},hovertemplate:"all setups %{y:,.0f}<extra></extra>"},{x:bt.d,y:bt.bh,name:"buy & hold (equal weight)",line:{color:C.muted,width:1.3},hovertemplate:"buy & hold %{y:,.0f}<extra></extra>"},
+  {x:bt.d,y:bt.dd,name:"strategy drawdown",fill:"tozeroy",line:{color:C.red,width:1},fillcolor:rgba(C.red,.35),yaxis:"y2",hovertemplate:"DD %{y:.1f}%<extra></extra>"},{x:bt.d,y:bt.bhdd,name:"buy & hold drawdown",line:{color:C.muted,width:1},yaxis:"y2",hovertemplate:"B&H DD %{y:.1f}%<extra></extra>"}],
+  base(520,{hovermode:"x unified",hoversubplots:"axis",yaxis:{domain:[.34,1],type:"log",gridcolor:C.grid},yaxis2:{domain:[0,.3],ticksuffix:"%",gridcolor:C.grid},legend:{x:.005,y:.99,yanchor:"top",orientation:"h",bgcolor:"rgba(26,26,25,.75)",font:{size:10}},
+   annotations:[{text:"equity · strategy vs buy & hold",xref:"paper",yref:"paper",x:1,y:1,xanchor:"right",yanchor:"bottom",showarrow:false,font:{size:10,color:C.muted}},{text:"underwater (drawdown)",xref:"paper",yref:"paper",x:1,y:.3,xanchor:"right",yanchor:"bottom",showarrow:false,font:{size:10,color:C.muted}}]}),CFG);
+ const R=bt.trades.map(t=>Math.max(-4,Math.min(4,t.R))).filter(isF);
+ Plotly.react("rhist",[{type:"histogram",x:R.filter(r=>r>0),xbins:{start:-4,end:4,size:.25},name:"winners",marker:{color:rgba(C.good,.8),line:{color:C.surface,width:1}}},{type:"histogram",x:R.filter(r=>r<=0),xbins:{start:-4,end:4,size:.25},name:"losers",marker:{color:rgba(C.crit,.8),line:{color:C.surface,width:1}}}],
+  base(270,{barmode:"overlay",title:{text:"R-multiple distribution",font:{size:11,color:C.ink2},x:.01},margin:{l:40,r:10,t:40,b:28},legend:{x:.99,xanchor:"right",y:.98,yanchor:"top",font:{size:10}}}),CFG);
+ const ex={};bt.trades.forEach(t=>{(ex[t.exit_reason]=ex[t.exit_reason]||[]).push(isF(t.R)?t.R:0)});const er=Object.entries(ex).map(([k,v])=>[k,v.length,v.reduce((a,b)=>a+b,0)/v.length]).sort((a,b)=>a[1]-b[1]);
+ Plotly.react("exits",[{type:"bar",orientation:"h",x:er.map(q=>q[1]),y:er.map(q=>q[0]),marker:{color:er.map(q=>q[2]>0?C.good:C.crit)},text:er.map(q=>(q[2]>=0?"+":"")+q[2].toFixed(2)+"R avg"),textposition:"outside",textfont:{size:10,color:C.ink2},hovertemplate:"%{y}: %{x} trades<extra></extra>"}],
+  base(270,{title:{text:"exits by reason (colour = average R sign)",font:{size:11,color:C.ink2},x:.01},showlegend:false,margin:{l:70,r:70,t:40,b:28}}),CFG);
+ const mo={};bt.d.forEach((d,i)=>{if(!i)return;const k=d.slice(0,7);mo[k]=(mo[k]||1)*(bt.eq[i]/bt.eq[i-1])});const years=[...new Set(Object.keys(mo).map(k=>k.slice(0,4)))];
+ const Z=years.map(y=>Array.from({length:12},(_,m)=>{const v=mo[`${y}-${String(m+1).padStart(2,"0")}`];return v?(v-1)*100:null}));
+ Plotly.react("monthly",[{type:"heatmap",z:Z,x:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],y:years,zmid:0,zmin:-4,zmax:4,colorscale:[[0,C.red],[.5,"#383835"],[1,C.blue]],xgap:2,ygap:2,
+  text:Z.map(r=>r.map(v=>v==null?"":v.toFixed(1))),texttemplate:"%{text}",textfont:{size:9,color:C.ink},colorbar:{thickness:10,ticksuffix:"%"},hovertemplate:"%{y} %{x}: %{z:.2f}%<extra></extra>"}],
+  base(Math.max(260,22*years.length+70),{title:{text:"monthly returns (%)",font:{size:11,color:C.ink2},x:.01},yaxis:{autorange:"reversed"},showlegend:false}),CFG);
+ $("attr").innerHTML="<tr>"+["symbol","signals","trades","P&L","win","exp. R","AUC","Brier skill","ECE"].map(h=>`<th>${h}</th>`).join("")+"</tr>"+RES.syms.filter(s=>RES.symbols[s]).map(s=>{const t=RES.metrics.symbols[s].trading,c=RES.metrics.symbols[s].classification;
+  return "<tr>"+[esc(s),RES.metrics.symbols[s].signals,t.n_trades,Math.round(t.pnl).toLocaleString(),pct(t.win_rate),fmt(t.expectancy_R,2),fmt(c.roc_auc),fmt(c.brier_skill,3),fmt(c.ece)].map(v=>`<td>${v}</td>`).join("")+"</tr>"}).join("")}
+
+// ------------------------------------------------ trades
+const TC=[["trade_id","#"],["symbol","symbol"],["direction","side"],["entry_date","entry"],["exit_date","exit"],["bars_held","bars"],["exit_reason","exit reason"],["entry_price","entry px"],["exit_price","exit px"],["R","R"],["pnl","P&L"],["weight","size"],["p","P(profit)"],["score","edge score"],["z_entry","z20"],["fear","fear rank"]];
+let tsort={k:"trade_id",asc:true};
+const tval=(k,v)=>k==="pnl"?Math.round(v).toLocaleString():k==="R"?(isF(v)?(v>=0?"+":"")+v.toFixed(2):"—"):k==="regime"?({1:"mean-rev",0:"neutral","-1":"trending"}[v]):typeof v==="number"&&!Number.isInteger(v)?v.toFixed(2):esc(v);
+function drawTrades(){if(!RES){$("trt").innerHTML='<tr><td class="empty">Run the walk-forward in the Data tab first.</td></tr>';return}
+ let t=RES.bt.trades.slice();if($("trsym").checked)t=t.filter(x=>x.symbol===st.sym);t.sort((a,b)=>{const u=a[tsort.k],v=b[tsort.k];return (u>v?1:u<v?-1:0)*(tsort.asc?1:-1)});
+ $("trt").innerHTML="<tr>"+TC.map(([k,h])=>`<th data-k="${k}">${h}${tsort.k===k?(tsort.asc?" ▲":" ▼"):""}</th>`).join("")+"</tr>"+(t.length?t.map(x=>`<tr data-s="${esc(x.symbol)}" data-d="${x.entry_date}">`+TC.map(([k])=>`<td style="${k==="R"?`color:${x.R>0?"#6fd06f":"#f08c8c"}`:""}">${tval(k,x[k])}</td>`).join("")+"</tr>").join(""):`<tr><td colspan="16" class="note" style="text-align:left">No trades with these settings. Try a lower probability threshold, entry |z| or min confluence.</td></tr>`)}
+$("trt").addEventListener("click",e=>{const th=e.target.closest("th");if(th){const k=th.dataset.k;tsort={k,asc:tsort.k===k?!tsort.asc:true};drawTrades();return}
+ const tr=e.target.closest("tr[data-s]");if(!tr)return;focusDate(tr.dataset.s,tr.dataset.d)});
+$("trsym").addEventListener("change",drawTrades);
+window.claude?.use?.("downloads").then(dl=>{if(!dl)return;const b=$("dlcsv");b.hidden=false;b.addEventListener("click",async()=>{if(!RES)return;
+ const rows=[TC.map(c=>c[0]).join(",")].concat(RES.bt.trades.map(t=>TC.map(([k])=>t[k]).join(",")));try{await dl.save({filename:"quantlab_trades.csv",data:rows.join("\n")})}catch(e){}})}).catch(()=>{});
+
+
+// ------------------------------------------------ Research tab
+$("research").innerHTML=`
+<h2 style="font-size:18px">How this system was built, and what the evidence says</h2>
+<p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>What works</h2>
+<p><b>1. A short-term oversold trigger with a quick exit.</b> Buy when the 2-day RSI closes below 10 (Connors &amp; Alvarez). Sell on the first close back above the 5-day average, at a 3-ATR stop, or after 10 days. This was profitable on 80% of the 87 stocks and in both Tesla periods (2011–17: +0.56% per trade; 2018–26: +0.23%, about 70% winners). In a portfolio of the 87 stocks, 2015–2017, it earned a Sharpe ratio around 1.6–1.7, against 0.96 for buy &amp; hold. The exit matters more than the entry: holding a fixed 5 days instead cut the Sharpe ratio to about 0.5.</p>
+<p><b>2. Not every setup is equal.</b> Within RSI(2) setups, nine signs pointed the same way in all three samples (87 stocks, Tesla 2011–17, Tesla 2018–26). They are combined into the <b>Reversal Edge Score</b>, with weights fitted on the 87 stocks by non-negative least squares on trade returns:</p>
+<ul>
+<li><b>Market fear (VIX rank)</b>, weight 1.95. Reversal profits are pay for providing liquidity, and they are highest when the market is scared (Nagel 2012, "Evaporating Liquidity"). In the 87 stocks, a stretched stock bounced +0.85% more over 5 days when the VIX was in its top 20%, and it <i>underperformed</i> by 0.23% when the VIX was calm.</li>
+<li><b>News-like gap</b>, counts against the trade, weight 2.16. Moves with news tend to drift, while moves without news reverse (Chan 2003). A big opening gap is the best daily-data proxy for news.</li>
+<li><b>Rising volatility</b> (5-day above 60-day), weight 1.59, and <b>high volatility rank</b>. Stress periods pay the most. Recent work finds volatility, more than volume, drives reversals (Bogousslavsky, LeBaron &amp; Pontiff 2024).</li>
+<li><b>Down streak</b>, weight 0.93. Consecutive lower closes.</li>
+<li><b>Relative volume</b>, weight 0.84, and <b>range expansion</b>, weight 0.76. Price drops on heavy volume reverse more (Campbell, Grossman &amp; Wang 1993; Conrad, Hameed &amp; Niden 1994). In the 87 stocks, stretched drops on above-normal volume bounced about +0.5% more over 5 days (t≈3); drops on low volume showed no bounce at all.</li>
+<li><b>Lower wick</b>, counts against the trade, weight 0.77. A long lower wick ("hammer") means the bounce already happened during the day.</li>
+</ul>
+<p>The score transferred to Tesla without any Tesla training. The top third of setups averaged <b>+1.64%</b> per trade (2011–17) and <b>+1.12%</b> (2018–26); the bottom third −0.09% and −0.46%. On the 87 stocks, walk-forward, the top third beat the bottom third in every year. Its probabilities are calibrated: it predicted 61% / 66% / 70% winners by third, and the actual rates were 61% / 65% / 71% (87 stocks) and 66% / 68% / 72% (Tesla).</p>
+<h2>The full system on Tesla (in this terminal, 2011–2026)</h2>
+<p>Trading RSI(2) setups in the top third of the score, 100% of equity per trade, with the 5-day-average exit, a 3-ATR stop and costs: <b>+375% total (11.1% a year)</b>, Sharpe 0.61, maximum drawdown −37%, 91 trades, 71% won, in the market about 6% of the time. Trading every setup instead: +247%, Sharpe 0.44, drawdown −61%, 206 trades. Fewer, better trades made more money with less pain. Buy &amp; hold made far more on Tesla (about 43% a year) but fell 74% on the way.</p>
+<h2>What does not work (so the system does not use it)</h2>
+<ul>
+<li><b>Shorting stocks that rose.</b> It lost money in every test, and badly on Tesla. The system buys drops only; shorting stays available, with a warning.</li>
+<li><b>Candlestick patterns</b> (hammer, engulfing, key reversal) as signals on their own: no reliable edge.</li>
+<li><b>Deeper z-score stretch</b> and <b>the 200-day trend filter</b>: they helped on some samples and hurt on others, so they are shown for context but not scored. A deep z-score of −2 or lower actually lost money on Tesla.</li>
+<li><b>The earlier 22-feature machine-learning model</b> on the Kalman fair value: about 0.57 AUC on Tesla with no calibrated edge. It was replaced.</li>
+</ul>
+<h2>The adaptive zones</h2>
+<p>Each stock has its own "normal" stretch. The zones on the chart are the stock's own percentiles of its 20-day z-score over the last three years (2.5%, 10%, 25%, 75%, 90%, 97.5%), recomputed every day from past data only. The inspector shows, for each zone, how often price got back to its 20-day mean within 10 days, and the average 5-day move, using only outcomes known before the bar you are looking at.</p>
+<h2>Volatility</h2>
+<p>The Volatility tab follows the professional toolkit:</p>
+<ul>
+<li>Five realised-volatility estimators: close-to-close, Parkinson (1980), Garman–Klass (1980), Rogers–Satchell (1991) and Yang–Zhang (2000). Yang–Zhang is the most efficient estimator that handles both overnight gaps and drift.</li>
+<li>A GARCH(1,1) model (Bollerslev 1986) fitted by maximum likelihood every 250 days, with its forecast term structure, persistence and shock half-life.</li>
+<li>A HAR forecast (Corsi 2009) on an OHLC daily-variance proxy.</li>
+<li>A volatility cone (Burghardt &amp; Lane 1990).</li>
+<li>Fat-tail statistics (skew, kurtosis, Hill tail index, VaR and expected shortfall), volatility clustering and the leverage effect.</li>
+<li>An out-of-sample check of which forecast was most accurate on your stock.</li>
+</ul>
+<h2>Honest limits</h2>
+<ul>
+<li>The edge is real but modest and noisy: a few tenths of a percent per trade on average, more in the top third.</li>
+<li>Tesla buy &amp; hold made about 43% a year from 2011 to 2026; no strategy that is in the market 10–20% of the time beats that in total return. Its value is in risk-adjusted return, smaller drawdowns, and capital that is free between trades.</li>
+<li>The 87-stock sample covers a bull market (2013–2017). Past results do not guarantee future ones. Practise in bar replay, compare your journal with the system, and size small. This is research software, not financial advice.</li>
+</ul>
+<h2>References</h2>
+<ol class="ref">
+<li>Nagel, S. (2012). Evaporating Liquidity. <i>Review of Financial Studies</i> 25(7). <a href="https://www.nber.org/papers/w17653" target="_blank" rel="noopener">NBER w17653</a></li>
+<li>Campbell, J., Grossman, S. &amp; Wang, J. (1993). Trading Volume and Serial Correlation in Stock Returns. <i>Quarterly Journal of Economics</i> 108(4). <a href="https://dash.harvard.edu/bitstream/1/3128710/2/campbell_trading.pdf" target="_blank" rel="noopener">PDF</a></li>
+<li>Conrad, J., Hameed, A. &amp; Niden, C. (1994). Volume and Autocovariances in Short-Horizon Individual Security Returns. <i>Journal of Finance</i> 49(4).</li>
+<li>Gervais, S., Kaniel, R. &amp; Mingelgrin, D. (2001). The High-Volume Return Premium. <i>Journal of Finance</i> 56(3). <a href="https://rodneywhitecenter.wharton.upenn.edu/wp-content/uploads/2014/04/9901.pdf" target="_blank" rel="noopener">PDF</a></li>
+<li>Chan, W. (2003). Stock Price Reaction to News and No-News: Drift and Reversal after Headlines. <i>Journal of Financial Economics</i> 70(2).</li>
+<li>Bogousslavsky, V., LeBaron, B. &amp; Pontiff, J. (2024). A Century of Market Reversals: Resurrecting Volatility. <a href="https://abfer.org/component/edocman/main-annual-conference/a-century-of-market-reversals-resurrecting-volatility" target="_blank" rel="noopener">ABFER 2024</a></li>
+<li>Lehmann, B. (1990). Fads, Martingales, and Market Efficiency. <i>QJE</i> 105(1); Jegadeesh, N. (1990). Evidence of Predictable Behavior of Security Returns. <i>Journal of Finance</i> 45(3).</li>
+<li>Connors, L. &amp; Alvarez, C. (2008). <i>Short Term Trading Strategies That Work</i> (RSI(2), 5-day-average exit).</li>
+<li>Pagonidis, A. (2013). The IBS Effect: Mean Reversion in Equity ETFs; replication: <a href="https://arxiv.org/abs/2306.12434" target="_blank" rel="noopener">arXiv 2306.12434</a></li>
+<li>Avellaneda, M. &amp; Lee, J. (2010). Statistical Arbitrage in the US Equities Market. <i>Quantitative Finance</i> 10(7).</li>
+<li>Yang, D. &amp; Zhang, Q. (2000). Drift-Independent Volatility Estimation Based on High, Low, Open and Close Prices. <i>Journal of Business</i> 73(3).</li>
+<li>Parkinson, M. (1980); Garman, M. &amp; Klass, M. (1980); Rogers, L. &amp; Satchell, S. (1991): range-based volatility estimators.</li>
+<li>Bollerslev, T. (1986). Generalized Autoregressive Conditional Heteroskedasticity. <i>Journal of Econometrics</i> 31(3).</li>
+<li>Corsi, F. (2009). A Simple Approximate Long-Memory Model of Realized Volatility. <i>Journal of Financial Econometrics</i> 7(2).</li>
+<li>Burghardt, G. &amp; Lane, M. (1990). How to Tell if Options Are Cheap. <i>Journal of Portfolio Management</i> 16(2). <a href="https://www.m-x.ca/f_publications_en/cone_vol_en.pdf" target="_blank" rel="noopener">volatility cones</a></li>
+<li>López de Prado, M. (2018). <i>Advances in Financial Machine Learning</i> (walk-forward testing, triple-barrier labels).</li>
+<li>Data: <a href="https://github.com/yumoxu/stocknet-dataset" target="_blank" rel="noopener">StockNet price data</a> (87 stocks); <a href="https://github.com/datasets/finance-vix" target="_blank" rel="noopener">datasets/finance-vix</a> (CBOE VIX).</li>
+</ol>`;
+
+// ------------------------------------------------ wiring
+function renderLive(){renderSigbar();if(!draft.show)defaultLevels();else ticketChanged(false);if(st.tab==="mine")drawMine();
+ if(REPLAY){const d=DS[REPLAY.sym];$("rp-date").textContent=d?`${d.d[REPLAY.idx]} · bar ${REPLAY.idx-REPLAY.startIdx>=0?"+":""}${REPLAY.idx-REPLAY.startIdx}`:""}}
+function focusDate(sym,date){if(REPLAY&&REPLAY.sym!==sym)exitReplay();if(sym!==st.sym){st.sym=sym;sel.value=sym;symChanged()}show("chart");const i=idxOf(date);if(i<0)return;
+ chart.timeScale().setVisibleLogicalRange({from:i-110,to:i+30});st.pinned=true;st.cursor=i;syncScrub();inspector(i);renderLegend()}
+function renderSymSelect(){const ks=Object.keys(DS).sort();sel.innerHTML=ks.map(k=>`<option ${k===st.sym?"selected":""}>${esc(k)}</option>`).join("")}
+function symChanged(){if(REPLAY&&REPLAY.sym!==st.sym)exitReplay();UI.sym=st.sym;saveUI();st.cursor=null;st.pinned=false;hoverIdx=null;draft.show=false;
+ if(chart){refreshOverlays();showRange();inspector(cur())}renderLive()}
+function afterDataChange(newSym){if(REPLAY&&!DS[REPLAY.sym]){REPLAY=null;saveReplay();syncMode()}
+ if(!DS[st.sym])st.sym=Object.keys(DS)[0]||null;renderSymSelect();renderDS();symChanged();if(Object.keys(DS).length)runNow();else{RES=null;$("snap").textContent="No data yet: upload price history in the Data tab."}}
+function show(t){st.tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+ ["data","chart","scan","mine","vol","model","perf","trades","about"].forEach(k=>$("t-"+k).hidden=k!==t);
+ if(t!=="chart"){setClickMode(null);stopPlay()}
+ if(t==="chart"){if(!chart)buildChart(false);renderLive();inspector(st.cursor!=null?Math.min(st.cursor,cur()):cur())}
+ if(t==="scan")drawScan();
+ if(t==="mine")drawMine();
+ if(t==="model"||t==="perf"||t==="vol"){const id={model:"cards",perf:"pk",vol:"v-est"}[t];if(!window.Plotly)clr(id,'<div class="empty">Loading charts…</div>');
+  needPlotly().then(()=>{if(st.tab!==t)return;if(t==="model"){drawModel();drawEdge()}else if(t==="perf")drawPerf();else drawVol()}).catch(e=>clr(id,`<div class="empty">${esc(e.message)}</div>`))}
+ if(t==="trades")drawTrades()}
+document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.t)));
+sel.addEventListener("change",()=>{st.sym=sel.value;symChanged();if(!["chart","data","about","scan"].includes(st.tab))show(st.tab)});
+document.querySelectorAll("#rng button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#rng button").forEach(x=>x.classList.remove("on"));b.classList.add("on");st.n=+b.dataset.n;showRange();if(st.tab==="vol"&&window.Plotly)drawVol()}));
+
+// boot
+st.sym=REPLAY&&DS[REPLAY.sym]?REPLAY.sym:(UI.sym&&DS[UI.sym]?UI.sym:Object.keys(DS)[0]||null);
+if(REPLAY&&!DS[REPLAY.sym]){REPLAY=null;saveReplay()}
+renderSymSelect();renderDS();syncMode();renderLive();
+await loadFear();
+if(Object.keys(DS).length)runNow();else await loadSample();
+
+})();
+</script>

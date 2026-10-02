@@ -1,0 +1,192 @@
+<style>
+/* additions: TradingView-style chart, signal strip, order ticket, replay, paper trades, reversal radar, volatility */
+.sigbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px 18px;align-items:center;background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:10px 12px;margin-bottom:8px}
+.sigbar .say{min-width:0;font-size:13px;color:var(--ink2);line-height:1.5}.sigbar .say b{color:var(--ink)}
+.sigbar .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.sigbar .row3{grid-column:1/-1;display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center}
+.gauge{display:grid;justify-items:center;gap:2px;min-width:92px}.gauge svg{display:block}.gauge span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.vp{font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:4px;border:1px solid currentColor;white-space:nowrap;display:inline-block}
+.vp.long{color:#4fd1a5;background:rgba(38,166,154,.16)}.vp.short{color:#f08c8c;background:rgba(230,103,103,.16)}.vp.watch{color:var(--warn);background:rgba(250,178,25,.12)}.vp.none{color:var(--muted)}
+.lvls{display:flex;gap:6px;flex-wrap:wrap}.lvls div{background:var(--s2);border-radius:4px;padding:3px 8px;display:grid}.lvls span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.lvls b{font:500 12px var(--mono);color:var(--ink)}
+.chips{display:flex;gap:4px;flex-wrap:wrap;font-size:11px}.chips span{border:1px solid var(--hair);border-radius:10px;padding:1px 8px;white-space:nowrap}.chips .y{color:#6fd06f;border-color:rgba(12,163,12,.45)}.chips .n{color:#f08c8c;border-color:rgba(208,59,59,.45)}.chips .m{color:var(--muted)}
+.tb{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-bottom:6px;font-size:12px}
+.seg2{display:inline-flex;border:1px solid var(--hair);border-radius:5px;overflow:hidden}.seg2 button{background:var(--s2);border:0;color:var(--ink2);padding:5px 11px;cursor:pointer;font:12px var(--sans)}.seg2 button.on{background:#1c4f8f;color:#fff}
+.btn.sm{padding:4px 10px;font-size:12px}
+.rp{display:inline-flex;gap:6px;align-items:center;background:rgba(250,178,25,.08);border:1px solid rgba(250,178,25,.4);border-radius:5px;padding:3px 6px}
+.rp .d{font:11px var(--mono);color:var(--warn);white-space:nowrap}.rp select{padding:3px 6px}
+#lwc-wrap{position:relative;border:1px solid var(--hair);border-radius:6px;overflow:hidden;background:var(--surface)}
+#lwc{position:absolute;inset:0}
+.legend{position:absolute;left:8px;top:6px;z-index:5;pointer-events:none;font:11.5px/1.5 var(--mono);color:var(--ink2);max-width:calc(100% - 90px)}
+.legend .l1,.legend .l2{display:flex;gap:10px;flex-wrap:wrap}.legend b{color:var(--ink);font:600 13px var(--sans)}.legend .lk{color:var(--muted)}
+.up{color:#26a69a}.down{color:#ef5350}.acc{color:var(--warn)}.you{color:#c08cff}
+.hint{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:6;background:var(--panel);border:1px solid var(--warn);border-radius:6px;padding:7px 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:calc(100% - 20px);font-size:12px;color:var(--ink)}
+.rtag{position:absolute;right:70px;top:6px;z-index:5;font:600 10px var(--sans);letter-spacing:.1em;color:#141008;background:var(--warn);padding:2px 7px;border-radius:3px}
+.pnote{font-size:11px;color:var(--muted);margin-top:4px}
+.tk{background:var(--panel);border:1px solid var(--hair);border-radius:6px;padding:10px;margin-bottom:10px;display:grid;gap:8px}
+.tk .row2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tk .sb{padding:7px;border-radius:5px;border:1px solid var(--hair);background:var(--s2);color:var(--ink2);cursor:pointer;font:600 12px var(--sans)}
+.tk .sb.b.on{background:#1f7a70;border-color:#26a69a;color:#fff}.tk .sb.s.on{background:#a83b39;border-color:#ef5350;color:#fff}
+.tf{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:5px 6px;align-items:center;font-size:12px}
+.tf label{color:var(--muted)}.tf input[type=number],.tf input[type=text]{width:100%;background:var(--page);color:var(--ink);border:1px solid var(--hair);border-radius:4px;padding:4px 6px;font:12px var(--mono)}
+.tf .ic{background:var(--s2);border:1px solid var(--hair);color:var(--muted);border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px}.tf .ic.on{color:var(--warn);border-color:rgba(250,178,25,.6)}
+.tf .ck{grid-column:1/-1;display:flex;gap:6px;align-items:center;color:var(--ink2)}
+.tsum{font:11px/1.6 var(--mono);color:var(--muted);background:var(--s2);border-radius:4px;padding:6px 8px}.tsum b{color:var(--ink);font-weight:500}
+.place{width:100%;padding:9px;border-radius:5px;border:0;font:600 13px var(--sans);cursor:pointer;color:#fff}.place.b{background:#1f8a7e}.place.s{background:#c4423f}.place:disabled{opacity:.45;cursor:default}
+.wn{font-size:11px;color:var(--warn)}.er{font-size:11px;color:#f08c8c}.okm{font-size:11px;color:#6fd06f}
+.tag{font:600 9px var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:var(--s2);color:var(--muted)}.tag.r{color:var(--warn)}.tag.l{color:#c08cff}
+.mine-grid{display:grid;gap:14px}
+.ban{border-radius:6px;padding:9px 12px;font-size:13px;border:1px solid;line-height:1.5}.ban.good{border-color:rgba(12,163,12,.5);background:rgba(12,163,12,.1)}.ban.mid{border-color:rgba(250,178,25,.5);background:rgba(250,178,25,.08)}.ban.bad{border-color:rgba(208,59,59,.55);background:rgba(208,59,59,.1)}
+.radar{display:grid;gap:3px;font-size:11px}
+.radar .rr{display:grid;grid-template-columns:minmax(0,1fr) 54px 92px;gap:6px;align-items:center}
+.radar .rr .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.radar .rr .vv{font-family:var(--mono);text-align:right;color:var(--muted)}
+.radar .cb{height:10px;position:relative;background:var(--s2);border-radius:2px}.radar .cb i{position:absolute;top:0;bottom:0}.radar .cb::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;border-left:1px solid var(--axis)}
+.ztab{width:100%;border-collapse:collapse;font-size:11px}.ztab td{padding:2px 4px;border-bottom:1px solid var(--grid)}.ztab td.n{text-align:right;font-family:var(--mono)}.ztab tr.cur td{background:rgba(250,178,25,.1);color:var(--ink)}
+.fan{width:100%;height:auto;display:block}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,560px),1fr));gap:10px}
+.vtxt{max-width:75ch;font-size:13px;line-height:1.6;color:var(--ink2)}.vtxt b{color:var(--ink)}
+.em{width:100%;border-collapse:collapse;font:12px var(--mono)}.em th,.em td{padding:4px 8px;border-bottom:1px solid var(--grid);text-align:right}.em th{color:var(--muted);font:500 10px var(--sans);text-transform:uppercase}.em td:first-child,.em th:first-child{text-align:left}
+.ref{font-size:13px;line-height:1.6}.ref li{margin:4px 0}
+.xs{font-size:11px;color:var(--muted)}
+@media (max-width:1100px){.sigbar{grid-template-columns:auto minmax(0,1fr)}.sigbar .acts{grid-column:1/-1;justify-content:flex-start}}
+</style>
+
+<div class="hdr">
+  <div class="brand"><b>QUANTLAB</b><span>reversal edge · research terminal</span></div>
+  <div class="f"><label for="sym">symbol</label><select id="sym"></select></div>
+  <div class="f"><label>range</label><div class="rng" id="rng"><button data-n="126">6M</button><button data-n="252" class="on">1Y</button><button data-n="504">2Y</button><button data-n="1260">5Y</button><button data-n="0">All</button></div></div>
+  <div class="live">LIVE · RUNS IN YOUR BROWSER</div>
+  <div class="snap" id="snap">No data yet: upload price history in the Data tab.</div>
+</div>
+<nav class="tabs" id="tabs"><button data-t="data" class="on">Data &amp; settings</button><button data-t="chart">Chart</button><button data-t="scan">Scanner</button><button data-t="mine">My trades</button><button data-t="vol">Volatility</button><button data-t="model">Model</button><button data-t="perf">Performance</button><button data-t="trades">Trades</button><button data-t="about">Research</button></nav>
+<main>
+  <section id="t-data">
+    <div class="grid2">
+      <div>
+        <div class="panel">
+          <h3>1 · Upload daily price history</h3>
+          <label class="drop" id="drop" for="file"><b>Drop CSV files here</b> or click to choose<br><span class="note">One file per stock (AAPL.csv, tsla_us_d.csv…) or one file with a Ticker column. Needs Date, Open, High, Low, Close; Volume and Adj Close are used when present. A file named VIX.csv (or ^VIX) is used as the market fear index instead of a stock.</span></label>
+          <input type="file" id="file" accept=".csv,.txt,text/csv" multiple hidden>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn ghost" id="sample">Load sample: TSLA (real, 2010–2026)</button><button class="btn ghost" id="clear">Remove all</button></div>
+          <div id="dslist" style="margin-top:10px"></div>
+          <div class="status" id="parsemsg"></div>
+          <div class="status" id="fearmsg"></div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h3>2 · Run</h3>
+          <button class="btn" id="run">Run the system</button>
+          <div class="bar"><i id="prog"></i></div>
+          <div class="status" id="runmsg">Trading settings rerun instantly; signal settings refit the model (about a second per symbol).</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Settings</h3>
+        <div class="set" id="settings">
+          <div class="h">Setup and score</div>
+          <label for="c-trig" title="A setup starts when the 2-day RSI closes below this level (Connors). Lower = deeper oversold, fewer setups.">setup: RSI(2) below</label><input id="c-trig" type="number" min="2" max="30" step="1" value="10">
+          <label for="c-scoreThr" title="Only trade setups whose Reversal Edge Score is at least this good. Thirds are from the 87-stock research.">trade setups scoring</label><select id="c-scoreThr"><option value="0.4356">top third (best quality)</option><option value="-1.7889">top two thirds</option><option value="-99">all setups</option></select>
+          <label for="c-side" title="Research: buying drops worked; shorting rises lost money in every test.">direction</label><select id="c-side"><option value="1">long: buy drops (recommended)</option><option value="-1">short: sell rises (not supported by the research)</option></select>
+          <label for="c-adapt" title="Start from the research weights and shift them toward what has worked on your own files as evidence accumulates (walk-forward).">adapt weights to my data</label><select id="c-adapt"><option value="1">yes</option><option value="0">no, keep research weights</option></select>
+          <label for="c-n0" title="How many own setups it takes before the stock's own evidence counts as much as the research. Higher = trust the research longer.">research weight (setups)</label><input id="c-n0" type="number" min="0" max="5000" step="50" value="300">
+          <label for="c-pool" title="Weight on other uploaded symbols' setups when adapting each symbol.">pooling weight</label><input id="c-pool" type="number" step="0.05" min="0" max="1" value="0.5">
+          <label for="c-testDays" title="Bars between refits of the adapted weights.">refit every (bars)</label><input id="c-testDays" type="number" min="5" max="252" value="63">
+          <label for="c-market" title="Optional: a market file such as SPY adds a market-residual fair value for context.">market file (optional)</label><select id="c-market"></select>
+          <div class="h">Exit rules (system and suggested plans)</div>
+          <label for="c-stopATR" title="Protective stop distance from the entry, in ATRs.">stop (ATRs)</label><input id="c-stopATR" type="number" step="0.25" min="0.5" max="10" value="3">
+          <label for="c-maxHold" title="Exit after this many bars if neither the stop nor the 5-day-average exit happened.">max hold (bars)</label><input id="c-maxHold" type="number" min="1" max="60" value="10">
+          <label for="c-slippage" title="Slippage + commission per side.">costs per side (bps)</label><input id="c-slippage" type="number" step="0.5" min="0" max="50" value="5">
+          <div class="h">System sizing (backtest)</div>
+          <label for="c-sizeMode" title="Fixed: each trade uses max position % of equity (split across symbols). Risk-based: size so the stop loses the risk % below.">position sizing</label><select id="c-sizeMode"><option value="fixed">fixed % of equity</option><option value="risk">risk-based (stop distance)</option></select>
+          <label for="c-riskPct" title="Risk-based sizing only: equity lost if the stop is hit.">risk per trade (%)</label><input id="c-riskPct" type="number" step="0.25" min="0.1" max="10" value="2">
+          <label for="c-maxW" title="Largest position as % of equity.">max position (%)</label><input id="c-maxW" type="number" step="5" min="5" max="100" value="100">
+          <label for="c-maxPos" title="Maximum open positions across symbols.">max positions</label><input id="c-maxPos" type="number" min="1" max="20" value="4">
+          <div class="h">Paper trading account</div>
+          <label for="a-start" title="Starting equity for your paper trades.">starting equity ($)</label><input id="a-start" type="number" step="1000" min="1000" value="100000">
+          <label for="a-fill" title="Next bar's open is realistic: you decide after the close.">fill orders at</label><select id="a-fill"><option value="open">next bar's open</option><option value="close">this bar's close</option></select>
+          <label for="a-lev" title="Largest position as a multiple of equity.">max size (× equity)</label><input id="a-lev" type="number" step="0.5" min="0.5" max="4" value="1">
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="t-chart" hidden>
+    <div class="sigbar" id="sigbar"></div>
+    <div class="chartwrap">
+      <div class="cc">
+        <div class="tb">
+          <div class="seg2" role="group" aria-label="Mode"><button id="m-live" class="on">Live</button><button id="m-replay">Bar replay</button></div>
+          <div class="rp" id="rpbar" hidden>
+            <button class="btn ghost sm" id="rp-back" title="Back one bar (←)" aria-label="Back one bar">◀</button>
+            <button class="btn sm" id="rp-play" title="Play / pause (Space)">Play</button>
+            <button class="btn ghost sm" id="rp-fwd" title="Forward one bar (→)" aria-label="Forward one bar">▶</button>
+            <select id="rp-speed" aria-label="Replay speed"><option value="1">1 bar/s</option><option value="3" selected>3 bars/s</option><option value="8">8 bars/s</option><option value="20">20 bars/s</option></select>
+            <span class="d" id="rp-date"></span>
+            <button class="btn ghost sm" id="rp-exit">Exit replay</button>
+          </div>
+          <button class="btn ghost sm" id="hline-btn" title="Click the chart to draw a horizontal price line">Draw line</button>
+          <button class="btn ghost sm" id="clear-lines">Clear lines</button>
+          <span class="note" id="chartnote"></span>
+        </div>
+        <div class="ctl" id="ov"></div>
+        <div class="ctl" id="pn"></div>
+        <div id="lwc-wrap">
+          <div id="lwc"></div>
+          <div class="legend" id="legend"></div>
+          <div class="rtag" id="rtag" hidden>REPLAY</div>
+          <div class="hint" id="pickhint" hidden><span>Click a bar to start the replay there.</span><button class="btn ghost sm" id="rp-year">1 year back</button><button class="btn ghost sm" id="rp-random">Random date</button><button class="btn ghost sm" id="rp-cancel">Cancel</button></div>
+          <div class="hint" id="clickhint" hidden><span id="clicktxt"></span><button class="btn ghost sm" id="click-cancel">Cancel</button></div>
+        </div>
+        <div class="scrub"><span>scrub</span><input type="range" id="scrub" min="0" max="1" value="1" aria-label="Inspect bar"><span id="scrubd"></span></div>
+        <div class="pnote">Markers: green arrow = system signal (with its chance of profit), dots = RSI(2) setups coloured by score third, small amber square = volume climax, grey square = news-like gap, green/red circle = system exit. Shaded zones are this stock's own z-score percentiles (last 3 years): light = 10–25% / 75–90%, strong = 2.5–10% / 90–97.5%. Drag to pan, scroll to zoom. Hover a bar to inspect it; click to pin. Drag the dashed Stop / Target lines to move them.</div>
+      </div>
+      <aside class="insp" id="insp">
+        <div class="tk" id="ticket">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span class="lab">order ticket · paper</span><span class="tag l" id="t-mode">live</span></div>
+          <div class="row2"><button class="sb b on" id="t-buy">Buy / long</button><button class="sb s" id="t-sell">Sell / short</button></div>
+          <div class="tf">
+            <label for="t-entry">Entry</label><input id="t-entry" type="text" readonly tabindex="-1"><span class="note" id="t-fill"></span>
+            <label for="t-stop">Stop</label><input id="t-stop" type="number" step="any"><button class="ic" id="pick-stop" title="Click the chart to set the stop">Pick</button>
+            <label for="t-target">Target</label><input id="t-target" type="number" step="any"><button class="ic" id="pick-target" title="Click the chart to set the target">Pick</button>
+            <label for="t-risk">Risk %</label><input id="t-risk" type="number" step="0.25" min="0.1" max="10" value="1"><span class="note">of equity</span>
+            <label for="t-qty">Shares</label><input id="t-qty" type="number" step="1" min="1"><button class="ic on" id="t-auto" title="Size from risk % automatically">Auto</button>
+            <label for="t-time">Time stop</label><input id="t-time" type="number" step="1" min="0" value="10"><span class="note">bars</span>
+            <label class="ck"><input type="checkbox" id="t-sys" checked> Also exit on the first close back above the 5-day average (system exit)</label>
+            <label for="t-note">Note</label><input id="t-note" type="text" maxlength="140" placeholder="why this trade?" style="grid-column:2/4">
+          </div>
+          <div class="tsum" id="t-sum"></div>
+          <div id="t-msg"></div>
+          <button class="place b" id="t-place">Buy</button>
+          <div class="note" id="t-acct"></div>
+        </div>
+        <div id="inspbody"></div>
+      </aside>
+    </div>
+  </section>
+  <section id="t-scan" hidden>
+    <div class="ban mid" id="scan-note" style="margin-bottom:10px">Every uploaded symbol on its latest bar, best setups first. Click a row to open it on the chart.</div>
+    <div class="tw"><table class="bl" id="scan-t"></table></div>
+  </section>
+  <section id="t-mine" hidden>
+    <div class="mine-grid">
+      <div class="kpis" id="acct-k"></div>
+      <div><h2 style="margin-top:0">Open positions</h2><div class="tw"><table class="bl" id="pos-t"></table></div></div>
+      <div><div class="ctl"><h2 style="margin:0">Journal (closed trades)</h2><button class="btn ghost" id="dl-jour" hidden>Download journal CSV</button><span class="note">click a row to see the trade on the chart</span></div><div class="tw" style="max-height:50vh"><table class="bl" id="jour-t"></table></div></div>
+      <div><h2>My results vs the system</h2><div id="mystats"></div></div>
+      <div class="ctl"><button class="btn ghost" id="reset-replay">Clear replay trades</button><button class="btn ghost" id="reset-all">Clear all paper trades</button><span class="note">Paper trading on your uploaded history. Not financial advice.</span></div>
+    </div>
+  </section>
+  <section id="t-vol" hidden>
+    <div class="kpis" id="vol-k"></div>
+    <div id="vol-say" class="ban mid" style="margin-bottom:10px"></div>
+    <div class="vgrid">
+      <div class="card"><h3>Realised volatility estimators<span>annualised %, 20-day windows, with GARCH and HAR forecasts</span></h3><div id="v-est"></div></div>
+      <div class="card"><h3>Volatility cone<span>where today's volatility sits in this stock's history, by horizon</span></h3><div id="v-cone"></div></div>
+      <div class="card"><h3>GARCH(1,1) forecast term structure<span>average volatility expected over the next h days</span></h3><div id="v-term"></div></div>
+      <div class="card"><h3>Expected move<span>±1σ and ±2σ price ranges from the volatility forecast</span></h3><div id="v-move"></div></div>
+      <div class="card"><h3>Return distribution<span>daily log returns vs a normal with the same volatility</span></h3><div id="v-dist"></div><div id="v-tails"></div></div>
+      <div class="card"><h3>Volatility clustering and leverage<span>autocorrelation of |returns| and of returns; return → future volatility</span></h3><div id="v-acf"></div></div>
+      <div class="card"><h3>Forecast check<span>forecast vs volatility realised over the next 5 days (out of sample)</span></h3><div id="v-fc"></div></div>
+      <div class="card"><h3>How the volatility read feeds the trade</h3><div class="vtxt" id="v-use"></div></div>
+    </div>
+  </section>
+  {{SECTIONS}}
+  <section id="t-about" hidden><div class="about" id="research"></div></section>
+</main>
