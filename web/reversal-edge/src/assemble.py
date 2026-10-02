@@ -1,4 +1,4 @@
-P=lambda n:open('v4parts/'+n+'.part').read()
+P=lambda n:open('../v4/'+n+'.part').read()
 css=P('css'); helpers=P('helpers'); mp=P('modelperf'); sec=P('sections')
 old_fam='fam:{stochastic:"#3987e5",deviation:"#d95926",volatility:"#199e70",tail:"#c98500",market:"#d55181",micro:"#008300",confluence:"#9085e9"}'
 helpers=helpers.replace(old_fam,'fam:{volume:"#3987e5",volatility:"#199e70",fear:"#d55181",oversold:"#d95926",news:"#c98500",candle:"#9085e9"}')

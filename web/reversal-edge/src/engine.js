@@ -278,6 +278,37 @@ function volSuite(o, h, l, c) {
   return V;
 }
 
+
+// ------------------------------------------------------------ Momentum Pulse (mirrors research/study9.py)
+// m_h = log(c_t/c_{t-h}) / (sigma*sqrt(h)) for h = 5,10,20,60 with sigma = Yang-Zhang 20-day daily volatility.
+// M = EMA3 of their mean (sigma units). align = horizons agreeing with M's sign. ER = 20-day efficiency ratio.
+// State: 1 trend up (M>1, 4/4 aligned, ER>.3), -1 trend down, 2 exhaustion up (M at its 2-year 95th percentile and turning down), -2 exhaustion down, 0 range.
+// Thrust: M crosses +1 (or -1) with 4/4 alignment. Divergence: confirmed 5-bar pivots, price makes a new extreme that M does not confirm.
+function ema3(x) { const out = nanArr(x.length); let m = NaN_; for (let i = 0; i < x.length; i++) { const v = x[i]; if (isF(v)) m = isF(m) ? m + 0.5 * (v - m) : v; out[i] = isF(v) ? m : NaN_; } return out; }
+function pulseCalc(R, h, l, c) {
+  const n = c.length, lc = c.map(Math.log), sig = R.yz20f.map((v) => v / Math.sqrt(252)), P = {};
+  const H = [5, 10, 20, 60], raw = H.map((hh) => lc.map((v, t) => t >= hh && sig[t] > 0 ? (v - lc[t - hh]) / (sig[t] * Math.sqrt(hh)) : NaN_));
+  const mean = lc.map((_, t) => raw.every((a) => isF(a[t])) ? (raw[0][t] + raw[1][t] + raw[2][t] + raw[3][t]) / 4 : NaN_);
+  P.M = ema3(mean); P.mh = raw.map(ema3);
+  P.align = P.M.map((m, t) => isF(m) ? raw.reduce((a, r) => a + (Math.sign(r[t]) === Math.sign(m) ? 1 : 0), 0) : 0);
+  P.er = c.map((v, t) => { if (t < 20) return NaN_; let p = 0; for (let k = t - 19; k <= t; k++) p += Math.abs(c[k] - c[k - 1]); return p > 0 ? Math.abs(v - c[t - 20]) / p : NaN_; });
+  P.acc = P.M.map((m, t) => t >= 3 ? m - P.M[t - 3] : NaN_);
+  P.pct = rollRankPct(P.M, 500, 250);
+  P.q95 = nanArr(n); P.q05 = nanArr(n);
+  { const win = []; for (let t = 0; t < n; t++) { const v = P.M[t]; if (isF(v)) win.splice(bisect(win, v), 0, v);
+      if (t >= 500 && isF(P.M[t - 500])) { const k = bisect(win, P.M[t - 500]); if (win[k] === P.M[t - 500]) win.splice(k, 1); }
+      if (win.length >= 250) { P.q95[t] = quantSorted(win, 0.95); P.q05[t] = quantSorted(win, 0.05); } } }
+  P.state = P.M.map((m, t) => { if (!isF(m)) return 0; let s0 = 0;
+    if (m > 1 && P.align[t] === 4 && P.er[t] > 0.3) s0 = 1; if (m < -1 && P.align[t] === 4 && P.er[t] > 0.3) s0 = -1;
+    if (P.pct[t] >= 0.95 && P.acc[t] < 0) s0 = 2; if (P.pct[t] <= 0.05 && P.acc[t] > 0) s0 = -2; return s0; });
+  P.thrust = P.M.map((m, t) => t && P.align[t] === 4 ? (m > 1 && P.M[t - 1] <= 1 ? 1 : m < -1 && P.M[t - 1] >= -1 ? -1 : 0) : 0);
+  const L = 5; P.div = new Array(n).fill(0); P.dp0 = new Array(n).fill(-1); P.dp1 = new Array(n).fill(-1); let lastLo = -1, lastHi = -1;
+  for (let p = L; p < n - L; p++) { const t = p + L; let lo = Infinity, hi = -Infinity; for (let k = p - L; k <= p + L; k++) { lo = Math.min(lo, l[k]); hi = Math.max(hi, h[k]); }
+    if (l[p] === lo) { if (lastLo >= 0 && p - lastLo <= 60 && l[p] < l[lastLo] && P.M[p] > P.M[lastLo] && P.M[lastLo] < -0.5) { P.div[t] = 1; P.dp0[t] = lastLo; P.dp1[t] = p; } lastLo = p; }
+    if (h[p] === hi) { if (lastHi >= 0 && p - lastHi <= 60 && h[p] > h[lastHi] && P.M[p] < P.M[lastHi] && P.M[lastHi] > 0.5) { P.div[t] = -1; P.dp0[t] = lastHi; P.dp1[t] = p; } lastHi = p; } }
+  P.f10 = c.map((v, t) => t + 10 < n ? Math.log(c[t + 10] / c[t]) : NaN_);   // hindsight, for the evidence table only
+  return P;
+}
 // ------------------------------------------------------------ reversal features (mirrors research/feats.py + prior.py exactly)
 function buildRev(ds, fear, cfg) {
   const { o, h, l, c, v } = ds, n = c.length, s = cfg.side;
@@ -350,6 +381,7 @@ function buildRev(ds, fear, cfg) {
   if (s > 0) for (let t = 0; t < n - 2; t++) { const e = o[t + 1]; let x = null, j = t + 1;
     for (; j < Math.min(n, t + 1 + cfg.momMaxHold); j++) { if (c[j] < R.sma5[j] || j === t + cfg.momMaxHold) { x = c[j]; break; } }
     if (x != null) { R.mret[t] = Math.log(x / e) - cost; R.mhold[t] = j - t; } }
+  R.pulse = pulseCalc(R, h, l, c);
   // adaptive z-zones: percentiles of this stock's own z20 over the last 750 bars (point in time)
   const QS = [0.025, 0.10, 0.25, 0.75, 0.90, 0.975]; R.zq = QS.map(() => nanArr(n)); R.zone = new Array(n).fill(-1);
   const win = [];
@@ -551,7 +583,7 @@ function run(datasets, cfg, fear) {
     const S = { first, side: cfg.side, exitName: R.exitName, steps: m.steps, garchSteps: R.garchSteps, harSteps: R.harSteps, sig: bt.sig[s] };
     for (const k of ["d", "o", "h", "l", "c", "v", "atr", "rsi2", "rsi14", "streak", "ibs", "lwick", "uwick", "ret1", "gap", "rangex", "volz", "m20", "s20", "z20", "sma5", "vterm", "vrank", "vix", "frank", "setup",
       "y", "tret", "thold", "texit", "tentry", "unfilled", "ac", "mode", "msetup", "mret", "mhold", "sma10", "zone", "ztouch", "zn", "zfwd", "touch", "fwd5", "r", "rv", "cc20", "park20", "gk20", "rs20", "yz5", "yz20", "yz60", "garch", "har5"]) S[k] = Array.from(R[k]);
-    S.zq = R.zq.map((a) => Array.from(a)); S.X = {}; S.Z = {}; for (const q of SKEYS) { S.X[q] = Array.from(R.X[q]); S.Z[q] = Array.from(R.Z[q]); }
+    S.zq = R.zq.map((a) => Array.from(a)); S.pulse = R.pulse; S.X = {}; S.Z = {}; for (const q of SKEYS) { S.X[q] = Array.from(R.X[q]); S.Z[q] = Array.from(R.Z[q]); }
     S.score = m.score; S.P = m.P; S.Pr = m.Pr; S.C = m.C;
     Object.assign(S, C);
     S.lv_primary = R.m20.map(Math.exp); S.sg_primary = R.s20; S.z = R.z20;

@@ -18,10 +18,100 @@ class ZoneView{
  isWhitespace(row){return !row.q}
  defaultOptions(){return Object.assign({},LW.customSeriesDefaultOptions,{lastValueVisible:false,priceLineVisible:false})}
 }
+// ------------------------------------------------ Momentum Pulse pane (custom renderer)
+// Colours validated for colour-blind separation on the dark surface: teal up, red down, amber exhaustion (glow dots), violet divergence (dashed, labelled).
+const PC={up:[38,166,154],dn:[239,83,80],ex:[217,154,30],dv:[167,123,234],mid:[120,120,115]};
+const prgb=(c,a)=>`rgba(${c[0]},${c[1]},${c[2]},${a})`;
+const mix=(a,b,t)=>[0,1,2].map(k=>Math.round(a[k]+(b[k]-a[k])*t));
+class PulseView{
+ constructor(){this.d=null}
+ renderer(){const me=this;return {draw(target,pc){const d=me.d;if(!d||!d.visibleRange)return;
+  target.useBitmapCoordinateSpace(({context:ctx,horizontalPixelRatio:hr,verticalPixelRatio:vr,bitmapSize})=>{
+   const bars=d.bars,from=Math.max(1,d.visibleRange.from-1),to=Math.min(bars.length,d.visibleRange.to+1),hw=Math.max(1,d.barSpacing*hr/2),H=bitmapSize.height,W=bitmapSize.width;
+   const Y=v=>{const y=pc(v);return y==null?null:y*vr},X=i=>bars[i].x*hr,od=i=>bars[i].originalData;
+   // 1 regime columns
+   for(let i=from;i<to;i++){const o=od(i);if(!o||!o.st)continue;const col=o.st===1?prgb(PC.up,.09):o.st===-1?prgb(PC.dn,.09):prgb(PC.ex,.13);ctx.fillStyle=col;ctx.fillRect(X(i)-hw,0,hw*2,H)}
+   // 2 guides: zero, ±1, ±2, and the stock's own 95th/5th percentile extremes
+   ctx.lineWidth=Math.max(1,hr);for(const [v,dash,a] of [[0,[],.55],[1,[4,4],.25],[-1,[4,4],.25],[2,[1,4],.3],[-2,[1,4],.3]]){const y=Y(v);if(y==null)continue;ctx.setLineDash(dash.map(x=>x*hr));ctx.strokeStyle=`rgba(195,194,183,${a})`;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+   ctx.setLineDash([2*hr,3*hr]);ctx.strokeStyle=prgb(PC.ex,.55);for(const key of ["q95","q05"]){ctx.beginPath();let pen=false;for(let i=from;i<to;i++){const o=od(i),y=o&&isF(o[key])?Y(o[key]):null;if(y==null){pen=false;continue}pen?ctx.lineTo(X(i),y):ctx.moveTo(X(i),y);pen=true}ctx.stroke()}ctx.setLineDash([]);
+   // 3 acceleration histogram (momentum of momentum)
+   const y0=Y(0);if(y0!=null)for(let i=from;i<to;i++){const o=od(i);if(!o||!isF(o.acc))continue;const y=Y(o.acc);if(y==null)continue;ctx.fillStyle=o.acc>=0?prgb(PC.up,.28):prgb(PC.dn,.28);const w=Math.max(1,hw*1.1);ctx.fillRect(X(i)-w/2,Math.min(y,y0),w,Math.abs(y-y0))}
+   // 4 multi-horizon ribbon (5/10/20/60-day momentum), colour by agreement, opacity by path efficiency
+   for(let i=from;i<to-1;i++){const a=od(i),b=od(i+1);if(!a||!b||!isF(a.lo)||!isF(b.lo))continue;const ya=Y(a.lo),yb=Y(b.lo),za=Y(a.hi),zb=Y(b.hi);if([ya,yb,za,zb].some(v=>v==null))continue;
+    const base=a.al===4?PC.up:a.al===-4?PC.dn:PC.dv,al=Math.abs(a.al)===4?.12+.42*Math.min(1,Math.max(0,a.er||0)):.10;ctx.fillStyle=prgb(base,al);
+    ctx.beginPath();ctx.moveTo(X(i),za);ctx.lineTo(X(i+1),zb);ctx.lineTo(X(i+1),yb);ctx.lineTo(X(i),ya);ctx.closePath();ctx.fill()}
+   // 5 composite line with diverging colour and a soft glow
+   ctx.lineWidth=2.4*hr;ctx.lineCap="round";ctx.shadowBlur=7*hr;
+   for(let i=from;i<to-1;i++){const a=od(i),b=od(i+1);if(!a||!b||!isF(a.M)||!isF(b.M))continue;const ya=Y(a.M),yb=Y(b.M);if(ya==null||yb==null)continue;
+    const m=(a.M+b.M)/2,t=Math.min(1,Math.abs(m)/2.2),c=mix(PC.mid,m>=0?PC.up:PC.dn,t);ctx.strokeStyle=prgb(c,1);ctx.shadowColor=prgb(c,.55);ctx.beginPath();ctx.moveTo(X(i),ya);ctx.lineTo(X(i+1),yb);ctx.stroke()}
+   ctx.shadowBlur=0;
+   // 6 thrusts (triangles) and exhaustion (glowing amber dots)
+   for(let i=from;i<to;i++){const o=od(i);if(!o)continue;const y=isF(o.M)?Y(o.M):null;if(y==null)continue;const x=X(i),r=Math.max(4*hr,hw*.9);
+    if(o.th){ctx.fillStyle=rgba(o.th>0?PC.up:PC.dn,1);ctx.strokeStyle="#1a1a19";ctx.lineWidth=1.5*hr;ctx.beginPath();const yy=o.th>0?y+r*2.2:y-r*2.2;ctx.moveTo(x,o.th>0?yy-r:yy+r);ctx.lineTo(x-r,o.th>0?yy+r*.7:yy-r*.7);ctx.lineTo(x+r,o.th>0?yy+r*.7:yy-r*.7);ctx.closePath();ctx.fill();ctx.stroke()}
+    if(Math.abs(o.st)===2){const g=ctx.createRadialGradient(x,y,0,x,y,r*3);g.addColorStop(0,prgb(PC.ex,.95));g.addColorStop(.35,prgb(PC.ex,.55));g.addColorStop(1,prgb(PC.ex,0));ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*3,0,Math.PI*2);ctx.fill();
+     ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(x,y,r*.45,0,Math.PI*2);ctx.fill()}}
+   // 7 divergences: dashed violet line between the two momentum pivots, labelled
+   ctx.font=`${11*hr}px "JetBrains Mono",monospace`;
+   for(let i=from;i<Math.min(bars.length,to+70);i++){const o=od(i);if(!o||!o.dv)continue;const i0=i-o.dv.b0,i1=i-o.dv.b1;if(i0<0||i1<0||i1<from-1)continue;const y0=Y(o.dv.M0),y1=Y(o.dv.M1);if(y0==null||y1==null)continue;
+    const col=prgb(PC.dv,1);ctx.strokeStyle=col;ctx.lineWidth=2*hr;ctx.setLineDash([5*hr,3*hr]);ctx.beginPath();ctx.moveTo(X(i0),y0);ctx.lineTo(X(i1),y1);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=col;for(const [xx,yy] of [[X(i0),y0],[X(i1),y1]]){ctx.beginPath();ctx.arc(xx,yy,3.2*hr,0,Math.PI*2);ctx.fill()}
+    ctx.fillText(o.dv.type>0?"bull div":"bear div",X(i1)+5*hr,y1+(o.dv.type>0?14:-6)*hr)}
+  })}}}
+ update(data){this.d=data}
+ priceValueBuilder(r){return [Math.min(r.lo,-2.2),Math.max(r.hi,2.2),r.M]}
+ isWhitespace(r){return !isF(r.M)}
+ defaultOptions(){return Object.assign({},LW.customSeriesDefaultOptions,{lastValueVisible:true,priceLineVisible:false,title:"pulse",color:"#c3c2b7"})}
+}
+// divergence lines on the price pane, between the two price pivots
+class PriceDivView{
+ constructor(){this.d=null}
+ renderer(){const me=this;return {draw(target,pc){const d=me.d;if(!d||!d.visibleRange)return;
+  target.useBitmapCoordinateSpace(({context:ctx,horizontalPixelRatio:hr,verticalPixelRatio:vr})=>{const bars=d.bars,from=Math.max(0,d.visibleRange.from),to=Math.min(bars.length,d.visibleRange.to+70);
+   ctx.font=`${11*hr}px "JetBrains Mono",monospace`;
+   for(let i=from;i<to;i++){const o=bars[i].originalData;if(!o||!o.dv)continue;const i0=i-o.dv.b0,i1=i-o.dv.b1;if(i0<0||i1<0)continue;const y0=pc(o.dv.p0),y1=pc(o.dv.p1);if(y0==null||y1==null)continue;
+    ctx.strokeStyle=prgb(PC.dv,.95);ctx.lineWidth=2*hr;ctx.setLineDash([5*hr,3*hr]);ctx.beginPath();ctx.moveTo(bars[i0].x*hr,y0*vr);ctx.lineTo(bars[i1].x*hr,y1*vr);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=prgb(PC.dv,1);ctx.fillText(o.dv.type>0?"bull div":"bear div",bars[i1].x*hr+5*hr,y1*vr+(o.dv.type>0?16:-8)*hr)}})}}}
+ update(data){this.d=data}
+ priceValueBuilder(r){return [r.dv.p1]}
+ isWhitespace(r){return !r.dv}
+ defaultOptions(){return Object.assign({},LW.customSeriesDefaultOptions,{lastValueVisible:false,priceLineVisible:false})}
+}
+const PULSE_STATE={1:"TREND UP",[-1]:"TREND DOWN",2:"EXHAUSTION UP",[-2]:"EXHAUSTION DOWN",0:"NO TREND"};
+function pulseAdvice(s,i){const P=s.pulse,st0=P.state[i],momMkt=s.mode[i]===-1,div=recentDiv(P,i);let a,tone;
+ if(momMkt){
+  if(st0===1){a="Momentum market in an up-trend: favour momentum entries, don't fade strength.";tone="good"}
+  else if(st0===-1){a="Momentum market falling: avoid buying dips here; they tend to keep falling.";tone="bad"}
+  else if(st0===2){a="Up-move at a 2-year momentum extreme and turning: a warning to tighten, not a proven sell signal.";tone="mid"}
+  else if(st0===-2){a="Down-move at a 2-year extreme and turning: possible exhaustion; no proven edge on its own.";tone="mid"}
+  else{a="Momentum market without a trend: wait for a strong close (momentum setup).";tone="mid"}
+  a="Avoid mean reversion: this market keeps moving the same way day to day. "+a}
+ else{
+  if(st0===-1){a="Strong down-momentum. In tests on 87 stocks and 6 long histories, reversal setups in this state did better (+1.70% vs +1.09% per trade): capitulation, not a reason to avoid.";tone="good"}
+  else if(st0===1){a="Strong up-momentum on a reverting stock: the next 10 days were weaker than average in tests (−0.31%, t −2.4). Don't chase.";tone="bad"}
+  else if(st0===2){a="Up-momentum at a 2-year extreme and turning: a warning, no proven edge on its own.";tone="mid"}
+  else if(st0===-2){a="Down-momentum at a 2-year extreme and turning: exhaustion often lines up with reversal setups.";tone="mid"}
+  else{a="No dominant momentum: mean reversion rules apply normally.";tone="mid"}}
+ const own=pulseEvidence(s,i).find(e=>e.k===String(st0));if(own&&own.cnt>=30&&st0!==0){const exp=st0===1?(momMkt?1:-1):st0===-1?(momMkt?-1:1):0;
+  if(exp&&Math.sign(own.ex)!==exp)a+=` <i>On this ${momMkt?"market":"stock"} the state has behaved differently: the next 10 days averaged ${spct(own.ex,2)} vs normal (${own.cnt} days). See the inspector.</i>`}
+ if(div)a+=` ${div>0?"Bullish":"Bearish"} divergence confirmed in the last 10 bars (shown for context; not a reliable signal in tests).`;
+ return {a,tone}}
+function recentDiv(P,i){for(let k=i;k>=Math.max(0,i-10);k--)if(P.div[k])return P.div[k];return 0}
+function pulseEvidence(s,i){const P=s.pulse,cnt={},sum={};let base=0,nb=0;
+ for(let j=0;j+10<=i;j++){const f=P.f10[j];if(!isF(f)||!isF(P.M[j]))continue;base+=f;nb++;const ks=[String(P.state[j])];if(P.thrust[j]===1)ks.push("th");if(P.div[j]===1)ks.push("bd");if(P.div[j]===-1)ks.push("sd");for(const k of ks){cnt[k]=(cnt[k]||0)+1;sum[k]=(sum[k]||0)+f}}
+ const b=nb?base/nb:0;return [["1","trend up"],["-1","trend down"],["0","no trend"],["2","exhaustion up"],["-2","exhaustion down"],["th","up-thrust"],["bd","bullish divergence"],["sd","bearish divergence"]].map(([k,n])=>({k,n,cnt:cnt[k]||0,ex:cnt[k]?sum[k]/cnt[k]-b:NaN}))}
+function placePulseHud(){const hud=$("pulse-hud");if(!chart||SER.pulsePane==null||!UI.pn.pulse){hud.hidden=true;return}
+ try{const el=chart.panes()[SER.pulsePane].getHTMLElement(),r=el.getBoundingClientRect(),w=$("lwc-wrap").getBoundingClientRect();hud.style.top=(r.top-w.top+4)+"px";hud.style.left="8px";hud.hidden=false}catch(e){hud.hidden=true}}
+function renderPulseHud(i){const hud=$("pulse-hud"),s=S();if(!s||!s.pulse||!UI.pn.pulse){hud.hidden=true;return}placePulseHud();
+ const P=s.pulse,M=P.M[i],st0=P.state[i],al=P.align[i]*(M>=0?1:-1),acc=P.acc[i],col=st0===1?"#26a69a":st0===-1?"#ef5350":Math.abs(st0)===2?"#d99a1e":"#c3c2b7";
+ hud.innerHTML=`<b>MOMENTUM PULSE</b> <span style="color:${M>=0?"#26a69a":"#ef5350"}">${isF(M)?(M>=0?"+":"")+M.toFixed(2)+"σ":"—"} ${isF(acc)?(acc>0?"▲ accelerating":"▼ decelerating"):""}</span>
+  <span class="pk">horizons</span> ${P.mh.map(a=>isF(a[i])?`<i style="background:${a[i]>=0?"#26a69a":"#ef5350"};opacity:${Math.min(1,.35+Math.abs(a[i])/3)}"></i>`:"<i></i>").join("")} ${Math.abs(al)}/4
+  <span class="pk">path</span> ${isF(P.er[i])?Math.round(100*P.er[i])+"%":"—"} <span class="pk">rank</span> ${isF(P.pct[i])?Math.round(100*P.pct[i])+"%":"—"}
+  <span class="st" style="color:${col};border-color:${col}">${PULSE_STATE[st0]}</span>${s.mode[i]===-1?'<span class="st" style="color:#a77bea;border-color:#a77bea">AVOID MEAN REVERSION</span>':""}`}
+
 let chart=null,SER={},MK=null,PLINES=[],ARR=null,hoverIdx=null;
 const OVL=[["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
- ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["mine","My trades",TV.you]];
-const PNS=[["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
+ ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["pdiv","Divergence lines","#a77bea"],["mine","My trades",TV.you]];
+const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
 $("ov").innerHTML=`<span class="lab">on price</span>`+OVL.map(([k,n,c])=>`<label><input type="checkbox" data-ov="${k}" ${UI.ov[k]?"checked":""}><span style="color:${c}">■</span>${n}</label>`).join("");
 $("pn").innerHTML=`<span class="lab">panels</span>`+PNS.map(([k,n])=>`<label><input type="checkbox" data-pn="${k}" ${UI.pn[k]?"checked":""}>${n}</label>`).join("");
 $("ov").addEventListener("change",e=>{const k=e.target.dataset.ov;if(!k)return;UI.ov[k]=e.target.checked;saveUI();applyVisibility();annotate()});
@@ -44,13 +134,18 @@ function buildArrays(){
  A.edgeL=L(s&&s.score);
  A.rsi=L(s?s.rsi2:null);
  A.z=L(A.zArr);for(let k=0;k<6;k++)A["zq"+k]=L(s&&s.zq[k]);
+ if(s&&s.pulse){const P=s.pulse;A.pulse=d.d.map((t,i)=>{if(!isF(P.M[i]))return {time:t};const mh=P.mh.map(a=>a[i]),ok=mh.every(isF);
+   const o={time:t,M:P.M[i],lo:ok?Math.min(...mh,P.M[i]):P.M[i],hi:ok?Math.max(...mh,P.M[i]):P.M[i],al:P.align[i]*(P.M[i]>=0?1:-1),er:P.er[i],acc:P.acc[i],st:P.state[i],th:P.thrust[i],q95:P.q95[i],q05:P.q05[i]};
+   if(P.div[i])o.dv={type:P.div[i],b0:i-P.dp0[i],b1:i-P.dp1[i],M0:P.M[P.dp0[i]],M1:P.M[P.dp1[i]]};return o});
+  A.pdiv=d.d.map((t,i)=>P.div[i]?{time:t,dv:{type:P.div[i],b0:i-P.dp0[i],b1:i-P.dp1[i],p0:P.div[i]>0?d.l[P.dp0[i]]:d.h[P.dp0[i]],p1:P.div[i]>0?d.l[P.dp1[i]]:d.h[P.dp1[i]]}}:{time:t})}
+ else{A.pulse=d.d.map(t=>({time:t}));A.pdiv=d.d.map(t=>({time:t}))}
  A.yz=L(s&&s.yz20);A.garch=L(s&&s.garch);A.har=L(s&&s.har5);A.cc=L(s&&s.cc20);
  A.hurst=L(s&&s.hurst);A.adf=L(s&&s.adf);A.vr4=L(s&&s.vr4);A.vix=L(s&&s.vix);
  return A}
 function buildChart(keep){
  const range=keep&&chart?chart.timeScale().getVisibleLogicalRange():null;
  if(chart){chart.remove();chart=null}
- const np=Object.values(UI.pn).filter(Boolean).length;$("lwc-wrap").style.height=(470+np*105)+"px";
+ const np=Object.values(UI.pn).filter(Boolean).length;$("lwc-wrap").style.height=(470+np*105+(UI.pn.pulse?60:0))+"px";
  chart=LW.createChart($("lwc"),{autoSize:true,
   layout:{background:{type:"solid",color:C.surface},textColor:C.muted,fontFamily:"'JetBrains Mono',ui-monospace,monospace",fontSize:11,attributionLogo:true,panes:{separatorColor:C.axis,separatorHoverColor:"rgba(57,135,229,.3)",enableResize:true}},
   grid:{vertLines:{color:"#222220"},horzLines:{color:"#222220"}},
@@ -65,6 +160,8 @@ function buildChart(keep){
  SER.exit=line("#fab219",{lineWidth:1,lineStyle:LW.LineStyle.Dashed,title:"5d avg",lastValueVisible:true});
  SER.mean=line("#ffffff",{lineWidth:2,title:"20d mean",lastValueVisible:true,crosshairMarkerVisible:true});
  let pane=1;const P={};
+ SER.pdiv=chart.addCustomSeries(new PriceDivView(),{},0);
+ if(UI.pn.pulse){P.pulse=pane++;SER.pulse=chart.addCustomSeries(new PulseView(),{priceFormat:{type:"price",precision:2,minMove:.01}},P.pulse);SER.pulsePane=P.pulse}else SER.pulsePane=null;
  if(UI.pn.edge){P.edge=pane++;SER.edgeL=line("rgba(195,194,183,.35)",{},P.edge);SER.edgeH=chart.addSeries(LW.HistogramSeries,{lastValueVisible:false,priceLineVisible:false,title:"edge score",priceFormat:{type:"price",precision:1,minMove:.1}},P.edge);
   SER.edgeL.createPriceLine({price:THIRDS[1],color:"rgba(79,209,165,.6)",lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:"top ⅓"});SER.edgeL.createPriceLine({price:THIRDS[0],color:"rgba(138,138,133,.6)",lineWidth:1,lineStyle:LW.LineStyle.Dotted,axisLabelVisible:false})}
  if(UI.pn.rsi){P.rsi=pane++;SER.rsi=line("#c3c2b7",{lineWidth:1.5,title:"RSI(2)",lastValueVisible:true,priceFormat:{type:"price",precision:0,minMove:1}},P.rsi)}
@@ -75,15 +172,15 @@ function buildChart(keep){
  if(UI.pn.reg){P.reg=pane++;SER.hurst=line(C.ink,{lineWidth:1.5,title:"Hurst",lastValueVisible:true},P.reg);SER.adf=line(C.mean.ou,{title:"ADF p",lastValueVisible:true},P.reg);SER.vr4=line(C.mean.kalman,{title:"VR(4)",lastValueVisible:true},P.reg);
   SER.hurst.createPriceLine({price:.5,color:C.axis,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:false})}
  if(UI.pn.fear){P.fear=pane++;SER.vix=line("#d55181",{lineWidth:1.5,title:"VIX",lastValueVisible:true},P.fear)}
- const panes=chart.panes();if(panes.length>1){panes[0].setStretchFactor(3.6);for(let i=1;i<panes.length;i++)panes[i].setStretchFactor(1)}
+ const panes=chart.panes();if(panes.length>1){panes[0].setStretchFactor(3.6);for(let i=1;i<panes.length;i++)panes[i].setStretchFactor(i===P.pulse?1.7:1)}
  MK=LW.createSeriesMarkers(SER.candle,[]);PLINES=[];
  chart.subscribeCrosshairMove(onCross);chart.subscribeClick(onChartClick);
  refreshOverlays(range);if(!range)showRange()}
-const DKEYS=["zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
+const DKEYS=["pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
 function setAllData(upto){if(!ARR)return;for(const k of DKEYS)if(SER[k]&&ARR[k])SER[k].setData(upto>=ARR.n-1?ARR[k]:ARR[k].slice(0,upto+1))}
 function stepData(i){for(const k of DKEYS)if(SER[k]&&ARR[k]&&ARR[k][i])SER[k].update(ARR[k][i])}
 function applyVisibility(){const v=UI.ov,set=(k,on)=>SER[k]&&SER[k].applyOptions({visible:!!on});
- set("zones",v.zones);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
+ set("zones",v.zones);set("pdiv",v.pdiv);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
 function refreshOverlays(range){
  if(!chart)return;const d=D();
  if(!d){ARR=null;for(const k of DKEYS)SER[k]&&SER[k].setData([]);annotate();renderLegend();return}
@@ -117,7 +214,8 @@ function annotate(){
   PL(r.status==="open"?r.entryPx:NaN,TV.you,`${r.o.side>0?"Long":"Short"} ${r.o.qty}`,LW.LineStyle.Solid,2);PL(lv.stop,TV.down,"Stop");PL(lv.target,TV.up,"Target")}
  if(draft.show){const t=readTicket();PL(t.stop,TV.down,"Plan stop",LW.LineStyle.LargeDashed);PL(t.target,TV.up,"Plan target",LW.LineStyle.LargeDashed)}
  for(const h of HLINES[st.sym]||[])PL(h,TV.line,"",LW.LineStyle.Solid)}
-function renderLegend(){
+function renderLegend(){try{const c0=cur(),i0=hoverIdx!=null?Math.max(0,Math.min(c0,hoverIdx)):(st.pinned&&st.cursor!=null?Math.min(st.cursor,c0):c0);renderPulseHud(i0)}catch(e){}
+
  const d=D(),el=$("legend");if(!d){el.innerHTML="";return}
  const c=cur(),i=hoverIdx!=null?Math.max(0,Math.min(c,hoverIdx)):(st.pinned&&st.cursor!=null?Math.min(st.cursor,c):c),s=S(),ch=i>0?d.c[i]/d.c[i-1]-1:NaN;
  const z=ARR?ARR.zArr[i]:NaN,mu=ARR?ARR.meanArr[i]:NaN;
