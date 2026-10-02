@@ -1,6 +1,6 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
-<h2 style="font-size:18px">How this system was built, and what the evidence says</h2>
+<h2 style="font-size:18px">How this system was built, and what the evidence says (v6)</h2>
 <p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
 <h2>What works</h2>
 <p><b>1. A short-term oversold trigger with a quick exit.</b> Buy when the 2-day RSI closes below 10 (Connors &amp; Alvarez). Sell on the first close back above the 5-day average, at a 3-ATR stop, or after 10 days. This was profitable on 80% of the 87 stocks and in both Tesla periods (2011–17: +0.56% per trade; 2018–26: +0.23%, about 70% winners). In a portfolio of the 87 stocks, 2015–2017, it earned a Sharpe ratio around 1.6–1.7, against 0.96 for buy &amp; hold. The exit matters more than the entry: holding a fixed 5 days instead cut the Sharpe ratio to about 0.5.</p>
@@ -14,6 +14,25 @@ $("research").innerHTML=`
 <li><b>Lower wick</b>, counts against the trade, weight 0.77. A long lower wick ("hammer") means the bounce already happened during the day.</li>
 </ul>
 <p>The score transferred to Tesla without any Tesla training. The top third of setups averaged <b>+1.64%</b> per trade (2011–17) and <b>+1.12%</b> (2018–26); the bottom third −0.09% and −0.46%. On the 87 stocks, walk-forward, the top third beat the bottom third in every year. Its probabilities are calibrated: it predicted 61% / 66% / 70% winners by third, and the actual rates were 61% / 65% / 71% (87 stocks) and 66% / 68% / 72% (Tesla).</p>
+<h2>Round 2 (v6): fixing the failures on Ford and TASI</h2>
+<p>Tested on new files the system had never seen, v5 failed twice. Ford (1978–2026) roughly broke even (−1% a year). TASI (2002–2026) lost money in every period. I searched the literature on the reasons, then tested every candidate fix. I designed on data before 2013 and judged only on 2013–2026 plus the 87 stocks: 92 series in all.</p>
+<ul>
+<li><b>Saudi stocks and TASI move with momentum, not reversal.</b> Their daily returns are positively autocorrelated, most of all in volatile periods (studies of the Saudi market from MPRA and the <i>Review of Accounting and Finance</i>). TASI's own 500-day lag-1 autocorrelation is about +0.12; US stocks sit near 0. Buying strength (RSI(2) above 90, sell on a close below the 5-day average) earned <b>Sharpe 2.0 on TASI before 2013 and 1.4 after</b> (10.4% a year while in the market 32% of the time), against 0.19 for holding it. The same rule lost money on MSFT, AMZN and Ford. So v6 checks each market's character every day. Above +0.08 it trades momentum setups; otherwise it trades reversal setups (the <b>Auto</b> mode).</li>
+<li><b>Stops hurt mean reversion.</b> The literature finds this repeatedly. Removing the 3-ATR stop raised the average trade from +0.45% to +0.62% (t 7.6 → 10.4). Wide 4–6 ATR stops still cost about 0.15% a trade and did not reduce the worst loss, which comes from gaps. v6 uses a 10-day time limit and no price stop by default; a stop is still available in Settings.</li>
+<li><b>Buy at a discount.</b> A limit order 0.5 ATR under the signal close, valid for the next day only, fills on about half the setups, but those trades averaged <b>+1.13%</b> instead of +0.62% (t 10.9).</li>
+<li><b>Exit on strength.</b> Selling on the first close above the previous day's high beat the 5-day-average exit: +1.18% a trade and 0.27% per day held, against 0.13% per day for v5.</li>
+<li><b>What did not help:</b> the 200-day trend filter, a filter on the stock's own short-window autocorrelation, and a "recent results" filter. All were inconsistent out of sample.</li>
+</ul>
+<p><b>v6 on your six files</b> (default settings, 100% of equity per trade, costs included):</p>
+<ul>
+<li>Ford: +546% total, Sharpe 0.34 (v5: −38%, Sharpe 0.02).</li>
+<li>TASI: +195%, Sharpe 0.63, worst drawdown −18% (v5: −42%; buy &amp; hold drew down −80%).</li>
+<li>AAPL: Sharpe 0.71, drawdown −14% (v5: 0.59, −25%).</li>
+<li>MSFT: Sharpe 0.53, drawdown −28% (v5: 0.48, −34%).</li>
+<li>AMZN: Sharpe 0.58, drawdown −23% (v5: 0.62, −35%).</li>
+<li>TSLA got worse (Sharpe 0.37 vs 0.61). Its v5 result relied on the 3-ATR stop and the 5-day exit, a combination that did not hold up across the other 91 series.</li>
+</ul>
+<p>Average Sharpe across the six rose from 0.36 to 0.53. The momentum rule was validated mainly on one market (TASI) plus the published evidence, so treat momentum mode with more caution than reversal mode.</p>
 <h2>The full system on Tesla (in this terminal, 2011–2026)</h2>
 <p>Trading RSI(2) setups in the top third of the score, 100% of equity per trade, with the 5-day-average exit, a 3-ATR stop and costs: <b>+375% total (11.1% a year)</b>, Sharpe 0.61, maximum drawdown −37%, 91 trades, 71% won, in the market about 6% of the time. Trading every setup instead: +247%, Sharpe 0.44, drawdown −61%, 206 trades. Fewer, better trades made more money with less pain. Buy &amp; hold made far more on Tesla (about 43% a year) but fell 74% on the way.</p>
 <h2>What does not work (so the system does not use it)</h2>

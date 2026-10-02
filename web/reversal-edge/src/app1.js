@@ -19,7 +19,7 @@ const RESEARCH_THIRDS={avg87:[-21,3,57],win87:[.61,.65,.71],avgT:[-7,-12,135],wi
 const ALIAS={date:["date","datetime","time","timestamp","day"],ticker:["ticker","symbol","stock","code"],open:["open","openprice"],high:["high","highprice"],low:["low","lowprice"],
  close:["close","closelast","last","closeprice","price"],adj:["adjclose","adjustedclose","closeadj"],volume:["volume","vol"]};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
-function tickerFromName(name){const parts=name.replace(/\.[^.]+$/,"").split(/[_.\s-]/).filter(Boolean);while(parts.length>1&&["us","uk","de","d","daily","w","m","historical","data","history","prices"].includes(parts[parts.length-1].toLowerCase()))parts.pop();return parts.join("_").toUpperCase()}
+function tickerFromName(name){const parts=name.replace(/\.[^.]+$/,"").split(/[_.\s-]/).filter(Boolean);while(parts.length>1&&(["us","uk","de","sa","se","d","daily","w","m","historical","data","history","prices"].includes(parts[parts.length-1].toLowerCase())||/^\d+$/.test(parts[parts.length-1])))parts.pop();return parts.join("_").toUpperCase()}
 function toISO(s){s=String(s).trim().replace(/^"|"$/g,"");let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
  m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return `${m[3]}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`;m=s.match(/^(\d{4})(\d{2})(\d{2})$/);if(m)return `${m[1]}-${m[2]}-${m[3]}`;const t=Date.parse(s);return isNaN(t)?null:new Date(t).toISOString().slice(0,10)}
 const num=v=>{const x=parseFloat(String(v).replace(/[$,\s"]/g,""));return isF(x)?x:NaN};
@@ -71,12 +71,12 @@ let arm={};function armed(btn,fn){if(arm[btn.id]){clearTimeout(arm[btn.id].t);bt
 $("clear").addEventListener("click",e=>armed(e.target,()=>{DS={};saveDS();RES=null;afterDataChange()}));
 
 // ------------------------------------------------ settings + worker
-const NUMS=["trig","n0","pool","testDays","stopATR","maxHold","slippage","riskPct","maxW","maxPos"],SELS=["scoreThr","side","adapt","sizeMode"];
-try{const s=JSON.parse(store("qlab-cfg2")||"{}");for(const [k,v] of Object.entries(s)){const el=$("c-"+k);if(el&&k!=="market")el.value=v}}catch(e){}
+const NUMS=["trig","n0","pool","testDays","stopATR","maxHold","slippage","riskPct","maxW","maxPos","acThr","limitATR","momTrig","momMaxHold"],SELS=["scoreThr","side","adapt","sizeMode","mode","entry","exit"];
+try{const s=JSON.parse(store("qlab-cfg3")||"{}");for(const [k,v] of Object.entries(s)){const el=$("c-"+k);if(el&&k!=="market")el.value=v}}catch(e){}
 (()=>{const a=load("desk-acct",{});if(a.start)$("a-start").value=a.start;if(a.fill)$("a-fill").value=a.fill;if(a.lev)$("a-lev").value=a.lev;if(a.risk)$("t-risk").value=a.risk})();
 function readCfg(){const c={market:$("c-market").value||null};NUMS.forEach(k=>c[k]=+$("c-"+k).value);
- c.scoreThr=+$("c-scoreThr").value;c.sizeMode=$("c-sizeMode").value;c.side=+$("c-side").value;c.adapt=$("c-adapt").value==="1";c.riskPct/=100;c.maxW/=100;
- const s={};[...NUMS,...SELS].forEach(k=>s[k]=$("c-"+k).value);store("qlab-cfg2",JSON.stringify(s));return c}
+ c.scoreThr=+$("c-scoreThr").value;c.sizeMode=$("c-sizeMode").value;c.mode=$("c-mode").value;c.entry=$("c-entry").value;c.exit=$("c-exit").value;c.side=+$("c-side").value;c.adapt=$("c-adapt").value==="1";c.riskPct/=100;c.maxW/=100;
+ const s={};[...NUMS,...SELS].forEach(k=>s[k]=$("c-"+k).value);store("qlab-cfg3",JSON.stringify(s));return c}
 const ACCT=()=>({start:Math.max(1000,+$("a-start").value||100000),fill:$("a-fill").value,cost:Math.max(0,+$("c-slippage").value||0)/1e4,lev:Math.max(.5,+$("a-lev").value||1)});
 const saveAcct=()=>store("desk-acct",JSON.stringify({start:$("a-start").value,fill:$("a-fill").value,lev:$("a-lev").value,risk:$("t-risk").value}));
 let ECFG=readCfg();
@@ -88,7 +88,7 @@ worker.onmessage=e=>{const m=e.data;
  lastErr=null;RES=m.res;const ok=RES.syms.filter(s=>RES.symbols[s]);
  const pm=RES.metrics.portfolio||{};
  $("runmsg").textContent=`Done: ${ok.length} symbol(s), ${RES.bt.trades.length} system trades (avg ${sR(pm.expectancy_R)}).`+(ok.length<RES.syms.length?` Too little history: ${RES.syms.filter(s=>!RES.symbols[s]).join(", ")}.`:"");
- $("snap").textContent=ok.length?`${ok.join(", ")} · ${ECFG.side>0?"buy drops":"sell rises"} · setups RSI(2)<${ECFG.trig} · ${$("c-scoreThr").selectedOptions[0].textContent}`+(RES.fearEnd?` · fear index to ${RES.fearEnd}`:" · no fear index"):"Not enough history: load 3+ years of daily data.";
+ $("snap").textContent=ok.length?`${ok.join(", ")} · ${ECFG.mode==="auto"?"auto mode (reversal or momentum by market character)":ECFG.mode==="rev"?"reversal mode":"momentum mode"} · ${ECFG.entry==="limit"?"limit entries":"next-open entries"} · exit ${ECFG.exit} · ${$("c-scoreThr").selectedOptions[0].textContent}`+(RES.fearEnd?` · fear index to ${RES.fearEnd}`:" · no fear index"):"Not enough history: load 3+ years of daily data.";
  if(queued){queued=false;runNow();return}
  refreshOverlays();renderLive();
  if(st.tab==="data")show("chart");else show(st.tab)};

@@ -123,7 +123,7 @@ def features(df, mkt=None, vix=None):
 
 
 def load_universe():
-    files = sorted(p for p in RD.glob("*.csv") if p.stem not in ("VIX", "TSLA_long"))
+    files = sorted(p for p in RD.glob("*.csv") if p.stem != "VIX" and not p.stem.endswith("_long"))
     data = {p.stem: load(p) for p in files}
     vix = pd.read_csv(RD / "VIX.csv")
     vix.columns = [x.lower() for x in vix.columns]

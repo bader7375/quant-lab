@@ -20,7 +20,7 @@ class ZoneView{
 }
 let chart=null,SER={},MK=null,PLINES=[],ARR=null,hoverIdx=null;
 const OVL=[["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
- ["vol","Volume","#5d6b78"],["setups","RSI(2) setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["mine","My trades",TV.you]];
+ ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["mine","My trades",TV.you]];
 const PNS=[["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
 $("ov").innerHTML=`<span class="lab">on price</span>`+OVL.map(([k,n,c])=>`<label><input type="checkbox" data-ov="${k}" ${UI.ov[k]?"checked":""}><span style="color:${c}">■</span>${n}</label>`).join("");
 $("pn").innerHTML=`<span class="lab">panels</span>`+PNS.map(([k,n])=>`<label><input type="checkbox" data-pn="${k}" ${UI.pn[k]?"checked":""}>${n}</label>`).join("");
@@ -100,14 +100,15 @@ function annotate(){
  const c=cur(),date=d.d[c],s=S(),mk=[];
  if(s){const lo=Math.max(s.first,0);
   for(let i=lo;i<=c;i++){
-   if(s.sig[i]&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${Math.round(100*s.P[i])}%`,size:1.4})}
+   if(s.sig[i]===1&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${Math.round(100*s.P[i])}%`,size:1.4})}
+   else if(s.sig[i]===2&&UI.ov.sys){mk.push({time:d.d[i],position:"belowBar",shape:"arrowUp",color:"#c08cff",text:"MOM",size:1.3})}
    else if(s.setup[i]&&UI.ov.setups)mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:"circle",color:THIRD_COL[thirdOf(s.score[i])],size:.5});
    if(UI.ov.signs){const down=d.c[i]<(i?d.c[i-1]:d.c[i]);
     if(down&&s.volz[i]>1.5&&s.rangex[i]>1.5)mk.push({time:d.d[i],position:"aboveBar",shape:"square",color:"#fab219",size:.45});
     else if(Math.abs(s.gap[i])>1.5)mk.push({time:d.d[i],position:"aboveBar",shape:"square",color:"#8a8a85",size:.35})}}
   if(RES&&UI.ov.sys)for(const t of RES.bt.trades){if(t.symbol!==st.sym||t.exit_date>date)continue;mk.push({time:t.exit_date,position:s.side>0?"aboveBar":"belowBar",shape:"circle",color:t.pnl>0?"#3fbf5f":"#e05252",size:.6})}}
  const sims=simAll();
- if(UI.ov.mine)for(const r of sims){if(r.o.sym!==st.sym||r.status==="pending"||r.status==="hidden"||r.status==="cancelled")continue;const lg=r.o.side>0;
+ if(UI.ov.mine)for(const r of sims){if(r.o.sym!==st.sym||(r.status!=="open"&&r.status!=="closed"))continue;const lg=r.o.side>0;
   mk.push({time:d.d[r.entryIdx],position:lg?"belowBar":"aboveBar",shape:lg?"arrowUp":"arrowDown",color:TV.you,text:`YOU ${lg?"BUY":"SELL"}`,size:1.2});
   if(r.status==="closed")mk.push({time:d.d[r.exitIdx],position:lg?"aboveBar":"belowBar",shape:"square",color:TV.you,text:`${r.reason} ${sR(r.R)}`,size:.8})}
  mk.sort((a,b)=>a.time<b.time?-1:a.time>b.time?1:0);MK.setMarkers(mk);

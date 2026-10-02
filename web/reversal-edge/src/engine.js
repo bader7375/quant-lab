@@ -315,20 +315,41 @@ function buildRev(ds, fear, cfg) {
   X.drop1_atr = R.ret1.map((x) => -s * x); X.gap_size = R.gap.map(Math.abs); X.lower_wick = s > 0 ? R.lwick : R.uwick;
   R.X = X;
   R.Z = {}; for (const k of SKEYS) R.Z[k] = X[k].map((x) => { if (!isF(x)) return 0; const xo = NEG.has(k) ? -x : x; return Math.max(-3, Math.min(3, (xo - PRIOR.med[k]) / PRIOR.iqr[k])); });
-  R.setup = R.rsi2.map((x) => isF(x) && (s > 0 ? x < cfg.trig : x > 100 - cfg.trig) ? 1 : 0);
-  // trade outcome (hindsight): enter next open, exit first close beyond the 5-day average, stop k*ATR, or after maxHold bars
-  R.y = nanArr(n); R.tret = nanArr(n); R.thold = nanArr(n); R.texit = new Array(n).fill("");
+  // instrument character: rolling 500-day lag-1 autocorrelation of daily returns (point in time).
+  // Markets that keep moving the same way day to day (e.g. TASI, about +0.12) get momentum setups instead of reversal setups.
+  R.ac = nanArr(n);
+  { const r = lc.map((v, i) => i ? v - lc[i - 1] : NaN_);
+    for (let t = 250; t < n; t++) { let sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0, m = 0;
+      for (let k = Math.max(2, t - 499); k <= t; k++) { const a = r[k - 1], b = r[k]; if (!isF(a) || !isF(b)) continue; m++; sx += a; sy += b; sxx += a * a; syy += b * b; sxy += a * b; }
+      if (m >= 250) { const cv = sxy / m - sx * sy / m / m, va = sxx / m - (sx / m) ** 2, vb = syy / m - (sy / m) ** 2; if (va > 0 && vb > 0) R.ac[t] = cv / Math.sqrt(va * vb); } } }
+  R.mode = R.ac.map((a) => s < 0 || cfg.mode === "rev" ? 1 : cfg.mode === "mom" ? -1 : isF(a) && a > cfg.acThr ? -1 : 1);   // 1 reversal, -1 momentum
+  R.setup = R.rsi2.map((x, i) => isF(x) && R.mode[i] === 1 && (s > 0 ? x < cfg.trig : x > 100 - cfg.trig) ? 1 : 0);
+  R.msetup = R.rsi2.map((x, i) => isF(x) && R.mode[i] === -1 && x > cfg.momTrig ? 1 : 0);
+  R.sma10 = rollMean(c, 10);
+  const exitHit = (j) => cfg.exit === "prevhigh" ? (s > 0 ? c[j] > h[j - 1] : c[j] < l[j - 1]) : cfg.exit === "rsi70" ? (s > 0 ? R.rsi2[j] > 70 : R.rsi2[j] < 30)
+    : cfg.exit === "sma10" ? (s > 0 ? c[j] > R.sma10[j] : c[j] < R.sma10[j]) : (s > 0 ? c[j] > R.sma5[j] : c[j] < R.sma5[j]);
+  R.exitName = { prevhigh: "PREV-HIGH", rsi70: "RSI70", sma10: "SMA10", sma5: "SMA5" }[cfg.exit] || "SMA5";
+  // reversal trade outcome (hindsight): limit buy limitATR under the close (valid one day) or next open; exit rule, optional ATR stop, maxHold bars
+  R.y = nanArr(n); R.tret = nanArr(n); R.thold = nanArr(n); R.texit = new Array(n).fill(""); R.tentry = nanArr(n); R.unfilled = new Array(n).fill(0);
   const cost = (cfg.slippage * 2) / 1e4;
   for (let t = 0; t < n - 2; t++) {
-    if (!isF(atr[t])) continue; const e = o[t + 1], st = e - s * cfg.stopATR * atr[t]; let x = null, j = t + 1, why = "";
+    if (!isF(atr[t])) continue; let e;
+    if (cfg.entry === "limit") { const lim = c[t] - s * cfg.limitATR * atr[t]; if ((s > 0 && l[t + 1] > lim) || (s < 0 && h[t + 1] < lim)) { R.unfilled[t] = 1; continue; } e = s > 0 ? Math.min(o[t + 1], lim) : Math.max(o[t + 1], lim); }
+    else e = o[t + 1];
+    const st = cfg.stopATR > 0 ? e - s * cfg.stopATR * atr[t] : null; let x = null, j = t + 1, why = "";
     for (; j < Math.min(n, t + 1 + cfg.maxHold); j++) {
-      if ((s > 0 && l[j] <= st) || (s < 0 && h[j] >= st)) { x = j > t + 1 ? (s > 0 ? Math.min(o[j], st) : Math.max(o[j], st)) : st; why = "STOP"; break; }
-      if ((s > 0 && c[j] > R.sma5[j]) || (s < 0 && c[j] < R.sma5[j])) { x = c[j]; why = "SMA5"; break; }
+      if (st != null && ((s > 0 && l[j] <= st) || (s < 0 && h[j] >= st))) { x = j > t + 1 ? (s > 0 ? Math.min(o[j], st) : Math.max(o[j], st)) : st; why = "STOP"; break; }
+      if (exitHit(j)) { x = c[j]; why = R.exitName; break; }
       if (j === t + cfg.maxHold) { x = c[j]; why = "TIME"; break; }
     }
     if (x == null) continue;
-    const rr = s * Math.log(x / e) - cost; R.tret[t] = rr; R.y[t] = rr > 0 ? 1 : 0; R.thold[t] = j - t; R.texit[t] = why;
+    const rr = s * Math.log(x / e) - cost; R.tret[t] = rr; R.y[t] = rr > 0 ? 1 : 0; R.thold[t] = j - t; R.texit[t] = why; R.tentry[t] = e;
   }
+  // momentum trade outcome (hindsight): buy the next open after a strong close, exit on a close below the 5-day average or after momMaxHold bars
+  R.mret = nanArr(n); R.mhold = nanArr(n);
+  if (s > 0) for (let t = 0; t < n - 2; t++) { const e = o[t + 1]; let x = null, j = t + 1;
+    for (; j < Math.min(n, t + 1 + cfg.momMaxHold); j++) { if (c[j] < R.sma5[j] || j === t + cfg.momMaxHold) { x = c[j]; break; } }
+    if (x != null) { R.mret[t] = Math.log(x / e) - cost; R.mhold[t] = j - t; } }
   // adaptive z-zones: percentiles of this stock's own z20 over the last 750 bars (point in time)
   const QS = [0.025, 0.10, 0.25, 0.75, 0.90, 0.975]; R.zq = QS.map(() => nanArr(n)); R.zone = new Array(n).fill(-1);
   const win = [];
@@ -416,30 +437,34 @@ function model(syms, rev, cfg) {
 function backtest(syms, rev, M, cfg, thr) {
   const cal = Array.from(new Set(syms.flatMap((s) => rev[s].d))).sort(), n = cal.length;
   const idx = {}; syms.forEach((s) => idx[s] = new Map(rev[s].d.map((d, i) => [d, i])));
-  const sig = {}; syms.forEach((s) => { const R = rev[s], m = M[s]; sig[s] = R.setup.map((v, i) => v && isF(m.score[i]) && m.score[i] >= thr ? 1 : 0); });
+  const sig = {}; syms.forEach((s) => { const R = rev[s], m = M[s]; sig[s] = R.setup.map((v, i) => v && isF(m.score[i]) && m.score[i] >= thr ? 1 : R.msetup[i] && isF(m.score[i]) ? 2 : 0); });
   let t0 = n; syms.forEach((s) => { const i = M[s].score.findIndex(isF); if (i >= 0) t0 = Math.min(t0, cal.indexOf(rev[s].d[i])); });
   if (t0 >= n) return { trades: [], eq: [], bh: [], d: [], dd: [], bhdd: [], sig };
   const cost = cfg.slippage / 1e4, s = cfg.side; let cash = 1e6; const pos = {}, trades = [], eq = [], bh = [], days = [];
   const px = (q, t, f) => { const i = idx[q].get(cal[t]); return i == null ? NaN_ : rev[q][f][i]; };
   const bh0 = syms.map((q) => { for (let t = t0; t < n; t++) { const v = px(q, t, "c"); if (isF(v)) return v; } return 1; });
-  let pend = [], inMkt = 0;
+  let pend = [], inMkt = 0; const lastC = syms.map(() => NaN_);   // carry each market's last close across days it does not trade
   for (let t = t0; t < n; t++) {
-    // entries at the open
-    for (const p of pend) { const op = px(p.s, t, "o"); if (!isF(op) || pos[p.s]) continue; const equity = cash + Object.values(pos).reduce((a, x) => a + x.q * (px(x.s, t, "o") || x.last), 0);
-      const dist = cfg.stopATR * p.atr / op; let notional = cfg.sizeMode === "fixed" ? equity * Math.min(cfg.maxW, 1 / Math.max(1, Math.min(cfg.maxPos, syms.length))) : Math.min(equity * cfg.riskPct / Math.max(dist, 1e-4), equity * cfg.maxW); notional = Math.min(notional, Math.max(0, s > 0 ? cash : equity)); if (notional < 100) continue;
-      const q = s * notional / op; cash -= q * op + notional * cost; pos[p.s] = { s: p.s, q, ep: op, ti: t, stop: op - s * cfg.stopATR * p.atr, last: q * op, sc: p.sc, P: p.P, z: p.z, fear: p.fear, risk: notional * dist, c0: notional * cost }; }
+    // entries: reversal limit orders fill only if the day trades down to the limit; momentum buys at the open
+    for (const p of pend) { const i = idx[p.s].get(cal[t]); if (i == null || pos[p.s]) continue; const R = rev[p.s], op = R.o[i]; if (!isF(op)) continue;
+      let fill = op;
+      if (p.kind === 1 && cfg.entry === "limit") { const lim = p.c - s * cfg.limitATR * p.atr; if ((s > 0 && R.l[i] > lim) || (s < 0 && R.h[i] < lim)) continue; fill = s > 0 ? Math.min(op, lim) : Math.max(op, lim); }
+      const equity = cash + Object.values(pos).reduce((a, x) => a + x.q * (px(x.s, t, "o") || x.last), 0);
+      const dist = (cfg.stopATR > 0 ? cfg.stopATR : 3) * p.atr / fill; let notional = cfg.sizeMode === "fixed" ? equity * Math.min(cfg.maxW, 1 / Math.max(1, Math.min(cfg.maxPos, syms.length))) : Math.min(equity * cfg.riskPct / Math.max(dist, 1e-4), equity * cfg.maxW); notional = Math.min(notional, Math.max(0, s > 0 ? cash : equity)); if (notional < 100) continue;
+      const q = s * notional / fill; cash -= q * fill + notional * cost; pos[p.s] = { s: p.s, kind: p.kind, q, ep: fill, ti: t, stop: cfg.stopATR > 0 && p.kind === 1 ? fill - s * cfg.stopATR * p.atr : null, last: q * fill, sc: p.sc, P: p.P, z: p.z, fear: p.fear, risk: notional * dist, c0: notional * cost }; }
     pend = [];
-    // intraday stop, then close-based exits
+    // intraday stop (if any), then close-based exits
     for (const q of Object.keys(pos)) { const p = pos[q], i = idx[q].get(cal[t]); if (i == null) continue; const R = rev[q]; let x = null, why = "";
-      if ((s > 0 && R.l[i] <= p.stop) || (s < 0 && R.h[i] >= p.stop)) { x = t > p.ti ? (s > 0 ? Math.min(R.o[i], p.stop) : Math.max(R.o[i], p.stop)) : p.stop; why = "STOP"; }
-      else if ((s > 0 && R.c[i] > R.sma5[i]) || (s < 0 && R.c[i] < R.sma5[i])) { x = R.c[i]; why = "SMA5"; }
-      else if (t - p.ti + 1 >= cfg.maxHold) { x = R.c[i]; why = "TIME"; }
+      if (p.kind === 2) { if (R.c[i] < R.sma5[i]) { x = R.c[i]; why = "MOM-SMA5"; } else if (t - p.ti + 1 >= cfg.momMaxHold) { x = R.c[i]; why = "TIME"; } }
+      else if (p.stop != null && ((s > 0 && R.l[i] <= p.stop) || (s < 0 && R.h[i] >= p.stop))) { x = t > p.ti ? (s > 0 ? Math.min(R.o[i], p.stop) : Math.max(R.o[i], p.stop)) : p.stop; why = "STOP"; }
+      else { const ex = cfg.exit === "prevhigh" ? (i > 0 && (s > 0 ? R.c[i] > R.h[i - 1] : R.c[i] < R.l[i - 1])) : cfg.exit === "rsi70" ? (s > 0 ? R.rsi2[i] > 70 : R.rsi2[i] < 30) : cfg.exit === "sma10" ? (s > 0 ? R.c[i] > R.sma10[i] : R.c[i] < R.sma10[i]) : (s > 0 ? R.c[i] > R.sma5[i] : R.c[i] < R.sma5[i]);
+        if (ex) { x = R.c[i]; why = R.exitName; } else if (t - p.ti + 1 >= cfg.maxHold) { x = R.c[i]; why = "TIME"; } }
       if (x != null) { const fee = Math.abs(p.q * x) * cost; cash += p.q * x - fee; const pnl = p.q * (x - p.ep) - fee - p.c0;
-        trades.push({ trade_id: trades.length + 1, symbol: q, direction: s > 0 ? "long" : "short", entry_date: cal[p.ti], exit_date: cal[t], bars_held: t - p.ti, exit_reason: why, entry_price: p.ep, exit_price: x, R: p.risk > 0 ? pnl / p.risk : NaN_, pnl, weight: Math.abs(p.q * p.ep) / 1e6, p: p.P, score: p.sc, z_entry: p.z, fear: p.fear }); delete pos[q]; } }
+        trades.push({ trade_id: trades.length + 1, symbol: q, direction: p.kind === 2 ? "momentum" : s > 0 ? "long" : "short", entry_date: cal[p.ti], exit_date: cal[t], bars_held: t - p.ti, exit_reason: why, entry_price: p.ep, exit_price: x, R: p.risk > 0 ? pnl / p.risk : NaN_, pnl, weight: Math.abs(p.q * p.ep) / 1e6, p: p.P, score: p.sc, z_entry: p.z, fear: p.fear }); delete pos[q]; } }
     let held = 0; for (const q of Object.keys(pos)) { const v = px(q, t, "c"); if (isF(v)) pos[q].last = pos[q].q * v; held += pos[q].last; }
-    eq.push(cash + held); days.push(cal[t]); if (Object.keys(pos).length) inMkt++; bh.push(1e6 * syms.reduce((a, q, k) => a + (px(q, t, "c") || bh0[k]) / bh0[k], 0) / syms.length);
+    eq.push(cash + held); days.push(cal[t]); if (Object.keys(pos).length) inMkt++; syms.forEach((q, k) => { const v = px(q, t, "c"); if (isF(v)) lastC[k] = v; }); bh.push(1e6 * syms.reduce((a, q, k) => a + (isF(lastC[k]) ? lastC[k] : bh0[k]) / bh0[k], 0) / syms.length);
     if (t === n - 1) break;
-    const cands = []; for (const q of syms) { const i = idx[q].get(cal[t]); if (i == null || pos[q] || !sig[q][i]) continue; cands.push({ s: q, sc: M[q].score[i], P: M[q].P[i], atr: rev[q].atr[i], z: rev[q].z20[i], fear: rev[q].frank[i] }); }
+    const cands = []; for (const q of syms) { const i = idx[q].get(cal[t]); if (i == null || pos[q] || !sig[q][i]) continue; cands.push({ s: q, kind: sig[q][i], c: rev[q].c[i], sc: sig[q][i] === 2 ? 0 : M[q].score[i], P: M[q].P[i], atr: rev[q].atr[i], z: rev[q].z20[i], fear: rev[q].frank[i] }); }
     cands.sort((a, b) => b.sc - a.sc); pend = cands.slice(0, Math.max(0, cfg.maxPos - Object.keys(pos).length));
   }
   let pk = -Infinity, bpk = -Infinity; const dd = eq.map((v) => { pk = Math.max(pk, v); return (v / pk - 1) * 100; }), bhdd = bh.map((v) => { bpk = Math.max(bpk, v); return (v / bpk - 1) * 100; });
@@ -497,7 +522,7 @@ function run(datasets, cfg, fear) {
   const syms = all.filter((s) => s !== cfg.market || all.length === 1);
   if (!syms.length) throw new Error("Upload at least one price file besides the market file.");
   const key = JSON.stringify([all.map((s) => [s, datasets[s].d.length, datasets[s].d[datasets[s].d.length - 1], datasets[s].c[datasets[s].c.length - 1]]), fear ? [fear.d.length, fear.d[fear.d.length - 1]] : 0,
-    cfg.market, cfg.side, cfg.trig, cfg.stopATR, cfg.maxHold, cfg.slippage, cfg.adapt, cfg.n0, cfg.pool, cfg.testDays]);
+    cfg.market, cfg.side, cfg.trig, cfg.stopATR, cfg.maxHold, cfg.slippage, cfg.adapt, cfg.n0, cfg.pool, cfg.testDays, cfg.mode, cfg.acThr, cfg.entry, cfg.limitATR, cfg.exit, cfg.momTrig, cfg.momMaxHold]);
   let base;
   if (CACHE.key === key) { base = CACHE.model; progress(0.9, "reusing features and model (only trading settings changed)"); }
   else {
@@ -522,10 +547,10 @@ function run(datasets, cfg, fear) {
     Y.push(...yy); P.push(...pp);
     const str = bt.trades.filter((t) => t.symbol === s), strAll = btAll.trades.filter((t) => t.symbol === s);
     const tm = (a) => ({ n_trades: a.length, win_rate: a.length ? a.filter((t) => t.pnl > 0).length / a.length : NaN_, expectancy_R: a.length ? a.reduce((x, t) => x + (isF(t.R) ? t.R : 0), 0) / a.length : NaN_, pnl: a.reduce((x, t) => x + t.pnl, 0) });
-    out.metrics.symbols[s] = { classification: classMetrics(yy, pp, pp, PRIOR.calib.a ? sigm(PRIOR.calib.a + PRIOR.calib.b * cfg.scoreThr) : 0.6), trading: tm(str), tradingAll: tm(strAll), signals: bt.sig[s].reduce((a, b) => a + b, 0), setups: R.setup.reduce((a, b) => a + b, 0) };
-    const S = { first, side: cfg.side, steps: m.steps, garchSteps: R.garchSteps, harSteps: R.harSteps, sig: bt.sig[s] };
+    out.metrics.symbols[s] = { classification: classMetrics(yy, pp, pp, PRIOR.calib.a ? sigm(PRIOR.calib.a + PRIOR.calib.b * cfg.scoreThr) : 0.6), trading: tm(str), tradingAll: tm(strAll), signals: bt.sig[s].filter((v) => v > 0).length, setups: R.setup.reduce((a, b) => a + b, 0), msetups: R.msetup.reduce((a, b) => a + b, 0) };
+    const S = { first, side: cfg.side, exitName: R.exitName, steps: m.steps, garchSteps: R.garchSteps, harSteps: R.harSteps, sig: bt.sig[s] };
     for (const k of ["d", "o", "h", "l", "c", "v", "atr", "rsi2", "rsi14", "streak", "ibs", "lwick", "uwick", "ret1", "gap", "rangex", "volz", "m20", "s20", "z20", "sma5", "vterm", "vrank", "vix", "frank", "setup",
-      "y", "tret", "thold", "texit", "zone", "ztouch", "zn", "zfwd", "touch", "fwd5", "r", "rv", "cc20", "park20", "gk20", "rs20", "yz5", "yz20", "yz60", "garch", "har5"]) S[k] = Array.from(R[k]);
+      "y", "tret", "thold", "texit", "tentry", "unfilled", "ac", "mode", "msetup", "mret", "mhold", "sma10", "zone", "ztouch", "zn", "zfwd", "touch", "fwd5", "r", "rv", "cc20", "park20", "gk20", "rs20", "yz5", "yz20", "yz60", "garch", "har5"]) S[k] = Array.from(R[k]);
     S.zq = R.zq.map((a) => Array.from(a)); S.X = {}; S.Z = {}; for (const q of SKEYS) { S.X[q] = Array.from(R.X[q]); S.Z[q] = Array.from(R.Z[q]); }
     S.score = m.score; S.P = m.P; S.Pr = m.Pr; S.C = m.C;
     Object.assign(S, C);

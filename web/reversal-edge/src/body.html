@@ -51,7 +51,7 @@
 </style>
 
 <div class="hdr">
-  <div class="brand"><b>QUANTLAB</b><span>reversal edge · research terminal</span></div>
+  <div class="brand"><b>QUANTLAB</b><span>reversal edge v6 · research terminal</span></div>
   <div class="f"><label for="sym">symbol</label><select id="sym"></select></div>
   <div class="f"><label>range</label><div class="rng" id="rng"><button data-n="126">6M</button><button data-n="252" class="on">1Y</button><button data-n="504">2Y</button><button data-n="1260">5Y</button><button data-n="0">All</button></div></div>
   <div class="live">LIVE · RUNS IN YOUR BROWSER</div>
@@ -90,9 +90,16 @@
           <label for="c-pool" title="Weight on other uploaded symbols' setups when adapting each symbol.">pooling weight</label><input id="c-pool" type="number" step="0.05" min="0" max="1" value="0.5">
           <label for="c-testDays" title="Bars between refits of the adapted weights.">refit every (bars)</label><input id="c-testDays" type="number" min="5" max="252" value="63">
           <label for="c-market" title="Optional: a market file such as SPY adds a market-residual fair value for context.">market file (optional)</label><select id="c-market"></select>
-          <div class="h">Exit rules (system and suggested plans)</div>
-          <label for="c-stopATR" title="Protective stop distance from the entry, in ATRs.">stop (ATRs)</label><input id="c-stopATR" type="number" step="0.25" min="0.5" max="10" value="3">
-          <label for="c-maxHold" title="Exit after this many bars if neither the stop nor the 5-day-average exit happened.">max hold (bars)</label><input id="c-maxHold" type="number" min="1" max="60" value="10">
+          <div class="h">Mode, entry and exit (round-2 research)</div>
+          <label for="c-mode" title="Auto: each market's own 500-day autocorrelation decides. Markets that keep moving the same way day to day (e.g. TASI) get momentum setups; markets that revert get reversal setups.">mode</label><select id="c-mode"><option value="auto">auto (by market character)</option><option value="rev">reversal only (buy dips)</option><option value="mom">momentum only (buy strength)</option></select>
+          <label for="c-acThr" title="Autocorrelation above this switches a market to momentum mode. TASI ≈ +0.12; US stocks ≈ 0.">momentum switch above</label><input id="c-acThr" type="number" step="0.01" min="-0.5" max="0.5" value="0.08">
+          <label for="c-entry" title="Limit: buy only if price drops a further fraction of an ATR the next day (much better trades, about half as many). Next open: always buy at the open.">reversal entry</label><select id="c-entry"><option value="limit">limit order below the close</option><option value="open">next open</option></select>
+          <label for="c-limitATR" title="How far below the signal close the limit order sits, in ATRs.">limit distance (ATRs)</label><input id="c-limitATR" type="number" step="0.05" min="0.05" max="2" value="0.5">
+          <label for="c-exit" title="When to sell a reversal trade.">reversal exit</label><select id="c-exit"><option value="prevhigh">close above previous day's high</option><option value="sma5">close above 5-day average</option><option value="sma10">close above 10-day average</option><option value="rsi70">RSI(2) above 70</option></select>
+          <label for="c-stopATR" title="0 = no price stop (research default: stops cut the edge). Otherwise a protective stop this many ATRs below the entry.">stop (ATRs, 0 = none)</label><input id="c-stopATR" type="number" step="0.25" min="0" max="10" value="0">
+          <label for="c-maxHold" title="Sell a reversal trade after this many bars if the exit rule has not fired.">reversal max hold (bars)</label><input id="c-maxHold" type="number" min="1" max="60" value="10">
+          <label for="c-momTrig" title="Momentum setup: RSI(2) closes above this.">momentum: RSI(2) above</label><input id="c-momTrig" type="number" min="50" max="99" value="90">
+          <label for="c-momMaxHold" title="Sell a momentum trade after this many bars if it has not closed below its 5-day average.">momentum max hold (bars)</label><input id="c-momMaxHold" type="number" min="1" max="120" value="30">
           <label for="c-slippage" title="Slippage + commission per side.">costs per side (bps)</label><input id="c-slippage" type="number" step="0.5" min="0" max="50" value="5">
           <div class="h">System sizing (backtest)</div>
           <label for="c-sizeMode" title="Fixed: each trade uses max position % of equity (split across symbols). Risk-based: size so the stop loses the risk % below.">position sizing</label><select id="c-sizeMode"><option value="fixed">fixed % of equity</option><option value="risk">risk-based (stop distance)</option></select>
@@ -135,20 +142,22 @@
           <div class="hint" id="clickhint" hidden><span id="clicktxt"></span><button class="btn ghost sm" id="click-cancel">Cancel</button></div>
         </div>
         <div class="scrub"><span>scrub</span><input type="range" id="scrub" min="0" max="1" value="1" aria-label="Inspect bar"><span id="scrubd"></span></div>
-        <div class="pnote">Markers: green arrow = system signal (with its chance of profit), dots = RSI(2) setups coloured by score third, small amber square = volume climax, grey square = news-like gap, green/red circle = system exit. Shaded zones are this stock's own z-score percentiles (last 3 years): light = 10–25% / 75–90%, strong = 2.5–10% / 90–97.5%. Drag to pan, scroll to zoom. Hover a bar to inspect it; click to pin. Drag the dashed Stop / Target lines to move them.</div>
+        <div class="pnote">Markers: green arrow = reversal signal (with its chance of profit), violet arrow = momentum signal, dots = setups (coloured by score third; violet = momentum), small amber square = volume climax, grey square = news-like gap, green/red circle = system exit. Shaded zones are this stock's own z-score percentiles (last 3 years): light = 10–25% / 75–90%, strong = 2.5–10% / 90–97.5%. Drag to pan, scroll to zoom. Hover a bar to inspect it; click to pin. Drag the dashed Stop / Target lines to move them.</div>
       </div>
       <aside class="insp" id="insp">
         <div class="tk" id="ticket">
           <div style="display:flex;justify-content:space-between;align-items:center"><span class="lab">order ticket · paper</span><span class="tag l" id="t-mode">live</span></div>
           <div class="row2"><button class="sb b on" id="t-buy">Buy / long</button><button class="sb s" id="t-sell">Sell / short</button></div>
           <div class="tf">
+            <label for="t-type">Order</label><select id="t-type" style="grid-column:2/4;background:var(--page);color:var(--ink);border:1px solid var(--hair);border-radius:4px;padding:4px 6px;font:12px var(--sans)"><option value="market">market (fill rule in Settings)</option><option value="limit">limit, valid next bar only</option></select>
+            <span id="t-limit-row" hidden style="display:contents"><label for="t-limit">Limit</label><input id="t-limit" type="number" step="any"><span class="note">price</span></span>
             <label for="t-entry">Entry</label><input id="t-entry" type="text" readonly tabindex="-1"><span class="note" id="t-fill"></span>
             <label for="t-stop">Stop</label><input id="t-stop" type="number" step="any"><button class="ic" id="pick-stop" title="Click the chart to set the stop">Pick</button>
             <label for="t-target">Target</label><input id="t-target" type="number" step="any"><button class="ic" id="pick-target" title="Click the chart to set the target">Pick</button>
             <label for="t-risk">Risk %</label><input id="t-risk" type="number" step="0.25" min="0.1" max="10" value="1"><span class="note">of equity</span>
             <label for="t-qty">Shares</label><input id="t-qty" type="number" step="1" min="1"><button class="ic on" id="t-auto" title="Size from risk % automatically">Auto</button>
             <label for="t-time">Time stop</label><input id="t-time" type="number" step="1" min="0" value="10"><span class="note">bars</span>
-            <label class="ck"><input type="checkbox" id="t-sys" checked> Also exit on the first close back above the 5-day average (system exit)</label>
+            <label class="ck"><input type="checkbox" id="t-sys" checked> Also exit by the system rule (from the plan / Settings)</label>
             <label for="t-note">Note</label><input id="t-note" type="text" maxlength="140" placeholder="why this trade?" style="grid-column:2/4">
           </div>
           <div class="tsum" id="t-sum"></div>
