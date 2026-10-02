@@ -1,0 +1,48 @@
+<section id="t-data">
+    <div class="grid2">
+      <div>
+        <div class="panel">
+          <h3>1 · Upload daily price history</h3>
+          <label class="drop" id="drop" for="file"><b>Drop CSV files here</b> or click to choose<br><span class="note">One file per stock (AAPL.csv, tsla_us_d.csv…) or one file with a Ticker column. Needs Date, Open, High, Low, Close; Volume and Adj Close are used when present. 4+ years recommended.</span></label>
+          <input type="file" id="file" accept=".csv,.txt,text/csv" multiple hidden>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn ghost" id="sample">Load sample: TSLA (real, 2010–2026)</button><button class="btn ghost" id="clear">Remove all</button></div>
+          <div id="dslist" style="margin-top:10px"></div>
+          <div class="status" id="parsemsg"></div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h3>2 · Run</h3>
+          <button class="btn" id="run">Run walk-forward</button>
+          <div class="bar"><i id="prog"></i></div>
+          <div class="status" id="runmsg">Changes to trading settings re-run the backtest instantly; model settings retrain.</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Settings</h3>
+        <div class="set" id="settings">
+          <div class="h">Data &amp; mean</div>
+          <label for="c-market" title="Choose the file that represents the market (e.g. SPY). Enables trading the market-adjusted residual with a hedge.">market file (optional)</label><select id="c-market"></select>
+          <label for="c-primary" title="Which mean defines the traded deviation.">traded mean</label><select id="c-primary"><option value="kalman">Kalman fair value</option><option value="ou">OU mean (price)</option><option value="factor">Market residual (needs market file)</option></select>
+          <div class="h">Labels &amp; model (retrains)</div>
+          <label for="c-K" title="Bars allowed for the reversion.">horizon K (bars)</label><input id="c-K" type="number" min="2" max="60" value="10">
+          <label for="c-frac" title="Share of the gap that must close for a success.">reversion fraction</label><input id="c-frac" type="number" step="0.05" min="0.1" max="1" value="0.5">
+          <label for="c-stopZ" title="Extension beyond entry, in sigmas, that fails the trade.">stop (sigmas beyond entry)</label><input id="c-stopZ" type="number" step="0.25" min="0.25" max="4" value="1">
+          <label for="c-minAbsZ" title="Bars with |z| below this are not used to train.">training min |z|</label><input id="c-minAbsZ" type="number" step="0.25" min="0" max="3" value="0.75">
+          <label for="c-trainDays" title="Training window before each test block.">training window (bars)</label><input id="c-trainDays" type="number" step="21" min="250" max="4000" value="1260">
+          <label for="c-testDays" title="Bars predicted before retraining.">retrain every (bars)</label><input id="c-testDays" type="number" min="5" max="252" value="63">
+          <label for="c-l2" title="Regularisation strength, in pseudo-samples. Higher = more conservative probabilities.">L2 strength</label><input id="c-l2" type="number" min="0" max="5000" step="10" value="200">
+          <label for="c-pool" title="Weight on other symbols' samples when training each symbol.">pooling weight</label><input id="c-pool" type="number" step="0.05" min="0" max="1" value="0.25">
+          <div class="h">Signal, risk &amp; exits (instant)</div>
+          <label for="c-thr" title="Calibrated probability required to enter.">probability threshold</label><input id="c-thr" type="number" step="0.01" min="0.3" max="0.95" value="0.6">
+          <label for="c-lower" title="Require the lower confidence bound to clear the threshold too.">require lower bound</label><select id="c-lower"><option value="1">yes</option><option value="0">no</option></select>
+          <label for="c-entryZ" title="|z| required to consider an entry.">entry |z|</label><input id="c-entryZ" type="number" step="0.1" min="0.5" max="4" value="1">
+          <label for="c-minConf" title="Independent means breached ≥2σ on the same side.">min confluence</label><input id="c-minConf" type="number" min="0" max="5" value="1">
+          <label for="c-regime" title="Disarm when Hurst > 0.5 and ADF p > 0.1.">regime gate</label><select id="c-regime"><option value="1">on</option><option value="0">off</option></select>
+          <label for="c-short" title="Fade upside extensions too.">allow shorts</label><select id="c-short"><option value="1">yes</option><option value="0">no</option></select>
+          <label for="c-risk" title="Target daily sigma per position, as a fraction of equity.">risk per position</label><input id="c-risk" type="number" step="0.001" min="0.001" max="0.03" value="0.008">
+          <label for="c-maxPos" title="Maximum concurrent positions.">max positions</label><input id="c-maxPos" type="number" min="1" max="20" value="4">
+          <label for="c-cooldown" title="Bars after an exit before re-entering the same symbol.">cooldown (bars)</label><input id="c-cooldown" type="number" min="0" max="60" value="3">
+          <label for="c-slippage" title="Slippage + commission per side, bps of notional.">costs per side (bps)</label><input id="c-slippage" type="number" step="0.5" min="0" max="50" value="3">
+        </div>
+      </div>
+    </div>
+  </section>
