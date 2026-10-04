@@ -15,6 +15,11 @@
 .rp{display:inline-flex;gap:6px;align-items:center;background:rgba(250,178,25,.08);border:1px solid rgba(250,178,25,.4);border-radius:5px;padding:3px 6px}
 .rp .d{font:11px var(--mono);color:var(--warn);white-space:nowrap}.rp select{padding:3px 6px}
 .aplus{color:#fab219}.aplus-b{color:#1a1a19!important;background:#fab219!important;font-weight:700}
+.aibox,.planbox{border:1px solid var(--hair,#2a2a28);border-radius:6px;padding:10px 12px;margin:10px 0;background:var(--surface,#1a1a19)}
+.ai-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.ai-head>b{letter-spacing:.06em;font-size:13px}.ai-head .ai-only{display:inline-flex;gap:8px;align-items:center}
+.ai-out{font-size:13px;line-height:1.55;max-width:900px}.ai-out h4{margin:10px 0 4px;font-size:13px;color:#e8e6dc}.ai-out p{margin:4px 0}.ai-out ul{margin:4px 0 4px 18px;padding:0}
+.ai-turn{font-size:12px;border-left:2px solid #3a3a38;padding:2px 8px;margin:6px 0;opacity:.8}.ai-ask{display:flex;gap:8px;margin-top:8px}.ai-ask input{flex:1;min-width:0}
+.ai-only[hidden],.ai-off[hidden]{display:none!important}
 .pulse-hud{position:absolute;z-index:4;pointer-events:none;font:11px/1.6 "JetBrains Mono",monospace;color:var(--ink2,#c3c2b7);background:rgba(26,26,25,.72);backdrop-filter:blur(3px);border:1px solid rgba(195,194,183,.12);border-radius:5px;padding:2px 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 90px)}
 .pulse-hud b{color:#e8e6dc;letter-spacing:.06em}.pulse-hud .pk{opacity:.55}.pulse-hud i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:2px;background:#444;vertical-align:-1px}
 .pulse-hud .st{border:1px solid;border-radius:3px;padding:0 5px;font-weight:600;letter-spacing:.05em}
@@ -57,13 +62,13 @@
 </style>
 
 <div class="hdr">
-  <div class="brand"><b>QUANTLAB</b><span>reversal edge v9 · stress-tested</span></div>
+  <div class="brand"><b>QUANTLAB</b><span>reversal edge v10 · Claude analyst</span></div>
   <div class="f"><label for="sym">symbol</label><select id="sym"></select></div>
   <div class="f"><label>range</label><div class="rng" id="rng"><button data-n="126">6M</button><button data-n="252" class="on">1Y</button><button data-n="504">2Y</button><button data-n="1260">5Y</button><button data-n="0">All</button></div></div>
   <div class="live">LIVE · RUNS IN YOUR BROWSER</div>
   <div class="snap" id="snap">No data yet: upload price history in the Data tab.</div>
 </div>
-<nav class="tabs" id="tabs"><button data-t="data" class="on">Data &amp; settings</button><button data-t="chart">Chart</button><button data-t="scan">Scanner</button><button data-t="mine">My trades</button><button data-t="vol">Volatility</button><button data-t="model">Model</button><button data-t="perf">Performance</button><button data-t="trades">Trades</button><button data-t="about">Research</button></nav>
+<nav class="tabs" id="tabs"><button data-t="data" class="on">Data &amp; settings</button><button data-t="chart">Chart</button><button data-t="scan">Scanner &amp; plan</button><button data-t="mine">My trades</button><button data-t="vol">Volatility</button><button data-t="model">Model</button><button data-t="perf">Performance</button><button data-t="trades">Trades</button><button data-t="about">Research</button></nav>
 <main>
   <section id="t-data">
     <div class="grid2">
@@ -123,6 +128,10 @@
   </section>
   <section id="t-chart" hidden>
     <div class="sigbar" id="sigbar"></div>
+    <div class="aibox"><div class="ai-head"><b>Claude analyst</b><span class="note ai-off">Available when this page is opened inside Claude: it reads everything the system computed for the stock, runs research on your files and tells you how to trade it. Uses your Claude account.</span>
+      <span class="ai-only" hidden><button class="btn sm" id="ai-go">Analyse this stock</button><button class="btn ghost sm" id="ai-stop" hidden>Stop</button><span class="note" id="ai-status"></span></span></div>
+      <div id="ai-hist"></div><div class="ai-out" id="ai-out"></div>
+      <div class="ai-only ai-ask" hidden><input id="ai-q" placeholder="Ask a follow-up, e.g. would you wait for a close below the lower band?" aria-label="Follow-up question"><button class="btn ghost sm" id="ai-send">Ask</button></div></div>
     <div class="chartwrap">
       <div class="cc">
         <div class="tb">
@@ -178,6 +187,10 @@
     </div>
   </section>
   <section id="t-scan" hidden>
+    <div class="planbox"><div class="ai-head"><b>Tomorrow's plan</b><button class="btn ghost sm" id="plan-upload">Upload stocks…</button>
+      <span class="ai-only" hidden><button class="btn sm" id="plan-go">Ask Claude: best trades for tomorrow</button><button class="btn ghost sm" id="plan-stop" hidden>Stop</button></span><span class="note ai-off">Open inside Claude to get a written brief.</span></div>
+      <div class="note" id="plan-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="plan-t"></table></div><div class="ai-out" id="plan-ai"></div></div>
+    <h3 style="font-size:13px;margin:16px 0 6px;color:var(--muted,#8a8a85);letter-spacing:.06em">ALL SYMBOLS · LATEST BAR</h3>
     <div class="ban mid" id="scan-note" style="margin-bottom:10px">Every uploaded symbol on its latest bar, best setups first. Click a row to open it on the chart.</div>
     <div class="tw"><table class="bl" id="scan-t"></table></div>
   </section>

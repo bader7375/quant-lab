@@ -109,7 +109,7 @@ function renderPulseHud(i){const hud=$("pulse-hud"),s=S();if(!s||!s.pulse||!UI.p
   <span class="st" style="color:${col};border-color:${col}">${PULSE_STATE[st0]}</span>${s.mode[i]===-1?'<span class="st" style="color:#a77bea;border-color:#a77bea">AVOID MEAN REVERSION</span>':""}`}
 
 let chart=null,SER={},MK=null,PLINES=[],ARR=null,hoverIdx=null;
-const OVL=[["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
+const OVL=[["bb","Bollinger Bands (20, 2)","#7aa7e0"],["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
  ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["pdiv","Divergence lines","#a77bea"],["mine","My trades",TV.you]];
 const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
 $("ov").innerHTML=`<span class="lab">on price</span>`+OVL.map(([k,n,c])=>`<label><input type="checkbox" data-ov="${k}" ${UI.ov[k]?"checked":""}><span style="color:${c}">■</span>${n}</label>`).join("");
@@ -129,6 +129,7 @@ function buildArrays(){
  A.meanArr=m20.map(Math.exp);A.sma5Arr=s?s.sma5:sma5;A.zArr=s?s.z20:lc.map((x,i)=>(x-m20[i])/s20[i]);
  A.mean=L(A.meanArr);A.exit=L(A.sma5Arr);
  A.zones=d.d.map((t,i)=>{if(!s)return {time:t};const q=s.zq.map(z=>isF(z[i])?Math.exp(s.m20[i]+z[i]*s.s20[i]):NaN);return q.every(isF)?{time:t,q}:{time:t}});
+ {const U=[],M=[],Lo=[];for(let i=0;i<n;i++){const b=bbAt(d.c,i);U.push(b?b.up:NaN);M.push(b?b.mid:NaN);Lo.push(b?b.lo:NaN)}A.bbu=L(U);A.bbm=L(M);A.bbl=L(Lo)}
  A.kalman=L(s&&s.lv_kalman);A.trend=L(s&&s.lv_trend);A.ou=L(s&&s.lv_ou);A.ema20=L(s&&s.lv_ema20);A.factor=L(s&&s.lv_factor);
  A.edgeH=d.d.map((t,i)=>s&&s.setup[i]&&isF(s.score[i])?{time:t,value:s.score[i],color:THIRD_COL[thirdOf(s.score[i])]}:{time:t});
  A.edgeL=L(s&&s.score);
@@ -157,6 +158,7 @@ function buildChart(keep){
  SER.candle=chart.addSeries(LW.CandlestickSeries,{upColor:TV.up,downColor:TV.down,borderUpColor:TV.up,borderDownColor:TV.down,wickUpColor:TV.up,wickDownColor:TV.down},0);
  SER.vol=chart.addSeries(LW.HistogramSeries,{priceScaleId:"vol",priceFormat:{type:"volume"},lastValueVisible:false,priceLineVisible:false},0);SER.vol.priceScale().applyOptions({scaleMargins:{top:.84,bottom:0}});
  for(const k of ["kalman","trend","ou","ema20","factor"])SER[k]=line(C.mean[k]);
+ SER.bbu=line("rgba(122,167,224,.9)",{title:"BB",lastValueVisible:true});SER.bbl=line("rgba(122,167,224,.9)",{lastValueVisible:true});SER.bbm=line("rgba(122,167,224,.55)",{lineStyle:LW.LineStyle.Dotted});
  SER.exit=line("#fab219",{lineWidth:1,lineStyle:LW.LineStyle.Dashed,title:"5d avg",lastValueVisible:true});
  SER.mean=line("#ffffff",{lineWidth:2,title:"20d mean",lastValueVisible:true,crosshairMarkerVisible:true});
  let pane=1;const P={};
@@ -176,16 +178,16 @@ function buildChart(keep){
  MK=LW.createSeriesMarkers(SER.candle,[]);PLINES=[];
  chart.subscribeCrosshairMove(onCross);chart.subscribeClick(onChartClick);
  refreshOverlays(range);if(!range)showRange()}
-const DKEYS=["pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
+const DKEYS=["bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
 function setAllData(upto){if(!ARR)return;for(const k of DKEYS)if(SER[k]&&ARR[k])SER[k].setData(upto>=ARR.n-1?ARR[k]:ARR[k].slice(0,upto+1))}
 function stepData(i){for(const k of DKEYS)if(SER[k]&&ARR[k]&&ARR[k][i])SER[k].update(ARR[k][i])}
 function applyVisibility(){const v=UI.ov,set=(k,on)=>SER[k]&&SER[k].applyOptions({visible:!!on});
- set("zones",v.zones);set("pdiv",v.pdiv);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
+ set("bbu",v.bb);set("bbm",v.bb);set("bbl",v.bb);set("zones",v.zones);set("pdiv",v.pdiv);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
 function refreshOverlays(range){
  if(!chart)return;const d=D();
  if(!d){ARR=null;for(const k of DKEYS)SER[k]&&SER[k].setData([]);annotate();renderLegend();return}
  ARR=buildArrays();const dg=pdig(d.c[d.c.length-1]),pf={type:"price",precision:dg,minMove:Math.pow(10,-dg)};
- for(const k of ["candle","mean","exit","kalman","trend","ou","ema20","factor"])SER[k].applyOptions({priceFormat:pf});
+ for(const k of ["candle","mean","exit","kalman","trend","ou","ema20","factor","bbu","bbm","bbl"])SER[k].applyOptions({priceFormat:pf});
  if(SER.rsi){(SER.rl||[]).forEach(l=>SER.rsi.removePriceLine(l));SER.rl=[ECFG.trig,100-ECFG.trig].map((v,k)=>SER.rsi.createPriceLine({price:v,color:k?"rgba(230,103,103,.5)":"rgba(79,209,165,.7)",lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:k?"":"setup"}))}
  if(SER.edgeL){SER.thrLine&&SER.edgeL.removePriceLine(SER.thrLine);SER.thrLine=ECFG.scoreThr>-50&&ECFG.scoreThr!==THIRDS[1]?SER.edgeL.createPriceLine({price:ECFG.scoreThr,color:C.warn,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:"your filter"}):null}
  setAllData(cur());applyVisibility();if(range)chart.timeScale().setVisibleLogicalRange(range);

@@ -112,6 +112,7 @@ function renderSigbar(){
    if(th===2){const ib=s.ibs[c],pm=s.pulse?s.pulse.M[c]:NaN,okI=sd>0?ib<=.13:ib>=.87,okM=sd>0?pm<=-.5:pm>=.5;
     say+=ap?` <b class="aplus">A+ grade</b>: it closed ${sd>0?"at the low":"at the high"} of the day (${pct(ib,0)} of the range) with deep momentum (pulse ${fmt(pm,2)}σ). A+ trades earned about twice as much per trade in every long-history test.`
      :` Not A+: needs ${[okI?"":`a close in the ${sd>0?"bottom":"top"} 13% of the day's range (now ${pct(ib,0)})`,okM?"":`pulse ${sd>0?"below −0.5":"above +0.5"} (now ${fmt(pm,2)}σ)`].filter(Boolean).join(" and ")}.`}
+   {const bb=bbAt(d.c,c);if(bb&&bb.pb<0)say+=` Closed <b>below the lower Bollinger Band</b> (%B ${bb.pb.toFixed(2)}): top-third setups below the band averaged +1.54% vs +0.93% per trade after 2013 (context, not a rule).`}
    if(cls==="watch")say+=` Below your filter (${$("c-scoreThr").selectedOptions[0].textContent}), so the system skips it.`;
    if(sig)say+=` Plan: ${plan.limit?`place a <b>limit ${sd>0?"buy":"sell"} at ${fp(plan.entry)}</b> (close − ${ECFG.limitATR} ATR), good for tomorrow only`:`${sd>0?"buy":"sell"} at the next open`}; sell on ${exitTxt}${isF(plan.exitLevel)?` (now ${fp(plan.exitLevel)})`:""} or after ${ECFG.maxHold} days; ${stopTxt}.`;
    gauge=`<div class="gauge">${gaugeSvg(P,THIRD_COL[th])}<span>chance of profit</span></div>`}
@@ -165,7 +166,7 @@ function inspector(i){const el=$("inspbody"),d=D();if(!d){el.innerHTML="";return
   return `<div class="rr" title="${esc(signMeaning(k))} Research: top-vs-bottom-third trade difference ${ev?ev.map(x=>(x>0?"+":"")+x+"bp").join(" / "):""} (87 stocks / TSLA 11-17 / TSLA 18-26)."><span class="nm">${esc(signLabel(k))}</span><span class="vv">${shown}</span><div class="cb"><i style="left:${(v||0)>=0?50:50-w}%;width:${w}%;background:${(v||0)>=0?"#4fd1a5":"#e66767"}"></i></div></div>`}).join("")+`</div>`;
  const stp=lastStep(s,i);if(stp)h+=`<div class="note" style="margin-top:4px">weights: ${!ECFG.adapt?`fixed research weights (v9) · ${stp.own} own setups used for the chance-of-profit calibration`:stp.own<30?"research (not enough own setups yet)":`${Math.round(100*(1-stp.lam))}% research, ${Math.round(100*stp.lam)}% this stock (${stp.own} own setups)`} · updated ${stp.d}</div>`;
  // other quick reads
- h+=`<div class="sec">quick read</div><table class="t"><tr><td>RSI(2) / RSI(14)</td><td class="n">${fmt(s.rsi2[i],0)} / ${fmt(s.rsi14[i],0)}</td></tr><tr><td>streak · close in range (IBS)</td><td class="n">${fmt(s.streak[i],0)} · ${pct(s.ibs[i],0)}</td></tr>
+ h+=`<div class="sec">quick read</div><table class="t">${(()=>{const b=bbAt(d.c,i);return b?`<tr><td>Bollinger %B · band width</td><td class="n">${b.pb.toFixed(2)} · ${(100*b.bw).toFixed(1)}%</td></tr>`:""})()}<tr><td>RSI(2) / RSI(14)</td><td class="n">${fmt(s.rsi2[i],0)} / ${fmt(s.rsi14[i],0)}</td></tr><tr><td>streak · close in range (IBS)</td><td class="n">${fmt(s.streak[i],0)} · ${pct(s.ibs[i],0)}</td></tr>
   <tr><td>volume vs normal</td><td class="n">${isF(s.volz[i])?(s.volz[i]>=0?"+":"")+s.volz[i].toFixed(1)+"σ":"—"}</td></tr><tr><td>range / gap (ATR)</td><td class="n">${fmt(s.rangex[i],2)} / ${fmt(s.gap[i],2)}</td></tr>
   <tr><td>market character (500d autocorr)</td><td class="n">${isF(s.ac[i])?(s.ac[i]>=0?"+":"")+s.ac[i].toFixed(3):"—"} · ${s.mode[i]===-1?"momentum":"reversal"}</td></tr>
   <tr><td>Yang-Zhang vol (5/20/60d)</td><td class="n">${fmt(s.yz5[i],0)} / ${fmt(s.yz20[i],0)} / ${fmt(s.yz60[i],0)}%</td></tr><tr><td>GARCH next-day vol</td><td class="n">${fmt(s.garch[i],0)}%</td></tr><tr><td>VIX · rank</td><td class="n">${fmt(s.vix[i],1)} · ${pct(s.frank[i],0)}</td></tr></table>`;
@@ -185,7 +186,8 @@ function inspector(i){const el=$("inspbody"),d=D();if(!d){el.innerHTML="";return
  el.innerHTML=h}
 
 // ------------------------------------------------ scanner
-function drawScan(){
+function drawScan(){try{drawPlan()}catch(e){console.error(e)}
+
  if(!RES){clr("scan-t",'<tr><td class="empty">Run the system in the Data tab first.</td></tr>');return}
  const rows=RES.syms.filter(SY).map(sym=>{const s=SY(sym),i=s.d.length-1,stp=lastStep(s,i),th=thirdOf(s.score[i]);return {sym,s,i,th,own:stp&&stp.thirds[th]}});
  rows.sort((a,b)=>((b.s.aplus?b.s.aplus[b.i]:0)-(a.s.aplus?a.s.aplus[a.i]:0))||(b.s.sig[b.i]-a.s.sig[a.i])||(b.s.setup[b.i]-a.s.setup[a.i])||(b.s.score[b.i]-a.s.score[a.i]));
