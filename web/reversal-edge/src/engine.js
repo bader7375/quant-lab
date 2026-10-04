@@ -559,18 +559,22 @@ function contextMeans(ds, mkt) { // fair-value means and stationarity statistics
   const st = rollingStats(y, 250); out.hurst = st.hurst; out.adf = st.adfp; out.vr4 = st.vr4;
   return out;
 }
+// v12: Saudi stocks trend day to day; dip-buys showed no edge there while momentum signals did (Al Rajhi, TASI), so they can run in momentum mode
+const SAUDI_NAMES = /^(TASI|TASI_\w+|ARAMCO|ALRAJHI|RAJHI|AL_RAJHI|SABIC|STC|SNB|ALINMA|MAADEN|ACWA|ELM|DRSK|MOUWASAT|SULAIMAN|NOMU|MT30)$/i;
+function isSaudi(sym) { return /^\d{4}(_SR|_SE|_SA)?$/i.test(sym) || /(_SR|\.SR|_SE|_SA)$/i.test(sym) || SAUDI_NAMES.test(sym); }
+function symCfg(sym, cfg) { return cfg.saudi === "mom" && isSaudi(sym) && cfg.mode !== "rev" ? Object.assign({}, cfg, { mode: "mom" }) : cfg; }
 function run(datasets, cfg, fear) {
   const all = Object.keys(datasets), mkt = cfg.market && datasets[cfg.market] ? datasets[cfg.market] : null;
   const syms = all.filter((s) => s !== cfg.market || all.length === 1);
   if (!syms.length) throw new Error("Upload at least one price file besides the market file.");
   const key = JSON.stringify([all.map((s) => [s, datasets[s].d.length, datasets[s].d[datasets[s].d.length - 1], datasets[s].c[datasets[s].c.length - 1]]), fear ? [fear.d.length, fear.d[fear.d.length - 1]] : 0,
-    cfg.market, cfg.side, cfg.shorts, cfg.trig, cfg.stopATR, cfg.maxHold, cfg.slippage, cfg.adapt, cfg.n0, cfg.pool, cfg.testDays, cfg.mode, cfg.acThr, cfg.entry, cfg.limitATR, cfg.exit, cfg.momTrig, cfg.momMaxHold]);
+    cfg.market, cfg.side, cfg.shorts, cfg.saudi, cfg.trig, cfg.stopATR, cfg.maxHold, cfg.slippage, cfg.adapt, cfg.n0, cfg.pool, cfg.testDays, cfg.mode, cfg.acThr, cfg.entry, cfg.limitATR, cfg.exit, cfg.momTrig, cfg.momMaxHold]);
   let base;
   if (CACHE.key === key) { base = CACHE.model; progress(0.9, "reusing features and model (only trading settings changed)"); }
   else {
     const rev = {}, ctx = {};
     syms.forEach((s, i) => { progress(0.02 + 0.6 * i / syms.length, `features, zones and volatility models: ${s}`);
-      rev[s] = Object.assign(buildRev(datasets[s], fear, cfg), { d: datasets[s].d, o: datasets[s].o, h: datasets[s].h, l: datasets[s].l, c: datasets[s].c, v: datasets[s].v });
+      rev[s] = Object.assign(buildRev(datasets[s], fear, symCfg(s, cfg)), { d: datasets[s].d, o: datasets[s].o, h: datasets[s].h, l: datasets[s].l, c: datasets[s].c, v: datasets[s].v });
       ctx[s] = contextMeans(datasets[s], s === cfg.market ? null : mkt); });
     progress(0.7, "fitting the reversal model walk-forward");
     const M = model(syms, rev, cfg);

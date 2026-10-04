@@ -19,10 +19,12 @@ const RESEARCH_THIRDS={avg87:[-21,3,57],win87:[.61,.65,.71],avgT:[-7,-12,135],wi
 const ALIAS={date:["date","datetime","time","timestamp","day"],ticker:["ticker","symbol","stock","code"],open:["open","openprice"],high:["high","highprice"],low:["low","lowprice"],
  close:["close","closelast","last","closeprice","price"],adj:["adjclose","adjustedclose","closeadj"],volume:["volume","vol"]};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
-function tickerFromName(name){const parts=name.replace(/\.[^.]+$/,"").split(/[_.\s-]/).filter(Boolean);while(parts.length>1&&(["us","uk","de","sa","se","d","daily","w","m","historical","data","history","prices"].includes(parts[parts.length-1].toLowerCase())||/^\d+$/.test(parts[parts.length-1])))parts.pop();return parts.join("_").toUpperCase()}
+function tickerFromName(name){const base=name.replace(/\.[^.]+$/,"").replace(/\d{4}-\d{2}-\d{2}/g," ").replace(/_/g," ").replace(/\b(historical|history|data|prices|price|daily|sar|usd|to|from|stock|quote)\b/gi," ").replace(/[_\s-]+/g," ").trim();
+ const code=base.match(/^(\d{4})$/);if(code)return code[1];return tickerFromName0(name)}
+function tickerFromName0(name){const parts=name.replace(/\.[^.]+$/,"").split(/[_.\s-]/).filter(Boolean);while(parts.length>1&&(["us","uk","de","sa","se","d","daily","w","m","historical","data","history","prices"].includes(parts[parts.length-1].toLowerCase())||/^\d+$/.test(parts[parts.length-1])))parts.pop();return parts.join("_").toUpperCase()}
 function toISO(s){s=String(s).trim().replace(/^"|"$/g,"");let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
  m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return `${m[3]}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`;m=s.match(/^(\d{4})(\d{2})(\d{2})$/);if(m)return `${m[1]}-${m[2]}-${m[3]}`;const t=Date.parse(s);return isNaN(t)?null:new Date(t).toISOString().slice(0,10)}
-const num=v=>{const x=parseFloat(String(v).replace(/[$,\s"]/g,""));return isF(x)?x:NaN};
+const num=v=>{const t=String(v).replace(/[$,\s"]/g,""),m=t.match(/^(-?[\d.]+)([KMB])$/i),x=m?parseFloat(m[1])*{K:1e3,M:1e6,B:1e9}[m[2].toUpperCase()]:parseFloat(t);return isF(x)?x:NaN};
 function splitLine(l,sep){if(!l.includes('"'))return l.split(sep);const out=[];let cur="",q=false;for(const ch of l){if(ch==='"')q=!q;else if(ch===sep&&!q){out.push(cur);cur=""}else cur+=ch}out.push(cur);return out}
 function parseCSV(text,fname){
  const lines=text.replace(/\r/g,"").split("\n").filter(l=>l.trim());if(lines.length<2)throw new Error(fname+": the file is empty.");
@@ -30,14 +32,16 @@ function parseCSV(text,fname){
  const head=splitLine(lines[0],sep).map(norm),col={};
  for(const [k,al] of Object.entries(ALIAS)){let i=head.findIndex(h=>al.includes(h));if(i<0&&k!=="ticker")i=head.findIndex(h=>al.some(a=>a.length>3&&h.includes(a)));if(i>=0)col[k]=i}
  const miss=["date","open","high","low","close"].filter(k=>col[k]==null);if(miss.length)throw new Error(`${fname}: missing column ${miss.join(", ")}. The first line reads: ${lines[0].slice(0,100)}`);
- const out={};let bad=0;
+ const out={};let bad=0,skip=0;
  for(const l of lines.slice(1)){const r=splitLine(l,sep);const d=toISO(r[col.date]);if(!d){bad++;continue}
   const tk=col.ticker!=null?String(r[col.ticker]).trim().replace(/"/g,"").toUpperCase():tickerFromName(fname);
   let o=num(r[col.open]),h=num(r[col.high]),lo=num(r[col.low]),c=num(r[col.close]);const adj=col.adj!=null?num(r[col.adj]):c;const v=col.volume!=null?num(r[col.volume]):NaN;
   if(!(c>0)||!(adj>0)){bad++;continue}const f=adj/c;o=(o>0?o:c)*f;c=adj;h=Math.max(isF(h)&&h>0?h*f:c,o,c);lo=Math.min(lo>0?lo*f:c,o,c);
-  (out[tk]=out[tk]||[]).push([d,o,h,lo,c,v])}
- const res={};for(const [tk,rows] of Object.entries(out)){rows.sort((a,b)=>a[0]<b[0]?-1:1);const u=rows.filter((r,i)=>i===0||r[0]!==rows[i-1][0]);
-  res[tk]={d:u.map(r=>r[0]),o:u.map(r=>r[1]),h:u.map(r=>r[2]),l:u.map(r=>r[3]),c:u.map(r=>r[4]),v:u.map(r=>r[5]),src:fname,bad}}
+  (out[tk]=out[tk]||[]).push([d,o,h,lo,c,v,col.volume!=null&&!(v>0)&&h===lo])}
+ const res={};for(const [tk,rows] of Object.entries(out)){rows.sort((a,b)=>a[0]<b[0]?-1:1);const u0=rows.filter((r,i)=>i===0||r[0]!==rows[i-1][0]);
+  // placeholder bars: no volume and a flat price that either repeats the previous close (holiday rows) or jumps >25% (bad feed rows, e.g. unadjusted prices)
+  const u=[];for(const r of u0){const p=u[u.length-1];if(r[6]&&p&&(r[4]===p[4]||Math.abs(r[4]/p[4]-1)>.25)){skip++;continue}u.push(r)}
+  res[tk]={d:u.map(r=>r[0]),o:u.map(r=>r[1]),h:u.map(r=>r[2]),l:u.map(r=>r[3]),c:u.map(r=>r[4]),v:u.map(r=>r[5]),src:fname,bad:bad+skip}}
  if(!Object.keys(res).length)throw new Error(fname+": no rows with a valid date and price.");return res}
 const isFearName=k=>/^\^?VIX(_|$)|^VIX\d*$|^CBOE_?VIX/i.test(k);
 
@@ -71,11 +75,11 @@ let arm={};function armed(btn,fn){if(arm[btn.id]){clearTimeout(arm[btn.id].t);bt
 $("clear").addEventListener("click",e=>armed(e.target,()=>{DS={};saveDS();RES=null;afterDataChange()}));
 
 // ------------------------------------------------ settings + worker
-const NUMS=["trig","n0","pool","testDays","stopATR","maxHold","slippage","riskPct","maxW","maxPos","acThr","limitATR","momTrig","momMaxHold"],SELS=["shorts","shortSize","apsize","scoreThr","side","adapt","sizeMode","mode","entry","exit"];
+const NUMS=["trig","n0","pool","testDays","stopATR","maxHold","slippage","riskPct","maxW","maxPos","acThr","limitATR","momTrig","momMaxHold"],SELS=["saudi","shorts","shortSize","apsize","scoreThr","side","adapt","sizeMode","mode","entry","exit"];
 try{const s=JSON.parse(store("qlab-cfg4")||(()=>{const o=JSON.parse(store("qlab-cfg3")||"{}");delete o.adapt;return JSON.stringify(o)})());for(const [k,v] of Object.entries(s)){const el=$("c-"+k);if(el&&k!=="market")el.value=v}}catch(e){}
 (()=>{const a=load("desk-acct",{});if(a.start)$("a-start").value=a.start;if(a.fill)$("a-fill").value=a.fill;if(a.lev)$("a-lev").value=a.lev;if(a.risk)$("t-risk").value=a.risk})();
 function readCfg(){const c={market:$("c-market").value||null};NUMS.forEach(k=>c[k]=+$("c-"+k).value);
- c.scoreThr=+$("c-scoreThr").value;c.shorts=$("c-shorts").value;c.shortSize=+$("c-shortSize").value;{const [am,om]=$("c-apsize").value.split(",").map(Number);c.aplusMult=am;c.otherMult=om;c.grade=om===0?"aplus":"all"}c.sizeMode=$("c-sizeMode").value;c.mode=$("c-mode").value;c.entry=$("c-entry").value;c.exit=$("c-exit").value;c.side=+$("c-side").value;c.adapt=$("c-adapt").value==="1";c.riskPct/=100;c.maxW/=100;
+ c.scoreThr=+$("c-scoreThr").value;c.shorts=$("c-shorts").value;c.saudi=$("c-saudi").value;c.shortSize=+$("c-shortSize").value;{const [am,om]=$("c-apsize").value.split(",").map(Number);c.aplusMult=am;c.otherMult=om;c.grade=om===0?"aplus":"all"}c.sizeMode=$("c-sizeMode").value;c.mode=$("c-mode").value;c.entry=$("c-entry").value;c.exit=$("c-exit").value;c.side=+$("c-side").value;c.adapt=$("c-adapt").value==="1";c.riskPct/=100;c.maxW/=100;
  const s={};[...NUMS,...SELS].forEach(k=>s[k]=$("c-"+k).value);store("qlab-cfg4",JSON.stringify(s));return c}
 const ACCT=()=>({start:Math.max(1000,+$("a-start").value||100000),fill:$("a-fill").value,cost:Math.max(0,+$("c-slippage").value||0)/1e4,lev:Math.max(.5,+$("a-lev").value||1)});
 const saveAcct=()=>store("desk-acct",JSON.stringify({start:$("a-start").value,fill:$("a-fill").value,lev:$("a-lev").value,risk:$("t-risk").value}));

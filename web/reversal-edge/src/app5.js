@@ -1,7 +1,23 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
-<h2 style="font-size:18px">How this system was built, and what the evidence says (v11)</h2>
+<h2 style="font-size:18px">How this system was built, and what the evidence says (v12)</h2>
 <p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>v12: the Saudi market</h2>
+<p><b>Data:</b> Al Rajhi Bank (1120, 2013–2026), Saudi Aramco (2222, Dec 2019 – Dec 2025) and the TASI index (2001–2026). The Al Rajhi file contained 17 corrupt rows from an unadjusted feed (prices about 2.46× too high, no volume), mostly in 2013. Aramco had 35 flat holiday rows. The importer now drops such rows and reads volumes written as "5.05M".</p>
+<p><b>Character:</b> Saudi stocks trend from one day to the next, the opposite of US stocks.</p>
+<table class="t"><tr><th></th><th>lag-1 autocorrelation</th><th>CAGR</th><th>max drawdown</th></tr>
+<tr><td>Al Rajhi</td><td>+0.03 to +0.14 by period</td><td>10.3%</td><td>−45%</td></tr><tr><td>Aramco</td><td>+0.07 / +0.17</td><td>1.1%</td><td>−29%</td></tr><tr><td>TASI</td><td>+0.03 to +0.14</td><td>6.0%</td><td>−80%</td></tr></table>
+<p><b>Dip-buying has little or no edge here.</b> After RSI(2) &lt; 10, the next 5 and 10 days were normal (t ≈ 0) on all three. The engine's dip trades made Sharpe 0.14 on Al Rajhi and 0.03 on Aramco.</p>
+<p><b>Momentum works.</b> Buying the open after RSI(2) &gt; 90 and selling on a close below the 5-day average, compared with random days:</p>
+<ul><li><b>Al Rajhi:</b> +0.49% per trade (2013–19) and +0.56% (2020–26). As a system: Sharpe 0.94, 11.0% a year, max drawdown −13%, vs buy &amp; hold 0.56, 10.5%, −45%.</li>
+<li><b>TASI:</b> +0.81%, +0.29%, +0.27% per trade across periods.</li>
+<li><b>Aramco:</b> +0.16%, not significant. As a system: Sharpe 0.36 vs buy &amp; hold 0.12.</li></ul>
+<p>The default "auto" mode missed this: Saudi stocks' autocorrelation (about +0.06) sits just under the 0.08 switch. So v12 runs Saudi symbols in momentum mode (Settings → Saudi stocks).</p>
+<p><b>Calendar:</b></p>
+<ul><li><b>Ramadan:</b> +0.13% to +0.17% a day vs about 0 in other months, on all three (t 1.5–2.1). Shown as a note, not a rule.</li>
+<li><b>Weekdays:</b> Sunday weak and Tuesday strong, but none is reliable (|t| ≤ 2).</li></ul>
+<p><b>Shorts:</b> too few signals to judge, and retail short selling in Saudi is restricted.</p>
+<p><b>Limits:</b> this is two stocks. Upload 20–30 Saudi stocks to confirm that momentum mode suits the market broadly. Your Aramco file ends on 2025-12-31.</p>
 <h2>v11: short trades (optional, off by default)</h2>
 <p><b>The rule.</b> Sell an overbought bounce: RSI(2) above 90 with a top-third short score, only while the stock is below its 200-day average. When you choose a market file, the market must also be below its 200-day average. The order is a limit sell 0.5 ATR above the close, valid for the next session. Cover on the first close below the previous day's low or after the max hold. Every short has a 3-ATR stop and uses half a slot.</p>
 <p><b>What the tests found</b> (written down before testing, same protocol as v9):</p>

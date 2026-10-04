@@ -1,3 +1,10 @@
+// ------------------------------------------------ v12: Saudi helpers (mirror of the engine's isSaudi) and the Hijri month (Umm al-Qura calendar)
+const SAUDI_NAMES_UI=/^(TASI|TASI_\w+|ARAMCO|ALRAJHI|RAJHI|AL_RAJHI|SABIC|STC|SNB|ALINMA|MAADEN|ACWA|ELM|DRSK|MOUWASAT|SULAIMAN|NOMU|MT30)$/i;
+const saudiSym=sym=>/^\d{4}(_SR|_SE|_SA)?$/i.test(sym)||/(_SR|\.SR|_SE|_SA)$/i.test(sym)||SAUDI_NAMES_UI.test(sym);
+function hijriMonth(iso){try{const p=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura",{month:"numeric",timeZone:"UTC"}).formatToParts(new Date(iso+"T12:00:00Z"));return +p.find(x=>x.type==="month").value}catch(e){return NaN}}
+function saudiNote(sym,date){if(!saudiSym(sym))return "";const ram=hijriMonth(date)===9;
+ return `Saudi stock: ${ECFG.saudi==="mom"?"momentum mode (v12: dip-buys showed little or no edge in Saudi stocks; momentum signals beat random entries, e.g. Al Rajhi +0.5% per trade in 2013–19 and 2020–26)":"same rules as other stocks (Settings → Saudi stocks → momentum mode is recommended)"}.`
+  +(ram?` <b>Ramadan:</b> since 2013, Al Rajhi, Aramco and TASI averaged +0.13% to +0.17% a day in Ramadan vs about 0 otherwise (t 1.5–2.1): a mild tailwind, not a signal.`:"")}
 // ------------------------------------------------ v10: Bollinger helper, tomorrow planner, Claude analyst
 function bbAt(c,i,n=20,k=2){if(i<n-1)return null;let m=0;for(let j=i-n+1;j<=i;j++)m+=c[j];m/=n;let v=0;for(let j=i-n+1;j<=i;j++)v+=(c[j]-m)**2;const sd=Math.sqrt(v/(n-1));
  return sd>0?{mid:m,up:m+k*sd,lo:m-k*sd,pb:(c[i]-(m-k*sd))/(2*k*sd),bw:4*sd/m}:null}
@@ -24,11 +31,12 @@ function shortSay(s,c,plan){const e=ownShort(s,c),mk=s.mdown?" and the market is
 function planFor(sym){const s=SY(sym);if(!s)return null;const i=s.d.length-1;if(i<s.first)return {sym,s,i,kind:"warm",rank:9};
  const c=s.c[i],atr=s.atr[i],mom=s.mode[i]===-1,P=s.pulse,bb=bbAt(s.c,i),tc=triggerClose(s,i),warn=[],good=[];
  const st0=P?P.state[i]:0,isIndex=/^(TASI|SPY|QQQ|DIA|IWM|\^)/i.test(sym);
- if(mom&&!isIndex)warn.push("momentum mode on what may be a single stock: momentum trades lost money on fresh US stocks; consider reversal only");
+ if(mom&&!isIndex&&!saudiSym(sym))warn.push("momentum mode on what may be a single stock: momentum trades lost money on fresh US stocks; consider reversal only");
  if(!mom&&st0===1)warn.push("strong up-trend on a reverting stock: the next 10 days averaged −0.31% vs normal in tests (don't chase)");
  if(!mom&&st0===-1)good.push("strong down-momentum: capitulation, reversal setups did better here in tests");
  if(bb&&bb.pb<0)good.push("closed below the lower Bollinger Band (top-third setups below the band averaged +1.54% vs +0.93% after 2013)");
  {const newest=RES.syms.map(q=>{const z=SY(q);return z?z.d[z.d.length-1]:""}).sort().pop(),gap=(Date.parse(newest)-Date.parse(s.d[i]))/864e5;if(gap>4)warn.push(`data ends ${s.d[i]}, ${Math.round(gap)} days before your newest file: update this file before trading it`)}
+ if(saudiSym(sym)&&hijriMonth(s.d[i])===9)good.push("Ramadan: Saudi stocks averaged +0.13% to +0.17% a day in Ramadan since 2013 (mild tailwind)");
  let o={sym,s,i,c,atr,mom,bb,tc,warn,good,st0};
  if(s.sig[i]===1){const ap=!!(s.aplus&&s.aplus[i]),grade=ap?"aplus":thirdOf(s.score[i]),e=ownEdge(s,i,grade);
   Object.assign(o,{kind:"rev",rank:ap?0:1,action:(ap?"A+ ":"")+(ECFG.entry==="limit"?"limit buy":"buy at open"),entry:ECFG.entry==="limit"?c-ECFG.limitATR*atr:c,
@@ -71,6 +79,7 @@ function snapshotFor(sym,iIn){const s=SY(sym);if(!s)return null;const i=iIn==nul
   character:{autocorr_500d:isF(s.ac[i])?+s.ac[i].toFixed(3):null,mode:s.mode[i]===-1?"momentum":"reversal",switch_above:ECFG.acThr},
   setup:{reversal_setup:!!s.setup[i],momentum_setup:!!s.msetup[i],system_signal:s.sig[i]===1?"reversal buy":s.sig[i]===2?"momentum buy":"none",edge_score:isF(s.score[i])?+s.score[i].toFixed(2):null,score_third:THIRD_NAME[thirdOf(s.score[i])]||null,chance_of_profit:isF(s.P[i])?Math.round(100*s.P[i])+"%":null,aplus:!!(s.aplus&&s.aplus[i])},
   plan:{action:pl.action||null,entry:isF(pl.entry)?+pl.entry.toFixed(4):null,exit:pl.exitTxt||null,max_hold_days:pl.maxHold||null,trigger_close_for_reversal_setup:isF(pl.tc&&pl.tc.rev)?+pl.tc.rev.toFixed(4):null,trigger_close_for_momentum_setup:isF(pl.tc&&pl.tc.mom)?+pl.tc.mom.toFixed(4):null,estimated_edge_per_trade:pl.edge?+(100*pl.edge.est).toFixed(2)+"%":null,warnings:pl.warn,positives:pl.good},
+  market_notes:saudiSym(sym)?{market:"Saudi (Tadawul)",mode_used:ECFG.saudi==="mom"?"momentum (Saudi setting)":"same as other stocks",hijri_month:hijriMonth(s.d[i]),ramadan:hijriMonth(s.d[i])===9,daily_price_limit:"±10%"}:{market:"other"},
   short_side:s.sgood?{enabled:ECFG.shorts,short_setup_now:!!s.sgood[i],below_200d_avg:isF(s.sma200[i])?c[i]<s.sma200[i]:null,market_below_200d:s.mdown?!!s.mdown[i]:"no market file",short_score:isF(s.sscore[i])?+s.sscore[i].toFixed(2):null,short_chance_of_profit:isF(s.sP[i])?Math.round(100*s.sP[i])+"%":null,own_short_record:(()=>{const e=ownShort(s,i);return {shorts:e.n,avg:isF(e.avg)?+(100*e.avg).toFixed(2)+"%":null}})()}:{enabled:"off"},
   pulse:P?{value_sigma:+P.M[i].toFixed(2),horizons_5_10_20_60:P.mh.map(a=>isF(a[i])?+a[i].toFixed(2):null),agreeing:P.align[i],path_efficiency:isF(P.er[i])?+P.er[i].toFixed(2):null,rank_2y:isF(P.pct[i])?+P.pct[i].toFixed(2):null,accelerating:P.acc[i]>0,state:PULSE_STATE[P.state[i]],divergence_last_10_bars:recentDiv(P,i),evidence_on_this_stock:ev}:null,
   top_signs:topSigns(s,i,4).map(([k,v])=>chipName(k,v)),
@@ -93,6 +102,7 @@ EVIDENCE (out of sample; 93 development series + 432 never-seen stocks):
 - 200-day average filter, VIX change, longer trends: no consistent effect. Exit at next open, 2-day limit orders, stops: rejected.
 - Position size "others half" (A+ full size, others half) lowered drawdowns on every data set with the same or better Sharpe; "A+ double" raised return with deeper drawdowns.
 - SHORTS (v11, optional): sell an overbought bounce (RSI(2) > 90, top-third short score) only below the 200-day average (and market below its 200-day average if a market file is set); limit 0.5 ATR above the close; cover on the first close below the previous day's low or after the max hold; 3-ATR stop; half size. Short rules broke even or lost on development data (87 stocks, 6 long histories) and paid only in bear markets (2007-12: +1.1% per short; 2020 crash: +3.8% on 18 shorts); China lost. Plain mirrored shorts blew up a test account through a squeeze. Index hedging lowered Sharpe everywhere. Recommend shorts only when the market itself is in a downtrend.
+- SAUDI MARKET (v12 study; Al Rajhi 1120 2013-2026, Aramco 2222 2019-2025, TASI 2001-2026): Saudi stocks trend day to day (lag-1 autocorrelation +0.06 to +0.17; US stocks are negative). Dip-buys (RSI(2) < 10) had no edge in forward returns (t about 0); the engine's dip trades: Al Rajhi Sharpe 0.14, Aramco 0.03. Momentum (buy after RSI(2) > 90, exit below the 5-day average) beat random entries: Al Rajhi +0.49% per trade 2013-19 and +0.56% 2020-26 (Sharpe 0.94 vs buy & hold 0.56, max drawdown -13% vs -45%); TASI +0.27% to +0.81% in every period; Aramco +0.16% (not significant). Ramadan: +0.13% to +0.17% a day vs about 0 otherwise (t 1.5-2.1). Big up days (>5%) on Al Rajhi were followed by a weaker next day (-1.2%, n 14). Shorts: too few signals; retail short selling in Saudi is restricted. Daily price limit ±10%. Only two stocks: more Saudi files are needed to generalise.
 - Costs matter: 87-stock Sharpe 1.23 at 5bp per side, 0.59 at 20bp.
 - Realistic diversified portfolio Sharpe on fresh data: about 0.45-0.7.`;
 const ANALYST_RULES=`You are the trading analyst built into the Reversal Edge terminal. You see only the data below (computed by the system from the user's own price files) plus the research summary. You cannot browse the web or see news.
