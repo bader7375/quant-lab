@@ -102,7 +102,8 @@ function renderSigbar(){
    say=`${rsiTxt}: a strong close in a market that keeps moving the same way. Plan: buy at the next open, sell on ${exitTxt} (now ${fp(plan.exitLevel)}) or after ${ECFG.momMaxHold} days; ${stopTxt}.`}
   else say=`${rsiTxt}: no momentum setup (needs RSI(2) above ${ECFG.momTrig}). In momentum mode the system buys strength, not dips.`;
   if(ms.n>=8)say+=` On this market, past momentum setups averaged <b class="${cl(ms.avg)}">${spct(ms.avg,2)}</b> (${ms.n} trades, ${pct(ms.win,0)} won).`;
-  say+=` Research: on TASI this rule had Sharpe 2.0 before 2013 and 1.4 after; on single US stocks it lost money.`}
+  say+=` Research: on TASI this rule had Sharpe 2.0 before 2013 and 1.4 after; on single US stocks it lost money.`;
+  if(st.sym!=="TASI")say+=` <span class="acc">If this file is an individual stock rather than an index: in the v9 fresh-data test, momentum-mode trades lost money (−1.6% per trade on 47 US stocks, 2007–2012) and "reversal only" scored better on all three fresh sets. For a single stock, consider Settings → mode → reversal only.</span>`}
  else{
   const setup=!!s.setup[c],sig=s.sig[c]===1,sc=s.score[c],th=thirdOf(sc),P=s.P[c],stp=lastStep(s,c);
   const ap=s.aplus&&s.aplus[c];if(setup&&sig){cls=sd>0?"long":"short";lab=(ap?"A+ ":"")+(sd>0?"Buy setup":"Sell setup")}else if(setup){cls="watch";lab="Weak setup"}
@@ -162,7 +163,7 @@ function inspector(i){const el=$("inspbody"),d=D();if(!d){el.innerHTML="";return
  h+=`<div class="sec">reversal radar · what moves the score (weight × how unusual today is)</div><div class="radar">`+RES.names.map(k=>{const v=s.C[k][i],w=Math.abs(v||0)/mx*50,raw=s.X[k][i],ev=signEvidence(k);
   const shown=k==="fear_rank"||k==="vol_rank"?pct(raw,0):k==="down_streak"?fmt(raw,0):k==="lower_wick"?pct(raw,0):fmt(raw,2);
   return `<div class="rr" title="${esc(signMeaning(k))} Research: top-vs-bottom-third trade difference ${ev?ev.map(x=>(x>0?"+":"")+x+"bp").join(" / "):""} (87 stocks / TSLA 11-17 / TSLA 18-26)."><span class="nm">${esc(signLabel(k))}</span><span class="vv">${shown}</span><div class="cb"><i style="left:${(v||0)>=0?50:50-w}%;width:${w}%;background:${(v||0)>=0?"#4fd1a5":"#e66767"}"></i></div></div>`}).join("")+`</div>`;
- const stp=lastStep(s,i);if(stp)h+=`<div class="note" style="margin-top:4px">weights: ${stp.own<30?"research (not enough own setups yet)":`${Math.round(100*(1-stp.lam))}% research, ${Math.round(100*stp.lam)}% this stock (${stp.own} own setups)`} · refit ${stp.d}</div>`;
+ const stp=lastStep(s,i);if(stp)h+=`<div class="note" style="margin-top:4px">weights: ${!ECFG.adapt?`fixed research weights (v9) · ${stp.own} own setups used for the chance-of-profit calibration`:stp.own<30?"research (not enough own setups yet)":`${Math.round(100*(1-stp.lam))}% research, ${Math.round(100*stp.lam)}% this stock (${stp.own} own setups)`} · updated ${stp.d}</div>`;
  // other quick reads
  h+=`<div class="sec">quick read</div><table class="t"><tr><td>RSI(2) / RSI(14)</td><td class="n">${fmt(s.rsi2[i],0)} / ${fmt(s.rsi14[i],0)}</td></tr><tr><td>streak · close in range (IBS)</td><td class="n">${fmt(s.streak[i],0)} · ${pct(s.ibs[i],0)}</td></tr>
   <tr><td>volume vs normal</td><td class="n">${isF(s.volz[i])?(s.volz[i]>=0?"+":"")+s.volz[i].toFixed(1)+"σ":"—"}</td></tr><tr><td>range / gap (ATR)</td><td class="n">${fmt(s.rangex[i],2)} / ${fmt(s.gap[i],2)}</td></tr>

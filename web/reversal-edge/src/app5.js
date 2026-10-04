@@ -1,7 +1,43 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
-<h2 style="font-size:18px">How this system was built, and what the evidence says (v8)</h2>
+<h2 style="font-size:18px">How this system was built, and what the evidence says (v9)</h2>
 <p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>v9: whole-system stress test</h2>
+<p><b>Method.</b> I tested the full engine, the same code that runs in this page, on two kinds of data:</p>
+<ul><li><b>Development data:</b> your 6 long histories (before 2013 = design, 2013+ = test) and the 87 StockNet stocks.</li>
+<li><b>Lockbox:</b> 432 stocks the system had never seen, run once after the changes were frozen. These were KDD17 (47 US stocks, 2007–2012/16), CMIN-US (106 US large caps, 2018–2021) and CMIN-CN (279 China CSI 300 stocks, 2018–2021, with T+1 and 10bp costs).</li></ul>
+<p>I wrote the candidate list and the acceptance rule before running them. A change had to improve Sharpe in the design period, the test period, the 6-market portfolio and the 87-stock portfolio. It also could not worsen drawdown by more than 20%, and had to win on at least 4 of 6 markets.</p>
+<p><b>Is the edge real?</b> I replaced the signals with random entry days at the same frequency, keeping the same exits:</p>
+<ul><li>The real system beat all 20 random runs on the long histories (Sharpe 0.53 vs 0.28 average), on the 87 stocks (1.23 vs 0.72) and on KDD17 (0.45 vs −0.09).</li>
+<li>Per reversal trade on US stocks, the edge over random entries was:</li></ul>
+<table class="t"><tr><th>period</th><th>real</th><th>random</th><th>edge per trade</th></tr>
+<tr><td>1990–2007</td><td>+3.01%</td><td>+0.45%</td><td>+2.56% ± 0.86</td></tr><tr><td>2008–2012</td><td>+1.28%</td><td>+0.54%</td><td>+0.74% ± 0.62</td></tr>
+<tr><td>2013–2017</td><td>+1.16%</td><td>+0.33%</td><td>+0.82% ± 0.26</td></tr><tr><td>2018–2021</td><td>+1.06%</td><td>+0.59%</td><td>+0.47% ± 0.43</td></tr><tr><td>2022–2026</td><td>+2.28%</td><td>+0.37%</td><td>+1.90% ± 1.29</td></tr></table>
+<p>The edge is real in every period but smaller since 2008. In the 2018–2021 US bull market, random entries made twice as many trades and so a higher portfolio Sharpe. In China the reversal signal had <b>no edge</b> over random (0.73% vs 0.81% per trade), so do not use it there without more testing.</p>
+<p><b>Robustness of v8</b> (plateaus, not spikes, are what you want):</p>
+<ul><li>RSI(2) trigger 5–20, limit depth 0–1 ATR, max hold 10–20 and the exit rule all gave similar results. Nothing hinges on one exact value.</li>
+<li>Price stops hurt in every test.</li>
+<li>Costs matter. At 5 / 10 / 20bp per side, the 87-stock Sharpe was 1.23 / 1.02 / 0.59. Use limit orders and liquid stocks.</li></ul>
+<table class="t"><tr><th>candidate</th><th>development result</th><th>decision</th></tr>
+<tr><td>Fixed research weights (no per-stock refit)</td><td>better on all 6 markets, both periods, both portfolios</td><td><b>adopted</b></td></tr>
+<tr><td>Refit with n0 = 1000</td><td>passed, but fixed weights are simpler and as good</td><td>not needed</td></tr>
+<tr><td>Exit on RSI(2) &gt; 70</td><td>passed alone; no gain on top of fixed weights. Lockbox: mixed.</td><td>kept as an option</td></tr>
+<tr><td>Exit at the next open</td><td>higher Sharpe, but 6-market drawdown −16% → −22%. Lockbox: worse on US 2018–21 and China.</td><td>rejected</td></tr>
+<tr><td>Momentum only if autocorrelation is significant</td><td>worse in the test period</td><td>rejected</td></tr>
+<tr><td>Inverse-volatility position size</td><td>lower drawdowns, slightly lower Sharpe on single markets</td><td>rejected</td></tr>
+<tr><td>Limit order valid 2 days</td><td>worse on 4 of 4 measures</td><td>rejected</td></tr></table>
+<p><b>Lockbox</b> (10-slot portfolios, never seen before; v8 → v9, with equal-weight buy &amp; hold):</p>
+<ul><li>KDD17: Sharpe 0.45 → 0.45, drawdown −14.8% → −13.0% (buy &amp; hold 0.27, −46%)</li>
+<li>CMIN-US: 0.65 → 0.67 (buy &amp; hold 1.19)</li>
+<li>CMIN-CN: 0.66 → 0.72 (buy &amp; hold 1.69)</li></ul>
+<p>v9 met the rule, but the gain is small. The honest expectation for a diversified portfolio on new data is a <b>Sharpe of about 0.45–0.7</b> (KDD17 95% interval 0.09–0.90), not the 1.3 seen on the 87 development stocks. Those 87 trained the score weights, so they flatter it. The fresh sets are today's big companies looked at backwards (survivorship bias), which flatters buy &amp; hold, and the period matters.</p>
+<p><b>Your six markets, v8 → v9 Sharpe (all years):</b> AAPL 0.71 → 0.87, AMZN 0.58 → 0.64, F 0.34 → 0.45, MSFT 0.53 → 0.54, TASI 0.63 → 0.71, TSLA 0.37 → 0.40.</p>
+<p><b>Bug fixed in v9.</b> In a portfolio mixing TASI with US stocks, a limit order was dropped when the next calendar day was a US-only trading day. Fixing it raised the 6-market Sharpe from 0.63 to 0.72.</p>
+<p><b>What the tests say about the options:</b></p>
+<ul><li><b>Others half size</b> lowered drawdowns on every data set with the same or better Sharpe: fresh portfolios −13%/−21%/−17% → −9%/−14%/−13%, single stocks about −30%. Total return is lower. It's the best choice if drawdowns bother you.</li>
+<li><b>Reversal only</b> beat "auto" on all three fresh stock sets (KDD17 0.45 → 0.56). Momentum mode helps index-like markets such as TASI and F, but on individual stocks its trades lost money.</li>
+<li><b>Idle cash in an index fund</b> roughly doubles return (CMIN-US 9.5% → 25.6% a year), but drawdowns become index-sized (−21% → −39%). That's more money, not better risk-adjusted money.</li>
+<li><b>More slots</b> (more stocks at once) give a smoother ride and lower drawdowns, but each trade is smaller.</li></ul>
 <h2>v8: the A+ grade</h2>
 <p><b>Definition.</b> An A+ setup is a top-third reversal setup that also closed in the bottom 13% of the day's range (internal bar strength ≤ 0.13) <i>and</i> has a Momentum Pulse below −0.5σ. The two thresholds are the medians of the setups before 2013. Both conditions were chosen from 14 candidates because they held in both periods. A 200-day-average filter, VIX change, volatility of volatility and longer trends did not.</p>
 <p><b>Per trade it is clearly better.</b> In the engine's own backtest, A+ trades averaged roughly twice the return of the other top-third trades on every long history:</p>
