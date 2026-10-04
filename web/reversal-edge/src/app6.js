@@ -5,11 +5,22 @@ function rsiState(c,i,n=2){let up=NaN,dn=NaN;for(let t=1;t<=i;t++){const d=c[t]-
 // the close tomorrow that would turn RSI(2) into a setup: below it for reversal (RSI2 < trig), above it for momentum (RSI2 > momTrig)
 function triggerClose(s,i){const {up,dn}=rsiState(s.c,i),c=s.c[i];if(!isF(up)||!isF(dn))return {rev:NaN,mom:NaN};
  const T=ECFG.trig,M=ECFG.momTrig;return {rev:c-Math.max(0,up*(100-T)/T-dn),mom:c+Math.max(0,dn*M/(100-M)-up)}}
-const PRIOR_EDGE={aplus:.025,2:.012,1:.006,0:.003,mom:.003};   // research per-trade averages (v6-v9 studies) used as the starting estimate
+const PRIOR_EDGE={aplus:.025,2:.012,1:.006,0:.003,mom:.003,short:0};   // research per-trade averages (v6-v9 studies) used as the starting estimate
 function ownEdge(s,i,grade){let n=0,sum=0,win=0;
  for(let j=s.first;j<i;j++){if(grade==="mom"){if(!s.msetup[j]||!isF(s.mret[j])||j+s.mhold[j]>=i)continue;n++;sum+=s.mret[j];win+=s.mret[j]>0;continue}
   if(!s.setup[j]||!isF(s.tret[j])||j+s.thold[j]>=i)continue;const g=s.aplus&&s.aplus[j]?"aplus":thirdOf(s.score[j]);if(grade==="aplus"?g!=="aplus":(g==="aplus"?2:g)!==grade)continue;n++;sum+=s.tret[j];win+=s.tret[j]>0}
  const avg=n?sum/n:NaN,K=30,est=(n*(n?avg:0)+K*PRIOR_EDGE[grade])/(n+K);return {n,avg,win:n?win/n:NaN,est}}
+// ---------- v11 short side
+const SHORT_EVIDENCE="Evidence: short rules broke even or lost on the development data (6 long histories, 87 stocks) and paid only in bear markets: 2007–2012 stocks +1.1% per short, the 2020 crash +3.8% (18 shorts, market filter on); China lost. Use shorts when the market itself is falling, keep the stop, half size.";
+function ownShort(s,i){let n=0,sum=0,win=0;if(!s.stret)return {n:0,avg:NaN,win:NaN,est:0};for(let j=s.first;j<i;j++){if(!s.sgood[j]||!isF(s.stret[j])||j+s.sthold[j]>=i)continue;n++;sum+=s.stret[j];win+=s.stret[j]>0}
+ const avg=n?sum/n:NaN,K=30;return {n,avg,win:n?win/n:NaN,est:(n*(n?avg:0)+K*PRIOR_EDGE.short)/(n+K)}}
+function shortSay(s,c,plan){const e=ownShort(s,c),mk=s.mdown?" and the market is below its 200-day average":"",sz=ECFG.shortSize<1?"half":"full";
+ return `RSI(2) is <b>${fmt(s.rsi2[c],0)}</b>: an overbought bounce inside a downtrend (close below its 200-day average ${fp(s.sma200[c])}${mk}). Short score <b>${fmt(s.sscore[c],1)}</b> (${THIRD_NAME[thirdOf(s.sscore[c])]}).`
+  +` Plan: place a <b>limit sell short at ${fp(plan.entry)}</b> (close + ${ECFG.limitATR} ATR), good for tomorrow only; cover on ${EXIT_TEXT.prevlow} (now ${fp(plan.exitLevel)}) or after ${ECFG.maxHold} days; <b>stop ${fp(plan.stop)}</b> (3 ATR); ${sz} size.`
+  +(e.n>=8?` On this stock, past short setups averaged <b class="${cl(e.avg)}">${spct(e.avg,2)}</b> (${e.n} shorts, ${pct(e.win,0)} won).`:"")
+  +(s.mdown?"":` <span class="acc">No market file is set, so the market-downtrend filter is off: choose one (e.g. SPY or TASI) in Settings.</span>`)
+  +(ECFG.shorts==="watch"?` <span class="note">(Shown only: Settings → short trades → trade them, to include shorts in the backtest and plan.)</span>`:"")
+  +` <span class="acc">${SHORT_EVIDENCE}</span>`}
 function planFor(sym){const s=SY(sym);if(!s)return null;const i=s.d.length-1;if(i<s.first)return {sym,s,i,kind:"warm",rank:9};
  const c=s.c[i],atr=s.atr[i],mom=s.mode[i]===-1,P=s.pulse,bb=bbAt(s.c,i),tc=triggerClose(s,i),warn=[],good=[];
  const st0=P?P.state[i]:0,isIndex=/^(TASI|SPY|QQQ|DIA|IWM|\^)/i.test(sym);
@@ -26,6 +37,9 @@ function planFor(sym){const s=SY(sym);if(!s)return null;const i=s.d.length-1;if(
   if(e.n<10)warn.push(`few own past setups (${e.n}): the estimate leans on research averages`)}
  else if(s.sig[i]===2){const e=ownEdge(s,i,"mom");Object.assign(o,{kind:"mom",rank:2,action:"momentum buy at open",entry:c,exitTxt:"close below the 5-day average",maxHold:ECFG.momMaxHold,grade:"mom",edge:e,P:NaN});
   if(e.n>=8&&e.avg<0)warn.push(`past momentum trades here lost (${spct(e.avg,2)}, ${e.n} trades)`)}
+ else if(s.sgood&&s.sgood[i]&&ECFG.shorts!=="off"&&!mom){const e=ownShort(s,i),entry=c+ECFG.limitATR*atr;
+  Object.assign(o,{kind:ECFG.shorts==="trade"?"short":"shortwatch",rank:ECFG.shorts==="trade"?2.5:3.2,action:ECFG.shorts==="trade"?"limit sell short":"short setup (watch only)",entry,exitTxt:`cover below today's low ${fp(s.l[i])}, stop ${fp(entry+3*atr)}`,maxHold:ECFG.maxHold,grade:"short",edge:e,P:s.sP[i]});
+  warn.push("short: research shows shorts only paid in bear markets; half size, keep the stop");if(!s.mdown)warn.push("no market file set: the market-downtrend filter is off")}
  else if(s.setup[i]){Object.assign(o,{kind:"weak",rank:4,action:"skip: setup below your score filter",edge:null})}
  else{const trig=mom?tc.mom:tc.rev,dist=isF(trig)&&atr>0?Math.abs(trig-c)/atr:NaN;
   Object.assign(o,{kind:"watch",rank:3,trig,dist,action:mom?`watch: momentum setup if it closes above ${fp(trig)}`:`watch: setup if it closes below ${fp(trig)}`,edge:null})}
@@ -33,11 +47,11 @@ function planFor(sym){const s=SY(sym);if(!s)return null;const i=s.d.length-1;if(
 function tomorrowPlan(){if(!RES)return [];const rows=RES.syms.map(planFor).filter(Boolean);
  rows.sort((a,b)=>(a.rank-b.rank)||((b.edge?b.edge.est:-1)-(a.edge?a.edge.est:-1))||((a.dist??99)-(b.dist??99)));return rows}
 function drawPlan(){const el=$("plan-t");if(!el)return;if(!RES){el.innerHTML='<tr><td class="empty">Upload stocks in the Data tab (or with the button above) and the plan appears here.</td></tr>';return}
- const rows=tomorrowPlan(),act=rows.filter(r=>r.kind==="rev"||r.kind==="mom");
+ const rows=tomorrowPlan(),act=rows.filter(r=>r.kind==="rev"||r.kind==="mom"||r.kind==="short");
  $("plan-note").innerHTML=`<b>${act.length}</b> trade(s) to place for the next session across ${rows.length} symbol(s)${act.length?`; best estimated edge: <b>${esc(act[0].sym)}</b>`:""}. Estimated edge = this stock's own past average for the same grade, shrunk toward the research average (30-trade weight). Watch rows show the close that would create a setup.`;
  el.innerHTML="<tr>"+["#","symbol","last close","action","entry","exit","est. edge / trade","own record","chance of profit","pulse","notes"].map(h=>`<th>${h}</th>`).join("")+"</tr>"+rows.map((r,k)=>{
   if(r.kind==="warm")return `<tr data-s="${esc(r.sym)}"><td>${k+1}</td><td>${esc(r.sym)}</td><td colspan="9" class="note">warming up: needs more history</td></tr>`;
-  const e=r.edge,cls=r.kind==="rev"?(r.grade==="aplus"?"vp long aplus-b":"vp long"):r.kind==="mom"?"vp long":"note";
+  const e=r.edge,cls=r.kind==="rev"?(r.grade==="aplus"?"vp long aplus-b":"vp long"):r.kind==="mom"?"vp long":r.kind==="short"||r.kind==="shortwatch"?"vp short":"note";
   return `<tr data-s="${esc(r.sym)}"><td>${k+1}</td><td><b>${esc(r.sym)}</b></td><td>${fp(r.c)}</td><td><span class="${cls}" style="padding:1px 6px${r.kind==="mom"?";color:#c08cff":""}">${esc(r.action)}</span></td>
    <td>${r.entry!=null?fp(r.entry):"—"}</td><td style="text-align:left">${r.exitTxt?esc(r.exitTxt)+(r.maxHold?`, max ${r.maxHold} days`:""):"—"}</td>
    <td class="${e?cl(e.est):""}">${e?spct(e.est,2):r.kind==="watch"&&isF(r.dist)?`${r.dist.toFixed(1)} ATR away`:"—"}</td><td>${e&&e.n?`${spct(e.avg,2)} · ${e.n} tr · ${pct(e.win,0)} won`:"—"}</td>
@@ -57,6 +71,7 @@ function snapshotFor(sym,iIn){const s=SY(sym);if(!s)return null;const i=iIn==nul
   character:{autocorr_500d:isF(s.ac[i])?+s.ac[i].toFixed(3):null,mode:s.mode[i]===-1?"momentum":"reversal",switch_above:ECFG.acThr},
   setup:{reversal_setup:!!s.setup[i],momentum_setup:!!s.msetup[i],system_signal:s.sig[i]===1?"reversal buy":s.sig[i]===2?"momentum buy":"none",edge_score:isF(s.score[i])?+s.score[i].toFixed(2):null,score_third:THIRD_NAME[thirdOf(s.score[i])]||null,chance_of_profit:isF(s.P[i])?Math.round(100*s.P[i])+"%":null,aplus:!!(s.aplus&&s.aplus[i])},
   plan:{action:pl.action||null,entry:isF(pl.entry)?+pl.entry.toFixed(4):null,exit:pl.exitTxt||null,max_hold_days:pl.maxHold||null,trigger_close_for_reversal_setup:isF(pl.tc&&pl.tc.rev)?+pl.tc.rev.toFixed(4):null,trigger_close_for_momentum_setup:isF(pl.tc&&pl.tc.mom)?+pl.tc.mom.toFixed(4):null,estimated_edge_per_trade:pl.edge?+(100*pl.edge.est).toFixed(2)+"%":null,warnings:pl.warn,positives:pl.good},
+  short_side:s.sgood?{enabled:ECFG.shorts,short_setup_now:!!s.sgood[i],below_200d_avg:isF(s.sma200[i])?c[i]<s.sma200[i]:null,market_below_200d:s.mdown?!!s.mdown[i]:"no market file",short_score:isF(s.sscore[i])?+s.sscore[i].toFixed(2):null,short_chance_of_profit:isF(s.sP[i])?Math.round(100*s.sP[i])+"%":null,own_short_record:(()=>{const e=ownShort(s,i);return {shorts:e.n,avg:isF(e.avg)?+(100*e.avg).toFixed(2)+"%":null}})()}:{enabled:"off"},
   pulse:P?{value_sigma:+P.M[i].toFixed(2),horizons_5_10_20_60:P.mh.map(a=>isF(a[i])?+a[i].toFixed(2):null),agreeing:P.align[i],path_efficiency:isF(P.er[i])?+P.er[i].toFixed(2):null,rank_2y:isF(P.pct[i])?+P.pct[i].toFixed(2):null,accelerating:P.acc[i]>0,state:PULSE_STATE[P.state[i]],divergence_last_10_bars:recentDiv(P,i),evidence_on_this_stock:ev}:null,
   top_signs:topSigns(s,i,4).map(([k,v])=>chipName(k,v)),
   volatility:{yz5:+s.yz5[i].toFixed(1),yz20:+s.yz20[i].toFixed(1),yz60:+s.yz60[i].toFixed(1),garch_next_day:+s.garch[i].toFixed(1),vol_rank_2y:isF(s.vrank[i])?+s.vrank[i].toFixed(2):null},
@@ -77,6 +92,7 @@ EVIDENCE (out of sample; 93 development series + 432 never-seen stocks):
 - A close below the lower Bollinger Band inside top-third setups: +1.54% vs +0.93% per trade (2013+), +2.13% vs +1.48% before 2013. Overlaps with depth of the drop; context, not a rule.
 - 200-day average filter, VIX change, longer trends: no consistent effect. Exit at next open, 2-day limit orders, stops: rejected.
 - Position size "others half" (A+ full size, others half) lowered drawdowns on every data set with the same or better Sharpe; "A+ double" raised return with deeper drawdowns.
+- SHORTS (v11, optional): sell an overbought bounce (RSI(2) > 90, top-third short score) only below the 200-day average (and market below its 200-day average if a market file is set); limit 0.5 ATR above the close; cover on the first close below the previous day's low or after the max hold; 3-ATR stop; half size. Short rules broke even or lost on development data (87 stocks, 6 long histories) and paid only in bear markets (2007-12: +1.1% per short; 2020 crash: +3.8% on 18 shorts); China lost. Plain mirrored shorts blew up a test account through a squeeze. Index hedging lowered Sharpe everywhere. Recommend shorts only when the market itself is in a downtrend.
 - Costs matter: 87-stock Sharpe 1.23 at 5bp per side, 0.59 at 20bp.
 - Realistic diversified portfolio Sharpe on fresh data: about 0.45-0.7.`;
 const ANALYST_RULES=`You are the trading analyst built into the Reversal Edge terminal. You see only the data below (computed by the system from the user's own price files) plus the research summary. You cannot browse the web or see news.
@@ -136,7 +152,7 @@ function followUp(){const q=$("ai-q").value.trim();if(!q)return;if(!aiTurns.leng
  $("ai-hist").insertAdjacentHTML("beforeend",`<div class="ai-turn"><b>You:</b> ${esc(q)}</div><div class="ai-turn">${$("ai-out").innerHTML}</div>`);
  aiTurns.push({role:"user",content:q});if(aiTurns.length>9)aiTurns.splice(1,2);
  askClaude("ai-out",aiTurns,{tools:true,onDone:t=>aiTurns.push({role:"assistant",content:t})}).then(()=>{if(aiTurns[aiTurns.length-1].role==="user")aiTurns.pop()})}
-function planBrief(){if(!RES){return}const rows=tomorrowPlan(),act=rows.filter(r=>r.kind==="rev"||r.kind==="mom").slice(0,8),watch=rows.filter(r=>r.kind==="watch").slice(0,8);
+function planBrief(){if(!RES){return}const rows=tomorrowPlan(),act=rows.filter(r=>r.kind==="rev"||r.kind==="mom"||r.kind==="short").slice(0,8),watch=rows.filter(r=>r.kind==="watch").slice(0,8);
  const table=rows.map(r=>({symbol:r.sym,action:r.action||r.kind,entry:isF(r.entry)?+r.entry.toFixed(4):null,exit:r.exitTxt||null,est_edge:r.edge?+(100*r.edge.est).toFixed(2)+"%":null,own_trades:r.edge?r.edge.n:null,own_avg:r.edge&&r.edge.n?+(100*r.edge.avg).toFixed(2)+"%":null,chance:isF(r.P)?Math.round(100*r.P)+"%":null,pulse:r.s.pulse?PULSE_STATE[r.st0]:null,distance_to_trigger_atr:isF(r.dist)?+r.dist.toFixed(2):null,warnings:r.warn,positives:r.good}));
  const snaps=act.concat(watch.slice(0,3)).map(r=>{const x=snapshotFor(r.sym);if(x){delete x.last_15_bars;delete x.system_backtest_on_this_symbol}return x});
  const input=`${ANALYST_RULES}\n\nRESEARCH SUMMARY:\n${researchFacts()}\n\nTOMORROW'S PLAN TABLE (all ${rows.length} loaded symbols, ranked by the system):\n${JSON.stringify(table)}\n\nDETAIL FOR THE TOP CANDIDATES:\n${JSON.stringify(snaps).slice(0,40000)}\n\nTASK:\nPick the best trades for the next session.\n## Best trades (ranked, max 3): for each, the order to place (type, price), exit, size (full or half) and the reason in one or two lines with numbers\n## Watch list: stocks that could set up tomorrow and the trigger close\n## Avoid: symbols to stay away from and why (strong up-momentum on reverting stocks, momentum mode on single stocks, weak own record)\n${TOOLS_OK?"Use study_condition to check the most important claim for your top pick before you write.":""}\nIf no trade is worth taking, say so.`;

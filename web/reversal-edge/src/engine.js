@@ -384,6 +384,11 @@ function buildRev(ds, fear, cfg) {
   R.pulse = pulseCalc(R, h, l, c);
   // A+ quality (study 11/12): the day closed in the bottom 13% of its range and the Momentum Pulse is below -0.5 (mirror for shorts)
   R.aq = R.ibs.map((b, i) => { const m = R.pulse.M[i]; return isF(b) && isF(m) && (s > 0 ? b <= 0.13 && m <= -0.5 : b >= 0.87 && m >= 0.5) ? 1 : 0; });
+  // v11 short side: sell overbought bounces only inside a downtrend (and a market downtrend when a market file is chosen)
+  if (s < 0 && cfg.shortFilter) { const s200 = rollMean(c, 200), mk = cfg.mktSeries; let mdown = null;
+    if (mk) { const m200 = rollMean(mk.c, 200); mdown = new Array(n).fill(0); let j = -1;
+      for (let i = 0; i < n; i++) { while (j + 1 < mk.d.length && mk.d[j + 1] <= ds.d[i]) j++; mdown[i] = j >= 0 && isF(m200[j]) && mk.c[j] < m200[j] ? 1 : 0; } }
+    R.mdown = mdown; R.setup = R.setup.map((v, i) => v && c[i] < s200[i] && (!mdown || mdown[i]) ? 1 : 0); }
   // adaptive z-zones: percentiles of this stock's own z20 over the last 750 bars (point in time)
   const QS = [0.025, 0.10, 0.25, 0.75, 0.90, 0.975]; R.zq = QS.map(() => nanArr(n)); R.zone = new Array(n).fill(-1);
   const win = [];
@@ -468,10 +473,10 @@ function model(syms, rev, cfg) {
 }
 
 // ------------------------------------------------------------ backtest (portfolio, next-open fills, 5-day-average exit, ATR stop, time stop)
-function backtest(syms, rev, M, cfg, thr) {
+function backtest(syms, rev, M, cfg, thr, revS, MS) {
   const cal = Array.from(new Set(syms.flatMap((s) => rev[s].d))).sort(), n = cal.length;
   const idx = {}; syms.forEach((s) => idx[s] = new Map(rev[s].d.map((d, i) => [d, i])));
-  const sig = {}; syms.forEach((s) => { const R = rev[s], m = M[s]; sig[s] = R.setup.map((v, i) => v && isF(m.score[i]) && m.score[i] >= thr && (cfg.grade !== "aplus" || R.aq[i]) ? 1 : R.msetup[i] && isF(m.score[i]) ? 2 : 0); });
+  const sig = {}; syms.forEach((s) => { const R = rev[s], m = M[s]; sig[s] = R.setup.map((v, i) => v && isF(m.score[i]) && m.score[i] >= thr && (cfg.grade !== "aplus" || R.aq[i]) ? 1 : R.msetup[i] && isF(m.score[i]) ? 2 : revS && cfg.shorts === "trade" && revS[s].setup[i] && isF(MS[s].score[i]) && MS[s].score[i] >= thr ? 3 : 0); });
   let t0 = n; syms.forEach((s) => { const i = M[s].score.findIndex(isF); if (i >= 0) t0 = Math.min(t0, cal.indexOf(rev[s].d[i])); });
   if (t0 >= n) return { trades: [], eq: [], bh: [], d: [], dd: [], bhdd: [], sig };
   const cost = cfg.slippage / 1e4, s = cfg.side; let cash = 1e6; const pos = {}, trades = [], eq = [], bh = [], days = [];
@@ -484,22 +489,24 @@ function backtest(syms, rev, M, cfg, thr) {
     for (const p of pend) { const i = idx[p.s].get(cal[t]); if (i == null) { keep.push(p); continue; } if (pos[p.s]) continue; const R = rev[p.s], op = R.o[i]; if (!isF(op)) continue;
       let fill = op;
       if (p.kind === 1 && cfg.entry === "limit") { const lim = p.c - s * cfg.limitATR * p.atr; if ((s > 0 && R.l[i] > lim) || (s < 0 && R.h[i] < lim)) continue; fill = s > 0 ? Math.min(op, lim) : Math.max(op, lim); }
-      const equity = cash + Object.values(pos).reduce((a, x) => a + x.q * (px(x.s, t, "o") || x.last), 0);
-      const dist = (cfg.stopATR > 0 ? cfg.stopATR : 3) * p.atr / fill; let notional = cfg.sizeMode === "fixed" ? equity * Math.min(cfg.maxW, 1 / Math.max(1, Math.min(cfg.maxPos, syms.length))) : Math.min(equity * cfg.riskPct / Math.max(dist, 1e-4), equity * cfg.maxW); const am = p.ap ? (cfg.aplusMult || 1) : (cfg.otherMult == null ? 1 : cfg.otherMult); notional *= am; notional = Math.min(notional, Math.max(0, s > 0 ? cash : equity)); if (notional < 100) continue;
-      const q = s * notional / fill; cash -= q * fill + notional * cost; pos[p.s] = { s: p.s, kind: p.kind, q, ep: fill, ti: t, stop: cfg.stopATR > 0 && p.kind === 1 ? fill - s * cfg.stopATR * p.atr : null, last: q * fill, sc: p.sc, P: p.P, z: p.z, fear: p.fear, risk: notional * dist, c0: notional * cost }; }
+      if (p.kind === 3) { const lim = p.c + cfg.limitATR * p.atr; if (R.h[i] < lim) continue; fill = Math.max(op, lim); }
+      const equity = cash + Object.values(pos).reduce((a, x) => a + (isF(px(x.s, t, "o")) ? x.q * px(x.s, t, "o") : x.last), 0);
+      const dist = (cfg.stopATR > 0 ? cfg.stopATR : 3) * p.atr / fill; let notional = cfg.sizeMode === "fixed" ? equity * Math.min(cfg.maxW, 1 / Math.max(1, Math.min(cfg.maxPos, syms.length))) : Math.min(equity * cfg.riskPct / Math.max(dist, 1e-4), equity * cfg.maxW); const am = p.ap ? (cfg.aplusMult || 1) : (cfg.otherMult == null ? 1 : cfg.otherMult); notional *= am; if (p.kind === 3) notional *= cfg.shortSize == null ? 0.5 : cfg.shortSize; notional = Math.min(notional, Math.max(0, s > 0 && p.kind !== 3 ? cash : equity)); if (notional < 100) continue;
+      const q = (p.kind === 3 ? -1 : s) * notional / fill; cash -= q * fill + notional * cost; pos[p.s] = { s: p.s, kind: p.kind, q, ep: fill, ti: t, stop: p.kind === 3 ? fill + (cfg.shortStopATR || 3) * p.atr : cfg.stopATR > 0 && p.kind === 1 ? fill - s * cfg.stopATR * p.atr : null, last: q * fill, sc: p.sc, P: p.P, z: p.z, fear: p.fear, risk: notional * dist, c0: notional * cost }; }
     pend = keep;
     // intraday stop (if any), then close-based exits
     for (const q of Object.keys(pos)) { const p = pos[q], i = idx[q].get(cal[t]); if (i == null) continue; const R = rev[q]; let x = null, why = "";
       if (p.kind === 2) { if (R.c[i] < R.sma5[i]) { x = R.c[i]; why = "MOM-SMA5"; } else if (t - p.ti + 1 >= cfg.momMaxHold) { x = R.c[i]; why = "TIME"; } }
+      else if (p.kind === 3) { if (R.h[i] >= p.stop) { x = t > p.ti ? Math.max(R.o[i], p.stop) : p.stop; why = "STOP"; } else if (i > 0 && R.c[i] < R.l[i - 1]) { x = R.c[i]; why = "PREV-LOW"; } else if (t - p.ti + 1 >= cfg.maxHold) { x = R.c[i]; why = "TIME"; } }
       else if (p.stop != null && ((s > 0 && R.l[i] <= p.stop) || (s < 0 && R.h[i] >= p.stop))) { x = t > p.ti ? (s > 0 ? Math.min(R.o[i], p.stop) : Math.max(R.o[i], p.stop)) : p.stop; why = "STOP"; }
       else { const ex = cfg.exit === "prevhigh" ? (i > 0 && (s > 0 ? R.c[i] > R.h[i - 1] : R.c[i] < R.l[i - 1])) : cfg.exit === "rsi70" ? (s > 0 ? R.rsi2[i] > 70 : R.rsi2[i] < 30) : cfg.exit === "sma10" ? (s > 0 ? R.c[i] > R.sma10[i] : R.c[i] < R.sma10[i]) : (s > 0 ? R.c[i] > R.sma5[i] : R.c[i] < R.sma5[i]);
         if (ex) { x = R.c[i]; why = R.exitName; } else if (t - p.ti + 1 >= cfg.maxHold) { x = R.c[i]; why = "TIME"; } }
-      if (x != null) { const fee = Math.abs(p.q * x) * cost; cash += p.q * x - fee; const pnl = p.q * (x - p.ep) - fee - p.c0;
-        trades.push({ trade_id: trades.length + 1, symbol: q, direction: p.kind === 2 ? "momentum" : s > 0 ? "long" : "short", entry_date: cal[p.ti], exit_date: cal[t], bars_held: t - p.ti, exit_reason: why, entry_price: p.ep, exit_price: x, R: p.risk > 0 ? pnl / p.risk : NaN_, pnl, weight: Math.abs(p.q * p.ep) / 1e6, p: p.P, score: p.sc, z_entry: p.z, fear: p.fear }); delete pos[q]; } }
+      if (x != null) { const fee = Math.abs(p.q * x) * cost + (p.q < 0 ? Math.abs(p.q * p.ep) * (cfg.borrowBps == null ? 50 : cfg.borrowBps) / 1e4 * (t - p.ti + 1) / 252 : 0); cash += p.q * x - fee; const pnl = p.q * (x - p.ep) - fee - p.c0;
+        trades.push({ trade_id: trades.length + 1, symbol: q, direction: p.kind === 2 ? "momentum" : p.kind === 3 || s < 0 ? "short" : "long", entry_date: cal[p.ti], exit_date: cal[t], bars_held: t - p.ti, exit_reason: why, entry_price: p.ep, exit_price: x, R: p.risk > 0 ? pnl / p.risk : NaN_, pnl, weight: Math.abs(p.q * p.ep) / 1e6, p: p.P, score: p.sc, z_entry: p.z, fear: p.fear }); delete pos[q]; } }
     let held = 0; for (const q of Object.keys(pos)) { const v = px(q, t, "c"); if (isF(v)) pos[q].last = pos[q].q * v; held += pos[q].last; }
     eq.push(cash + held); days.push(cal[t]); if (Object.keys(pos).length) inMkt++; syms.forEach((q, k) => { const v = px(q, t, "c"); if (isF(v)) lastC[k] = v; }); bh.push(1e6 * syms.reduce((a, q, k) => a + (isF(lastC[k]) ? lastC[k] : bh0[k]) / bh0[k], 0) / syms.length);
     if (t === n - 1) break;
-    const cands = []; for (const q of syms) { const i = idx[q].get(cal[t]); if (i == null || pos[q] || !sig[q][i]) continue; cands.push({ s: q, kind: sig[q][i], ap: sig[q][i] === 1 && rev[q].aq[i] === 1, c: rev[q].c[i], sc: sig[q][i] === 2 ? 0 : M[q].score[i], P: M[q].P[i], atr: rev[q].atr[i], z: rev[q].z20[i], fear: rev[q].frank[i] }); }
+    const cands = []; for (const q of syms) { const i = idx[q].get(cal[t]); if (i == null || pos[q] || !sig[q][i]) continue; cands.push({ s: q, kind: sig[q][i], ap: sig[q][i] === 1 && rev[q].aq[i] === 1, c: rev[q].c[i], sc: sig[q][i] === 2 ? 0 : sig[q][i] === 3 ? MS[q].score[i] - 100 : M[q].score[i], P: sig[q][i] === 3 ? MS[q].P[i] : M[q].P[i], atr: rev[q].atr[i], z: rev[q].z20[i], fear: rev[q].frank[i] }); }
     cands.sort((a, b) => (b.ap - a.ap) || (b.sc - a.sc)); { const live = pend.filter((p) => !cands.some((c) => c.s === p.s)); pend = live.concat(cands).slice(0, Math.max(0, cfg.maxPos - Object.keys(pos).length)); }
   }
   let pk = -Infinity, bpk = -Infinity; const dd = eq.map((v) => { pk = Math.max(pk, v); return (v / pk - 1) * 100; }), bhdd = bh.map((v) => { bpk = Math.max(bpk, v); return (v / bpk - 1) * 100; });
@@ -557,7 +564,7 @@ function run(datasets, cfg, fear) {
   const syms = all.filter((s) => s !== cfg.market || all.length === 1);
   if (!syms.length) throw new Error("Upload at least one price file besides the market file.");
   const key = JSON.stringify([all.map((s) => [s, datasets[s].d.length, datasets[s].d[datasets[s].d.length - 1], datasets[s].c[datasets[s].c.length - 1]]), fear ? [fear.d.length, fear.d[fear.d.length - 1]] : 0,
-    cfg.market, cfg.side, cfg.trig, cfg.stopATR, cfg.maxHold, cfg.slippage, cfg.adapt, cfg.n0, cfg.pool, cfg.testDays, cfg.mode, cfg.acThr, cfg.entry, cfg.limitATR, cfg.exit, cfg.momTrig, cfg.momMaxHold]);
+    cfg.market, cfg.side, cfg.shorts, cfg.trig, cfg.stopATR, cfg.maxHold, cfg.slippage, cfg.adapt, cfg.n0, cfg.pool, cfg.testDays, cfg.mode, cfg.acThr, cfg.entry, cfg.limitATR, cfg.exit, cfg.momTrig, cfg.momMaxHold]);
   let base;
   if (CACHE.key === key) { base = CACHE.model; progress(0.9, "reusing features and model (only trading settings changed)"); }
   else {
@@ -567,11 +574,16 @@ function run(datasets, cfg, fear) {
       ctx[s] = contextMeans(datasets[s], s === cfg.market ? null : mkt); });
     progress(0.7, "fitting the reversal model walk-forward");
     const M = model(syms, rev, cfg);
-    base = { rev, ctx, M }; CACHE = { key, model: base };
+    let revS = null, MS = null;
+    if (cfg.shorts && cfg.shorts !== "off") { progress(0.8, "short side: overbought bounces in downtrends");
+      const cs = Object.assign({}, cfg, { side: -1, stopATR: cfg.shortStopATR || 3, shortFilter: true, mktSeries: mkt ? { d: mkt.d, c: mkt.c } : null }); revS = {};
+      syms.forEach((q) => { revS[q] = Object.assign(buildRev(datasets[q], fear, cs), { d: datasets[q].d, o: datasets[q].o, h: datasets[q].h, l: datasets[q].l, c: datasets[q].c }); });
+      MS = model(syms, revS, cs); }
+    base = { rev, ctx, M, revS, MS }; CACHE = { key, model: base };
   }
-  const { rev, ctx, M } = base;
+  const { rev, ctx, M, revS, MS } = base;
   progress(0.93, "backtest");
-  const bt = backtest(syms, rev, M, cfg, cfg.scoreThr), btAll = backtest(syms, rev, M, cfg, -Infinity);
+  const bt = backtest(syms, rev, M, cfg, cfg.scoreThr, revS, MS), btAll = backtest(syms, rev, M, cfg, -Infinity);
   const btA = backtest(syms, rev, M, Object.assign({}, cfg, { grade: "aplus" }), Math.max(cfg.scoreThr, PRIOR.thirds[1])), btB = backtest(syms, rev, M, Object.assign({}, cfg, { grade: "all" }), Math.max(cfg.scoreThr, PRIOR.thirds[1]));
   const out = { syms, signs: SIGNS, prior: PRIOR, names: SKEYS, features: SIGNS.map((s) => [s[0], s[2], s[3]]), bt: { trades: bt.trades, eq: bt.eq, bh: bt.bh, dd: bt.dd, bhdd: bt.bhdd, d: bt.d, exposure: bt.exposure }, btAll: { eq: btAll.eq, d: btAll.d, trades: btAll.trades.length }, btA: { eq: btA.eq, d: btA.d, exposure: btA.exposure }, btB: { eq: btB.eq, d: btB.d, exposure: btB.exposure }, symbols: {}, metrics: { symbols: {} }, fearEnd: fear ? fear.d[fear.d.length - 1] : null };
   const Y = [], P = [];
@@ -588,6 +600,8 @@ function run(datasets, cfg, fear) {
     for (const k of ["d", "o", "h", "l", "c", "v", "atr", "rsi2", "rsi14", "streak", "ibs", "lwick", "uwick", "ret1", "gap", "rangex", "volz", "m20", "s20", "z20", "sma5", "vterm", "vrank", "vix", "frank", "setup",
       "y", "tret", "thold", "texit", "tentry", "unfilled", "ac", "mode", "msetup", "mret", "mhold", "sma10", "zone", "ztouch", "zn", "zfwd", "touch", "fwd5", "r", "rv", "cc20", "park20", "gk20", "rs20", "yz5", "yz20", "yz60", "garch", "har5"]) S[k] = Array.from(R[k]);
     S.zq = R.zq.map((a) => Array.from(a)); S.pulse = R.pulse; S.X = {}; S.Z = {}; for (const q of SKEYS) { S.X[q] = Array.from(R.X[q]); S.Z[q] = Array.from(R.Z[q]); }
+    if (revS) { const RS = revS[s], ms = MS[s]; S.ssetup = Array.from(RS.setup); S.sscore = ms.score; S.sP = ms.P; S.stret = Array.from(RS.tret); S.sthold = Array.from(RS.thold);
+      S.sgood = RS.setup.map((v, i) => v && isF(ms.score[i]) && ms.score[i] >= cfg.scoreThr ? 1 : 0); S.mdown = RS.mdown ? Array.from(RS.mdown) : null; S.sma200 = Array.from(rollMean(R.c, 200)); }
     S.aplus = R.setup.map((v, i) => v && R.aq[i] && isF(m.score[i]) && m.score[i] >= PRIOR.thirds[1] ? 1 : 0); S.aq = Array.from(R.aq); S.score = m.score; S.P = m.P; S.Pr = m.Pr; S.C = m.C;
     Object.assign(S, C);
     S.lv_primary = R.m20.map(Math.exp); S.sg_primary = R.s20; S.z = R.z20;

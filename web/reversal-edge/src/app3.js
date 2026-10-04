@@ -6,8 +6,8 @@ function levelsAt(o,k){let stop=o.stop,target=o.target;for(const m of o.mods||[]
 function setLevel(o,key,price,persist=true){const d=DS[o.sym],c=REPLAY&&REPLAY.sym===o.sym?REPLAY.idx:d.d.length-1,date=d.d[c];o.mods=o.mods||[];let m=o.mods.find(x=>x.date===date);if(!m){m={date};o.mods.push(m)}m[key]=price;if(persist)saveOrders()}
 const smaCache={};
 function smaOf(sym,w){const d=DS[sym];if(!d)return [];const key=sym+":"+w+":"+d.d.length;if(smaCache[key])return smaCache[key];const a=new Array(d.c.length).fill(NaN);let s=0;for(let i=0;i<d.c.length;i++){s+=d.c[i];if(i>=w)s-=d.c[i-w];if(i>=w-1)a[i]=s/w}return smaCache[key]=a}
-const EXIT_TEXT={prevhigh:"the first close above the previous day's high",sma5:"the first close above the 5-day average",sma10:"the first close above the 10-day average",rsi70:"the first close with RSI(2) above 70",mom:"the first close below the 5-day average"};
-const EXIT_SHORT={prevhigh:"prev high",sma5:"5d avg",sma10:"10d avg",rsi70:"RSI70",mom:"below 5d avg"};
+const EXIT_TEXT={prevlow:"the first close below the previous day's low",prevhigh:"the first close above the previous day's high",sma5:"the first close above the 5-day average",sma10:"the first close above the 10-day average",rsi70:"the first close with RSI(2) above 70",mom:"the first close below the 5-day average"};
+const EXIT_SHORT={prevlow:"prev low",prevhigh:"prev high",sma5:"5d avg",sma10:"10d avg",rsi70:"RSI70",mom:"below 5d avg"};
 function simulate(o,upto){
  const d=DS[o.sym];if(!d)return {o,status:"hidden"};const p=idxIn(o.sym,o.date);if(p<0||p>upto)return {o,status:"hidden"};
  if(o.cancelled)return {o,status:"cancelled"};const cost=o.cost!=null?o.cost:ACCT().cost;let ei,ep;
@@ -19,7 +19,7 @@ function simulate(o,upto){
  for(let k=p+1;k<=upto;k++){const {stop,target}=levelsAt(o,k),op=d.o[k],hi=d.h[k],lo=d.l[k],c=d.c[k];
   if(isF(stop)&&(sg>0?lo<=stop:hi>=stop)){xi=k;xp=(k>ei&&(sg>0?op<=stop:op>=stop))?op:stop;why="Stop";break}
   if(isF(target)&&(sg>0?hi>=target:lo<=target)){xi=k;xp=(k>ei&&(sg>0?op>=target:op<=target))?op:target;why="Target";break}
-  if(sx&&k>=ei){const hit=sx==="prevhigh"?(sg>0?c>d.h[k-1]:c<d.l[k-1]):sx==="sma5"?(sg>0?c>s5[k]:c<s5[k]):sx==="sma10"?(sg>0?c>s10[k]:c<s10[k]):sx==="rsi70"?(rs&&(sg>0?rs[k]>70:rs[k]<30)):sx==="mom"?(sg>0?c<s5[k]:c>s5[k]):false;
+  if(sx&&k>=ei){const hit=sx==="prevlow"?c<d.l[k-1]:sx==="prevhigh"?(sg>0?c>d.h[k-1]:c<d.l[k-1]):sx==="sma5"?(sg>0?c>s5[k]:c<s5[k]):sx==="sma10"?(sg>0?c>s10[k]:c<s10[k]):sx==="rsi70"?(rs&&(sg>0?rs[k]>70:rs[k]<30)):sx==="mom"?(sg>0?c<s5[k]:c>s5[k]):false;
    if(hit){xi=k;xp=c;why=EXIT_SHORT[sx];break}}
   if(o.time>0&&k-ei>=o.time){xi=k;xp=c;why="Time";break}
   if(ci>=ei){if(cf==="close"&&k===ci){xi=k;xp=c;why="Manual";break}if(cf!=="close"&&k===ci+1){xi=k;xp=op;why="Manual";break}}}
@@ -38,6 +38,8 @@ const refPrice=()=>{const d=D();if(!d)return NaN;if(ticketType()==="limit"){cons
 const readTicket=()=>({stop:parseFloat($("t-stop").value),target:parseFloat($("t-target").value),risk:parseFloat($("t-risk").value)/100,qty:parseInt($("t-qty").value,10),time:parseInt($("t-time").value,10)||0});
 function setSide(s){side=s;$("t-buy").classList.toggle("on",s>0);$("t-sell").classList.toggle("on",s<0);$("t-place").className="place "+(s>0?"b":"s");const t=readTicket(),e=refPrice();if(isF(t.stop)&&(s>0?t.stop>=e:t.stop<=e))defaultLevels();else ticketChanged(false)}
 function sysPlan(c){const d=D();if(!d||!ARR)return null;const s=S(),sd=s?s.side:1,e=d.c[c],atr=isF(ARR.atr[c])?ARR.atr[c]:e*.02,mom=!!(s&&s.mode&&s.mode[c]===-1);
+ if(s&&s.sgood&&ECFG.shorts!=="off"&&!mom&&!s.setup[c]&&s.sgood[c]){const entry=e+ECFG.limitATR*atr,stop=entry+3*atr,lvl=d.l[c];
+  return {lg:false,mom:false,kind:"short",e,entry,limit:true,stop,hasStop:true,target:lvl<entry?lvl:NaN,exitKey:"prevlow",exitLevel:lvl,mean:ARR.meanArr[c],atr,maxHold:ECFG.maxHold}}
  const limit=!mom&&ECFG.entry==="limit",entry=limit?e-sd*ECFG.limitATR*atr:e,hasStop=!mom&&ECFG.stopATR>0,stop=entry-sd*(hasStop?ECFG.stopATR:3)*atr;
  const exitKey=mom?"mom":ECFG.exit,s10=smaOf(st.sym,10);
  const exitLevel=mom?ARR.sma5Arr[c]:exitKey==="prevhigh"?(sd>0?d.h[c]:d.l[c]):exitKey==="sma5"?ARR.sma5Arr[c]:exitKey==="sma10"?s10[c]:NaN;
@@ -62,7 +64,7 @@ function ticketChanged(user=true){if(user)draft.show=true;
  const risk=per*qty,reward=isF(t.target)?Math.abs(t.target-e)*qty:NaN,notional=e*qty;
  $("t-sum").innerHTML=`risk <b>${money(risk)}</b> (${pct(risk/acc.eq,2)}) · reward <b>${money(reward)}</b><br>R:R <b>${isF(reward)&&risk>0?(reward/risk).toFixed(2):"—"}</b> · size <b>${money(notional)}</b> (${pct(notional/acc.eq,0)} of equity)`;
  if(autoQty&&qty>0&&per>0&&Math.floor(acc.eq*t.risk/per)>qty)warn.push(`Size capped at ${A.lev}× equity.`);
- if($("t-sys").checked)warn.push(`System exit on: ${planKind==="mom"?EXIT_TEXT.mom:EXIT_TEXT[ECFG.exit]}. The edge comes from winning often with small gains; the stop line here is mainly for sizing.`);
+ if($("t-sys").checked)warn.push(`System exit on: ${planKind==="mom"?EXIT_TEXT.mom:planKind==="short"?EXIT_TEXT.prevlow:EXIT_TEXT[ECFG.exit]}. The edge comes from winning often with small gains; the stop line here is mainly for sizing.`);
  if(!REPLAY)warn.push(ticketType()==="limit"?"Live: the limit order is checked against the next bar you upload; if price never reaches it, it expires.":A.fill==="open"?"Live: fills at the open of the next bar you upload.":"");
  $("t-msg").innerHTML=errs.map(x=>`<div class="er">${esc(x)}</div>`).join("")+warn.filter(Boolean).map(x=>`<div class="wn">${esc(x)}</div>`).join("");
  const pl=$("t-place");pl.disabled=errs.length>0;pl.textContent=`${side>0?"Buy":"Sell short"} ${qty>0?qty.toLocaleString():""} ${st.sym||""}${ticketType()==="limit"?" (limit)":""}`;
@@ -74,7 +76,7 @@ $("t-type").addEventListener("change",()=>{if(ticketType()==="limit"&&!(parseFlo
 $("t-qty").addEventListener("input",()=>{autoQty=false;$("t-auto").classList.remove("on");ticketChanged(true)});
 $("t-auto").addEventListener("click",()=>{autoQty=!autoQty;$("t-auto").classList.toggle("on",autoQty);ticketChanged(true)});
 $("t-place").addEventListener("click",()=>{const {t,qty,A}=sizing(),d=D(),c=cur();if(!(qty>0))return;const s=S(),lim=ticketType()==="limit";
- ORDERS.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),sym:st.sym,side,qty,stop:t.stop,target:isF(t.target)?t.target:NaN,time:t.time,sysExit:$("t-sys").checked?(planKind==="mom"?"mom":ECFG.exit):false,
+ ORDERS.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),sym:st.sym,side,qty,stop:t.stop,target:isF(t.target)?t.target:NaN,time:t.time,sysExit:$("t-sys").checked?(planKind==="mom"?"mom":planKind==="short"?"prevlow":ECFG.exit):false,
   date:d.d[c],fill:lim?"limit":A.fill,limit:lim?parseFloat($("t-limit").value):undefined,cost:A.cost,mode:mode(),sid:REPLAY?REPLAY.sid:null,note:$("t-note").value.trim(),
   sys:s?{setup:s.setup[c],msetup:s.msetup&&s.msetup[c],score:s.score[c],P:s.P[c],sig:s.sig[c]}:null});
  saveOrders();draft.show=false;$("t-note").value="";renderLive();annotate();
@@ -117,6 +119,7 @@ function renderSigbar(){
    if(sig)say+=` Plan: ${plan.limit?`place a <b>limit ${sd>0?"buy":"sell"} at ${fp(plan.entry)}</b> (close − ${ECFG.limitATR} ATR), good for tomorrow only`:`${sd>0?"buy":"sell"} at the next open`}; sell on ${exitTxt}${isF(plan.exitLevel)?` (now ${fp(plan.exitLevel)})`:""} or after ${ECFG.maxHold} days; ${stopTxt}.`;
    gauge=`<div class="gauge">${gaugeSvg(P,THIRD_COL[th])}<span>chance of profit</span></div>`}
   else say=`${rsiTxt}: no ${sd>0?"oversold":"overbought"} setup (needs RSI(2) ${sd>0?"below "+ECFG.trig:"above "+(100-ECFG.trig)}). Price is ${fmt(Math.abs(s.z20[c]),2)}σ ${s.z20[c]<0?"below":"above"} its 20-day mean${s.zone[c]>=0?`, in zone ${["below 2.5%","2.5–10%","10–25%","25–75%","75–90%","90–97.5%","above 97.5%"][s.zone[c]]} of its own history`:""}.`;
+  if(!setup&&plan.kind==="short"){cls="short";lab=s.sig[c]===3?"Short signal":"Short setup";say=shortSay(s,c,plan);const Ps=s.sP[c];if(isF(Ps))gauge=`<div class="gauge">${gaugeSvg(Ps,"#ef5350")}<span>chance of profit</span></div>`}
   if(!isF(s.frank[c]))say+=` <span class="acc">No fear-index value for this date; that sign counts as neutral.</span>`}
  const chips=!mom&&s.setup[c]?topSigns(s,c).map(([k,v])=>`<span class="${v>0.05?"y":v<-0.05?"n":"m"}" title="${esc(signMeaning(k))}">${v>0.05?"▲":v<-0.05?"▼":"·"} ${esc(chipName(k,v))}</span>`).join(""):"";
  el.innerHTML=`<div><span class="vp ${cls}"${mom&&cls==="long"?' style="color:#c08cff;background:rgba(192,140,255,.14)"':lab.startsWith("A+")?' style="color:#1a1a19;background:#fab219;border-color:#fab219"':""}>${lab}</span><div class="note" style="margin-top:4px">${when}</div></div><div class="say">${say}<div style="margin-top:4px;font-size:12px">Market character: ${charText(s,c)}</div>${s.pulse?(()=>{const pa=pulseAdvice(s,c);return `<div class="pulse-say ${pa.tone}"><b>Momentum Pulse · ${PULSE_STATE[s.pulse.state[c]]}</b> ${pa.a}</div>`})():""}</div>
@@ -194,6 +197,6 @@ function drawScan(){try{drawPlan()}catch(e){console.error(e)}
  $("scan-note").innerHTML=`${rows.filter(r=>r.s.aplus&&r.s.aplus[r.i]).length} A+ · ${rows.filter(r=>r.s.sig[r.i]).length} signal(s) and ${rows.filter(r=>r.s.setup[r.i]).length} setup(s) on the latest bar across ${rows.length} symbol(s). Click a row to open it on the chart.`;
  const zn=["<2.5%","2.5–10%","10–25%","25–75%","75–90%","90–97.5%",">97.5%"];
  $("scan-t").innerHTML="<tr>"+["symbol","date","close","1d","RSI(2)","character","state","edge score","chance of profit","this stock, same third","zone","vol rank","vol trend","fear rank","top signs"].map(h=>`<th>${h}</th>`).join("")+"</tr>"+rows.map(({sym,s,i,th,own})=>{
-  const ap=s.aplus&&s.aplus[i],state=ap&&s.sig[i]===1?`<span class="vp long aplus-b" style="padding:1px 6px">A+ ${s.side>0?(ECFG.entry==="limit"?"limit buy":"buy"):"sell"}</span>`:s.sig[i]===2?'<span class="vp long" style="padding:1px 6px;color:#c08cff">momentum buy</span>':s.sig[i]?`<span class="vp long" style="padding:1px 6px">${s.side>0?(ECFG.entry==="limit"?"limit buy":"buy"):"sell"}</span>`:s.setup[i]?'<span class="vp watch" style="padding:1px 6px">weak setup</span>':'<span class="note">—</span>';
+  const ap=s.aplus&&s.aplus[i],state=s.sig[i]===3||(s.sgood&&s.sgood[i]&&!s.setup[i]&&ECFG.shorts!=="off")?`<span class="vp short" style="padding:1px 6px">${s.sig[i]===3?"short signal":"short setup"}</span>`:ap&&s.sig[i]===1?`<span class="vp long aplus-b" style="padding:1px 6px">A+ ${s.side>0?(ECFG.entry==="limit"?"limit buy":"buy"):"sell"}</span>`:s.sig[i]===2?'<span class="vp long" style="padding:1px 6px;color:#c08cff">momentum buy</span>':s.sig[i]?`<span class="vp long" style="padding:1px 6px">${s.side>0?(ECFG.entry==="limit"?"limit buy":"buy"):"sell"}</span>`:s.setup[i]?'<span class="vp watch" style="padding:1px 6px">weak setup</span>':'<span class="note">—</span>';
   return `<tr data-s="${esc(sym)}"><td>${esc(sym)}</td><td>${s.d[i]}</td><td>${fp(s.c[i])}</td><td class="${cl(s.c[i]/s.c[i-1]-1)}">${spct(s.c[i]/s.c[i-1]-1,1)}</td><td>${fmt(s.rsi2[i],0)}</td><td>${s.mode[i]===-1?"trends":"reverts"} (${isF(s.ac[i])?(s.ac[i]>=0?"+":"")+s.ac[i].toFixed(2):"—"})</td><td>${state}</td><td style="color:${THIRD_COL[th]}">${fmt(s.score[i],1)}</td><td>${pct(s.P[i],0)}</td><td>${own&&own.n?`${spct(own.avg,2)} (n ${own.n})`:"—"}</td><td>${s.zone[i]>=0?zn[s.zone[i]]:"—"}</td><td>${pct(s.vrank[i],0)}</td><td>${isF(s.vterm[i])?(s.vterm[i]>0?"rising":"falling"):"—"}</td><td>${pct(s.frank[i],0)}</td><td style="text-align:left">${topSigns(s,i,3).map(([k,v])=>`<span class="${v>0?"up":"down"}">${v>0?"▲":"▼"}${esc(chipName(k,v))}</span>`).join(" ")}</td></tr>`}).join("")}
 $("scan-t").addEventListener("click",e=>{const tr=e.target.closest("tr[data-s]");if(!tr)return;const sym=tr.dataset.s;focusDate(sym,DS[sym].d[DS[sym].d.length-1])});

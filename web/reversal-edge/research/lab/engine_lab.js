@@ -388,6 +388,10 @@ function buildRev(ds, fear, cfg) {
   R.pulse = pulseCalc(R, h, l, c);
   // A+ quality (study 11/12): the day closed in the bottom 13% of its range and the Momentum Pulse is below -0.5 (mirror for shorts)
   R.aq = R.ibs.map((b, i) => { const m = R.pulse.M[i]; return isF(b) && isF(m) && (s > 0 ? b <= 0.13 && m <= -0.5 : b >= 0.87 && m >= 0.5) ? 1 : 0; });
+  if (s < 0 && cfg.shortFilter) { const s200 = rollMean(c, 200), f = cfg.shortFilter; let mdown = null;
+    if (f.includes("mkt") && cfg.mktSeries) { const M = cfg.mktSeries[ds.sym] || cfg.mktSeries["*"], m200 = rollMean(M.c, 200); mdown = new Array(n).fill(0); let j = -1;
+      for (let i = 0; i < n; i++) { while (j + 1 < M.d.length && M.d[j + 1] <= ds.d[i]) j++; mdown[i] = j >= 0 && isF(m200[j]) && M.c[j] < m200[j] ? 1 : 0; } }
+    R.setup = R.setup.map((v, i) => v && (!f.includes("sma200") || c[i] < s200[i]) && (!f.includes("pulse") || R.pulse.M[i] < 0) && (!mdown || mdown[i]) ? 1 : 0); }
   // adaptive z-zones: percentiles of this stock's own z20 over the last 750 bars (point in time)
   const QS = [0.025, 0.10, 0.25, 0.75, 0.90, 0.975]; R.zq = QS.map(() => nanArr(n)); R.zone = new Array(n).fill(-1);
   const win = [];
@@ -491,7 +495,7 @@ function backtest(syms, rev, M, cfg, thr) {
     for (const p of pend) { const i = idx[p.s].get(cal[t]); if (i == null) { keep.push(p); continue; } if (pos[p.s]) continue; const R = rev[p.s], op = R.o[i]; if (!isF(op)) continue;
       let fill = op;
       if (p.kind === 1 && cfg.entry === "limit") { const lim = p.c - s * cfg.limitATR * p.atr; if ((s > 0 && R.l[i] > lim) || (s < 0 && R.h[i] < lim)) { p.age = (p.age || 1) + 1; if (p.age <= (cfg.limitDays || 1)) keep.push(p); continue; } fill = s > 0 ? Math.min(op, lim) : Math.max(op, lim); }
-      const equity = cash + Object.values(pos).reduce((a, x) => a + x.q * (px(x.s, t, "o") || x.last), 0);
+      const equity = cash + Object.values(pos).reduce((a, x) => a + (isF(px(x.s, t, "o")) ? x.q * px(x.s, t, "o") : x.last), 0);
       const dist = (cfg.stopATR > 0 ? cfg.stopATR : 3) * p.atr / fill; let notional = cfg.sizeMode === "fixed" ? equity * Math.min(cfg.maxW, 1 / Math.max(1, Math.min(cfg.maxPos, syms.length))) : Math.min(equity * cfg.riskPct / Math.max(dist, 1e-4), equity * cfg.maxW); const am = p.ap ? (cfg.aplusMult || 1) : (cfg.otherMult == null ? 1 : cfg.otherMult); notional *= am; if (cfg.invVol && isF(p.vol) && p.vol > 0) notional *= Math.max(0.5, Math.min(1.5, 30 / p.vol)); notional = Math.min(notional, Math.max(0, s > 0 ? cash : equity)); if (notional < 100) continue;
       const q = s * notional / fill; cash -= q * fill + notional * cost; pos[p.s] = { s: p.s, kind: p.kind, q, ep: fill, ti: t, stop: cfg.stopATR > 0 && p.kind === 1 ? fill - s * cfg.stopATR * p.atr : null, last: q * fill, sc: p.sc, P: p.P, z: p.z, fear: p.fear, risk: notional * dist, c0: notional * cost }; }
     pend = keep;
@@ -505,7 +509,7 @@ function backtest(syms, rev, M, cfg, thr) {
       else { const ex = cfg.exit === "prevhigh" ? (i > 0 && (s > 0 ? R.c[i] > R.h[i - 1] : R.c[i] < R.l[i - 1])) : cfg.exit === "rsi70" ? (s > 0 ? R.rsi2[i] > 70 : R.rsi2[i] < 30) : cfg.exit === "sma10" ? (s > 0 ? R.c[i] > R.sma10[i] : R.c[i] < R.sma10[i]) : (s > 0 ? R.c[i] > R.sma5[i] : R.c[i] < R.sma5[i]);
         if (ex) { x = R.c[i]; why = R.exitName; } else if (t - p.ti + 1 >= cfg.maxHold) { x = R.c[i]; why = "TIME"; } }
       if (x != null && cfg.exitAt === "open" && why !== "STOP") { p.exitNext = why; x = null; } }
-      if (x != null) { const fee = Math.abs(p.q * x) * cost; cash += p.q * x - fee; const pnl = p.q * (x - p.ep) - fee - p.c0;
+      if (x != null) { const fee = Math.abs(p.q * x) * cost + (p.q < 0 ? Math.abs(p.q * p.ep) * (cfg.borrowBps || 0) / 1e4 * (t - p.ti + 1) / 252 : 0); cash += p.q * x - fee; const pnl = p.q * (x - p.ep) - fee - p.c0;
         trades.push({ trade_id: trades.length + 1, symbol: q, direction: p.kind === 2 ? "momentum" : s > 0 ? "long" : "short", entry_date: cal[p.ti], exit_date: cal[t], bars_held: t - p.ti, exit_reason: why, entry_price: p.ep, exit_price: x, R: p.risk > 0 ? pnl / p.risk : NaN_, pnl, weight: Math.abs(p.q * p.ep) / 1e6, p: p.P, score: p.sc, z_entry: p.z, fear: p.fear }); delete pos[q]; } }
     let held = 0; for (const q of Object.keys(pos)) { const v = px(q, t, "c"); if (isF(v)) pos[q].last = pos[q].q * v; held += pos[q].last; }
     eq.push(cash + held); days.push(cal[t]); (bt_inv = bt_inv || []).push(held / (cash + held)); if (Object.keys(pos).length) inMkt++; syms.forEach((q, k) => { const v = px(q, t, "c"); if (isF(v)) lastC[k] = v; }); bh.push(1e6 * syms.reduce((a, q, k) => a + (isF(lastC[k]) ? lastC[k] : bh0[k]) / bh0[k], 0) / syms.length);

@@ -1,7 +1,21 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
-<h2 style="font-size:18px">How this system was built, and what the evidence says (v9)</h2>
+<h2 style="font-size:18px">How this system was built, and what the evidence says (v11)</h2>
 <p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>v11: short trades (optional, off by default)</h2>
+<p><b>The rule.</b> Sell an overbought bounce: RSI(2) above 90 with a top-third short score, only while the stock is below its 200-day average. When you choose a market file, the market must also be below its 200-day average. The order is a limit sell 0.5 ATR above the close, valid for the next session. Cover on the first close below the previous day's low or after the max hold. Every short has a 3-ATR stop and uses half a slot.</p>
+<p><b>What the tests found</b> (written down before testing, same protocol as v9):</p>
+<table class="t"><tr><th>short rule</th><th>6 long histories, test Sharpe</th><th>87 stocks Sharpe</th><th>verdict</th></tr>
+<tr><td>Plain mirror (sell RSI(2) &gt; 90)</td><td>−0.30</td><td>−0.91</td><td>loses; a squeeze blew up a test account</td></tr>
+<tr><td>Only below the 200-day average</td><td>−0.13</td><td>−0.45</td><td>loses</td></tr>
+<tr><td>Only when the Pulse is negative</td><td>−0.04</td><td>−0.74</td><td>loses</td></tr>
+<tr><td>Below 200-day + 3-ATR stop</td><td>−0.14</td><td>−0.38</td><td>loses</td></tr>
+<tr><td>+ market below its 200-day average</td><td>−0.08</td><td>−0.67</td><td>loses in bull periods</td></tr></table>
+<p>On fresh stocks, shorts paid only in bear markets: +1.1% per short on 2007–2012 stocks (2008 inside), and +3.8% on 18 shorts in the 2020 crash with the market filter. China lost (−6.9% on 5 shorts).</p>
+<p>Inside the full long + short book (half size, stop, downtrend only), Sharpe changed by −0.06 to +0.07. That's roughly nothing in normal markets and a small help in crashes.</p>
+<p><b>Hedging instead</b> (short the index while long trades are open) lowered Sharpe on all four data sets, because much of the dip-buy profit comes from the market bouncing too.</p>
+<p><b>Use shorts as a bear-market tool.</b> Turn them on when your market file is below its 200-day average, keep the stop, and keep them small. Short losses are open-ended.</p>
+<p><b>Bug fixed in v11.</b> When a held stock did not trade on a given day (TASI vs US holidays), its value was miscounted while sizing a new trade. Long trades were capped by cash so the effect was small: the 6-market Sharpe went 0.77 → 0.76, drawdown −15.0% → −14.5%. All single-market and same-calendar results are unchanged.</p>
 <h2>v9: whole-system stress test</h2>
 <p><b>Method.</b> I tested the full engine, the same code that runs in this page, on two kinds of data:</p>
 <ul><li><b>Development data:</b> your 6 long histories (before 2013 = design, 2013+ = test) and the 87 StockNet stocks.</li>

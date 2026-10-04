@@ -202,10 +202,12 @@ function annotate(){
    if(s.sig[i]===1&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${s.aplus&&s.aplus[i]?"A+ ":""}${Math.round(100*s.P[i])}%`,size:s.aplus&&s.aplus[i]?1.9:1.4})}
    else if(s.sig[i]===2&&UI.ov.sys){mk.push({time:d.d[i],position:"belowBar",shape:"arrowUp",color:"#c08cff",text:"MOM",size:1.3})}
    else if(s.setup[i]&&UI.ov.setups)mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:"circle",color:THIRD_COL[thirdOf(s.score[i])],size:.5});
+   else if(s.sig[i]===3&&UI.ov.sys)mk.push({time:d.d[i],position:"aboveBar",shape:"arrowDown",color:"#ef5350",text:"SHORT",size:1.3});
+   else if(s.sgood&&s.sgood[i]&&ECFG.shorts!=="off"&&UI.ov.setups)mk.push({time:d.d[i],position:"aboveBar",shape:"circle",color:"#ef5350",size:.5});
    if(UI.ov.signs){const down=d.c[i]<(i?d.c[i-1]:d.c[i]);
     if(down&&s.volz[i]>1.5&&s.rangex[i]>1.5)mk.push({time:d.d[i],position:"aboveBar",shape:"square",color:"#fab219",size:.45});
     else if(Math.abs(s.gap[i])>1.5)mk.push({time:d.d[i],position:"aboveBar",shape:"square",color:"#8a8a85",size:.35})}}
-  if(RES&&UI.ov.sys)for(const t of RES.bt.trades){if(t.symbol!==st.sym||t.exit_date>date)continue;mk.push({time:t.exit_date,position:s.side>0?"aboveBar":"belowBar",shape:"circle",color:t.pnl>0?"#3fbf5f":"#e05252",size:.6})}}
+  if(RES&&UI.ov.sys)for(const t of RES.bt.trades){if(t.symbol!==st.sym||t.exit_date>date)continue;mk.push({time:t.exit_date,position:t.direction==="short"?"belowBar":"aboveBar",shape:"circle",color:t.pnl>0?"#3fbf5f":"#e05252",size:.6})}}
  const sims=simAll();
  if(UI.ov.mine)for(const r of sims){if(r.o.sym!==st.sym||(r.status!=="open"&&r.status!=="closed"))continue;const lg=r.o.side>0;
   mk.push({time:d.d[r.entryIdx],position:lg?"belowBar":"aboveBar",shape:lg?"arrowUp":"arrowDown",color:TV.you,text:`YOU ${lg?"BUY":"SELL"}`,size:1.2});
