@@ -23,7 +23,7 @@ def yahoo_panel(start="2010-01-01", end=None, oos=False, extra=True):
     if not oos and end > IS_END: raise ValueError("OOS data locked")
     P = {}
     for f in glob.glob(os.path.join(H, "data", "d", "*.csv")):
-        s = os.path.basename(f)[:-4]
+        s = os.path.basename(f)[:-4].replace(".SR", "")
         if s in EXCL: continue
         d = pd.read_csv(f, index_col=0, parse_dates=True).loc[start:end]
         if len(d) < 5: continue
