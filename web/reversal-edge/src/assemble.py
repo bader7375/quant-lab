@@ -17,5 +17,5 @@ for a,b in reps:
 i=sec.index('<section id="t-about"'); j=sec.index('</section>',i)+len('</section>'); sec=sec[:i]+sec[j:]
 sec=sec.replace('<div class="cards" id="cards"></div>','<div class="cards" id="cards"></div><div id="edgebox" style="margin-top:14px"></div>')
 body=open('body.html').read().replace('{{SECTIONS}}',sec)
-js='\n'.join(open(f).read() for f in ['app1.js','app2.js','app3.js','app4.js'])+'\n'+mp+'\n'+open('app5.js').read()+'\n'+open('app6.js').read()
+js='\n'.join(open(f).read() for f in ['app1.js','app2.js','app3.js','app4.js'])+'\n'+mp+'\n'+open('app5.js').read()+'\n'+open('app6.js').read()+'\n'+open('app7.js').read()
 open('index.html','w').write(css+'\n'+body+'\n<script src="lwc.js"></script>\n<script>\n(async function(){\n"use strict";\n'+helpers+'\n'+js+'\n})();\n</script>\n')

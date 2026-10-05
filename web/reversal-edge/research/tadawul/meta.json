@@ -1,0 +1,1932 @@
+{
+"1010": {
+"name": "RIBL",
+"full": "Riyad Bank",
+"sector": "Financials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4759,
+"value_med": 22472426.61,
+"big_moves": 0
+},
+"1020": {
+"name": "BJAZ",
+"full": "Bank Aljazira",
+"sector": "Financials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4747,
+"value_med": 41928448.42,
+"big_moves": 2
+},
+"1030": {
+"name": "SAIB",
+"full": "Saudi Investment Bank",
+"sector": "Financials",
+"start": "2001-12-31",
+"end": "2020-01-23",
+"bars": 4724,
+"value_med": 2574240.63,
+"big_moves": 1
+},
+"1050": {
+"name": "BSFR",
+"full": "Banque Saudi Fransi",
+"sector": "Financials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4750,
+"value_med": 13359686.65,
+"big_moves": 1
+},
+"1060": {
+"name": "SABB",
+"full": "Saudi British Bank",
+"sector": "Financials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4733,
+"value_med": 12314022.55,
+"big_moves": 0
+},
+"1080": {
+"name": "ANB",
+"full": "Arab National Bank",
+"sector": "Financials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4737,
+"value_med": 10347912.6,
+"big_moves": 0
+},
+"1090": {
+"name": "SAMBA",
+"full": "Samba Financial Group",
+"sector": "Financials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4759,
+"value_med": 35836626.175,
+"big_moves": 0
+},
+"1120": {
+"name": "ALRAJHI",
+"full": "Al Rajhi Bank",
+"sector": "Financials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4758,
+"value_med": 283495115.79999995,
+"big_moves": 0
+},
+"1140": {
+"name": "ALBILAD",
+"full": "Bank Albilad",
+"sector": "Financials",
+"start": "2005-04-30",
+"end": "2020-03-05",
+"bars": 3761,
+"value_med": 13819491.84,
+"big_moves": 0
+},
+"1150": {
+"name": "ALINMA",
+"full": "Alinma Bank",
+"sector": "Financials",
+"start": "2008-06-03",
+"end": "2020-03-05",
+"bars": 2933,
+"value_med": 267677906.89,
+"big_moves": 0
+},
+"1180": {
+"name": "NCB",
+"full": "National Commercial Bank",
+"sector": "Financials",
+"start": "2014-11-12",
+"end": "2020-03-05",
+"bars": 1332,
+"value_med": 55991607.35,
+"big_moves": 0
+},
+"1201": {
+"name": "TAKWEEN",
+"full": "Takween Advanced Industries Co.",
+"sector": "Materials",
+"start": "2012-02-07",
+"end": "2020-03-05",
+"bars": 2018,
+"value_med": 2815907.415,
+"big_moves": 0
+},
+"1202": {
+"name": "MEPCO",
+"full": "Middle East Paper Co.",
+"sector": "Materials",
+"start": "2015-05-03",
+"end": "2020-03-05",
+"bars": 1211,
+"value_med": 4745549.71,
+"big_moves": 0
+},
+"1210": {
+"name": "BCI",
+"full": "Basic Chemical Industries Co.",
+"sector": "Materials",
+"start": "2008-06-16",
+"end": "2020-03-05",
+"bars": 2924,
+"value_med": 1388852.73,
+"big_moves": 0
+},
+"1211": {
+"name": "MAADEN",
+"full": "Saudi Arabian Mining Co.",
+"sector": "Materials",
+"start": "2008-07-28",
+"end": "2020-03-05",
+"bars": 2894,
+"value_med": 21386784.15,
+"big_moves": 0
+},
+"1212": {
+"name": "ASTRA INDUSTRIAL",
+"full": "Astra Industrial Group",
+"sector": "Industrials",
+"start": "2008-08-18",
+"end": "2020-03-05",
+"bars": 2879,
+"value_med": 1376890.08,
+"big_moves": 0
+},
+"1213": {
+"name": "ALSORAYAI GROUP",
+"full": "Al Sorayai Trading and Industrial Group",
+"sector": "Consumer Discretionary",
+"start": "2010-02-22",
+"end": "2020-03-05",
+"bars": 2475,
+"value_med": 7780692.93,
+"big_moves": 1
+},
+"1214": {
+"name": "SHAKER",
+"full": "Al Hassan Ghazi Ibrahim Shaker Co.",
+"sector": "Consumer Discretionary",
+"start": "2010-05-17",
+"end": "2020-03-05",
+"bars": 2445,
+"value_med": 3358948.1500000004,
+"big_moves": 0
+},
+"1301": {
+"name": "ASLAK",
+"full": "United Wire Factories Co.",
+"sector": "Materials",
+"start": "2011-08-21",
+"end": "2020-03-05",
+"bars": 2129,
+"value_med": 1414362.05,
+"big_moves": 0
+},
+"1302": {
+"name": "BAWAN",
+"full": "Bawan Co.",
+"sector": "Industrials",
+"start": "2013-12-24",
+"end": "2020-03-05",
+"bars": 1552,
+"value_med": 2124623.11,
+"big_moves": 0
+},
+"1303": {
+"name": "EIC",
+"full": "Electrical Industries Co.",
+"sector": "Industrials",
+"start": "2014-12-07",
+"end": "2020-03-05",
+"bars": 1315,
+"value_med": 1904355.67,
+"big_moves": 0
+},
+"1304": {
+"name": "ALYAMAMAH STEEL",
+"full": "Al Yamamah Steel Industries Co.",
+"sector": "Materials",
+"start": "2016-05-22",
+"end": "2020-03-05",
+"bars": 945,
+"value_med": 2443888.05,
+"big_moves": 0
+},
+"1320": {
+"name": "SSP",
+"full": "Saudi Steel Pipe Co.",
+"sector": "Materials",
+"start": "2009-08-04",
+"end": "2020-03-05",
+"bars": 2639,
+"value_med": 4213585.18,
+"big_moves": 0
+},
+"1330": {
+"name": "ALKHODARI",
+"full": "Abdullah A. M. Al-Khodari Sons Co.",
+"sector": "Industrials",
+"start": "2010-10-23",
+"end": "2020-03-05",
+"bars": 2338,
+"value_med": 0.0,
+"big_moves": 0
+},
+"1810": {
+"name": "SEERA",
+"full": "Seera Group Holding",
+"sector": "Consumer Discretionary",
+"start": "2012-06-04",
+"end": "2020-03-05",
+"bars": 1934,
+"value_med": 23106842.740000002,
+"big_moves": 0
+},
+"1820": {
+"name": "ALHOKAIR GROUP",
+"full": "Abdulmohsen Alhokair Group for Tourism and Development",
+"sector": "Consumer Discretionary",
+"start": "2014-06-26",
+"end": "2020-03-05",
+"bars": 1420,
+"value_med": 4310317.02,
+"big_moves": 0
+},
+"1830": {
+"name": "FITNESS TIME",
+"full": "Leejam Sports Co.",
+"sector": "Consumer Discretionary",
+"start": "2018-09-10",
+"end": "2020-03-05",
+"bars": 376,
+"value_med": 8303351.15,
+"big_moves": 0
+},
+"2001": {
+"name": "CHEMANOL",
+"full": "Methanol Chemicals Co.",
+"sector": "Materials",
+"start": "2008-09-16",
+"end": "2020-03-05",
+"bars": 2858,
+"value_med": 9289124.745000001,
+"big_moves": 0
+},
+"2002": {
+"name": "PETROCHEM",
+"full": "National Petrochemical Co.",
+"sector": "Materials",
+"start": "2009-08-08",
+"end": "2020-03-05",
+"bars": 2637,
+"value_med": 3766020.865,
+"big_moves": 0
+},
+"2010": {
+"name": "SABIC",
+"full": "Saudi Basic Industries Corp.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-01-23",
+"bars": 4729,
+"value_med": 331437168.0,
+"big_moves": 2
+},
+"2020": {
+"name": "SAFCO",
+"full": "Saudi Arabian Fertilizer Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4758,
+"value_med": 16484603.100000001,
+"big_moves": 0
+},
+"2030": {
+"name": "SARCO",
+"full": "Saudi Arabia Refineries Co.",
+"sector": "Energy",
+"start": "2002-01-23",
+"end": "2020-03-05",
+"bars": 4458,
+"value_med": 14944466.475000001,
+"big_moves": 3
+},
+"2040": {
+"name": "SAUDI CERAMICS",
+"full": "Saudi Ceramic Co.",
+"sector": "Industrials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4589,
+"value_med": 4714070.59,
+"big_moves": 1
+},
+"2050": {
+"name": "SAVOLA GROUP",
+"full": "Savola Group",
+"sector": "Consumer Staples",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4758,
+"value_med": 15494191.075,
+"big_moves": 2
+},
+"2060": {
+"name": "TASNEE",
+"full": "National Industrialization Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4759,
+"value_med": 34973250.69,
+"big_moves": 11
+},
+"2070": {
+"name": "SPIMACO",
+"full": "Saudi Pharmaceutical Industries and Medical Appliances Corp.",
+"sector": "Health Care",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4758,
+"value_med": 2463290.675,
+"big_moves": 3
+},
+"2080": {
+"name": "GASCO",
+"full": "National Gas and Industrialization Co.",
+"sector": "Utilities",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4759,
+"value_med": 3225890.225,
+"big_moves": 1
+},
+"2090": {
+"name": "NGC",
+"full": "National Gypsum Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4631,
+"value_med": 2011218.25,
+"big_moves": 2
+},
+"2100": {
+"name": "WAFRAH",
+"full": "Wafrah for Industry and Development Co.",
+"sector": "Consumer Staples",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4716,
+"value_med": 1757664.5499999998,
+"big_moves": 8
+},
+"2110": {
+"name": "SAUDI CABLE",
+"full": "Saudi Cable Co.",
+"sector": "Industrials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4751,
+"value_med": 10549685.05,
+"big_moves": 7
+},
+"2120": {
+"name": "SAIC",
+"full": "Saudi Advanced Industries Co.",
+"sector": "Financials",
+"start": "2002-01-01",
+"end": "2020-03-05",
+"bars": 4595,
+"value_med": 3440267.28,
+"big_moves": 18
+},
+"2130": {
+"name": "SIDC",
+"full": "Saudi Industrial Development Co.",
+"sector": "Consumer Discretionary",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4753,
+"value_med": 2579168.8200000003,
+"big_moves": 14
+},
+"2140": {
+"name": "ADC",
+"full": "Al-Ahsa Development Co.",
+"sector": "Industrials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4756,
+"value_med": 2380886.925,
+"big_moves": 7
+},
+"2150": {
+"name": "ZOUJAJ",
+"full": "The National Company for Glass Industries",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4510,
+"value_med": 583655.27,
+"big_moves": 5
+},
+"2160": {
+"name": "AMIANTIT",
+"full": "Saudi Arabian Amiantit Co.",
+"sector": "Industrials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4726,
+"value_med": 6660196.91,
+"big_moves": 1
+},
+"2170": {
+"name": "ALUJAIN",
+"full": "Alujain Holding Corp.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4754,
+"value_med": 10932459.085,
+"big_moves": 26
+},
+"2180": {
+"name": "FIPCO",
+"full": "Filing and Packing Materials Manufacturing Co.",
+"sector": "Materials",
+"start": "2002-02-16",
+"end": "2020-03-05",
+"bars": 4261,
+"value_med": 1671248.9,
+"big_moves": 3
+},
+"2190": {
+"name": "SISCO",
+"full": "Saudi Industrial Services Co.",
+"sector": "Industrials",
+"start": "2002-02-03",
+"end": "2020-03-05",
+"bars": 4504,
+"value_med": 4972691.8100000005,
+"big_moves": 16
+},
+"2200": {
+"name": "APC",
+"full": "Arabian Pipes Co.",
+"sector": "Materials",
+"start": "2002-06-05",
+"end": "2020-03-05",
+"bars": 4208,
+"value_med": 5847673.64,
+"big_moves": 7
+},
+"2210": {
+"name": "NAMA CHEMICALS",
+"full": "Nama Chemicals Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4687,
+"value_med": 6833855.215,
+"big_moves": 44
+},
+"2220": {
+"name": "MAADANIYAH",
+"full": "National Metal Manufacturing and Casting Co.",
+"sector": "Materials",
+"start": "2002-01-01",
+"end": "2020-03-05",
+"bars": 4516,
+"value_med": 1406422.91,
+"big_moves": 10
+},
+"2230": {
+"name": "CHEMICAL",
+"full": "Saudi Chemical Co.",
+"sector": "Health Care",
+"start": "2002-05-26",
+"end": "2020-03-05",
+"bars": 4541,
+"value_med": 2450682.14,
+"big_moves": 5
+},
+"2240": {
+"name": "ZAMIL INDUST",
+"full": "Zamil Industrial Investment Co.",
+"sector": "Materials",
+"start": "2002-02-13",
+"end": "2020-03-05",
+"bars": 4625,
+"value_med": 1245273.02,
+"big_moves": 5
+},
+"2250": {
+"name": "SIIG",
+"full": "Saudi Industrial Investment Group",
+"sector": "Materials",
+"start": "2004-02-15",
+"end": "2020-03-05",
+"bars": 4124,
+"value_med": 15187795.745000001,
+"big_moves": 0
+},
+"2270": {
+"name": "SADAFCO",
+"full": "Saudia Dairy and Foodstuff Co.",
+"sector": "Consumer Staples",
+"start": "2005-05-23",
+"end": "2020-03-05",
+"bars": 3741,
+"value_med": 4502432.5,
+"big_moves": 0
+},
+"2280": {
+"name": "ALMARAI",
+"full": "Almarai Co.",
+"sector": "Consumer Staples",
+"start": "2005-08-17",
+"end": "2020-03-05",
+"bars": 3667,
+"value_med": 19016998.950000003,
+"big_moves": 2
+},
+"2290": {
+"name": "YANSAB",
+"full": "Yanbu National Petrochemical Co.",
+"sector": "Materials",
+"start": "2006-02-20",
+"end": "2020-03-05",
+"bars": 3520,
+"value_med": 25852166.35,
+"big_moves": 0
+},
+"2300": {
+"name": "SPM",
+"full": "Saudi Paper Manufacturing Co.",
+"sector": "Materials",
+"start": "2006-06-14",
+"end": "2020-03-05",
+"bars": 3426,
+"value_med": 5543055.015000001,
+"big_moves": 1
+},
+"2310": {
+"name": "SIPCHEM",
+"full": "Sahara International Petrochemical Co.",
+"sector": "Materials",
+"start": "2006-11-11",
+"end": "2020-03-05",
+"bars": 3326,
+"value_med": 19787930.060000002,
+"big_moves": 1
+},
+"2320": {
+"name": "ALBABTAIN",
+"full": "Al-Babtain Power and Telecommunication Co.",
+"sector": "Industrials",
+"start": "2006-12-12",
+"end": "2020-01-23",
+"bars": 3273,
+"value_med": 2584734.58,
+"big_moves": 1
+},
+"2330": {
+"name": "ADVANCED",
+"full": "Advanced Petrochemical Co.",
+"sector": "Materials",
+"start": "2007-01-20",
+"end": "2020-03-05",
+"bars": 3281,
+"value_med": 13141158.7,
+"big_moves": 0
+},
+"2340": {
+"name": "ALABDULLATIF",
+"full": "Al Abdullatif Industrial Investment Co.",
+"sector": "Consumer Discretionary",
+"start": "2007-02-03",
+"end": "2020-03-05",
+"bars": 3271,
+"value_med": 1045965.06,
+"big_moves": 0
+},
+"2350": {
+"name": "SAUDI KAYAN",
+"full": "Saudi Kayan Petrochemical Co.",
+"sector": "Materials",
+"start": "2007-06-23",
+"end": "2020-03-05",
+"bars": 3171,
+"value_med": 79508958.47,
+"big_moves": 0
+},
+"2360": {
+"name": "SVCP",
+"full": "Saudi Vitrified Clay Pipes Co.",
+"sector": "Industrials",
+"start": "2007-05-26",
+"end": "2020-03-05",
+"bars": 3191,
+"value_med": 750012.1000000001,
+"big_moves": 0
+},
+"2370": {
+"name": "MESC",
+"full": "Middle East Specialized Cables Co.",
+"sector": "Industrials",
+"start": "2007-12-08",
+"end": "2020-03-05",
+"bars": 3057,
+"value_med": 3185770.785,
+"big_moves": 0
+},
+"2380": {
+"name": "PETRO RABIGH",
+"full": "Rabigh Refining and Petrochemical Co.",
+"sector": "Energy",
+"start": "2008-01-27",
+"end": "2020-03-05",
+"bars": 3025,
+"value_med": 22550473.79,
+"big_moves": 0
+},
+"3001": {
+"name": "HCC",
+"full": "Hail Cement Co.",
+"sector": "Materials",
+"start": "2011-10-16",
+"end": "2020-01-23",
+"bars": 2065,
+"value_med": 2882808.48,
+"big_moves": 0
+},
+"3002": {
+"name": "NAJRAN CEMENT",
+"full": "Najran Cement Co.",
+"sector": "Materials",
+"start": "2012-05-12",
+"end": "2020-03-05",
+"bars": 1951,
+"value_med": 10547163.84,
+"big_moves": 0
+},
+"3003": {
+"name": "CITY CEMENT",
+"full": "City Cement Co.",
+"sector": "Materials",
+"start": "2012-10-13",
+"end": "2020-03-05",
+"bars": 1847,
+"value_med": 6648175.9399999995,
+"big_moves": 0
+},
+"3004": {
+"name": "NORTHERN CEMENT",
+"full": "Northern Region Cement Co.",
+"sector": "Materials",
+"start": "2013-02-05",
+"end": "2020-03-05",
+"bars": 1769,
+"value_med": 3507246.885,
+"big_moves": 0
+},
+"3005": {
+"name": "UACC",
+"full": "Umm Al-Qura Cement Co.",
+"sector": "Materials",
+"start": "2014-06-12",
+"end": "2020-03-05",
+"bars": 1430,
+"value_med": 4642632.68,
+"big_moves": 0
+},
+"3007": {
+"name": "OASIS",
+"full": "Zahrat Al Waha for Trading Co.",
+"sector": "Materials",
+"start": "2017-09-17",
+"end": "2020-03-05",
+"bars": 621,
+"value_med": 3542703.05,
+"big_moves": 0
+},
+"3008": {
+"name": "ALKATHIRI",
+"full": "Al Kathiri Holding Co.",
+"sector": "Materials",
+"start": "2017-07-09",
+"end": "2020-03-05",
+"bars": 666,
+"value_med": 36442.6,
+"big_moves": 27
+},
+"3010": {
+"name": "ACC",
+"full": "Arabian Cement Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4749,
+"value_med": 4461938.1,
+"big_moves": 1
+},
+"3020": {
+"name": "YSCC",
+"full": "Yamama Cement Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4732,
+"value_med": 5305953.01,
+"big_moves": 0
+},
+"3030": {
+"name": "SAUDI CEMENT",
+"full": "Saudi Cement Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4757,
+"value_med": 6478737.625,
+"big_moves": 2
+},
+"3040": {
+"name": "QACCO",
+"full": "Qassim Cement Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4701,
+"value_med": 3110060.2,
+"big_moves": 3
+},
+"3050": {
+"name": "SPCC",
+"full": "Southern Province Cement Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4743,
+"value_med": 4428306.550000001,
+"big_moves": 0
+},
+"3060": {
+"name": "YCC",
+"full": "Yanbu Cement Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4756,
+"value_med": 5809596.574999999,
+"big_moves": 2
+},
+"3080": {
+"name": "EPCCO",
+"full": "Eastern Province Cement Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4750,
+"value_med": 2241940.5,
+"big_moves": 0
+},
+"3090": {
+"name": "TCC",
+"full": "Tabuk Cement Co.",
+"sector": "Materials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4757,
+"value_med": 3164961.04,
+"big_moves": 1
+},
+"3091": {
+"name": "JOUF CEMENT",
+"full": "Al Jouf Cement Co.",
+"sector": "Materials",
+"start": "2010-08-11",
+"end": "2020-03-05",
+"bars": 2383,
+"value_med": 4846799.14,
+"big_moves": 0
+},
+"4001": {
+"name": "A.OTHAIM MARKET",
+"full": "Abdullah Al Othaim Markets Co.",
+"sector": "Consumer Staples",
+"start": "2008-07-14",
+"end": "2020-03-05",
+"bars": 2904,
+"value_med": 6782358.75,
+"big_moves": 0
+},
+"4002": {
+"name": "MOUWASAT",
+"full": "Mouwasat Medical Services Co.",
+"sector": "Health Care",
+"start": "2009-09-02",
+"end": "2020-03-05",
+"bars": 2617,
+"value_med": 6000755.25,
+"big_moves": 0
+},
+"4003": {
+"name": "EXTRA",
+"full": "United Electronics Co.",
+"sector": "Consumer Discretionary",
+"start": "2011-12-24",
+"end": "2020-03-05",
+"bars": 2051,
+"value_med": 10111397.7,
+"big_moves": 0
+},
+"4004": {
+"name": "DALLAH HEALTH",
+"full": "Dallah Healthcare Co.",
+"sector": "Health Care",
+"start": "2012-12-17",
+"end": "2020-03-05",
+"bars": 1805,
+"value_med": 8236607.675000001,
+"big_moves": 0
+},
+"4005": {
+"name": "CARE",
+"full": "National Medical Care Co.",
+"sector": "Health Care",
+"start": "2013-03-13",
+"end": "2020-03-05",
+"bars": 1743,
+"value_med": 5375109.8,
+"big_moves": 0
+},
+"4006": {
+"name": "FARM SUPERSTORES",
+"full": "Saudi Marketing Co.",
+"sector": "Consumer Staples",
+"start": "2014-02-16",
+"end": "2020-03-05",
+"bars": 1514,
+"value_med": 1524283.25,
+"big_moves": 0
+},
+"4007": {
+"name": "ALHAMMADI",
+"full": "Al Hammadi Company for Development and Investment",
+"sector": "Health Care",
+"start": "2014-07-15",
+"end": "2020-03-05",
+"bars": 1407,
+"value_med": 5677792.744999999,
+"big_moves": 0
+},
+"4008": {
+"name": "SACO",
+"full": "Saudi Company for Hardware",
+"sector": "Consumer Discretionary",
+"start": "2015-05-12",
+"end": "2020-03-05",
+"bars": 1204,
+"value_med": 6589170.699999999,
+"big_moves": 0
+},
+"4009": {
+"name": "SAUDI GERMAN HOSPTL",
+"full": "Middle East Healthcare Co.",
+"sector": "Health Care",
+"start": "2016-03-29",
+"end": "2020-03-05",
+"bars": 983,
+"value_med": 8496596.524999999,
+"big_moves": 0
+},
+"4010": {
+"name": "DUR",
+"full": "Dur Hospitality Co.",
+"sector": "Consumer Discretionary",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4693,
+"value_med": 1781139.49,
+"big_moves": 7
+},
+"4011": {
+"name": "LAZURDE",
+"full": "Lazurde Company for Jewelry",
+"sector": "Consumer Discretionary",
+"start": "2016-06-29",
+"end": "2020-03-05",
+"bars": 917,
+"value_med": 1820424.79,
+"big_moves": 0
+},
+"4012": {
+"name": "ALASEEL",
+"full": "Thob Al Aseel Co.",
+"sector": "Consumer Discretionary",
+"start": "2017-06-15",
+"end": "2020-03-05",
+"bars": 677,
+"value_med": 170304.805,
+"big_moves": 5
+},
+"4020": {
+"name": "SRECO",
+"full": "Saudi Real Estate Co.",
+"sector": "Real Estate",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4757,
+"value_med": 4211229.16,
+"big_moves": 4
+},
+"4030": {
+"name": "BAHRI",
+"full": "National Shipping Company of Saudi Arabia",
+"sector": "Energy",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4755,
+"value_med": 22205341.525,
+"big_moves": 9
+},
+"4031": {
+"name": "SGS",
+"full": "Saudi Ground Services Co.",
+"sector": "Industrials",
+"start": "2015-06-25",
+"end": "2020-03-05",
+"bars": 1172,
+"value_med": 9890096.5,
+"big_moves": 0
+},
+"4040": {
+"name": "SAPTCO",
+"full": "Saudi Public Transport Co.",
+"sector": "Industrials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4758,
+"value_med": 8327092.17,
+"big_moves": 5
+},
+"4050": {
+"name": "SASCO",
+"full": "Saudi Automotive Services Co.",
+"sector": "Consumer Discretionary",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4759,
+"value_med": 5779014.58,
+"big_moves": 6
+},
+"4051": {
+"name": "BAAZEEM",
+"full": "Baazeem Trading Co.",
+"sector": "Consumer Discretionary",
+"start": "2017-02-26",
+"end": "2020-03-05",
+"bars": 756,
+"value_med": 194618.58000000002,
+"big_moves": 8
+},
+"4061": {
+"name": "ANAAM HOLDING",
+"full": "Anaam International Holding Group",
+"sector": "Consumer Staples",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4230,
+"value_med": 2734072.37,
+"big_moves": 17
+},
+"4070": {
+"name": "TAPRCO",
+"full": "Tihama Advertising and Public Relations Co.",
+"sector": "Communication Services",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4695,
+"value_med": 9491507.575,
+"big_moves": 5
+},
+"4080": {
+"name": "ASEER",
+"full": "Aseer Trading, Tourism and Manufacturing Co.",
+"sector": "Financials",
+"start": "2002-01-06",
+"end": "2020-03-05",
+"bars": 4713,
+"value_med": 2135512.64,
+"big_moves": 6
+},
+"4090": {
+"name": "TAIBA",
+"full": "Taiba Investments Co.",
+"sector": "Real Estate",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4758,
+"value_med": 2095381.5,
+"big_moves": 13
+},
+"4100": {
+"name": "MCDC",
+"full": "Makkah Construction and Development Co.",
+"sector": "Real Estate",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4758,
+"value_med": 2150376.35,
+"big_moves": 0
+},
+"4110": {
+"name": "BATIC",
+"full": "Batic Investments and Logistics Co.",
+"sector": "Industrials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4759,
+"value_med": 4299684.925000001,
+"big_moves": 4
+},
+"4130": {
+"name": "ALBAHA",
+"full": "Al-Baha Investment and Development Co.",
+"sector": "Financials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4406,
+"value_med": 3498802.08,
+"big_moves": 12
+},
+"4140": {
+"name": "SIECO",
+"full": "Saudi Industrial Export Co.",
+"sector": "Industrials",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4716,
+"value_med": 12201264.899999999,
+"big_moves": 20
+},
+"4150": {
+"name": "ARDCO",
+"full": "Arriyadh Development Co.",
+"sector": "Real Estate",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4759,
+"value_med": 4512871.1899999995,
+"big_moves": 1
+},
+"4160": {
+"name": "THIMAR",
+"full": "National Agricultural Marketing Co.",
+"sector": "Consumer Staples",
+"start": "2002-02-27",
+"end": "2020-03-05",
+"bars": 4208,
+"value_med": 2842968.17,
+"big_moves": 2
+},
+"4170": {
+"name": "TECO",
+"full": "Tourism Enterprise Co.",
+"sector": "Consumer Discretionary",
+"start": "2002-01-05",
+"end": "2020-03-05",
+"bars": 4676,
+"value_med": 2977229.99,
+"big_moves": 7
+},
+"4180": {
+"name": "FITAIHI GROUP",
+"full": "Fitaihi Holding Group",
+"sector": "Consumer Discretionary",
+"start": "2002-01-26",
+"end": "2020-03-05",
+"bars": 4220,
+"value_med": 1166476.22,
+"big_moves": 8
+},
+"4190": {
+"name": "JARIR",
+"full": "Jarir Marketing Co.",
+"sector": "Consumer Discretionary",
+"start": "2003-12-16",
+"end": "2020-03-05",
+"bars": 4169,
+"value_med": 15519193.9,
+"big_moves": 1
+},
+"4191": {
+"name": "ABO MOATI",
+"full": "Abdullah Saad Mohammed Abo Moati for Bookstores Co.",
+"sector": "Consumer Discretionary",
+"start": "2017-02-26",
+"end": "2020-03-05",
+"bars": 756,
+"value_med": 192819.53,
+"big_moves": 4
+},
+"4200": {
+"name": "ALDREES",
+"full": "Aldrees Petroleum and Transport Services Co.",
+"sector": "Energy",
+"start": "2006-03-14",
+"end": "2020-03-05",
+"bars": 3501,
+"value_med": 10033141.2,
+"big_moves": 0
+},
+"4210": {
+"name": "SRMG",
+"full": "Saudi Research and Marketing Group",
+"sector": "Communication Services",
+"start": "2006-05-15",
+"end": "2020-03-05",
+"bars": 3452,
+"value_med": 10640361.649999999,
+"big_moves": 1
+},
+"4220": {
+"name": "EMAAR EC",
+"full": "Emaar The Economic City",
+"sector": "Real Estate",
+"start": "2006-10-07",
+"end": "2020-03-05",
+"bars": 3346,
+"value_med": 13197558.17,
+"big_moves": 0
+},
+"4230": {
+"name": "RED SEA",
+"full": "Red Sea International Co.",
+"sector": "Real Estate",
+"start": "2006-11-04",
+"end": "2020-03-05",
+"bars": 3331,
+"value_med": 1171139.48,
+"big_moves": 0
+},
+"4240": {
+"name": "ALHOKAIR",
+"full": "Fawaz Abdulaziz Alhokair Co.",
+"sector": "Consumer Discretionary",
+"start": "2006-12-23",
+"end": "2020-03-05",
+"bars": 3296,
+"value_med": 10063020.515,
+"big_moves": 0
+},
+"4250": {
+"name": "JABAL OMAR",
+"full": "Jabal Omar Development Co.",
+"sector": "Real Estate",
+"start": "2007-12-01",
+"end": "2020-03-05",
+"bars": 3062,
+"value_med": 23031835.125,
+"big_moves": 0
+},
+"4260": {
+"name": "BUDGET SAUDI",
+"full": "United International Transportation Co.",
+"sector": "Industrials",
+"start": "2007-09-01",
+"end": "2020-03-05",
+"bars": 3121,
+"value_med": 8356480.300000001,
+"big_moves": 0
+},
+"4270": {
+"name": "SPPC",
+"full": "Saudi Printing and Packaging Co.",
+"sector": "Industrials",
+"start": "2007-07-15",
+"end": "2020-03-05",
+"bars": 3155,
+"value_med": 4146199.6799999997,
+"big_moves": 0
+},
+"4280": {
+"name": "KINGDOM",
+"full": "Kingdom Holding Co.",
+"sector": "Financials",
+"start": "2007-07-29",
+"end": "2020-03-05",
+"bars": 3145,
+"value_med": 1417045.56,
+"big_moves": 6
+},
+"4290": {
+"name": "ALKHALEEJ TRNG",
+"full": "Alkhaleej Training and Education Co.",
+"sector": "Consumer Discretionary",
+"start": "2007-12-10",
+"end": "2020-03-05",
+"bars": 3055,
+"value_med": 2877728.29,
+"big_moves": 1
+},
+"4291": {
+"name": "NCLE",
+"full": "National Company for Learning and Education",
+"sector": "Consumer Discretionary",
+"start": "2018-11-18",
+"end": "2020-03-05",
+"bars": 329,
+"value_med": 2654842.9,
+"big_moves": 0
+},
+"4300": {
+"name": "DAR ALARKAN",
+"full": "Dar Alarkan Real Estate Development Co.",
+"sector": "Real Estate",
+"start": "2007-12-29",
+"end": "2020-03-05",
+"bars": 3046,
+"value_med": 96155829.2,
+"big_moves": 0
+},
+"4310": {
+"name": "KEC",
+"full": "Knowledge Economic City",
+"sector": "Real Estate",
+"start": "2010-08-09",
+"end": "2020-03-05",
+"bars": 2385,
+"value_med": 4461906.125,
+"big_moves": 0
+},
+"4320": {
+"name": "ALANDALUS",
+"full": "Alandalus Property Co.",
+"sector": "Real Estate",
+"start": "2016-01-12",
+"end": "2020-03-05",
+"bars": 1038,
+"value_med": 4690511.13,
+"big_moves": 0
+},
+"4330": {
+"name": "RIYAD REIT",
+"full": "Riyad REIT Fund",
+"sector": "Real Estate",
+"start": "2016-11-13",
+"end": "2020-03-05",
+"bars": 831,
+"value_med": 1199729.96,
+"big_moves": 0
+},
+"4331": {
+"name": "ALJAZIRA REIT",
+"full": "AlJazira Mawten REIT Fund",
+"sector": "Real Estate",
+"start": "2017-02-15",
+"end": "2020-03-05",
+"bars": 763,
+"value_med": 3515990.6100000003,
+"big_moves": 0
+},
+"4332": {
+"name": "JADWA REIT ALHARAMAIN",
+"full": "Jadwa REIT Al Haramain Fund",
+"sector": "Real Estate",
+"start": "2017-04-30",
+"end": "2020-03-05",
+"bars": 711,
+"value_med": 1024424.0700000001,
+"big_moves": 0
+},
+"4333": {
+"name": "TALEEM REIT",
+"full": "Taleem REIT Fund",
+"sector": "Real Estate",
+"start": "2017-05-30",
+"end": "2020-03-05",
+"bars": 689,
+"value_med": 697751.1,
+"big_moves": 0
+},
+"4334": {
+"name": "AL MAATHER REIT",
+"full": "AL Maather REIT Fund",
+"sector": "Real Estate",
+"start": "2017-08-22",
+"end": "2020-03-05",
+"bars": 634,
+"value_med": 734933.06,
+"big_moves": 0
+},
+"4335": {
+"name": "MUSHARAKA REIT",
+"full": "Musharaka REIT Fund",
+"sector": "Real Estate",
+"start": "2017-10-01",
+"end": "2020-03-05",
+"bars": 612,
+"value_med": 945368.99,
+"big_moves": 0
+},
+"4336": {
+"name": "MULKIA REIT",
+"full": "Mulkia Gulf Real Estate REIT",
+"sector": "Real Estate",
+"start": "2017-11-05",
+"end": "2020-03-05",
+"bars": 587,
+"value_med": 598689.925,
+"big_moves": 0
+},
+"4337": {
+"name": "MASHAAR REIT",
+"full": "Al Mashaar REIT",
+"sector": "Real Estate",
+"start": "2018-01-18",
+"end": "2020-03-05",
+"bars": 533,
+"value_med": 841549.9199999999,
+"big_moves": 0
+},
+"4338": {
+"name": "ALAHLI REIT 1",
+"full": "AlAhli REIT Fund 1",
+"sector": "Real Estate",
+"start": "2018-01-08",
+"end": "2020-03-05",
+"bars": 541,
+"value_med": 819501.355,
+"big_moves": 0
+},
+"4339": {
+"name": "DERAYAH REIT",
+"full": "Derayah REIT Fund",
+"sector": "Real Estate",
+"start": "2018-03-26",
+"end": "2020-03-05",
+"bars": 486,
+"value_med": 1962487.03,
+"big_moves": 0
+},
+"4340": {
+"name": "Al RAJHI REIT",
+"full": "Al Rajhi REIT Fund",
+"sector": "Real Estate",
+"start": "2018-03-20",
+"end": "2020-03-05",
+"bars": 490,
+"value_med": 1216996.145,
+"big_moves": 0
+},
+"4342": {
+"name": "JADWA REIT SAUDI",
+"full": "Jadwa REIT Saudi Fund",
+"sector": "Real Estate",
+"start": "2018-02-11",
+"end": "2020-03-05",
+"bars": 517,
+"value_med": 1267206.83,
+"big_moves": 0
+},
+"4344": {
+"name": "SEDCO CAPITAL REIT",
+"full": "SEDCO Capital REIT Fund",
+"sector": "Real Estate",
+"start": "2018-05-01",
+"end": "2020-03-05",
+"bars": 460,
+"value_med": 656598.5549999999,
+"big_moves": 0
+},
+"4345": {
+"name": "SWICORP WABEL REIT",
+"full": "Swicorp Wabel REIT Fund",
+"sector": "Real Estate",
+"start": "2018-08-06",
+"end": "2020-03-05",
+"bars": 396,
+"value_med": 211974.33000000002,
+"big_moves": 0
+},
+"4346": {
+"name": "MEFIC REIT",
+"full": "MEFIC REIT Fund",
+"sector": "Real Estate",
+"start": "2018-11-13",
+"end": "2020-03-05",
+"bars": 302,
+"value_med": 3100548.74,
+"big_moves": 0
+},
+"4347": {
+"name": "BONYAN REIT",
+"full": "Bonyan REIT Fund",
+"sector": "Real Estate",
+"start": "2018-07-25",
+"end": "2020-03-05",
+"bars": 404,
+"value_med": 257123.975,
+"big_moves": 0
+},
+"5110": {
+"name": "SAUDI ELECTRICITY",
+"full": "Saudi Electricity Co.",
+"sector": "Utilities",
+"start": "2002-06-08",
+"end": "2020-03-05",
+"bars": 4627,
+"value_med": 20675358.9,
+"big_moves": 4
+},
+"6001": {
+"name": "HB",
+"full": "Halwani Bros. Co.",
+"sector": "Consumer Staples",
+"start": "2008-07-16",
+"end": "2020-03-05",
+"bars": 2902,
+"value_med": 820419.875,
+"big_moves": 0
+},
+"6002": {
+"name": "HERFY FOODS",
+"full": "Herfy Food Services Co.",
+"sector": "Consumer Discretionary",
+"start": "2010-02-02",
+"end": "2020-03-05",
+"bars": 2519,
+"value_med": 2355114.55,
+"big_moves": 0
+},
+"6004": {
+"name": "CATERING",
+"full": "Saudi Airlines Catering Co.",
+"sector": "Industrials",
+"start": "2012-07-09",
+"end": "2020-03-05",
+"bars": 1909,
+"value_med": 7880047.300000001,
+"big_moves": 0
+},
+"6010": {
+"name": "NADEC",
+"full": "National Agricultural Development Co.",
+"sector": "Consumer Staples",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4708,
+"value_med": 2719266.92,
+"big_moves": 6
+},
+"6012": {
+"name": "RAYDAN",
+"full": "Raydan Food Co.",
+"sector": "Consumer Discretionary",
+"start": "2017-02-26",
+"end": "2020-03-05",
+"bars": 756,
+"value_med": 222512.06,
+"big_moves": 9
+},
+"6020": {
+"name": "GACO",
+"full": "Al Gassim Investment Holding Co.",
+"sector": "Consumer Staples",
+"start": "2002-01-01",
+"end": "2020-03-05",
+"bars": 4736,
+"value_med": 3291193.42,
+"big_moves": 27
+},
+"6040": {
+"name": "TADCO",
+"full": "Tabuk Agricultural Development Co.",
+"sector": "Consumer Staples",
+"start": "2002-01-01",
+"end": "2020-03-05",
+"bars": 4716,
+"value_med": 2211622.75,
+"big_moves": 6
+},
+"6050": {
+"name": "SFICO",
+"full": "Saudi Fisheries Co.",
+"sector": "Consumer Staples",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4578,
+"value_med": 10169851.08,
+"big_moves": 11
+},
+"6060": {
+"name": "SHARQIYAH DEV",
+"full": "Ash-Sharqiyah Development Co.",
+"sector": "Consumer Staples",
+"start": "2002-01-05",
+"end": "2020-03-05",
+"bars": 4684,
+"value_med": 4737704.35,
+"big_moves": 12
+},
+"6070": {
+"name": "ALJOUF",
+"full": "Al-Jouf Agricultural Development Co.",
+"sector": "Consumer Staples",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4672,
+"value_med": 1523226.605,
+"big_moves": 5
+},
+"6090": {
+"name": "JAZADCO",
+"full": "Jazan Energy and Development Co.",
+"sector": "Consumer Staples",
+"start": "2001-12-31",
+"end": "2020-03-05",
+"bars": 4744,
+"value_med": 2565423.2,
+"big_moves": 16
+},
+"7010": {
+"name": "STC",
+"full": "Saudi Telecom Co.",
+"sector": "Communication Services",
+"start": "2003-01-25",
+"end": "2020-03-05",
+"bars": 4432,
+"value_med": 38814629.05,
+"big_moves": 0
+},
+"7020": {
+"name": "ETIHAD ETISALAT",
+"full": "Etihad Etisalat Co.",
+"sector": "Communication Services",
+"start": "2004-12-20",
+"end": "2020-03-05",
+"bars": 3865,
+"value_med": 40678242.81,
+"big_moves": 0
+},
+"7030": {
+"name": "ZAIN KSA",
+"full": "Mobile Telecommunication Company Saudi Arabia",
+"sector": "Communication Services",
+"start": "2008-03-22",
+"end": "2020-03-05",
+"bars": 2986,
+"value_med": 27473756.08,
+"big_moves": 0
+},
+"7040": {
+"name": "ATHEEB TELECOM",
+"full": "Etihad Atheeb Telecommunication Co.",
+"sector": "Communication Services",
+"start": "2009-03-21",
+"end": "2020-03-05",
+"bars": 2532,
+"value_med": 0.0,
+"big_moves": 0
+},
+"7201": {
+"name": "ARAB SEA",
+"full": "Arab Sea Information System Co.",
+"sector": "Information Technology",
+"start": "2017-02-26",
+"end": "2020-03-04",
+"bars": 755,
+"value_med": 183300.06,
+"big_moves": 14
+},
+"8010": {
+"name": "TAWUNIYA",
+"full": "The Company for Cooperative Insurance",
+"sector": "Financials",
+"start": "2005-01-17",
+"end": "2020-03-05",
+"bars": 3842,
+"value_med": 13150395.45,
+"big_moves": 0
+},
+"8012": {
+"name": "JAZIRA TAKAFUL",
+"full": "Aljazira Takaful Taawuni Co.",
+"sector": "Financials",
+"start": "2013-07-21",
+"end": "2020-03-05",
+"bars": 1652,
+"value_med": 3424014.3,
+"big_moves": 0
+},
+"8020": {
+"name": "MALATH INSURANCE",
+"full": "Malath Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2007-05-05",
+"end": "2020-03-05",
+"bars": 3206,
+"value_med": 5506117.26,
+"big_moves": 0
+},
+"8030": {
+"name": "MEDGULF",
+"full": "The Mediterranean and Gulf Insurance and Reinsurance Co.",
+"sector": "Financials",
+"start": "2007-05-07",
+"end": "2020-03-05",
+"bars": 3203,
+"value_med": 5276094.720000001,
+"big_moves": 0
+},
+"8040": {
+"name": "ALLIANZ SF",
+"full": "Allianz Saudi Fransi Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2007-07-23",
+"end": "2020-03-05",
+"bars": 3149,
+"value_med": 2533274.7249999996,
+"big_moves": 0
+},
+"8050": {
+"name": "SALAMA",
+"full": "Salama Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2007-06-18",
+"end": "2020-03-05",
+"bars": 3174,
+"value_med": 4179355.69,
+"big_moves": 0
+},
+"8060": {
+"name": "WALAA",
+"full": "Walaa Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2007-07-17",
+"end": "2020-03-05",
+"bars": 3153,
+"value_med": 3835201.24,
+"big_moves": 0
+},
+"8070": {
+"name": "ARABIAN SHIELD",
+"full": "Arabian Shield Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2007-06-26",
+"end": "2020-03-05",
+"bars": 3168,
+"value_med": 4327368.795,
+"big_moves": 0
+},
+"8080": {
+"name": "SABB TAKAFUL",
+"full": "SABB Takaful Co.",
+"sector": "Financials",
+"start": "2007-06-16",
+"end": "2020-03-05",
+"bars": 3176,
+"value_med": 2159753.02,
+"big_moves": 0
+},
+"8100": {
+"name": "SAICO",
+"full": "Saudi Arabian Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2007-09-03",
+"end": "2020-03-05",
+"bars": 3119,
+"value_med": 2556238.09,
+"big_moves": 0
+},
+"8110": {
+"name": "WAFA INSURANCE",
+"full": "Saudi Indian Company for Cooperative Insurance",
+"sector": "Financials",
+"start": "2007-08-25",
+"end": "2020-03-05",
+"bars": 3113,
+"value_med": 0.0,
+"big_moves": 0
+},
+"8120": {
+"name": "GULF UNION",
+"full": "Gulf Union Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2007-09-11",
+"end": "2020-03-05",
+"bars": 3113,
+"value_med": 1372311.38,
+"big_moves": 0
+},
+"8130": {
+"name": "ATC",
+"full": "Alahli Takaful Co.",
+"sector": "Financials",
+"start": "2007-08-18",
+"end": "2020-03-05",
+"bars": 3131,
+"value_med": 2803398.5999999996,
+"big_moves": 0
+},
+"8140": {
+"name": "ALAHLIA",
+"full": "Al-Ahlia Insurance Co.",
+"sector": "Financials",
+"start": "2007-10-06",
+"end": "2020-03-05",
+"bars": 3097,
+"value_med": 2876097.945,
+"big_moves": 0
+},
+"8150": {
+"name": "ACIG",
+"full": "Allied Cooperative Insurance Group",
+"sector": "Financials",
+"start": "2007-08-27",
+"end": "2020-03-05",
+"bars": 3090,
+"value_med": 1758862.75,
+"big_moves": 0
+},
+"8160": {
+"name": "AICC",
+"full": "Arabia Insurance Cooperative Co.",
+"sector": "Financials",
+"start": "2008-02-04",
+"end": "2020-03-05",
+"bars": 3019,
+"value_med": 3525204.75,
+"big_moves": 0
+},
+"8170": {
+"name": "ALETIHAD",
+"full": "Al-Etihad Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2008-02-09",
+"end": "2020-03-05",
+"bars": 3016,
+"value_med": 3431002.93,
+"big_moves": 0
+},
+"8180": {
+"name": "ALSAGR INSURANCE",
+"full": "Al Sagr Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2008-02-10",
+"end": "2020-01-23",
+"bars": 2985,
+"value_med": 2978972.29,
+"big_moves": 0
+},
+"8190": {
+"name": "UCA",
+"full": "United Cooperative Assurance Co.",
+"sector": "Financials",
+"start": "2008-06-21",
+"end": "2020-03-05",
+"bars": 2916,
+"value_med": 1998389.5699999998,
+"big_moves": 0
+},
+"8200": {
+"name": "SAUDI RE",
+"full": "Saudi Re for Cooperative Reinsurance Co.",
+"sector": "Financials",
+"start": "2008-05-24",
+"end": "2020-03-05",
+"bars": 2941,
+"value_med": 4798057.76,
+"big_moves": 0
+},
+"8210": {
+"name": "BUPA ARABIA",
+"full": "Bupa Arabia for Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2008-05-17",
+"end": "2020-03-05",
+"bars": 2946,
+"value_med": 11090561.649999999,
+"big_moves": 0
+},
+"8230": {
+"name": "ALRAJHI TAKAFUL",
+"full": "Al-Rajhi Company for Cooperative Insurance",
+"sector": "Financials",
+"start": "2009-07-13",
+"end": "2020-03-05",
+"bars": 2655,
+"value_med": 10251534.35,
+"big_moves": 0
+},
+"8240": {
+"name": "CHUBB",
+"full": "CHUBB Arabia Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2009-07-29",
+"end": "2020-01-23",
+"bars": 2613,
+"value_med": 2675848.3899999997,
+"big_moves": 0
+},
+"8250": {
+"name": "AXA COOPERATIVE",
+"full": "AXA Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2009-07-27",
+"end": "2020-03-05",
+"bars": 2645,
+"value_med": 3297763.55,
+"big_moves": 0
+},
+"8260": {
+"name": "GULF GENERAL",
+"full": "Gulf General Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2010-02-08",
+"end": "2020-03-05",
+"bars": 2515,
+"value_med": 1685286.9500000002,
+"big_moves": 0
+},
+"8270": {
+"name": "BURUJ",
+"full": "Buruj Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2010-02-15",
+"end": "2020-03-05",
+"bars": 2490,
+"value_med": 2920909.74,
+"big_moves": 0
+},
+"8280": {
+"name": "ALALAMIYA",
+"full": "Al Alamiya for Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2009-12-08",
+"end": "2020-03-05",
+"bars": 2559,
+"value_med": 4051051.1500000004,
+"big_moves": 0
+},
+"8290": {
+"name": "SOLIDARITY",
+"full": "Solidarity Saudi Takaful Co.",
+"sector": "Financials",
+"start": "2010-06-08",
+"end": "2020-03-05",
+"bars": 2429,
+"value_med": 2219573.45,
+"big_moves": 0
+},
+"8300": {
+"name": "WATANIYA",
+"full": "Wataniya Insurance Co.",
+"sector": "Financials",
+"start": "2010-06-06",
+"end": "2020-03-05",
+"bars": 2431,
+"value_med": 1439958.08,
+"big_moves": 0
+},
+"8310": {
+"name": "AMANA INSURANCE",
+"full": "Amana Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2010-06-13",
+"end": "2020-03-05",
+"bars": 2426,
+"value_med": 7987882.24,
+"big_moves": 0
+},
+"8311": {
+"name": "ENAYA",
+"full": "Saudi Enaya Cooperative Insurance Co.",
+"sector": "Financials",
+"start": "2012-02-27",
+"end": "2020-03-05",
+"bars": 2004,
+"value_med": 8349739.42,
+"big_moves": 0
+},
+"8312": {
+"name": "ALINMA TOKIO M",
+"full": "Alinma Tokio Marine Co.",
+"sector": "Financials",
+"start": "2012-06-24",
+"end": "2020-03-05",
+"bars": 1920,
+"value_med": 2464268.81,
+"big_moves": 0
+}
+}

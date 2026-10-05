@@ -13,7 +13,10 @@ reps = [
 ]
 for a, b in reps:
     assert a in page, a; page = page.replace(a, b)
-blobs = "".join(f'<script type="text/plain" id="{i}">{safe(rd(n))}</script>\n' for i, n in (("eng-src", "engine.js"), ("plotly-src", "plotly.min.js"), ("tsla-src", "sample_TSLA.csv"), ("vix-src", "VIX.csv")))
+extra = ""
+if (src / "tadawul_gz_base64.txt").exists():
+    extra = f'<script type="text/plain" id="tadawul-b64">{rd("tadawul_gz_base64.txt")}</script>\n<script type="application/json" id="tadawul-meta">{safe(rd("tadawul_meta.json"))}</script>\n'
+blobs = extra + "".join(f'<script type="text/plain" id="{i}">{safe(rd(n))}</script>\n' for i, n in (("eng-src", "engine.js"), ("plotly-src", "plotly.min.js"), ("tsla-src", "sample_TSLA.csv"), ("vix-src", "VIX.csv")))
 head = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
         '<style>[hidden]{display:none!important}body{margin:0;background:#0d0d0d}</style></head><body>\n'
         f'<!-- QuantLab Reversal Edge terminal · saved version {label} · open this file in Chrome, Edge, Firefox or Safari; everything runs offline except Google Fonts. -->\n')

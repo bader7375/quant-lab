@@ -19,7 +19,7 @@
 .ai-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.ai-head>b{letter-spacing:.06em;font-size:13px}.ai-head .ai-only{display:inline-flex;gap:8px;align-items:center}
 .ai-out{font-size:13px;line-height:1.55;max-width:900px}.ai-out h4{margin:10px 0 4px;font-size:13px;color:#e8e6dc}.ai-out p{margin:4px 0}.ai-out ul{margin:4px 0 4px 18px;padding:0}
 .ai-turn{font-size:12px;border-left:2px solid #3a3a38;padding:2px 8px;margin:6px 0;opacity:.8}.ai-ask{display:flex;gap:8px;margin-top:8px}.ai-ask input{flex:1;min-width:0}
-.ai-only[hidden],.ai-off[hidden]{display:none!important}
+.ai-only[hidden],.ai-off[hidden],.mcp-only[hidden],.mcp-off[hidden],.db-only[hidden]{display:none!important}
 .pulse-hud{position:absolute;z-index:4;pointer-events:none;font:11px/1.6 "JetBrains Mono",monospace;color:var(--ink2,#c3c2b7);background:rgba(26,26,25,.72);backdrop-filter:blur(3px);border:1px solid rgba(195,194,183,.12);border-radius:5px;padding:2px 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 90px)}
 .pulse-hud b{color:#e8e6dc;letter-spacing:.06em}.pulse-hud .pk{opacity:.55}.pulse-hud i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:2px;background:#444;vertical-align:-1px}
 .pulse-hud .st{border:1px solid;border-radius:3px;padding:0 5px;font-weight:600;letter-spacing:.05em}
@@ -62,7 +62,7 @@
 </style>
 
 <div class="hdr">
-  <div class="brand"><b>QUANTLAB</b><span>reversal edge v12 · Saudi aware</span></div>
+  <div class="brand"><b>QUANTLAB</b><span>reversal edge v13 · Tadawul library</span></div>
   <div class="f"><label for="sym">symbol</label><select id="sym"></select></div>
   <div class="f"><label>range</label><div class="rng" id="rng"><button data-n="126">6M</button><button data-n="252" class="on">1Y</button><button data-n="504">2Y</button><button data-n="1260">5Y</button><button data-n="0">All</button></div></div>
   <div class="live">LIVE · RUNS IN YOUR BROWSER</div>
@@ -81,6 +81,32 @@
           <div id="dslist" style="margin-top:10px"></div>
           <div class="status" id="parsemsg"></div>
           <div class="status" id="fearmsg"></div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h3>Tadawul library · 193 Saudi stocks built in</h3>
+          <div class="note" id="lib-note">Loading the library list…</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;align-items:center"><button class="btn sm" id="lib-top30">Load the 30 most traded</button><button class="btn ghost sm" id="lib-shown">Load all shown</button><button class="btn ghost sm" id="lib-none">Unload library stocks</button>
+            <select id="lib-sector" aria-label="Filter by sector"></select><input id="lib-q" placeholder="code or name" aria-label="Search the library" style="width:130px"></div>
+          <div class="status" id="lib-msg"></div>
+          <div class="tw" style="max-height:300px;overflow:auto"><table class="bl" id="lib-t"></table></div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h3>Update data with Claude</h3>
+          <p class="note mcp-off">Works when this page is open inside Claude. The button starts a Claude Code session on your account (it uses your plan's usage, Opus 5.5 by default). The session downloads the latest daily prices from a data provider, checks them, and writes them into this terminal. Prices are never taken from search summaries or the model's memory.</p>
+          <div class="mcp-only" hidden>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0">
+              <label for="upd-scope" class="note">update</label><select id="upd-scope"><option value="loaded">the Saudi stocks loaded now</option><option value="all">the whole library (193 + loaded)</option></select>
+              <label for="upd-model" class="note">model</label><input id="upd-model" value="claude-opus-5-5" style="width:140px" aria-label="Model for the update session">
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0">
+              <label for="upd-env" class="note">Claude Code environment</label><select id="upd-env"><option value="">press Find</option></select><button class="btn ghost sm" id="upd-envs">Find my environments</button>
+              <button class="btn sm" id="upd-go">Update data</button>
+            </div>
+            <p class="note">The environment must allow the data provider in its network settings (claude.ai/code → environment → Edit → Network access → Custom → add <b>query1.finance.yahoo.com</b>). Otherwise the session stops and tells you which host was blocked.</p>
+          </div>
+          <div class="status" id="upd-msg"></div><div class="status" id="upd-run"></div>
+          <div class="db-only" hidden><div class="tw" style="max-height:220px;overflow:auto;margin-top:6px"><table class="bl" id="upd-t"></table></div></div>
+          <p class="note">Or update by hand: download newer daily prices (Saudi Exchange website, your broker) and drop the files above. A file that overlaps the stored history is joined to it automatically, and the older prices are rescaled for bonus shares and splits.</p>
         </div>
         <div class="panel" style="margin-top:14px">
           <h3>2 · Run</h3>
@@ -133,7 +159,7 @@
   <section id="t-chart" hidden>
     <div class="sigbar" id="sigbar"></div>
     <div class="aibox"><div class="ai-head"><b>Claude analyst</b><span class="note ai-off">Available when this page is opened inside Claude: it reads everything the system computed for the stock, runs research on your files and tells you how to trade it. Uses your Claude account.</span>
-      <span class="ai-only" hidden><button class="btn sm" id="ai-go">Analyse this stock</button><button class="btn ghost sm" id="ai-stop" hidden>Stop</button><span class="note" id="ai-status"></span></span></div>
+      <span class="ai-only" hidden><select id="ai-tier" aria-label="Claude model for the analysis"><option value="complex">most capable model (Opus)</option><option value="default">balanced</option><option value="quick">fast</option></select><button class="btn sm" id="ai-go">Analyse this stock</button><button class="btn ghost sm" id="ai-stop" hidden>Stop</button><span class="note" id="ai-status"></span></span></div>
       <div id="ai-hist"></div><div class="ai-out" id="ai-out"></div>
       <div class="ai-only ai-ask" hidden><input id="ai-q" placeholder="Ask a follow-up, e.g. would you wait for a close below the lower band?" aria-label="Follow-up question"><button class="btn ghost sm" id="ai-send">Ask</button></div></div>
     <div class="chartwrap">

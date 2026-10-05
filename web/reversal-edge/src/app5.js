@@ -1,7 +1,31 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
-<h2 style="font-size:18px">How this system was built, and what the evidence says (v12)</h2>
+<h2 style="font-size:18px">How this system was built, and what the evidence says (v13)</h2>
 <p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>v13: 193 Tadawul stocks, 2002–2020</h2>
+<p><b>Data:</b> the Tadawul file (199 stocks; 193 with 300+ days), 2001-12-31 to 2020-03-05. Prices are already adjusted for corporate actions as of 2020.</p>
+<ul><li>Removed: 1,165 zero-price rows, 2 spike glitches, and flat no-trade rows.</li>
+<li>Al Rajhi and Aramco were used to design the v12 rule, so every decision test below uses the other 191 stocks.</li>
+<li>Only companies still listed in 2020 are included (survivorship).</li></ul>
+<p><b>The v12 Saudi rule passed on fresh stocks</b> (test written down first):</p>
+<table class="t"><tr><th>191 stocks, real engine</th><th>momentum mode</th><th>dip-buy mode</th><th>auto</th><th>buy &amp; hold</th></tr>
+<tr><td>mean Sharpe</td><td><b>0.31</b></td><td>−0.04</td><td>0.16</td><td>0.22</td></tr><tr><td>stocks with Sharpe &gt; 0</td><td>72%</td><td>40%</td><td></td><td></td></tr></table>
+<ul><li>Momentum beat dip-buying on 75% of stocks, in every sector (Materials 90%, Consumer Staples 94%, Financials 76%) and every liquidity group.</li>
+<li>Momentum entries beat random days by <b>+0.42%</b> (2002–07), <b>+0.20%</b> (2008–13) and <b>+0.17%</b> (2014–20) per trade, all significant. The edge is shrinking as the market matures.</li></ul>
+<p><b>Behaviour:</b></p>
+<ul><li>89–94% of stocks trend day to day in every period. The effect is strongest in the most liquid names.</li>
+<li><b>Limit-up close:</b> the next morning opens +2.6% to +3.4% higher, then fades 0.5–1.3% by the close. Buying that open loses; holders can sell into it.</li>
+<li><b>Limit-down close:</b> the next morning opens 2.3–3.8% lower.</li>
+<li><b>Gap-down opens</b> (&lt; −2%) rebounded about +1% open-to-close in every liquidity group and both periods (t 12–18). Gap-up opens faded −0.7% after 2013. Daily data can't prove these open prices were fillable, so it's shown as a day-trade idea only.</li>
+<li><b>Weekly momentum:</b> last week's top fifth beat last week's bottom fifth by +0.30% the next week (t 2.4). One-month to one-year rankings showed nothing.</li>
+<li><b>Lead-lag:</b> after TASI rises more than 1%, the average stock gains +0.28% the next day (t 4.2). Big caps lead small caps.</li>
+<li><b>Calendar:</b> the day before a long holiday averaged +0.51% (t 3.3, n 39). Ramadan showed no reliable effect for the average stock. The earlier Ramadan finding came from three large names only, so it's withdrawn.</li></ul>
+<p><b>Tested and not adopted</b> (each had to help in both halves and on the post-2020 Al Rajhi, Aramco and TASI data):</p>
+<ul><li>Momentum only in a TASI uptrend: helped before 2013, hurt after.</li>
+<li>Skipping signals on more than 2× normal volume: helped in both halves (+0.1 Sharpe) but hurt Al Rajhi and Aramco after 2020.</li>
+<li>Selling at the next open after a limit-up close.</li>
+<li>Pullback-turn entries: better on only 42% and 49% of stocks.</li></ul>
+<p><b>Built in:</b> all 193 stocks are in the Data tab library. The "Update data with Claude" button starts a Claude Code session on your account that downloads newer prices and writes them into the terminal. Older history is rescaled automatically for bonus shares and splits.</p>
 <h2>v12: the Saudi market</h2>
 <p><b>Data:</b> Al Rajhi Bank (1120, 2013–2026), Saudi Aramco (2222, Dec 2019 – Dec 2025) and the TASI index (2001–2026). The Al Rajhi file contained 17 corrupt rows from an unadjusted feed (prices about 2.46× too high, no volume), mostly in 2013. Aramco had 35 flat holiday rows. The importer now drops such rows and reads volumes written as "5.05M".</p>
 <p><b>Character:</b> Saudi stocks trend from one day to the next, the opposite of US stocks.</p>
@@ -174,7 +198,7 @@ function renderLive(){renderSigbar();if(!draft.show)defaultLevels();else ticketC
  if(REPLAY){const d=DS[REPLAY.sym];$("rp-date").textContent=d?`${d.d[REPLAY.idx]} · bar ${REPLAY.idx-REPLAY.startIdx>=0?"+":""}${REPLAY.idx-REPLAY.startIdx}`:""}}
 function focusDate(sym,date){if(REPLAY&&REPLAY.sym!==sym)exitReplay();if(sym!==st.sym){st.sym=sym;sel.value=sym;symChanged()}show("chart");const i=idxOf(date);if(i<0)return;
  chart.timeScale().setVisibleLogicalRange({from:i-110,to:i+30});st.pinned=true;st.cursor=i;syncScrub();inspector(i);renderLegend()}
-function renderSymSelect(){const ks=Object.keys(DS).sort();sel.innerHTML=ks.map(k=>`<option ${k===st.sym?"selected":""}>${esc(k)}</option>`).join("")}
+function renderSymSelect(){const ks=Object.keys(DS).sort();sel.innerHTML=ks.map(k=>`<option value="${esc(k)}" ${k===st.sym?"selected":""}>${esc(nameOf(k))}</option>`).join("")}
 function symChanged(){if(REPLAY&&REPLAY.sym!==st.sym)exitReplay();UI.sym=st.sym;saveUI();st.cursor=null;st.pinned=false;hoverIdx=null;draft.show=false;
  if(chart){refreshOverlays();showRange();inspector(cur())}renderLive()}
 function afterDataChange(newSym){if(REPLAY&&!DS[REPLAY.sym]){REPLAY=null;saveReplay();syncMode()}

@@ -62,7 +62,8 @@ $("dslist").addEventListener("click",e=>{const k=e.target.dataset.rm;if(k){delet
 async function addFiles(files){const msgs=[];let first=null,fearHit=false;
  for(const f of files){try{const r=parseCSV(await f.text(),f.name);
   for(const [k,v] of Object.entries(r)){if(isFearName(k)||isFearName(tickerFromName(f.name))){USERFEAR=mergeFear(USERFEAR,{d:v.d,c:v.c});store("qlab-fear",JSON.stringify(USERFEAR));fearHit=true;msgs.push(`${esc(f.name)}: fear index (VIX) ${v.d[0]} → ${v.d[v.d.length-1]}`)}
-   else{DS[k]=v;first=first||k;msgs.push(`${esc(f.name)}: ${esc(k)} (${v.d.length.toLocaleString()} bars${v.bad?`, ${v.bad} rows skipped`:""})`)}}}
+   else{let how="";if(DS[k]&&DS[k].d[0]<v.d[0]){const m=mergeSeries(DS[k],v);DS[k]=Object.assign(m.s,{src:`${DS[k].src||"earlier data"} + ${f.name}`,lib:"merged",bad:v.bad});how=` · joined to the earlier history (${m.note||"same price basis"})`}else DS[k]=v;
+    first=first||k;msgs.push(`${esc(f.name)}: ${esc(k)} (${v.d.length.toLocaleString()} bars${v.bad?`, ${v.bad} rows skipped`:""})${esc(how)}`)}}}
   catch(e){msgs.push(`<span class="err">${esc(e.message)}</span>`)}}
  $("parsemsg").innerHTML=msgs.join("<br>");saveDS();if(fearHit)await loadFear();if(first)st.sym=first;afterDataChange(true)}
 $("file").addEventListener("change",e=>{addFiles([...e.target.files]);e.target.value=""});
