@@ -91,6 +91,17 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
 .btn.sm{padding:4px 10px;font-size:12px}
 .rp{display:inline-flex;gap:6px;align-items:center;background:rgba(250,178,25,.08);border:1px solid rgba(250,178,25,.4);border-radius:5px;padding:3px 6px}
 .rp .d{font:11px var(--mono);color:var(--warn);white-space:nowrap}.rp select{padding:3px 6px}
+.aplus{color:#fab219}.aplus-b{color:#1a1a19!important;background:#fab219!important;font-weight:700}
+.aibox,.planbox{border:1px solid var(--hair,#2a2a28);border-radius:6px;padding:10px 12px;margin:10px 0;background:var(--surface,#1a1a19)}
+.ai-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.ai-head>b{letter-spacing:.06em;font-size:13px}.ai-head .ai-only{display:inline-flex;gap:8px;align-items:center}
+.ai-out{font-size:13px;line-height:1.55;max-width:900px}.ai-out h4{margin:10px 0 4px;font-size:13px;color:#e8e6dc}.ai-out p{margin:4px 0}.ai-out ul{margin:4px 0 4px 18px;padding:0}
+.ai-turn{font-size:12px;border-left:2px solid #3a3a38;padding:2px 8px;margin:6px 0;opacity:.8}.ai-ask{display:flex;gap:8px;margin-top:8px}.ai-ask input{flex:1;min-width:0}
+.ai-only[hidden],.ai-off[hidden],.mcp-only[hidden],.mcp-off[hidden],.db-only[hidden]{display:none!important}
+.pulse-hud{position:absolute;z-index:4;pointer-events:none;font:11px/1.6 "JetBrains Mono",monospace;color:var(--ink2,#c3c2b7);background:rgba(26,26,25,.72);backdrop-filter:blur(3px);border:1px solid rgba(195,194,183,.12);border-radius:5px;padding:2px 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 90px)}
+.pulse-hud b{color:#e8e6dc;letter-spacing:.06em}.pulse-hud .pk{opacity:.55}.pulse-hud i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:2px;background:#444;vertical-align:-1px}
+.pulse-hud .st{border:1px solid;border-radius:3px;padding:0 5px;font-weight:600;letter-spacing:.05em}
+.pulse-say{margin-top:6px;font-size:12px;padding:5px 8px;border-left:3px solid #8a8a85;background:rgba(195,194,183,.05);border-radius:0 4px 4px 0}.pulse-say.good{border-color:#26a69a}.pulse-say.bad{border-color:#ef5350}.pulse-say.mid{border-color:#d99a1e}
+.pgrid .rr{display:grid;grid-template-columns:44px 62px 1fr;gap:6px;align-items:center;font-size:12px}.pgrid .cb{position:relative;height:8px;background:rgba(195,194,183,.07);border-radius:3px}.pgrid .cb i{position:absolute;top:0;bottom:0;border-radius:3px}
 #lwc-wrap{position:relative;border:1px solid var(--hair);border-radius:6px;overflow:hidden;background:var(--surface)}
 #lwc{position:absolute;inset:0}
 .legend{position:absolute;left:8px;top:6px;z-index:5;pointer-events:none;font:11.5px/1.5 var(--mono);color:var(--ink2);max-width:calc(100% - 90px)}
@@ -128,13 +139,13 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
 </style>
 
 <div class="hdr">
-  <div class="brand"><b>QUANTLAB</b><span>reversal edge v6 · research terminal</span></div>
+  <div class="brand"><b>QUANTLAB</b><span>reversal edge v13 · Tadawul library</span></div>
   <div class="f"><label for="sym">symbol</label><select id="sym"></select></div>
   <div class="f"><label>range</label><div class="rng" id="rng"><button data-n="126">6M</button><button data-n="252" class="on">1Y</button><button data-n="504">2Y</button><button data-n="1260">5Y</button><button data-n="0">All</button></div></div>
   <div class="live">LIVE · RUNS IN YOUR BROWSER</div>
   <div class="snap" id="snap">No data yet: upload price history in the Data tab.</div>
 </div>
-<nav class="tabs" id="tabs"><button data-t="data" class="on">Data &amp; settings</button><button data-t="chart">Chart</button><button data-t="scan">Scanner</button><button data-t="mine">My trades</button><button data-t="vol">Volatility</button><button data-t="model">Model</button><button data-t="perf">Performance</button><button data-t="trades">Trades</button><button data-t="about">Research</button></nav>
+<nav class="tabs" id="tabs"><button data-t="data" class="on">Data &amp; settings</button><button data-t="chart">Chart</button><button data-t="scan">Scanner &amp; plan</button><button data-t="mine">My trades</button><button data-t="vol">Volatility</button><button data-t="model">Model</button><button data-t="perf">Performance</button><button data-t="trades">Trades</button><button data-t="about">Research</button></nav>
 <main>
   <section id="t-data">
     <div class="grid2">
@@ -149,6 +160,33 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
           <div class="status" id="fearmsg"></div>
         </div>
         <div class="panel" style="margin-top:14px">
+          <h3>Tadawul library · 193 Saudi stocks built in</h3>
+          <div class="note" id="lib-note">Loading the library list…</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;align-items:center"><button class="btn sm" id="lib-top30">Load the 30 most traded</button><button class="btn ghost sm" id="lib-shown">Load all shown</button><button class="btn ghost sm" id="lib-none">Unload library stocks</button>
+            <select id="lib-sector" aria-label="Filter by sector"></select><input id="lib-q" placeholder="code or name" aria-label="Search the library" style="width:130px"></div>
+          <div class="status" id="lib-msg"></div>
+          <div class="tw" style="max-height:300px;overflow:auto"><table class="bl" id="lib-t"></table></div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h3>Update data with Claude</h3>
+          <p class="note mcp-off">Works when this page is open inside Claude. The button starts a Claude Code session on your account (it uses your plan's usage, Opus 5.5 by default). The session downloads the latest daily prices from a data provider, checks them, and writes them into this terminal. Prices are never taken from search summaries or the model's memory.</p>
+          <div class="mcp-only" hidden>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0">
+              <label for="upd-scope" class="note">update</label><select id="upd-scope"><option value="loaded">the Saudi stocks loaded now</option><option value="all">the whole library (193 + loaded)</option></select>
+              <label for="upd-model" class="note">model</label><input id="upd-model" value="claude-opus-5-5" style="width:140px" aria-label="Model for the update session">
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0">
+              <label for="upd-env" class="note">Claude Code environment</label><select id="upd-env"><option value="">press Find</option></select><button class="btn ghost sm" id="upd-envs">Find my environments</button>
+              <button class="btn sm" id="upd-go">Update data</button><button class="btn ghost sm" id="upd-ask">Ask for Claude Code access</button>
+            </div>
+            <p class="note">The environment must allow the data provider in its network settings (claude.ai/code → environment → Edit → Network access → Custom → add <b>query1.finance.yahoo.com</b>). Otherwise the session stops and tells you which host was blocked.</p>
+          </div>
+          <div class="status" id="upd-perm"></div><div class="status" id="upd-msg"></div><div class="status" id="upd-run"></div>
+          <div class="db-only" hidden><div class="tw" style="max-height:220px;overflow:auto;margin-top:6px"><table class="bl" id="upd-t"></table></div></div>
+          <p class="note"><b>Automatic updates:</b> the Routine "QuantLab daily data update" refreshes all 193 stocks and TASI every Sunday to Thursday after the close (15:48 Riyadh) and notifies your phone. Run it any time from the Claude app: Routines → QuantLab daily data update → Run now. New prices show up here by themselves.</p>
+          <p class="note">Or update by hand: download newer daily prices (Saudi Exchange website, your broker) and drop the files above. A file that overlaps the stored history is joined to it automatically, and the older prices are rescaled for bonus shares and splits.</p>
+        </div>
+        <div class="panel" style="margin-top:14px">
           <h3>2 · Run</h3>
           <button class="btn" id="run">Run the system</button>
           <div class="bar"><i id="prog"></i></div>
@@ -161,12 +199,17 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
           <div class="h">Setup and score</div>
           <label for="c-trig" title="A setup starts when the 2-day RSI closes below this level (Connors). Lower = deeper oversold, fewer setups.">setup: RSI(2) below</label><input id="c-trig" type="number" min="2" max="30" step="1" value="10">
           <label for="c-scoreThr" title="Only trade setups whose Reversal Edge Score is at least this good. Thirds are from the 87-stock research.">trade setups scoring</label><select id="c-scoreThr"><option value="0.4356">top third (best quality)</option><option value="-1.7889">top two thirds</option><option value="-99">all setups</option></select>
-          <label for="c-side" title="Research: buying drops worked; shorting rises lost money in every test.">direction</label><select id="c-side"><option value="1">long: buy drops (recommended)</option><option value="-1">short: sell rises (not supported by the research)</option></select>
-          <label for="c-adapt" title="Start from the research weights and shift them toward what has worked on your own files as evidence accumulates (walk-forward).">adapt weights to my data</label><select id="c-adapt"><option value="1">yes</option><option value="0">no, keep research weights</option></select>
+          <label for="c-saudi" title="v12 Saudi study (Al Rajhi 2013-2026, Aramco 2019-2025, TASI 2001-2026): Saudi stocks trend from day to day (lag-1 autocorrelation +0.06 to +0.17, the opposite of US stocks). Dip-buys showed little or no edge; momentum signals beat random entries (Al Rajhi +0.5% per trade in both 2013-19 and 2020-26; TASI in every period). Detected by name: TASI, 4-digit codes such as 1120, or names such as ARAMCO and ALRAJHI.">Saudi stocks</label><select id="c-saudi"><option value="mom">momentum mode (recommended)</option><option value="same">same rules as other stocks</option></select>
+          <label for="c-shorts" title="v11 short side: sell an overbought bounce (RSI(2) > 90, top-third short score) only while the stock is below its 200-day average, and also the market when a market file is chosen below. Limit sell 0.5 ATR above the close, cover on the first close below the previous day's low or after the max hold, 3-ATR stop. Evidence: shorts broke even or lost on the development data and paid only in bear markets (2008, 2020).">short trades</label><select id="c-shorts"><option value="off">off (recommended outside bear markets)</option><option value="watch">show short setups only</option><option value="trade">trade them (paper + backtest)</option></select>
+          <label for="c-shortSize" title="Size of a short relative to a normal slot. Short losses are open-ended (squeezes, gaps).">short size</label><select id="c-shortSize"><option value="0.5">half slot (recommended)</option><option value="1">full slot</option></select>
+          <label for="c-apsize" title="A+ = a top-third setup that closed in the bottom 13% of its day range with the Momentum Pulse below -0.5. A+ trades earned about twice as much per trade on all six long histories. v9 test: 'others half size' lowered drawdowns on every data set (including 432 fresh stocks) with the same or better Sharpe, at the cost of lower total return.">position size: A+ vs other setups</label><select id="c-apsize"><option value="1,1">equal (as v7)</option><option value="2,1">A+ double size (more return, deeper drawdown)</option><option value="1,0.5">others half size (smaller drawdowns)</option><option value="1,0">A+ only</option></select>
+          <input type="hidden" id="c-side" value="1">
+
+          <label for="c-adapt" title="v9 test: refitting the score weights on each stock fitted noise. Fixed research weights scored better on all six long histories, on the 87 stocks, and on 2 of 3 fresh stock sets (equal on the third). The chance of profit is still calibrated on your own files.">refit weights on each stock</label><select id="c-adapt"><option value="0">no, fixed research weights (recommended)</option><option value="1">yes (v8 behaviour)</option></select>
           <label for="c-n0" title="How many own setups it takes before the stock's own evidence counts as much as the research. Higher = trust the research longer.">research weight (setups)</label><input id="c-n0" type="number" min="0" max="5000" step="50" value="300">
           <label for="c-pool" title="Weight on other uploaded symbols' setups when adapting each symbol.">pooling weight</label><input id="c-pool" type="number" step="0.05" min="0" max="1" value="0.5">
           <label for="c-testDays" title="Bars between refits of the adapted weights.">refit every (bars)</label><input id="c-testDays" type="number" min="5" max="252" value="63">
-          <label for="c-market" title="Optional: a market file such as SPY adds a market-residual fair value for context.">market file (optional)</label><select id="c-market"></select>
+          <label for="c-market" title="Optional: a market file such as SPY or TASI. Adds a market-residual fair value, and with short trades on, shorts are allowed only while this market is below its 200-day average.">market file (optional)</label><select id="c-market"></select>
           <div class="h">Mode, entry and exit (round-2 research)</div>
           <label for="c-mode" title="Auto: each market's own 500-day autocorrelation decides. Markets that keep moving the same way day to day (e.g. TASI) get momentum setups; markets that revert get reversal setups.">mode</label><select id="c-mode"><option value="auto">auto (by market character)</option><option value="rev">reversal only (buy dips)</option><option value="mom">momentum only (buy strength)</option></select>
           <label for="c-acThr" title="Autocorrelation above this switches a market to momentum mode. TASI ≈ +0.12; US stocks ≈ 0.">momentum switch above</label><input id="c-acThr" type="number" step="0.01" min="-0.5" max="0.5" value="0.08">
@@ -193,6 +236,10 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
   </section>
   <section id="t-chart" hidden>
     <div class="sigbar" id="sigbar"></div>
+    <div class="aibox"><div class="ai-head"><b>Claude analyst</b><span class="note ai-off">Available when this page is opened inside Claude: it reads everything the system computed for the stock, runs research on your files and tells you how to trade it. Uses your Claude account.</span>
+      <span class="ai-only" hidden><select id="ai-tier" aria-label="Claude model for the analysis"><option value="complex">most capable model (Opus)</option><option value="default">balanced</option><option value="quick">fast</option></select><button class="btn sm" id="ai-go">Analyse this stock</button><button class="btn ghost sm" id="ai-stop" hidden>Stop</button><span class="note" id="ai-status"></span></span></div>
+      <div id="ai-hist"></div><div class="ai-out" id="ai-out"></div>
+      <div class="ai-only ai-ask" hidden><input id="ai-q" placeholder="Ask a follow-up, e.g. would you wait for a close below the lower band?" aria-label="Follow-up question"><button class="btn ghost sm" id="ai-send">Ask</button></div></div>
     <div class="chartwrap">
       <div class="cc">
         <div class="tb">
@@ -214,6 +261,7 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
         <div id="lwc-wrap">
           <div id="lwc"></div>
           <div class="legend" id="legend"></div>
+          <div class="pulse-hud" id="pulse-hud" hidden></div>
           <div class="rtag" id="rtag" hidden>REPLAY</div>
           <div class="hint" id="pickhint" hidden><span>Click a bar to start the replay there.</span><button class="btn ghost sm" id="rp-year">1 year back</button><button class="btn ghost sm" id="rp-random">Random date</button><button class="btn ghost sm" id="rp-cancel">Cancel</button></div>
           <div class="hint" id="clickhint" hidden><span id="clicktxt"></span><button class="btn ghost sm" id="click-cancel">Cancel</button></div>
@@ -247,6 +295,10 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
     </div>
   </section>
   <section id="t-scan" hidden>
+    <div class="planbox"><div class="ai-head"><b>Tomorrow's plan</b><button class="btn ghost sm" id="plan-upload">Upload stocks…</button>
+      <span class="ai-only" hidden><button class="btn sm" id="plan-go">Ask Claude: best trades for tomorrow</button><button class="btn ghost sm" id="plan-stop" hidden>Stop</button></span><span class="note ai-off">Open inside Claude to get a written brief.</span></div>
+      <div class="note" id="plan-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="plan-t"></table></div><div class="ai-out" id="plan-ai"></div></div>
+    <h3 style="font-size:13px;margin:16px 0 6px;color:var(--muted,#8a8a85);letter-spacing:.06em">ALL SYMBOLS · LATEST BAR</h3>
     <div class="ban mid" id="scan-note" style="margin-bottom:10px">Every uploaded symbol on its latest bar, best setups first. Click a row to open it on the chart.</div>
     <div class="tw"><table class="bl" id="scan-t"></table></div>
   </section>
@@ -337,10 +389,12 @@ const RESEARCH_THIRDS={avg87:[-21,3,57],win87:[.61,.65,.71],avgT:[-7,-12,135],wi
 const ALIAS={date:["date","datetime","time","timestamp","day"],ticker:["ticker","symbol","stock","code"],open:["open","openprice"],high:["high","highprice"],low:["low","lowprice"],
  close:["close","closelast","last","closeprice","price"],adj:["adjclose","adjustedclose","closeadj"],volume:["volume","vol"]};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
-function tickerFromName(name){const parts=name.replace(/\.[^.]+$/,"").split(/[_.\s-]/).filter(Boolean);while(parts.length>1&&(["us","uk","de","sa","se","d","daily","w","m","historical","data","history","prices"].includes(parts[parts.length-1].toLowerCase())||/^\d+$/.test(parts[parts.length-1])))parts.pop();return parts.join("_").toUpperCase()}
+function tickerFromName(name){const base=name.replace(/\.[^.]+$/,"").replace(/\d{4}-\d{2}-\d{2}/g," ").replace(/_/g," ").replace(/\b(historical|history|data|prices|price|daily|sar|usd|to|from|stock|quote)\b/gi," ").replace(/[_\s-]+/g," ").trim();
+ const code=base.match(/^(\d{4})$/);if(code)return code[1];return tickerFromName0(name)}
+function tickerFromName0(name){const parts=name.replace(/\.[^.]+$/,"").split(/[_.\s-]/).filter(Boolean);while(parts.length>1&&(["us","uk","de","sa","se","d","daily","w","m","historical","data","history","prices"].includes(parts[parts.length-1].toLowerCase())||/^\d+$/.test(parts[parts.length-1])))parts.pop();return parts.join("_").toUpperCase()}
 function toISO(s){s=String(s).trim().replace(/^"|"$/g,"");let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
  m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return `${m[3]}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`;m=s.match(/^(\d{4})(\d{2})(\d{2})$/);if(m)return `${m[1]}-${m[2]}-${m[3]}`;const t=Date.parse(s);return isNaN(t)?null:new Date(t).toISOString().slice(0,10)}
-const num=v=>{const x=parseFloat(String(v).replace(/[$,\s"]/g,""));return isF(x)?x:NaN};
+const num=v=>{const t=String(v).replace(/[$,\s"]/g,""),m=t.match(/^(-?[\d.]+)([KMB])$/i),x=m?parseFloat(m[1])*{K:1e3,M:1e6,B:1e9}[m[2].toUpperCase()]:parseFloat(t);return isF(x)?x:NaN};
 function splitLine(l,sep){if(!l.includes('"'))return l.split(sep);const out=[];let cur="",q=false;for(const ch of l){if(ch==='"')q=!q;else if(ch===sep&&!q){out.push(cur);cur=""}else cur+=ch}out.push(cur);return out}
 function parseCSV(text,fname){
  const lines=text.replace(/\r/g,"").split("\n").filter(l=>l.trim());if(lines.length<2)throw new Error(fname+": the file is empty.");
@@ -348,14 +402,16 @@ function parseCSV(text,fname){
  const head=splitLine(lines[0],sep).map(norm),col={};
  for(const [k,al] of Object.entries(ALIAS)){let i=head.findIndex(h=>al.includes(h));if(i<0&&k!=="ticker")i=head.findIndex(h=>al.some(a=>a.length>3&&h.includes(a)));if(i>=0)col[k]=i}
  const miss=["date","open","high","low","close"].filter(k=>col[k]==null);if(miss.length)throw new Error(`${fname}: missing column ${miss.join(", ")}. The first line reads: ${lines[0].slice(0,100)}`);
- const out={};let bad=0;
+ const out={};let bad=0,skip=0;
  for(const l of lines.slice(1)){const r=splitLine(l,sep);const d=toISO(r[col.date]);if(!d){bad++;continue}
   const tk=col.ticker!=null?String(r[col.ticker]).trim().replace(/"/g,"").toUpperCase():tickerFromName(fname);
   let o=num(r[col.open]),h=num(r[col.high]),lo=num(r[col.low]),c=num(r[col.close]);const adj=col.adj!=null?num(r[col.adj]):c;const v=col.volume!=null?num(r[col.volume]):NaN;
   if(!(c>0)||!(adj>0)){bad++;continue}const f=adj/c;o=(o>0?o:c)*f;c=adj;h=Math.max(isF(h)&&h>0?h*f:c,o,c);lo=Math.min(lo>0?lo*f:c,o,c);
-  (out[tk]=out[tk]||[]).push([d,o,h,lo,c,v])}
- const res={};for(const [tk,rows] of Object.entries(out)){rows.sort((a,b)=>a[0]<b[0]?-1:1);const u=rows.filter((r,i)=>i===0||r[0]!==rows[i-1][0]);
-  res[tk]={d:u.map(r=>r[0]),o:u.map(r=>r[1]),h:u.map(r=>r[2]),l:u.map(r=>r[3]),c:u.map(r=>r[4]),v:u.map(r=>r[5]),src:fname,bad}}
+  (out[tk]=out[tk]||[]).push([d,o,h,lo,c,v,col.volume!=null&&!(v>0)&&h===lo])}
+ const res={};for(const [tk,rows] of Object.entries(out)){rows.sort((a,b)=>a[0]<b[0]?-1:1);const u0=rows.filter((r,i)=>i===0||r[0]!==rows[i-1][0]);
+  // placeholder bars: no volume and a flat price that either repeats the previous close (holiday rows) or jumps >25% (bad feed rows, e.g. unadjusted prices)
+  const u=[];for(const r of u0){const p=u[u.length-1];if(r[6]&&p&&(r[4]===p[4]||Math.abs(r[4]/p[4]-1)>.25)){skip++;continue}u.push(r)}
+  res[tk]={d:u.map(r=>r[0]),o:u.map(r=>r[1]),h:u.map(r=>r[2]),l:u.map(r=>r[3]),c:u.map(r=>r[4]),v:u.map(r=>r[5]),src:fname,bad:bad+skip}}
  if(!Object.keys(res).length)throw new Error(fname+": no rows with a valid date and price.");return res}
 const isFearName=k=>/^\^?VIX(_|$)|^VIX\d*$|^CBOE_?VIX/i.test(k);
 
@@ -376,7 +432,8 @@ $("dslist").addEventListener("click",e=>{const k=e.target.dataset.rm;if(k){delet
 async function addFiles(files){const msgs=[];let first=null,fearHit=false;
  for(const f of files){try{const r=parseCSV(await f.text(),f.name);
   for(const [k,v] of Object.entries(r)){if(isFearName(k)||isFearName(tickerFromName(f.name))){USERFEAR=mergeFear(USERFEAR,{d:v.d,c:v.c});store("qlab-fear",JSON.stringify(USERFEAR));fearHit=true;msgs.push(`${esc(f.name)}: fear index (VIX) ${v.d[0]} → ${v.d[v.d.length-1]}`)}
-   else{DS[k]=v;first=first||k;msgs.push(`${esc(f.name)}: ${esc(k)} (${v.d.length.toLocaleString()} bars${v.bad?`, ${v.bad} rows skipped`:""})`)}}}
+   else{let how="";if(DS[k]&&DS[k].d[0]<v.d[0]){const m=mergeSeries(DS[k],v);DS[k]=Object.assign(m.s,{src:`${DS[k].src||"earlier data"} + ${f.name}`,lib:"merged",bad:v.bad});how=` · joined to the earlier history (${m.note||"same price basis"})`}else DS[k]=v;
+    first=first||k;msgs.push(`${esc(f.name)}: ${esc(k)} (${v.d.length.toLocaleString()} bars${v.bad?`, ${v.bad} rows skipped`:""})${esc(how)}`)}}}
   catch(e){msgs.push(`<span class="err">${esc(e.message)}</span>`)}}
  $("parsemsg").innerHTML=msgs.join("<br>");saveDS();if(fearHit)await loadFear();if(first)st.sym=first;afterDataChange(true)}
 $("file").addEventListener("change",e=>{addFiles([...e.target.files]);e.target.value=""});
@@ -389,12 +446,12 @@ let arm={};function armed(btn,fn){if(arm[btn.id]){clearTimeout(arm[btn.id].t);bt
 $("clear").addEventListener("click",e=>armed(e.target,()=>{DS={};saveDS();RES=null;afterDataChange()}));
 
 // ------------------------------------------------ settings + worker
-const NUMS=["trig","n0","pool","testDays","stopATR","maxHold","slippage","riskPct","maxW","maxPos","acThr","limitATR","momTrig","momMaxHold"],SELS=["scoreThr","side","adapt","sizeMode","mode","entry","exit"];
-try{const s=JSON.parse(store("qlab-cfg3")||"{}");for(const [k,v] of Object.entries(s)){const el=$("c-"+k);if(el&&k!=="market")el.value=v}}catch(e){}
+const NUMS=["trig","n0","pool","testDays","stopATR","maxHold","slippage","riskPct","maxW","maxPos","acThr","limitATR","momTrig","momMaxHold"],SELS=["saudi","shorts","shortSize","apsize","scoreThr","side","adapt","sizeMode","mode","entry","exit"];
+try{const s=JSON.parse(store("qlab-cfg4")||(()=>{const o=JSON.parse(store("qlab-cfg3")||"{}");delete o.adapt;return JSON.stringify(o)})());for(const [k,v] of Object.entries(s)){const el=$("c-"+k);if(el&&k!=="market")el.value=v}}catch(e){}
 (()=>{const a=load("desk-acct",{});if(a.start)$("a-start").value=a.start;if(a.fill)$("a-fill").value=a.fill;if(a.lev)$("a-lev").value=a.lev;if(a.risk)$("t-risk").value=a.risk})();
 function readCfg(){const c={market:$("c-market").value||null};NUMS.forEach(k=>c[k]=+$("c-"+k).value);
- c.scoreThr=+$("c-scoreThr").value;c.sizeMode=$("c-sizeMode").value;c.mode=$("c-mode").value;c.entry=$("c-entry").value;c.exit=$("c-exit").value;c.side=+$("c-side").value;c.adapt=$("c-adapt").value==="1";c.riskPct/=100;c.maxW/=100;
- const s={};[...NUMS,...SELS].forEach(k=>s[k]=$("c-"+k).value);store("qlab-cfg3",JSON.stringify(s));return c}
+ c.scoreThr=+$("c-scoreThr").value;c.shorts=$("c-shorts").value;c.saudi=$("c-saudi").value;c.shortSize=+$("c-shortSize").value;{const [am,om]=$("c-apsize").value.split(",").map(Number);c.aplusMult=am;c.otherMult=om;c.grade=om===0?"aplus":"all"}c.sizeMode=$("c-sizeMode").value;c.mode=$("c-mode").value;c.entry=$("c-entry").value;c.exit=$("c-exit").value;c.side=+$("c-side").value;c.adapt=$("c-adapt").value==="1";c.riskPct/=100;c.maxW/=100;
+ const s={};[...NUMS,...SELS].forEach(k=>s[k]=$("c-"+k).value);store("qlab-cfg4",JSON.stringify(s));return c}
 const ACCT=()=>({start:Math.max(1000,+$("a-start").value||100000),fill:$("a-fill").value,cost:Math.max(0,+$("c-slippage").value||0)/1e4,lev:Math.max(.5,+$("a-lev").value||1)});
 const saveAcct=()=>store("desk-acct",JSON.stringify({start:$("a-start").value,fill:$("a-fill").value,lev:$("a-lev").value,risk:$("t-risk").value}));
 let ECFG=readCfg();
@@ -419,8 +476,8 @@ document.querySelectorAll("#settings input,#settings select").forEach(el=>el.add
 
 // ------------------------------------------------ state
 const sel=$("sym");const st={sym:null,n:252,tab:"data",cursor:null,pinned:false};
-const UI=load("qlab-ui2",{});UI.ov=Object.assign({zones:true,mean:true,exit:true,kalman:false,trend:false,ou:false,ema20:false,factor:false,vol:true,sys:true,setups:true,signs:true,mine:true},UI.ov||{});
-UI.pn=Object.assign({edge:true,rsi:true,z:true,vol:true,reg:false,fear:false},UI.pn||{});
+const UI=load("qlab-ui2",{});UI.ov=Object.assign({bb:true,pdiv:true,zones:true,mean:true,exit:true,kalman:false,trend:false,ou:false,ema20:false,factor:false,vol:true,sys:true,setups:true,signs:true,mine:true},UI.ov||{});
+UI.pn=Object.assign({pulse:true,edge:true,rsi:true,z:true,vol:true,reg:false,fear:false},UI.pn||{});
 const saveUI=()=>store("qlab-ui2",JSON.stringify(UI));
 let ORDERS=load("desk-orders",[]),HLINES=load("desk-hlines",{}),REPLAY=load("desk-replay",null);
 const saveOrders=()=>store("desk-orders",JSON.stringify(ORDERS));
@@ -458,10 +515,100 @@ class ZoneView{
  isWhitespace(row){return !row.q}
  defaultOptions(){return Object.assign({},LW.customSeriesDefaultOptions,{lastValueVisible:false,priceLineVisible:false})}
 }
+// ------------------------------------------------ Momentum Pulse pane (custom renderer)
+// Colours validated for colour-blind separation on the dark surface: teal up, red down, amber exhaustion (glow dots), violet divergence (dashed, labelled).
+const PC={up:[38,166,154],dn:[239,83,80],ex:[217,154,30],dv:[167,123,234],mid:[120,120,115]};
+const prgb=(c,a)=>`rgba(${c[0]},${c[1]},${c[2]},${a})`;
+const mix=(a,b,t)=>[0,1,2].map(k=>Math.round(a[k]+(b[k]-a[k])*t));
+class PulseView{
+ constructor(){this.d=null}
+ renderer(){const me=this;return {draw(target,pc){const d=me.d;if(!d||!d.visibleRange)return;
+  target.useBitmapCoordinateSpace(({context:ctx,horizontalPixelRatio:hr,verticalPixelRatio:vr,bitmapSize})=>{
+   const bars=d.bars,from=Math.max(1,d.visibleRange.from-1),to=Math.min(bars.length,d.visibleRange.to+1),hw=Math.max(1,d.barSpacing*hr/2),H=bitmapSize.height,W=bitmapSize.width;
+   const Y=v=>{const y=pc(v);return y==null?null:y*vr},X=i=>bars[i].x*hr,od=i=>bars[i].originalData;
+   // 1 regime columns
+   for(let i=from;i<to;i++){const o=od(i);if(!o||!o.st)continue;const col=o.st===1?prgb(PC.up,.09):o.st===-1?prgb(PC.dn,.09):prgb(PC.ex,.13);ctx.fillStyle=col;ctx.fillRect(X(i)-hw,0,hw*2,H)}
+   // 2 guides: zero, ±1, ±2, and the stock's own 95th/5th percentile extremes
+   ctx.lineWidth=Math.max(1,hr);for(const [v,dash,a] of [[0,[],.55],[1,[4,4],.25],[-1,[4,4],.25],[2,[1,4],.3],[-2,[1,4],.3]]){const y=Y(v);if(y==null)continue;ctx.setLineDash(dash.map(x=>x*hr));ctx.strokeStyle=`rgba(195,194,183,${a})`;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+   ctx.setLineDash([2*hr,3*hr]);ctx.strokeStyle=prgb(PC.ex,.55);for(const key of ["q95","q05"]){ctx.beginPath();let pen=false;for(let i=from;i<to;i++){const o=od(i),y=o&&isF(o[key])?Y(o[key]):null;if(y==null){pen=false;continue}pen?ctx.lineTo(X(i),y):ctx.moveTo(X(i),y);pen=true}ctx.stroke()}ctx.setLineDash([]);
+   // 3 acceleration histogram (momentum of momentum)
+   const y0=Y(0);if(y0!=null)for(let i=from;i<to;i++){const o=od(i);if(!o||!isF(o.acc))continue;const y=Y(o.acc);if(y==null)continue;ctx.fillStyle=o.acc>=0?prgb(PC.up,.28):prgb(PC.dn,.28);const w=Math.max(1,hw*1.1);ctx.fillRect(X(i)-w/2,Math.min(y,y0),w,Math.abs(y-y0))}
+   // 4 multi-horizon ribbon (5/10/20/60-day momentum), colour by agreement, opacity by path efficiency
+   for(let i=from;i<to-1;i++){const a=od(i),b=od(i+1);if(!a||!b||!isF(a.lo)||!isF(b.lo))continue;const ya=Y(a.lo),yb=Y(b.lo),za=Y(a.hi),zb=Y(b.hi);if([ya,yb,za,zb].some(v=>v==null))continue;
+    const base=a.al===4?PC.up:a.al===-4?PC.dn:PC.dv,al=Math.abs(a.al)===4?.12+.42*Math.min(1,Math.max(0,a.er||0)):.10;ctx.fillStyle=prgb(base,al);
+    ctx.beginPath();ctx.moveTo(X(i),za);ctx.lineTo(X(i+1),zb);ctx.lineTo(X(i+1),yb);ctx.lineTo(X(i),ya);ctx.closePath();ctx.fill()}
+   // 5 composite line with diverging colour and a soft glow
+   ctx.lineWidth=2.4*hr;ctx.lineCap="round";ctx.shadowBlur=7*hr;
+   for(let i=from;i<to-1;i++){const a=od(i),b=od(i+1);if(!a||!b||!isF(a.M)||!isF(b.M))continue;const ya=Y(a.M),yb=Y(b.M);if(ya==null||yb==null)continue;
+    const m=(a.M+b.M)/2,t=Math.min(1,Math.abs(m)/2.2),c=mix(PC.mid,m>=0?PC.up:PC.dn,t);ctx.strokeStyle=prgb(c,1);ctx.shadowColor=prgb(c,.55);ctx.beginPath();ctx.moveTo(X(i),ya);ctx.lineTo(X(i+1),yb);ctx.stroke()}
+   ctx.shadowBlur=0;
+   // 6 thrusts (triangles) and exhaustion (glowing amber dots)
+   for(let i=from;i<to;i++){const o=od(i);if(!o)continue;const y=isF(o.M)?Y(o.M):null;if(y==null)continue;const x=X(i),r=Math.max(4*hr,hw*.9);
+    if(o.th){ctx.fillStyle=rgba(o.th>0?PC.up:PC.dn,1);ctx.strokeStyle="#1a1a19";ctx.lineWidth=1.5*hr;ctx.beginPath();const yy=o.th>0?y+r*2.2:y-r*2.2;ctx.moveTo(x,o.th>0?yy-r:yy+r);ctx.lineTo(x-r,o.th>0?yy+r*.7:yy-r*.7);ctx.lineTo(x+r,o.th>0?yy+r*.7:yy-r*.7);ctx.closePath();ctx.fill();ctx.stroke()}
+    if(Math.abs(o.st)===2){const g=ctx.createRadialGradient(x,y,0,x,y,r*3);g.addColorStop(0,prgb(PC.ex,.95));g.addColorStop(.35,prgb(PC.ex,.55));g.addColorStop(1,prgb(PC.ex,0));ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*3,0,Math.PI*2);ctx.fill();
+     ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(x,y,r*.45,0,Math.PI*2);ctx.fill()}}
+   // 7 divergences: dashed violet line between the two momentum pivots, labelled
+   ctx.font=`${11*hr}px "JetBrains Mono",monospace`;
+   for(let i=from;i<Math.min(bars.length,to+70);i++){const o=od(i);if(!o||!o.dv)continue;const i0=i-o.dv.b0,i1=i-o.dv.b1;if(i0<0||i1<0||i1<from-1)continue;const y0=Y(o.dv.M0),y1=Y(o.dv.M1);if(y0==null||y1==null)continue;
+    const col=prgb(PC.dv,1);ctx.strokeStyle=col;ctx.lineWidth=2*hr;ctx.setLineDash([5*hr,3*hr]);ctx.beginPath();ctx.moveTo(X(i0),y0);ctx.lineTo(X(i1),y1);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=col;for(const [xx,yy] of [[X(i0),y0],[X(i1),y1]]){ctx.beginPath();ctx.arc(xx,yy,3.2*hr,0,Math.PI*2);ctx.fill()}
+    ctx.fillText(o.dv.type>0?"bull div":"bear div",X(i1)+5*hr,y1+(o.dv.type>0?14:-6)*hr)}
+  })}}}
+ update(data){this.d=data}
+ priceValueBuilder(r){return [Math.min(r.lo,-2.2),Math.max(r.hi,2.2),r.M]}
+ isWhitespace(r){return !isF(r.M)}
+ defaultOptions(){return Object.assign({},LW.customSeriesDefaultOptions,{lastValueVisible:true,priceLineVisible:false,title:"pulse",color:"#c3c2b7"})}
+}
+// divergence lines on the price pane, between the two price pivots
+class PriceDivView{
+ constructor(){this.d=null}
+ renderer(){const me=this;return {draw(target,pc){const d=me.d;if(!d||!d.visibleRange)return;
+  target.useBitmapCoordinateSpace(({context:ctx,horizontalPixelRatio:hr,verticalPixelRatio:vr})=>{const bars=d.bars,from=Math.max(0,d.visibleRange.from),to=Math.min(bars.length,d.visibleRange.to+70);
+   ctx.font=`${11*hr}px "JetBrains Mono",monospace`;
+   for(let i=from;i<to;i++){const o=bars[i].originalData;if(!o||!o.dv)continue;const i0=i-o.dv.b0,i1=i-o.dv.b1;if(i0<0||i1<0)continue;const y0=pc(o.dv.p0),y1=pc(o.dv.p1);if(y0==null||y1==null)continue;
+    ctx.strokeStyle=prgb(PC.dv,.95);ctx.lineWidth=2*hr;ctx.setLineDash([5*hr,3*hr]);ctx.beginPath();ctx.moveTo(bars[i0].x*hr,y0*vr);ctx.lineTo(bars[i1].x*hr,y1*vr);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=prgb(PC.dv,1);ctx.fillText(o.dv.type>0?"bull div":"bear div",bars[i1].x*hr+5*hr,y1*vr+(o.dv.type>0?16:-8)*hr)}})}}}
+ update(data){this.d=data}
+ priceValueBuilder(r){return [r.dv.p1]}
+ isWhitespace(r){return !r.dv}
+ defaultOptions(){return Object.assign({},LW.customSeriesDefaultOptions,{lastValueVisible:false,priceLineVisible:false})}
+}
+const PULSE_STATE={1:"TREND UP",[-1]:"TREND DOWN",2:"EXHAUSTION UP",[-2]:"EXHAUSTION DOWN",0:"NO TREND"};
+function pulseAdvice(s,i){const P=s.pulse,st0=P.state[i],momMkt=s.mode[i]===-1,div=recentDiv(P,i);let a,tone;
+ if(momMkt){
+  if(st0===1){a="Momentum market in an up-trend: favour momentum entries, don't fade strength.";tone="good"}
+  else if(st0===-1){a="Momentum market falling: avoid buying dips here; they tend to keep falling.";tone="bad"}
+  else if(st0===2){a="Up-move at a 2-year momentum extreme and turning: a warning to tighten, not a proven sell signal.";tone="mid"}
+  else if(st0===-2){a="Down-move at a 2-year extreme and turning: possible exhaustion; no proven edge on its own.";tone="mid"}
+  else{a="Momentum market without a trend: wait for a strong close (momentum setup).";tone="mid"}
+  a="Avoid mean reversion: this market keeps moving the same way day to day. "+a}
+ else{
+  if(st0===-1){a="Strong down-momentum. In tests on 87 stocks and 6 long histories, reversal setups in this state did better (+1.70% vs +1.09% per trade): capitulation, not a reason to avoid.";tone="good"}
+  else if(st0===1){a="Strong up-momentum on a reverting stock: the next 10 days were weaker than average in tests (−0.31%, t −2.4). Don't chase.";tone="bad"}
+  else if(st0===2){a="Up-momentum at a 2-year extreme and turning: a warning, no proven edge on its own.";tone="mid"}
+  else if(st0===-2){a="Down-momentum at a 2-year extreme and turning: exhaustion often lines up with reversal setups.";tone="mid"}
+  else{a="No dominant momentum: mean reversion rules apply normally.";tone="mid"}}
+ const own=pulseEvidence(s,i).find(e=>e.k===String(st0));if(own&&own.cnt>=30&&st0!==0){const exp=st0===1?(momMkt?1:-1):st0===-1?(momMkt?-1:1):0;
+  if(exp&&Math.sign(own.ex)!==exp)a+=` <i>On this ${momMkt?"market":"stock"} the state has behaved differently: the next 10 days averaged ${spct(own.ex,2)} vs normal (${own.cnt} days). See the inspector.</i>`}
+ if(div)a+=` ${div>0?"Bullish":"Bearish"} divergence confirmed in the last 10 bars (shown for context; not a reliable signal in tests).`;
+ return {a,tone}}
+function recentDiv(P,i){for(let k=i;k>=Math.max(0,i-10);k--)if(P.div[k])return P.div[k];return 0}
+function pulseEvidence(s,i){const P=s.pulse,cnt={},sum={};let base=0,nb=0;
+ for(let j=0;j+10<=i;j++){const f=P.f10[j];if(!isF(f)||!isF(P.M[j]))continue;base+=f;nb++;const ks=[String(P.state[j])];if(P.thrust[j]===1)ks.push("th");if(P.div[j]===1)ks.push("bd");if(P.div[j]===-1)ks.push("sd");for(const k of ks){cnt[k]=(cnt[k]||0)+1;sum[k]=(sum[k]||0)+f}}
+ const b=nb?base/nb:0;return [["1","trend up"],["-1","trend down"],["0","no trend"],["2","exhaustion up"],["-2","exhaustion down"],["th","up-thrust"],["bd","bullish divergence"],["sd","bearish divergence"]].map(([k,n])=>({k,n,cnt:cnt[k]||0,ex:cnt[k]?sum[k]/cnt[k]-b:NaN}))}
+function placePulseHud(){const hud=$("pulse-hud");if(!chart||SER.pulsePane==null||!UI.pn.pulse){hud.hidden=true;return}
+ try{const el=chart.panes()[SER.pulsePane].getHTMLElement(),r=el.getBoundingClientRect(),w=$("lwc-wrap").getBoundingClientRect();hud.style.top=(r.top-w.top+4)+"px";hud.style.left="8px";hud.hidden=false}catch(e){hud.hidden=true}}
+function renderPulseHud(i){const hud=$("pulse-hud"),s=S();if(!s||!s.pulse||!UI.pn.pulse){hud.hidden=true;return}placePulseHud();
+ const P=s.pulse,M=P.M[i],st0=P.state[i],al=P.align[i]*(M>=0?1:-1),acc=P.acc[i],col=st0===1?"#26a69a":st0===-1?"#ef5350":Math.abs(st0)===2?"#d99a1e":"#c3c2b7";
+ hud.innerHTML=`<b>MOMENTUM PULSE</b> <span style="color:${M>=0?"#26a69a":"#ef5350"}">${isF(M)?(M>=0?"+":"")+M.toFixed(2)+"σ":"—"} ${isF(acc)?(acc>0?"▲ accelerating":"▼ decelerating"):""}</span>
+  <span class="pk">horizons</span> ${P.mh.map(a=>isF(a[i])?`<i style="background:${a[i]>=0?"#26a69a":"#ef5350"};opacity:${Math.min(1,.35+Math.abs(a[i])/3)}"></i>`:"<i></i>").join("")} ${Math.abs(al)}/4
+  <span class="pk">path</span> ${isF(P.er[i])?Math.round(100*P.er[i])+"%":"—"} <span class="pk">rank</span> ${isF(P.pct[i])?Math.round(100*P.pct[i])+"%":"—"}
+  <span class="st" style="color:${col};border-color:${col}">${PULSE_STATE[st0]}</span>${s.mode[i]===-1?'<span class="st" style="color:#a77bea;border-color:#a77bea">AVOID MEAN REVERSION</span>':""}`}
+
 let chart=null,SER={},MK=null,PLINES=[],ARR=null,hoverIdx=null;
-const OVL=[["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
- ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["mine","My trades",TV.you]];
-const PNS=[["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
+const OVL=[["bb","Bollinger Bands (20, 2)","#7aa7e0"],["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
+ ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["pdiv","Divergence lines","#a77bea"],["mine","My trades",TV.you]];
+const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
 $("ov").innerHTML=`<span class="lab">on price</span>`+OVL.map(([k,n,c])=>`<label><input type="checkbox" data-ov="${k}" ${UI.ov[k]?"checked":""}><span style="color:${c}">■</span>${n}</label>`).join("");
 $("pn").innerHTML=`<span class="lab">panels</span>`+PNS.map(([k,n])=>`<label><input type="checkbox" data-pn="${k}" ${UI.pn[k]?"checked":""}>${n}</label>`).join("");
 $("ov").addEventListener("change",e=>{const k=e.target.dataset.ov;if(!k)return;UI.ov[k]=e.target.checked;saveUI();applyVisibility();annotate()});
@@ -479,18 +626,24 @@ function buildArrays(){
  A.meanArr=m20.map(Math.exp);A.sma5Arr=s?s.sma5:sma5;A.zArr=s?s.z20:lc.map((x,i)=>(x-m20[i])/s20[i]);
  A.mean=L(A.meanArr);A.exit=L(A.sma5Arr);
  A.zones=d.d.map((t,i)=>{if(!s)return {time:t};const q=s.zq.map(z=>isF(z[i])?Math.exp(s.m20[i]+z[i]*s.s20[i]):NaN);return q.every(isF)?{time:t,q}:{time:t}});
+ {const U=[],M=[],Lo=[];for(let i=0;i<n;i++){const b=bbAt(d.c,i);U.push(b?b.up:NaN);M.push(b?b.mid:NaN);Lo.push(b?b.lo:NaN)}A.bbu=L(U);A.bbm=L(M);A.bbl=L(Lo)}
  A.kalman=L(s&&s.lv_kalman);A.trend=L(s&&s.lv_trend);A.ou=L(s&&s.lv_ou);A.ema20=L(s&&s.lv_ema20);A.factor=L(s&&s.lv_factor);
  A.edgeH=d.d.map((t,i)=>s&&s.setup[i]&&isF(s.score[i])?{time:t,value:s.score[i],color:THIRD_COL[thirdOf(s.score[i])]}:{time:t});
  A.edgeL=L(s&&s.score);
  A.rsi=L(s?s.rsi2:null);
  A.z=L(A.zArr);for(let k=0;k<6;k++)A["zq"+k]=L(s&&s.zq[k]);
+ if(s&&s.pulse){const P=s.pulse;A.pulse=d.d.map((t,i)=>{if(!isF(P.M[i]))return {time:t};const mh=P.mh.map(a=>a[i]),ok=mh.every(isF);
+   const o={time:t,M:P.M[i],lo:ok?Math.min(...mh,P.M[i]):P.M[i],hi:ok?Math.max(...mh,P.M[i]):P.M[i],al:P.align[i]*(P.M[i]>=0?1:-1),er:P.er[i],acc:P.acc[i],st:P.state[i],th:P.thrust[i],q95:P.q95[i],q05:P.q05[i]};
+   if(P.div[i])o.dv={type:P.div[i],b0:i-P.dp0[i],b1:i-P.dp1[i],M0:P.M[P.dp0[i]],M1:P.M[P.dp1[i]]};return o});
+  A.pdiv=d.d.map((t,i)=>P.div[i]?{time:t,dv:{type:P.div[i],b0:i-P.dp0[i],b1:i-P.dp1[i],p0:P.div[i]>0?d.l[P.dp0[i]]:d.h[P.dp0[i]],p1:P.div[i]>0?d.l[P.dp1[i]]:d.h[P.dp1[i]]}}:{time:t})}
+ else{A.pulse=d.d.map(t=>({time:t}));A.pdiv=d.d.map(t=>({time:t}))}
  A.yz=L(s&&s.yz20);A.garch=L(s&&s.garch);A.har=L(s&&s.har5);A.cc=L(s&&s.cc20);
  A.hurst=L(s&&s.hurst);A.adf=L(s&&s.adf);A.vr4=L(s&&s.vr4);A.vix=L(s&&s.vix);
  return A}
 function buildChart(keep){
  const range=keep&&chart?chart.timeScale().getVisibleLogicalRange():null;
  if(chart){chart.remove();chart=null}
- const np=Object.values(UI.pn).filter(Boolean).length;$("lwc-wrap").style.height=(470+np*105)+"px";
+ const np=Object.values(UI.pn).filter(Boolean).length;$("lwc-wrap").style.height=(470+np*105+(UI.pn.pulse?60:0))+"px";
  chart=LW.createChart($("lwc"),{autoSize:true,
   layout:{background:{type:"solid",color:C.surface},textColor:C.muted,fontFamily:"'JetBrains Mono',ui-monospace,monospace",fontSize:11,attributionLogo:true,panes:{separatorColor:C.axis,separatorHoverColor:"rgba(57,135,229,.3)",enableResize:true}},
   grid:{vertLines:{color:"#222220"},horzLines:{color:"#222220"}},
@@ -502,9 +655,12 @@ function buildChart(keep){
  SER.candle=chart.addSeries(LW.CandlestickSeries,{upColor:TV.up,downColor:TV.down,borderUpColor:TV.up,borderDownColor:TV.down,wickUpColor:TV.up,wickDownColor:TV.down},0);
  SER.vol=chart.addSeries(LW.HistogramSeries,{priceScaleId:"vol",priceFormat:{type:"volume"},lastValueVisible:false,priceLineVisible:false},0);SER.vol.priceScale().applyOptions({scaleMargins:{top:.84,bottom:0}});
  for(const k of ["kalman","trend","ou","ema20","factor"])SER[k]=line(C.mean[k]);
+ SER.bbu=line("rgba(122,167,224,.9)",{title:"BB",lastValueVisible:true});SER.bbl=line("rgba(122,167,224,.9)",{lastValueVisible:true});SER.bbm=line("rgba(122,167,224,.55)",{lineStyle:LW.LineStyle.Dotted});
  SER.exit=line("#fab219",{lineWidth:1,lineStyle:LW.LineStyle.Dashed,title:"5d avg",lastValueVisible:true});
  SER.mean=line("#ffffff",{lineWidth:2,title:"20d mean",lastValueVisible:true,crosshairMarkerVisible:true});
  let pane=1;const P={};
+ SER.pdiv=chart.addCustomSeries(new PriceDivView(),{},0);
+ if(UI.pn.pulse){P.pulse=pane++;SER.pulse=chart.addCustomSeries(new PulseView(),{priceFormat:{type:"price",precision:2,minMove:.01}},P.pulse);SER.pulsePane=P.pulse}else SER.pulsePane=null;
  if(UI.pn.edge){P.edge=pane++;SER.edgeL=line("rgba(195,194,183,.35)",{},P.edge);SER.edgeH=chart.addSeries(LW.HistogramSeries,{lastValueVisible:false,priceLineVisible:false,title:"edge score",priceFormat:{type:"price",precision:1,minMove:.1}},P.edge);
   SER.edgeL.createPriceLine({price:THIRDS[1],color:"rgba(79,209,165,.6)",lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:"top ⅓"});SER.edgeL.createPriceLine({price:THIRDS[0],color:"rgba(138,138,133,.6)",lineWidth:1,lineStyle:LW.LineStyle.Dotted,axisLabelVisible:false})}
  if(UI.pn.rsi){P.rsi=pane++;SER.rsi=line("#c3c2b7",{lineWidth:1.5,title:"RSI(2)",lastValueVisible:true,priceFormat:{type:"price",precision:0,minMove:1}},P.rsi)}
@@ -515,20 +671,20 @@ function buildChart(keep){
  if(UI.pn.reg){P.reg=pane++;SER.hurst=line(C.ink,{lineWidth:1.5,title:"Hurst",lastValueVisible:true},P.reg);SER.adf=line(C.mean.ou,{title:"ADF p",lastValueVisible:true},P.reg);SER.vr4=line(C.mean.kalman,{title:"VR(4)",lastValueVisible:true},P.reg);
   SER.hurst.createPriceLine({price:.5,color:C.axis,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:false})}
  if(UI.pn.fear){P.fear=pane++;SER.vix=line("#d55181",{lineWidth:1.5,title:"VIX",lastValueVisible:true},P.fear)}
- const panes=chart.panes();if(panes.length>1){panes[0].setStretchFactor(3.6);for(let i=1;i<panes.length;i++)panes[i].setStretchFactor(1)}
+ const panes=chart.panes();if(panes.length>1){panes[0].setStretchFactor(3.6);for(let i=1;i<panes.length;i++)panes[i].setStretchFactor(i===P.pulse?1.7:1)}
  MK=LW.createSeriesMarkers(SER.candle,[]);PLINES=[];
  chart.subscribeCrosshairMove(onCross);chart.subscribeClick(onChartClick);
  refreshOverlays(range);if(!range)showRange()}
-const DKEYS=["zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
+const DKEYS=["bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
 function setAllData(upto){if(!ARR)return;for(const k of DKEYS)if(SER[k]&&ARR[k])SER[k].setData(upto>=ARR.n-1?ARR[k]:ARR[k].slice(0,upto+1))}
 function stepData(i){for(const k of DKEYS)if(SER[k]&&ARR[k]&&ARR[k][i])SER[k].update(ARR[k][i])}
 function applyVisibility(){const v=UI.ov,set=(k,on)=>SER[k]&&SER[k].applyOptions({visible:!!on});
- set("zones",v.zones);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
+ set("bbu",v.bb);set("bbm",v.bb);set("bbl",v.bb);set("zones",v.zones);set("pdiv",v.pdiv);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
 function refreshOverlays(range){
  if(!chart)return;const d=D();
  if(!d){ARR=null;for(const k of DKEYS)SER[k]&&SER[k].setData([]);annotate();renderLegend();return}
  ARR=buildArrays();const dg=pdig(d.c[d.c.length-1]),pf={type:"price",precision:dg,minMove:Math.pow(10,-dg)};
- for(const k of ["candle","mean","exit","kalman","trend","ou","ema20","factor"])SER[k].applyOptions({priceFormat:pf});
+ for(const k of ["candle","mean","exit","kalman","trend","ou","ema20","factor","bbu","bbm","bbl"])SER[k].applyOptions({priceFormat:pf});
  if(SER.rsi){(SER.rl||[]).forEach(l=>SER.rsi.removePriceLine(l));SER.rl=[ECFG.trig,100-ECFG.trig].map((v,k)=>SER.rsi.createPriceLine({price:v,color:k?"rgba(230,103,103,.5)":"rgba(79,209,165,.7)",lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:k?"":"setup"}))}
  if(SER.edgeL){SER.thrLine&&SER.edgeL.removePriceLine(SER.thrLine);SER.thrLine=ECFG.scoreThr>-50&&ECFG.scoreThr!==THIRDS[1]?SER.edgeL.createPriceLine({price:ECFG.scoreThr,color:C.warn,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:"your filter"}):null}
  setAllData(cur());applyVisibility();if(range)chart.timeScale().setVisibleLogicalRange(range);
@@ -540,13 +696,15 @@ function annotate(){
  const c=cur(),date=d.d[c],s=S(),mk=[];
  if(s){const lo=Math.max(s.first,0);
   for(let i=lo;i<=c;i++){
-   if(s.sig[i]===1&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${Math.round(100*s.P[i])}%`,size:1.4})}
+   if(s.sig[i]===1&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${s.aplus&&s.aplus[i]?"A+ ":""}${Math.round(100*s.P[i])}%`,size:s.aplus&&s.aplus[i]?1.9:1.4})}
    else if(s.sig[i]===2&&UI.ov.sys){mk.push({time:d.d[i],position:"belowBar",shape:"arrowUp",color:"#c08cff",text:"MOM",size:1.3})}
    else if(s.setup[i]&&UI.ov.setups)mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:"circle",color:THIRD_COL[thirdOf(s.score[i])],size:.5});
+   else if(s.sig[i]===3&&UI.ov.sys)mk.push({time:d.d[i],position:"aboveBar",shape:"arrowDown",color:"#ef5350",text:"SHORT",size:1.3});
+   else if(s.sgood&&s.sgood[i]&&ECFG.shorts!=="off"&&UI.ov.setups)mk.push({time:d.d[i],position:"aboveBar",shape:"circle",color:"#ef5350",size:.5});
    if(UI.ov.signs){const down=d.c[i]<(i?d.c[i-1]:d.c[i]);
     if(down&&s.volz[i]>1.5&&s.rangex[i]>1.5)mk.push({time:d.d[i],position:"aboveBar",shape:"square",color:"#fab219",size:.45});
     else if(Math.abs(s.gap[i])>1.5)mk.push({time:d.d[i],position:"aboveBar",shape:"square",color:"#8a8a85",size:.35})}}
-  if(RES&&UI.ov.sys)for(const t of RES.bt.trades){if(t.symbol!==st.sym||t.exit_date>date)continue;mk.push({time:t.exit_date,position:s.side>0?"aboveBar":"belowBar",shape:"circle",color:t.pnl>0?"#3fbf5f":"#e05252",size:.6})}}
+  if(RES&&UI.ov.sys)for(const t of RES.bt.trades){if(t.symbol!==st.sym||t.exit_date>date)continue;mk.push({time:t.exit_date,position:t.direction==="short"?"belowBar":"aboveBar",shape:"circle",color:t.pnl>0?"#3fbf5f":"#e05252",size:.6})}}
  const sims=simAll();
  if(UI.ov.mine)for(const r of sims){if(r.o.sym!==st.sym||(r.status!=="open"&&r.status!=="closed"))continue;const lg=r.o.side>0;
   mk.push({time:d.d[r.entryIdx],position:lg?"belowBar":"aboveBar",shape:lg?"arrowUp":"arrowDown",color:TV.you,text:`YOU ${lg?"BUY":"SELL"}`,size:1.2});
@@ -557,7 +715,8 @@ function annotate(){
   PL(r.status==="open"?r.entryPx:NaN,TV.you,`${r.o.side>0?"Long":"Short"} ${r.o.qty}`,LW.LineStyle.Solid,2);PL(lv.stop,TV.down,"Stop");PL(lv.target,TV.up,"Target")}
  if(draft.show){const t=readTicket();PL(t.stop,TV.down,"Plan stop",LW.LineStyle.LargeDashed);PL(t.target,TV.up,"Plan target",LW.LineStyle.LargeDashed)}
  for(const h of HLINES[st.sym]||[])PL(h,TV.line,"",LW.LineStyle.Solid)}
-function renderLegend(){
+function renderLegend(){try{const c0=cur(),i0=hoverIdx!=null?Math.max(0,Math.min(c0,hoverIdx)):(st.pinned&&st.cursor!=null?Math.min(st.cursor,c0):c0);renderPulseHud(i0)}catch(e){}
+
  const d=D(),el=$("legend");if(!d){el.innerHTML="";return}
  const c=cur(),i=hoverIdx!=null?Math.max(0,Math.min(c,hoverIdx)):(st.pinned&&st.cursor!=null?Math.min(st.cursor,c):c),s=S(),ch=i>0?d.c[i]/d.c[i-1]-1:NaN;
  const z=ARR?ARR.zArr[i]:NaN,mu=ARR?ARR.meanArr[i]:NaN;
@@ -639,8 +798,8 @@ function levelsAt(o,k){let stop=o.stop,target=o.target;for(const m of o.mods||[]
 function setLevel(o,key,price,persist=true){const d=DS[o.sym],c=REPLAY&&REPLAY.sym===o.sym?REPLAY.idx:d.d.length-1,date=d.d[c];o.mods=o.mods||[];let m=o.mods.find(x=>x.date===date);if(!m){m={date};o.mods.push(m)}m[key]=price;if(persist)saveOrders()}
 const smaCache={};
 function smaOf(sym,w){const d=DS[sym];if(!d)return [];const key=sym+":"+w+":"+d.d.length;if(smaCache[key])return smaCache[key];const a=new Array(d.c.length).fill(NaN);let s=0;for(let i=0;i<d.c.length;i++){s+=d.c[i];if(i>=w)s-=d.c[i-w];if(i>=w-1)a[i]=s/w}return smaCache[key]=a}
-const EXIT_TEXT={prevhigh:"the first close above the previous day's high",sma5:"the first close above the 5-day average",sma10:"the first close above the 10-day average",rsi70:"the first close with RSI(2) above 70",mom:"the first close below the 5-day average"};
-const EXIT_SHORT={prevhigh:"prev high",sma5:"5d avg",sma10:"10d avg",rsi70:"RSI70",mom:"below 5d avg"};
+const EXIT_TEXT={prevlow:"the first close below the previous day's low",prevhigh:"the first close above the previous day's high",sma5:"the first close above the 5-day average",sma10:"the first close above the 10-day average",rsi70:"the first close with RSI(2) above 70",mom:"the first close below the 5-day average"};
+const EXIT_SHORT={prevlow:"prev low",prevhigh:"prev high",sma5:"5d avg",sma10:"10d avg",rsi70:"RSI70",mom:"below 5d avg"};
 function simulate(o,upto){
  const d=DS[o.sym];if(!d)return {o,status:"hidden"};const p=idxIn(o.sym,o.date);if(p<0||p>upto)return {o,status:"hidden"};
  if(o.cancelled)return {o,status:"cancelled"};const cost=o.cost!=null?o.cost:ACCT().cost;let ei,ep;
@@ -652,7 +811,7 @@ function simulate(o,upto){
  for(let k=p+1;k<=upto;k++){const {stop,target}=levelsAt(o,k),op=d.o[k],hi=d.h[k],lo=d.l[k],c=d.c[k];
   if(isF(stop)&&(sg>0?lo<=stop:hi>=stop)){xi=k;xp=(k>ei&&(sg>0?op<=stop:op>=stop))?op:stop;why="Stop";break}
   if(isF(target)&&(sg>0?hi>=target:lo<=target)){xi=k;xp=(k>ei&&(sg>0?op>=target:op<=target))?op:target;why="Target";break}
-  if(sx&&k>=ei){const hit=sx==="prevhigh"?(sg>0?c>d.h[k-1]:c<d.l[k-1]):sx==="sma5"?(sg>0?c>s5[k]:c<s5[k]):sx==="sma10"?(sg>0?c>s10[k]:c<s10[k]):sx==="rsi70"?(rs&&(sg>0?rs[k]>70:rs[k]<30)):sx==="mom"?(sg>0?c<s5[k]:c>s5[k]):false;
+  if(sx&&k>=ei){const hit=sx==="prevlow"?c<d.l[k-1]:sx==="prevhigh"?(sg>0?c>d.h[k-1]:c<d.l[k-1]):sx==="sma5"?(sg>0?c>s5[k]:c<s5[k]):sx==="sma10"?(sg>0?c>s10[k]:c<s10[k]):sx==="rsi70"?(rs&&(sg>0?rs[k]>70:rs[k]<30)):sx==="mom"?(sg>0?c<s5[k]:c>s5[k]):false;
    if(hit){xi=k;xp=c;why=EXIT_SHORT[sx];break}}
   if(o.time>0&&k-ei>=o.time){xi=k;xp=c;why="Time";break}
   if(ci>=ei){if(cf==="close"&&k===ci){xi=k;xp=c;why="Manual";break}if(cf!=="close"&&k===ci+1){xi=k;xp=op;why="Manual";break}}}
@@ -671,6 +830,8 @@ const refPrice=()=>{const d=D();if(!d)return NaN;if(ticketType()==="limit"){cons
 const readTicket=()=>({stop:parseFloat($("t-stop").value),target:parseFloat($("t-target").value),risk:parseFloat($("t-risk").value)/100,qty:parseInt($("t-qty").value,10),time:parseInt($("t-time").value,10)||0});
 function setSide(s){side=s;$("t-buy").classList.toggle("on",s>0);$("t-sell").classList.toggle("on",s<0);$("t-place").className="place "+(s>0?"b":"s");const t=readTicket(),e=refPrice();if(isF(t.stop)&&(s>0?t.stop>=e:t.stop<=e))defaultLevels();else ticketChanged(false)}
 function sysPlan(c){const d=D();if(!d||!ARR)return null;const s=S(),sd=s?s.side:1,e=d.c[c],atr=isF(ARR.atr[c])?ARR.atr[c]:e*.02,mom=!!(s&&s.mode&&s.mode[c]===-1);
+ if(s&&s.sgood&&ECFG.shorts!=="off"&&!mom&&!s.setup[c]&&s.sgood[c]){const entry=e+ECFG.limitATR*atr,stop=entry+3*atr,lvl=d.l[c];
+  return {lg:false,mom:false,kind:"short",e,entry,limit:true,stop,hasStop:true,target:lvl<entry?lvl:NaN,exitKey:"prevlow",exitLevel:lvl,mean:ARR.meanArr[c],atr,maxHold:ECFG.maxHold}}
  const limit=!mom&&ECFG.entry==="limit",entry=limit?e-sd*ECFG.limitATR*atr:e,hasStop=!mom&&ECFG.stopATR>0,stop=entry-sd*(hasStop?ECFG.stopATR:3)*atr;
  const exitKey=mom?"mom":ECFG.exit,s10=smaOf(st.sym,10);
  const exitLevel=mom?ARR.sma5Arr[c]:exitKey==="prevhigh"?(sd>0?d.h[c]:d.l[c]):exitKey==="sma5"?ARR.sma5Arr[c]:exitKey==="sma10"?s10[c]:NaN;
@@ -695,7 +856,7 @@ function ticketChanged(user=true){if(user)draft.show=true;
  const risk=per*qty,reward=isF(t.target)?Math.abs(t.target-e)*qty:NaN,notional=e*qty;
  $("t-sum").innerHTML=`risk <b>${money(risk)}</b> (${pct(risk/acc.eq,2)}) · reward <b>${money(reward)}</b><br>R:R <b>${isF(reward)&&risk>0?(reward/risk).toFixed(2):"—"}</b> · size <b>${money(notional)}</b> (${pct(notional/acc.eq,0)} of equity)`;
  if(autoQty&&qty>0&&per>0&&Math.floor(acc.eq*t.risk/per)>qty)warn.push(`Size capped at ${A.lev}× equity.`);
- if($("t-sys").checked)warn.push(`System exit on: ${planKind==="mom"?EXIT_TEXT.mom:EXIT_TEXT[ECFG.exit]}. The edge comes from winning often with small gains; the stop line here is mainly for sizing.`);
+ if($("t-sys").checked)warn.push(`System exit on: ${planKind==="mom"?EXIT_TEXT.mom:planKind==="short"?EXIT_TEXT.prevlow:EXIT_TEXT[ECFG.exit]}. The edge comes from winning often with small gains; the stop line here is mainly for sizing.`);
  if(!REPLAY)warn.push(ticketType()==="limit"?"Live: the limit order is checked against the next bar you upload; if price never reaches it, it expires.":A.fill==="open"?"Live: fills at the open of the next bar you upload.":"");
  $("t-msg").innerHTML=errs.map(x=>`<div class="er">${esc(x)}</div>`).join("")+warn.filter(Boolean).map(x=>`<div class="wn">${esc(x)}</div>`).join("");
  const pl=$("t-place");pl.disabled=errs.length>0;pl.textContent=`${side>0?"Buy":"Sell short"} ${qty>0?qty.toLocaleString():""} ${st.sym||""}${ticketType()==="limit"?" (limit)":""}`;
@@ -707,7 +868,7 @@ $("t-type").addEventListener("change",()=>{if(ticketType()==="limit"&&!(parseFlo
 $("t-qty").addEventListener("input",()=>{autoQty=false;$("t-auto").classList.remove("on");ticketChanged(true)});
 $("t-auto").addEventListener("click",()=>{autoQty=!autoQty;$("t-auto").classList.toggle("on",autoQty);ticketChanged(true)});
 $("t-place").addEventListener("click",()=>{const {t,qty,A}=sizing(),d=D(),c=cur();if(!(qty>0))return;const s=S(),lim=ticketType()==="limit";
- ORDERS.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),sym:st.sym,side,qty,stop:t.stop,target:isF(t.target)?t.target:NaN,time:t.time,sysExit:$("t-sys").checked?(planKind==="mom"?"mom":ECFG.exit):false,
+ ORDERS.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),sym:st.sym,side,qty,stop:t.stop,target:isF(t.target)?t.target:NaN,time:t.time,sysExit:$("t-sys").checked?(planKind==="mom"?"mom":planKind==="short"?"prevlow":ECFG.exit):false,
   date:d.d[c],fill:lim?"limit":A.fill,limit:lim?parseFloat($("t-limit").value):undefined,cost:A.cost,mode:mode(),sid:REPLAY?REPLAY.sid:null,note:$("t-note").value.trim(),
   sys:s?{setup:s.setup[c],msetup:s.msetup&&s.msetup[c],score:s.score[c],P:s.P[c],sig:s.sig[c]}:null});
  saveOrders();draft.show=false;$("t-note").value="";renderLive();annotate();
@@ -735,19 +896,25 @@ function renderSigbar(){
    say=`${rsiTxt}: a strong close in a market that keeps moving the same way. Plan: buy at the next open, sell on ${exitTxt} (now ${fp(plan.exitLevel)}) or after ${ECFG.momMaxHold} days; ${stopTxt}.`}
   else say=`${rsiTxt}: no momentum setup (needs RSI(2) above ${ECFG.momTrig}). In momentum mode the system buys strength, not dips.`;
   if(ms.n>=8)say+=` On this market, past momentum setups averaged <b class="${cl(ms.avg)}">${spct(ms.avg,2)}</b> (${ms.n} trades, ${pct(ms.win,0)} won).`;
-  say+=` Research: on TASI this rule had Sharpe 2.0 before 2013 and 1.4 after; on single US stocks it lost money.`}
+  say+=` Research: on TASI this rule had Sharpe 2.0 before 2013 and 1.4 after; on single US stocks it lost money.`;
+  if(st.sym!=="TASI"&&!saudiSym(st.sym))say+=` <span class="acc">If this file is an individual stock rather than an index: in the v9 fresh-data test, momentum-mode trades lost money (−1.6% per trade on 47 US stocks, 2007–2012) and "reversal only" scored better on all three fresh sets. For a single stock, consider Settings → mode → reversal only.</span>`}
  else{
   const setup=!!s.setup[c],sig=s.sig[c]===1,sc=s.score[c],th=thirdOf(sc),P=s.P[c],stp=lastStep(s,c);
-  if(setup&&sig){cls=sd>0?"long":"short";lab=sd>0?"Buy setup":"Sell setup"}else if(setup){cls="watch";lab="Weak setup"}
+  const ap=s.aplus&&s.aplus[c];if(setup&&sig){cls=sd>0?"long":"short";lab=(ap?"A+ ":"")+(sd>0?"Buy setup":"Sell setup")}else if(setup){cls="watch";lab="Weak setup"}
   if(setup){say=`${rsiTxt}: a short-term ${sd>0?"oversold":"overbought"} setup. Reversal Edge Score <b style="color:${THIRD_COL[th]}">${fmt(sc,1)} (${THIRD_NAME[th]})</b>; chance this bounce trade is profitable <b>${pct(P,0)}</b>.`;
    const own=stp&&stp.thirds[th];if(own&&own.n>=8)say+=` On this stock, past setups in the ${THIRD_NAME[th]} averaged <b class="${cl(own.avg)}">${spct(own.avg,2)}</b> per trade (${own.n} trades, ${pct(own.win,0)} won).`;
+   if(th===2){const ib=s.ibs[c],pm=s.pulse?s.pulse.M[c]:NaN,okI=sd>0?ib<=.13:ib>=.87,okM=sd>0?pm<=-.5:pm>=.5;
+    say+=ap?` <b class="aplus">A+ grade</b>: it closed ${sd>0?"at the low":"at the high"} of the day (${pct(ib,0)} of the range) with deep momentum (pulse ${fmt(pm,2)}σ). A+ trades earned about twice as much per trade in every long-history test.`
+     :` Not A+: needs ${[okI?"":`a close in the ${sd>0?"bottom":"top"} 13% of the day's range (now ${pct(ib,0)})`,okM?"":`pulse ${sd>0?"below −0.5":"above +0.5"} (now ${fmt(pm,2)}σ)`].filter(Boolean).join(" and ")}.`}
+   {const bb=bbAt(d.c,c);if(bb&&bb.pb<0)say+=` Closed <b>below the lower Bollinger Band</b> (%B ${bb.pb.toFixed(2)}): top-third setups below the band averaged +1.54% vs +0.93% per trade after 2013 (context, not a rule).`}
    if(cls==="watch")say+=` Below your filter (${$("c-scoreThr").selectedOptions[0].textContent}), so the system skips it.`;
    if(sig)say+=` Plan: ${plan.limit?`place a <b>limit ${sd>0?"buy":"sell"} at ${fp(plan.entry)}</b> (close − ${ECFG.limitATR} ATR), good for tomorrow only`:`${sd>0?"buy":"sell"} at the next open`}; sell on ${exitTxt}${isF(plan.exitLevel)?` (now ${fp(plan.exitLevel)})`:""} or after ${ECFG.maxHold} days; ${stopTxt}.`;
    gauge=`<div class="gauge">${gaugeSvg(P,THIRD_COL[th])}<span>chance of profit</span></div>`}
   else say=`${rsiTxt}: no ${sd>0?"oversold":"overbought"} setup (needs RSI(2) ${sd>0?"below "+ECFG.trig:"above "+(100-ECFG.trig)}). Price is ${fmt(Math.abs(s.z20[c]),2)}σ ${s.z20[c]<0?"below":"above"} its 20-day mean${s.zone[c]>=0?`, in zone ${["below 2.5%","2.5–10%","10–25%","25–75%","75–90%","90–97.5%","above 97.5%"][s.zone[c]]} of its own history`:""}.`;
+  if(!setup&&plan.kind==="short"){cls="short";lab=s.sig[c]===3?"Short signal":"Short setup";say=shortSay(s,c,plan);const Ps=s.sP[c];if(isF(Ps))gauge=`<div class="gauge">${gaugeSvg(Ps,"#ef5350")}<span>chance of profit</span></div>`}
   if(!isF(s.frank[c]))say+=` <span class="acc">No fear-index value for this date; that sign counts as neutral.</span>`}
  const chips=!mom&&s.setup[c]?topSigns(s,c).map(([k,v])=>`<span class="${v>0.05?"y":v<-0.05?"n":"m"}" title="${esc(signMeaning(k))}">${v>0.05?"▲":v<-0.05?"▼":"·"} ${esc(chipName(k,v))}</span>`).join(""):"";
- el.innerHTML=`<div><span class="vp ${cls}"${mom&&cls==="long"?' style="color:#c08cff;background:rgba(192,140,255,.14)"':""}>${lab}</span><div class="note" style="margin-top:4px">${when}</div></div><div class="say">${say}<div style="margin-top:4px;font-size:12px">Market character: ${charText(s,c)}</div></div>
+ el.innerHTML=`<div><span class="vp ${cls}"${mom&&cls==="long"?' style="color:#c08cff;background:rgba(192,140,255,.14)"':lab.startsWith("A+")?' style="color:#1a1a19;background:#fab219;border-color:#fab219"':""}>${lab}</span><div class="note" style="margin-top:4px">${when}</div></div><div class="say">${say}<div style="margin-top:4px;font-size:12px">Market character: ${charText(s,c)}${saudiSym(st.sym)?`<div style="margin-top:3px">${saudiNote(st.sym,s.d[c])}</div>`:""}</div>${s.pulse?(()=>{const pa=pulseAdvice(s,c);return `<div class="pulse-say ${pa.tone}"><b>Momentum Pulse · ${PULSE_STATE[s.pulse.state[c]]}</b> ${pa.a}</div>`})():""}</div>
   <div class="acts">${gauge}<div style="display:grid;gap:6px"><button class="btn sm" id="use-plan">Trade this plan</button>${REPLAY?"":`<div style="display:flex;gap:6px"><button class="btn ghost sm" id="sig-prev">◀ prev</button><button class="btn ghost sm" id="sig-next">next ▶</button></div>`}</div></div>
   <div class="row3"><div class="lvls"><div><span>${plan.limit?"limit entry":"entry ≈"}</span><b>${fp(plan.entry)}</b></div><div><span>${plan.hasStop?"stop":"risk line (3 ATR)"}</span><b class="down">${fp(plan.stop)}</b></div><div><span>exit: ${EXIT_SHORT[plan.exitKey]}</span><b class="acc">${isF(plan.exitLevel)?fp(plan.exitLevel):"RSI-based"}</b></div><div><span>20-day mean</span><b>${fp(plan.mean)}</b></div><div><span>ATR</span><b>${fp(plan.atr)}</b></div></div><div class="chips">${chips}</div></div>`}
 $("sigbar").addEventListener("click",e=>{const id=e.target.id;
@@ -792,12 +959,18 @@ function inspector(i){const el=$("inspbody"),d=D();if(!d){el.innerHTML="";return
  h+=`<div class="sec">reversal radar · what moves the score (weight × how unusual today is)</div><div class="radar">`+RES.names.map(k=>{const v=s.C[k][i],w=Math.abs(v||0)/mx*50,raw=s.X[k][i],ev=signEvidence(k);
   const shown=k==="fear_rank"||k==="vol_rank"?pct(raw,0):k==="down_streak"?fmt(raw,0):k==="lower_wick"?pct(raw,0):fmt(raw,2);
   return `<div class="rr" title="${esc(signMeaning(k))} Research: top-vs-bottom-third trade difference ${ev?ev.map(x=>(x>0?"+":"")+x+"bp").join(" / "):""} (87 stocks / TSLA 11-17 / TSLA 18-26)."><span class="nm">${esc(signLabel(k))}</span><span class="vv">${shown}</span><div class="cb"><i style="left:${(v||0)>=0?50:50-w}%;width:${w}%;background:${(v||0)>=0?"#4fd1a5":"#e66767"}"></i></div></div>`}).join("")+`</div>`;
- const stp=lastStep(s,i);if(stp)h+=`<div class="note" style="margin-top:4px">weights: ${stp.own<30?"research (not enough own setups yet)":`${Math.round(100*(1-stp.lam))}% research, ${Math.round(100*stp.lam)}% this stock (${stp.own} own setups)`} · refit ${stp.d}</div>`;
+ const stp=lastStep(s,i);if(stp)h+=`<div class="note" style="margin-top:4px">weights: ${!ECFG.adapt?`fixed research weights (v9) · ${stp.own} own setups used for the chance-of-profit calibration`:stp.own<30?"research (not enough own setups yet)":`${Math.round(100*(1-stp.lam))}% research, ${Math.round(100*stp.lam)}% this stock (${stp.own} own setups)`} · updated ${stp.d}</div>`;
  // other quick reads
- h+=`<div class="sec">quick read</div><table class="t"><tr><td>RSI(2) / RSI(14)</td><td class="n">${fmt(s.rsi2[i],0)} / ${fmt(s.rsi14[i],0)}</td></tr><tr><td>streak · close in range (IBS)</td><td class="n">${fmt(s.streak[i],0)} · ${pct(s.ibs[i],0)}</td></tr>
+ h+=`<div class="sec">quick read</div><table class="t">${(()=>{const b=bbAt(d.c,i);return b?`<tr><td>Bollinger %B · band width</td><td class="n">${b.pb.toFixed(2)} · ${(100*b.bw).toFixed(1)}%</td></tr>`:""})()}<tr><td>RSI(2) / RSI(14)</td><td class="n">${fmt(s.rsi2[i],0)} / ${fmt(s.rsi14[i],0)}</td></tr><tr><td>streak · close in range (IBS)</td><td class="n">${fmt(s.streak[i],0)} · ${pct(s.ibs[i],0)}</td></tr>
   <tr><td>volume vs normal</td><td class="n">${isF(s.volz[i])?(s.volz[i]>=0?"+":"")+s.volz[i].toFixed(1)+"σ":"—"}</td></tr><tr><td>range / gap (ATR)</td><td class="n">${fmt(s.rangex[i],2)} / ${fmt(s.gap[i],2)}</td></tr>
   <tr><td>market character (500d autocorr)</td><td class="n">${isF(s.ac[i])?(s.ac[i]>=0?"+":"")+s.ac[i].toFixed(3):"—"} · ${s.mode[i]===-1?"momentum":"reversal"}</td></tr>
   <tr><td>Yang-Zhang vol (5/20/60d)</td><td class="n">${fmt(s.yz5[i],0)} / ${fmt(s.yz20[i],0)} / ${fmt(s.yz60[i],0)}%</td></tr><tr><td>GARCH next-day vol</td><td class="n">${fmt(s.garch[i],0)}%</td></tr><tr><td>VIX · rank</td><td class="n">${fmt(s.vix[i],1)} · ${pct(s.frank[i],0)}</td></tr></table>`;
+ if(s.pulse&&isF(s.pulse.M[i])){const P=s.pulse,E=pulseEvidence(s,i),pa=pulseAdvice(s,i);
+  h+=`<div class="sec">momentum pulse · ${PULSE_STATE[P.state[i]].toLowerCase()}</div><div class="pgrid">`+[["5d",P.mh[0][i]],["10d",P.mh[1][i]],["20d",P.mh[2][i]],["60d",P.mh[3][i]],["pulse",P.M[i]]].map(([nm,v])=>{const w=isF(v)?Math.min(50,Math.abs(v)/3*50):0;
+   return `<div class="rr"><span class="nm">${nm}</span><span class="vv">${isF(v)?(v>=0?"+":"")+v.toFixed(2)+"σ":"—"}</span><div class="cb"><i style="left:${v>=0?50:50-w}%;width:${w}%;background:${v>=0?"#26a69a":"#ef5350"}"></i></div></div>`}).join("")+`</div>
+  <div class="note" style="margin:4px 0">Each horizon is the return over that many days divided by the volatility expected over it, so ±2σ is a big move for <i>this</i> stock. Path efficiency ${isF(P.er[i])?pct(P.er[i],0):"—"} (100% = a straight line) · 2-year rank ${isF(P.pct[i])?pct(P.pct[i],0):"—"} · ${P.acc[i]>0?"accelerating":"decelerating"}.</div>
+  <div class="pulse-say ${pa.tone}">${pa.a}</div>
+  <div class="note" style="margin-top:6px">What happened next on <b>this stock</b> (next 10 days vs its own average, bars known before this date):</div><table class="t">`+E.map(e=>`<tr${(e.k===String(P.state[i]))?' style="background:rgba(195,194,183,.08)"':""}><td>${e.n}</td><td class="n">${e.cnt}</td><td class="n ${e.cnt>=30?cl(e.ex):""}">${e.cnt>=30?spct(e.ex,2):e.cnt?'<span class="note">too few</span>':"—"}</td></tr>`).join("")+`</table>`}
  h+=`<div class="sec">stock-specific z-zones · what happened next from each zone (data before this bar)</div>`+zoneTable(s,i);
  const A=analogs(s,i);
  if(A){h+=`<div class="sec">look-alike setups · ${A.pick.length} most similar past ${s.setup[i]?"setups":"bars"} (signs + RSI(2))</div>${fanSvg(A)}<div class="note">${pct(A.up5,0)} were higher 5 days later · system exit averaged <span class="${cl(A.trade)}">${spct(A.trade,2)}</span> (${pct(A.win,0)} won). Median path green; bands 25–75% and 10–90%. Most recent: ${A.dates.slice().sort().slice(-3).join(", ")}.</div>`}
@@ -808,14 +981,15 @@ function inspector(i){const el=$("inspbody"),d=D();if(!d){el.innerHTML="";return
  el.innerHTML=h}
 
 // ------------------------------------------------ scanner
-function drawScan(){
+function drawScan(){try{drawPlan()}catch(e){console.error(e)}
+
  if(!RES){clr("scan-t",'<tr><td class="empty">Run the system in the Data tab first.</td></tr>');return}
  const rows=RES.syms.filter(SY).map(sym=>{const s=SY(sym),i=s.d.length-1,stp=lastStep(s,i),th=thirdOf(s.score[i]);return {sym,s,i,th,own:stp&&stp.thirds[th]}});
- rows.sort((a,b)=>(b.s.sig[b.i]-a.s.sig[a.i])||(b.s.setup[b.i]-a.s.setup[a.i])||(b.s.score[b.i]-a.s.score[a.i]));
- $("scan-note").innerHTML=`${rows.filter(r=>r.s.sig[r.i]).length} signal(s) and ${rows.filter(r=>r.s.setup[r.i]).length} setup(s) on the latest bar across ${rows.length} symbol(s). Click a row to open it on the chart.`;
+ rows.sort((a,b)=>((b.s.aplus?b.s.aplus[b.i]:0)-(a.s.aplus?a.s.aplus[a.i]:0))||(b.s.sig[b.i]-a.s.sig[a.i])||(b.s.setup[b.i]-a.s.setup[a.i])||(b.s.score[b.i]-a.s.score[a.i]));
+ $("scan-note").innerHTML=`${rows.filter(r=>r.s.aplus&&r.s.aplus[r.i]).length} A+ · ${rows.filter(r=>r.s.sig[r.i]).length} signal(s) and ${rows.filter(r=>r.s.setup[r.i]).length} setup(s) on the latest bar across ${rows.length} symbol(s). Click a row to open it on the chart.`;
  const zn=["<2.5%","2.5–10%","10–25%","25–75%","75–90%","90–97.5%",">97.5%"];
  $("scan-t").innerHTML="<tr>"+["symbol","date","close","1d","RSI(2)","character","state","edge score","chance of profit","this stock, same third","zone","vol rank","vol trend","fear rank","top signs"].map(h=>`<th>${h}</th>`).join("")+"</tr>"+rows.map(({sym,s,i,th,own})=>{
-  const state=s.sig[i]===2?'<span class="vp long" style="padding:1px 6px;color:#c08cff">momentum buy</span>':s.sig[i]?`<span class="vp long" style="padding:1px 6px">${s.side>0?(ECFG.entry==="limit"?"limit buy":"buy"):"sell"}</span>`:s.setup[i]?'<span class="vp watch" style="padding:1px 6px">weak setup</span>':'<span class="note">—</span>';
+  const ap=s.aplus&&s.aplus[i],state=s.sig[i]===3||(s.sgood&&s.sgood[i]&&!s.setup[i]&&ECFG.shorts!=="off")?`<span class="vp short" style="padding:1px 6px">${s.sig[i]===3?"short signal":"short setup"}</span>`:ap&&s.sig[i]===1?`<span class="vp long aplus-b" style="padding:1px 6px">A+ ${s.side>0?(ECFG.entry==="limit"?"limit buy":"buy"):"sell"}</span>`:s.sig[i]===2?'<span class="vp long" style="padding:1px 6px;color:#c08cff">momentum buy</span>':s.sig[i]?`<span class="vp long" style="padding:1px 6px">${s.side>0?(ECFG.entry==="limit"?"limit buy":"buy"):"sell"}</span>`:s.setup[i]?'<span class="vp watch" style="padding:1px 6px">weak setup</span>':'<span class="note">—</span>';
   return `<tr data-s="${esc(sym)}"><td>${esc(sym)}</td><td>${s.d[i]}</td><td>${fp(s.c[i])}</td><td class="${cl(s.c[i]/s.c[i-1]-1)}">${spct(s.c[i]/s.c[i-1]-1,1)}</td><td>${fmt(s.rsi2[i],0)}</td><td>${s.mode[i]===-1?"trends":"reverts"} (${isF(s.ac[i])?(s.ac[i]>=0?"+":"")+s.ac[i].toFixed(2):"—"})</td><td>${state}</td><td style="color:${THIRD_COL[th]}">${fmt(s.score[i],1)}</td><td>${pct(s.P[i],0)}</td><td>${own&&own.n?`${spct(own.avg,2)} (n ${own.n})`:"—"}</td><td>${s.zone[i]>=0?zn[s.zone[i]]:"—"}</td><td>${pct(s.vrank[i],0)}</td><td>${isF(s.vterm[i])?(s.vterm[i]>0?"rising":"falling"):"—"}</td><td>${pct(s.frank[i],0)}</td><td style="text-align:left">${topSigns(s,i,3).map(([k,v])=>`<span class="${v>0?"up":"down"}">${v>0?"▲":"▼"}${esc(chipName(k,v))}</span>`).join(" ")}</td></tr>`}).join("")}
 $("scan-t").addEventListener("click",e=>{const tr=e.target.closest("tr[data-s]");if(!tr)return;const sym=tr.dataset.s;focusDate(sym,DS[sym].d[DS[sym].d.length-1])});
 
@@ -948,9 +1122,9 @@ $("impstep").addEventListener("input",e=>{e.target.dataset.touched=1;impBars()})
 function drawPerf(){if(!RES){needRun("pk");["eqplot","rhist","exits","monthly"].forEach(id=>clr(id));$("attr").innerHTML="";return}
  const p=RES.metrics.portfolio,c=RES.metrics.pooled,bt=RES.bt,K=(l,v,n="",cls="")=>`<div class="k"><div class="lab">${l}</div><div class="v ${cls}">${v}</div><div class="note">${n}</div></div>`;
  $("pk").innerHTML=K("Sharpe",fmt(p.sharpe,2),"buy&hold "+fmt(p.bh_sharpe,2),p.sharpe>0?"pos":"neg")+K("Sortino",fmt(p.sortino,2))+K("CAGR",pct(p.cagr,2))+K("Max DD",pct(p.max_drawdown),"buy&hold "+pct(p.bh_max_drawdown))
-  +K("Trades",p.n_trades,fmt(p.trades_per_year,1)+"/yr")+K("Win rate",pct(p.win_rate))+K("Expectancy",fmt(p.expectancy_R,2,"R"),"",p.expectancy_R>0?"pos":"neg")+K("Profit factor",fmt(p.profit_factor,2))+K("OOS AUC",fmt(c.roc_auc),"Brier skill "+fmt(c.brier_skill,3))+K("All setups, no filter",fmt(RES.metrics.portfolioAll.expectancy_R,2,"R"),"Sharpe "+fmt(RES.metrics.portfolioAll.sharpe,2)+" · "+RES.metrics.portfolioAll.n_trades+" trades")+K("Time in market",pct(RES.bt.exposure,0),"total return "+pct(p.total_return,0));
+  +K("Trades",p.n_trades,fmt(p.trades_per_year,1)+"/yr")+K("Win rate",pct(p.win_rate))+K("Expectancy",fmt(p.expectancy_R,2,"R"),"",p.expectancy_R>0?"pos":"neg")+K("Profit factor",fmt(p.profit_factor,2))+K("OOS AUC",fmt(c.roc_auc),"Brier skill "+fmt(c.brier_skill,3))+K("All setups, no filter",fmt(RES.metrics.portfolioAll.expectancy_R,2,"R"),"Sharpe "+fmt(RES.metrics.portfolioAll.sharpe,2)+" · "+RES.metrics.portfolioAll.n_trades+" trades")+K("Time in market",pct(RES.bt.exposure,0),"total return "+pct(p.total_return,0))+(RES.metrics.portfolioAPlus&&RES.metrics.portfolioAPlus.n_trades?K("A+ only (comparison)",pct(RES.metrics.portfolioAPlus.total_return,0),"Sharpe "+fmt(RES.metrics.portfolioAPlus.sharpe,2)+" · "+RES.metrics.portfolioAPlus.n_trades+" trades · max DD "+pct(RES.metrics.portfolioAPlus.max_drawdown,0)):"");
  if(!bt.eq.length){clr("eqplot",'<div class="empty">No out-of-sample period to simulate.</div>');return}
- Plotly.react("eqplot",[{x:bt.d,y:bt.eq,name:"strategy (score filter)",line:{color:C.blue,width:2},hovertemplate:"strategy %{y:,.0f}<extra></extra>"},{x:RES.btAll.d,y:RES.btAll.eq,name:"all RSI(2) setups",line:{color:"#8a8a85",width:1.2,dash:"dot"},hovertemplate:"all setups %{y:,.0f}<extra></extra>"},{x:bt.d,y:bt.bh,name:"buy & hold (equal weight)",line:{color:C.muted,width:1.3},hovertemplate:"buy & hold %{y:,.0f}<extra></extra>"},
+ Plotly.react("eqplot",[{x:bt.d,y:bt.eq,name:"strategy (score filter)",line:{color:C.blue,width:2},hovertemplate:"strategy %{y:,.0f}<extra></extra>"},{x:RES.btAll.d,y:RES.btAll.eq,name:"all RSI(2) setups",line:{color:"#8a8a85",width:1.2,dash:"dot"},hovertemplate:"all setups %{y:,.0f}<extra></extra>"},{x:RES.btA.d,y:RES.btA.eq,name:"A+ only",line:{color:"#fab219",width:1.4,dash:"dash"},hovertemplate:"A+ only %{y:,.0f}<extra></extra>"},{x:bt.d,y:bt.bh,name:"buy & hold (equal weight)",line:{color:C.muted,width:1.3},hovertemplate:"buy & hold %{y:,.0f}<extra></extra>"},
   {x:bt.d,y:bt.dd,name:"strategy drawdown",fill:"tozeroy",line:{color:C.red,width:1},fillcolor:rgba(C.red,.35),yaxis:"y2",hovertemplate:"DD %{y:.1f}%<extra></extra>"},{x:bt.d,y:bt.bhdd,name:"buy & hold drawdown",line:{color:C.muted,width:1},yaxis:"y2",hovertemplate:"B&H DD %{y:.1f}%<extra></extra>"}],
   base(520,{hovermode:"x unified",hoversubplots:"axis",yaxis:{domain:[.34,1],type:"log",gridcolor:C.grid},yaxis2:{domain:[0,.3],ticksuffix:"%",gridcolor:C.grid},legend:{x:.005,y:.99,yanchor:"top",orientation:"h",bgcolor:"rgba(26,26,25,.75)",font:{size:10}},
    annotations:[{text:"equity · strategy vs buy & hold",xref:"paper",yref:"paper",x:1,y:1,xanchor:"right",yanchor:"bottom",showarrow:false,font:{size:10,color:C.muted}},{text:"underwater (drawdown)",xref:"paper",yref:"paper",x:1,y:.3,xanchor:"right",yanchor:"bottom",showarrow:false,font:{size:10,color:C.muted}}]}),CFG);
@@ -984,8 +1158,120 @@ window.claude?.use?.("downloads").then(dl=>{if(!dl)return;const b=$("dlcsv");b.h
 
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
-<h2 style="font-size:18px">How this system was built, and what the evidence says (v6)</h2>
+<h2 style="font-size:18px">How this system was built, and what the evidence says (v13)</h2>
 <p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>v13: 193 Tadawul stocks, 2002–2020</h2>
+<p><b>Data:</b> the Tadawul file (199 stocks; 193 with 300+ days), 2001-12-31 to 2020-03-05. Prices are already adjusted for corporate actions as of 2020.</p>
+<ul><li>Removed: 1,165 zero-price rows, 2 spike glitches, and flat no-trade rows.</li>
+<li>Al Rajhi and Aramco were used to design the v12 rule, so every decision test below uses the other 191 stocks.</li>
+<li>Only companies still listed in 2020 are included (survivorship).</li></ul>
+<p><b>The v12 Saudi rule passed on fresh stocks</b> (test written down first):</p>
+<table class="t"><tr><th>191 stocks, real engine</th><th>momentum mode</th><th>dip-buy mode</th><th>auto</th><th>buy &amp; hold</th></tr>
+<tr><td>mean Sharpe</td><td><b>0.31</b></td><td>−0.04</td><td>0.16</td><td>0.22</td></tr><tr><td>stocks with Sharpe &gt; 0</td><td>72%</td><td>40%</td><td></td><td></td></tr></table>
+<ul><li>Momentum beat dip-buying on 75% of stocks, in every sector (Materials 90%, Consumer Staples 94%, Financials 76%) and every liquidity group.</li>
+<li>Momentum entries beat random days by <b>+0.42%</b> (2002–07), <b>+0.20%</b> (2008–13) and <b>+0.17%</b> (2014–20) per trade, all significant. The edge is shrinking as the market matures.</li></ul>
+<p><b>Behaviour:</b></p>
+<ul><li>89–94% of stocks trend day to day in every period. The effect is strongest in the most liquid names.</li>
+<li><b>Limit-up close:</b> the next morning opens +2.6% to +3.4% higher, then fades 0.5–1.3% by the close. Buying that open loses; holders can sell into it.</li>
+<li><b>Limit-down close:</b> the next morning opens 2.3–3.8% lower.</li>
+<li><b>Gap-down opens</b> (&lt; −2%) rebounded about +1% open-to-close in every liquidity group and both periods (t 12–18). Gap-up opens faded −0.7% after 2013. Daily data can't prove these open prices were fillable, so it's shown as a day-trade idea only.</li>
+<li><b>Weekly momentum:</b> last week's top fifth beat last week's bottom fifth by +0.30% the next week (t 2.4). One-month to one-year rankings showed nothing.</li>
+<li><b>Lead-lag:</b> after TASI rises more than 1%, the average stock gains +0.28% the next day (t 4.2). Big caps lead small caps.</li>
+<li><b>Calendar:</b> the day before a long holiday averaged +0.51% (t 3.3, n 39). Ramadan showed no reliable effect for the average stock. The earlier Ramadan finding came from three large names only, so it's withdrawn.</li></ul>
+<p><b>Tested and not adopted</b> (each had to help in both halves and on the post-2020 Al Rajhi, Aramco and TASI data):</p>
+<ul><li>Momentum only in a TASI uptrend: helped before 2013, hurt after.</li>
+<li>Skipping signals on more than 2× normal volume: helped in both halves (+0.1 Sharpe) but hurt Al Rajhi and Aramco after 2020.</li>
+<li>Selling at the next open after a limit-up close.</li>
+<li>Pullback-turn entries: better on only 42% and 49% of stocks.</li></ul>
+<p><b>Built in:</b> all 193 stocks are in the Data tab library. The "Update data with Claude" button starts a Claude Code session on your account that downloads newer prices and writes them into the terminal. Older history is rescaled automatically for bonus shares and splits.</p>
+<h2>v12: the Saudi market</h2>
+<p><b>Data:</b> Al Rajhi Bank (1120, 2013–2026), Saudi Aramco (2222, Dec 2019 – Dec 2025) and the TASI index (2001–2026). The Al Rajhi file contained 17 corrupt rows from an unadjusted feed (prices about 2.46× too high, no volume), mostly in 2013. Aramco had 35 flat holiday rows. The importer now drops such rows and reads volumes written as "5.05M".</p>
+<p><b>Character:</b> Saudi stocks trend from one day to the next, the opposite of US stocks.</p>
+<table class="t"><tr><th></th><th>lag-1 autocorrelation</th><th>CAGR</th><th>max drawdown</th></tr>
+<tr><td>Al Rajhi</td><td>+0.03 to +0.14 by period</td><td>10.3%</td><td>−45%</td></tr><tr><td>Aramco</td><td>+0.07 / +0.17</td><td>1.1%</td><td>−29%</td></tr><tr><td>TASI</td><td>+0.03 to +0.14</td><td>6.0%</td><td>−80%</td></tr></table>
+<p><b>Dip-buying has little or no edge here.</b> After RSI(2) &lt; 10, the next 5 and 10 days were normal (t ≈ 0) on all three. The engine's dip trades made Sharpe 0.14 on Al Rajhi and 0.03 on Aramco.</p>
+<p><b>Momentum works.</b> Buying the open after RSI(2) &gt; 90 and selling on a close below the 5-day average, compared with random days:</p>
+<ul><li><b>Al Rajhi:</b> +0.49% per trade (2013–19) and +0.56% (2020–26). As a system: Sharpe 0.94, 11.0% a year, max drawdown −13%, vs buy &amp; hold 0.56, 10.5%, −45%.</li>
+<li><b>TASI:</b> +0.81%, +0.29%, +0.27% per trade across periods.</li>
+<li><b>Aramco:</b> +0.16%, not significant. As a system: Sharpe 0.36 vs buy &amp; hold 0.12.</li></ul>
+<p>The default "auto" mode missed this: Saudi stocks' autocorrelation (about +0.06) sits just under the 0.08 switch. So v12 runs Saudi symbols in momentum mode (Settings → Saudi stocks).</p>
+<p><b>Calendar:</b></p>
+<ul><li><b>Ramadan:</b> +0.13% to +0.17% a day vs about 0 in other months, on all three (t 1.5–2.1). Shown as a note, not a rule.</li>
+<li><b>Weekdays:</b> Sunday weak and Tuesday strong, but none is reliable (|t| ≤ 2).</li></ul>
+<p><b>Shorts:</b> too few signals to judge, and retail short selling in Saudi is restricted.</p>
+<p><b>Limits:</b> this is two stocks. Upload 20–30 Saudi stocks to confirm that momentum mode suits the market broadly. Your Aramco file ends on 2025-12-31.</p>
+<h2>v11: short trades (optional, off by default)</h2>
+<p><b>The rule.</b> Sell an overbought bounce: RSI(2) above 90 with a top-third short score, only while the stock is below its 200-day average. When you choose a market file, the market must also be below its 200-day average. The order is a limit sell 0.5 ATR above the close, valid for the next session. Cover on the first close below the previous day's low or after the max hold. Every short has a 3-ATR stop and uses half a slot.</p>
+<p><b>What the tests found</b> (written down before testing, same protocol as v9):</p>
+<table class="t"><tr><th>short rule</th><th>6 long histories, test Sharpe</th><th>87 stocks Sharpe</th><th>verdict</th></tr>
+<tr><td>Plain mirror (sell RSI(2) &gt; 90)</td><td>−0.30</td><td>−0.91</td><td>loses; a squeeze blew up a test account</td></tr>
+<tr><td>Only below the 200-day average</td><td>−0.13</td><td>−0.45</td><td>loses</td></tr>
+<tr><td>Only when the Pulse is negative</td><td>−0.04</td><td>−0.74</td><td>loses</td></tr>
+<tr><td>Below 200-day + 3-ATR stop</td><td>−0.14</td><td>−0.38</td><td>loses</td></tr>
+<tr><td>+ market below its 200-day average</td><td>−0.08</td><td>−0.67</td><td>loses in bull periods</td></tr></table>
+<p>On fresh stocks, shorts paid only in bear markets: +1.1% per short on 2007–2012 stocks (2008 inside), and +3.8% on 18 shorts in the 2020 crash with the market filter. China lost (−6.9% on 5 shorts).</p>
+<p>Inside the full long + short book (half size, stop, downtrend only), Sharpe changed by −0.06 to +0.07. That's roughly nothing in normal markets and a small help in crashes.</p>
+<p><b>Hedging instead</b> (short the index while long trades are open) lowered Sharpe on all four data sets, because much of the dip-buy profit comes from the market bouncing too.</p>
+<p><b>Use shorts as a bear-market tool.</b> Turn them on when your market file is below its 200-day average, keep the stop, and keep them small. Short losses are open-ended.</p>
+<p><b>Bug fixed in v11.</b> When a held stock did not trade on a given day (TASI vs US holidays), its value was miscounted while sizing a new trade. Long trades were capped by cash so the effect was small: the 6-market Sharpe went 0.77 → 0.76, drawdown −15.0% → −14.5%. All single-market and same-calendar results are unchanged.</p>
+<h2>v9: whole-system stress test</h2>
+<p><b>Method.</b> I tested the full engine, the same code that runs in this page, on two kinds of data:</p>
+<ul><li><b>Development data:</b> your 6 long histories (before 2013 = design, 2013+ = test) and the 87 StockNet stocks.</li>
+<li><b>Lockbox:</b> 432 stocks the system had never seen, run once after the changes were frozen. These were KDD17 (47 US stocks, 2007–2012/16), CMIN-US (106 US large caps, 2018–2021) and CMIN-CN (279 China CSI 300 stocks, 2018–2021, with T+1 and 10bp costs).</li></ul>
+<p>I wrote the candidate list and the acceptance rule before running them. A change had to improve Sharpe in the design period, the test period, the 6-market portfolio and the 87-stock portfolio. It also could not worsen drawdown by more than 20%, and had to win on at least 4 of 6 markets.</p>
+<p><b>Is the edge real?</b> I replaced the signals with random entry days at the same frequency, keeping the same exits:</p>
+<ul><li>The real system beat all 20 random runs on the long histories (Sharpe 0.53 vs 0.28 average), on the 87 stocks (1.23 vs 0.72) and on KDD17 (0.45 vs −0.09).</li>
+<li>Per reversal trade on US stocks, the edge over random entries was:</li></ul>
+<table class="t"><tr><th>period</th><th>real</th><th>random</th><th>edge per trade</th></tr>
+<tr><td>1990–2007</td><td>+3.01%</td><td>+0.45%</td><td>+2.56% ± 0.86</td></tr><tr><td>2008–2012</td><td>+1.28%</td><td>+0.54%</td><td>+0.74% ± 0.62</td></tr>
+<tr><td>2013–2017</td><td>+1.16%</td><td>+0.33%</td><td>+0.82% ± 0.26</td></tr><tr><td>2018–2021</td><td>+1.06%</td><td>+0.59%</td><td>+0.47% ± 0.43</td></tr><tr><td>2022–2026</td><td>+2.28%</td><td>+0.37%</td><td>+1.90% ± 1.29</td></tr></table>
+<p>The edge is real in every period but smaller since 2008. In the 2018–2021 US bull market, random entries made twice as many trades and so a higher portfolio Sharpe. In China the reversal signal had <b>no edge</b> over random (0.73% vs 0.81% per trade), so do not use it there without more testing.</p>
+<p><b>Robustness of v8</b> (plateaus, not spikes, are what you want):</p>
+<ul><li>RSI(2) trigger 5–20, limit depth 0–1 ATR, max hold 10–20 and the exit rule all gave similar results. Nothing hinges on one exact value.</li>
+<li>Price stops hurt in every test.</li>
+<li>Costs matter. At 5 / 10 / 20bp per side, the 87-stock Sharpe was 1.23 / 1.02 / 0.59. Use limit orders and liquid stocks.</li></ul>
+<table class="t"><tr><th>candidate</th><th>development result</th><th>decision</th></tr>
+<tr><td>Fixed research weights (no per-stock refit)</td><td>better on all 6 markets, both periods, both portfolios</td><td><b>adopted</b></td></tr>
+<tr><td>Refit with n0 = 1000</td><td>passed, but fixed weights are simpler and as good</td><td>not needed</td></tr>
+<tr><td>Exit on RSI(2) &gt; 70</td><td>passed alone; no gain on top of fixed weights. Lockbox: mixed.</td><td>kept as an option</td></tr>
+<tr><td>Exit at the next open</td><td>higher Sharpe, but 6-market drawdown −16% → −22%. Lockbox: worse on US 2018–21 and China.</td><td>rejected</td></tr>
+<tr><td>Momentum only if autocorrelation is significant</td><td>worse in the test period</td><td>rejected</td></tr>
+<tr><td>Inverse-volatility position size</td><td>lower drawdowns, slightly lower Sharpe on single markets</td><td>rejected</td></tr>
+<tr><td>Limit order valid 2 days</td><td>worse on 4 of 4 measures</td><td>rejected</td></tr></table>
+<p><b>Lockbox</b> (10-slot portfolios, never seen before; v8 → v9, with equal-weight buy &amp; hold):</p>
+<ul><li>KDD17: Sharpe 0.45 → 0.45, drawdown −14.8% → −13.0% (buy &amp; hold 0.27, −46%)</li>
+<li>CMIN-US: 0.65 → 0.67 (buy &amp; hold 1.19)</li>
+<li>CMIN-CN: 0.66 → 0.72 (buy &amp; hold 1.69)</li></ul>
+<p>v9 met the rule, but the gain is small. The honest expectation for a diversified portfolio on new data is a <b>Sharpe of about 0.45–0.7</b> (KDD17 95% interval 0.09–0.90), not the 1.3 seen on the 87 development stocks. Those 87 trained the score weights, so they flatter it. The fresh sets are today's big companies looked at backwards (survivorship bias), which flatters buy &amp; hold, and the period matters.</p>
+<p><b>Your six markets, v8 → v9 Sharpe (all years):</b> AAPL 0.71 → 0.87, AMZN 0.58 → 0.64, F 0.34 → 0.45, MSFT 0.53 → 0.54, TASI 0.63 → 0.71, TSLA 0.37 → 0.40.</p>
+<p><b>Bug fixed in v9.</b> In a portfolio mixing TASI with US stocks, a limit order was dropped when the next calendar day was a US-only trading day. Fixing it raised the 6-market Sharpe from 0.63 to 0.72.</p>
+<p><b>What the tests say about the options:</b></p>
+<ul><li><b>Others half size</b> lowered drawdowns on every data set with the same or better Sharpe: fresh portfolios −13%/−21%/−17% → −9%/−14%/−13%, single stocks about −30%. Total return is lower. It's the best choice if drawdowns bother you.</li>
+<li><b>Reversal only</b> beat "auto" on all three fresh stock sets (KDD17 0.45 → 0.56). Momentum mode helps index-like markets such as TASI and F, but on individual stocks its trades lost money.</li>
+<li><b>Idle cash in an index fund</b> roughly doubles return (CMIN-US 9.5% → 25.6% a year), but drawdowns become index-sized (−21% → −39%). That's more money, not better risk-adjusted money.</li>
+<li><b>More slots</b> (more stocks at once) give a smoother ride and lower drawdowns, but each trade is smaller.</li></ul>
+<h2>v8: the A+ grade</h2>
+<p><b>Definition.</b> An A+ setup is a top-third reversal setup that also closed in the bottom 13% of the day's range (internal bar strength ≤ 0.13) <i>and</i> has a Momentum Pulse below −0.5σ. The two thresholds are the medians of the setups before 2013. Both conditions were chosen from 14 candidates because they held in both periods. A 200-day-average filter, VIX change, volatility of volatility and longer trends did not.</p>
+<p><b>Per trade it is clearly better.</b> In the engine's own backtest, A+ trades averaged roughly twice the return of the other top-third trades on every long history:</p>
+<table class="t"><tr><th></th><th>A+</th><th>other top-third</th></tr>
+<tr><td>TSLA</td><td>+5.3% (8 trades, 88% won)</td><td>+2.6% (33, 76%)</td></tr><tr><td>MSFT</td><td>+2.4% (33, 76%)</td><td>+1.6% (93, 72%)</td></tr>
+<tr><td>AMZN</td><td>+6.7% (15, 93%)</td><td>+2.6% (55, 76%)</td></tr><tr><td>AAPL</td><td>+3.3% (16, 75%)</td><td>+1.7% (29, 72%)</td></tr>
+<tr><td>F</td><td>+2.3% (45, 67%)</td><td>+0.8% (115, 71%)</td></tr><tr><td>TASI</td><td>+1.6% (8, 75%)</td><td>−1.1% (20, 50%)</td></tr></table>
+<p><b>But as a filter it makes less money.</b> The other top-third trades are still profitable, so skipping them halves total return. On the 6-market portfolio, "A+ only" made +428% (Sharpe 0.58) against +952% (Sharpe 0.63). <b>Putting the two signs into the score did not help either.</b> A refit with 11 signs scored slightly worse out of sample than the current 9 weights, so the score is unchanged.</p>
+<p><b>How to use it: position size</b> (Settings → position size):</p>
+<ul><li><b>A+ double size:</b> on the 6-market portfolio, total +952% → +1,521% and CAGR 4.3% → 5.1%, with the same Sharpe (0.63) and a deeper max drawdown (−16.5% → −18.9%). This is more money, not better risk-adjusted money.</li>
+<li><b>Others half size:</b> on single markets, Sharpe stays the same or improves on all six (TSLA 0.37 → 0.43, TASI 0.63 → 0.67) and drawdowns shrink sharply (F −54% → −31%, TSLA −34% → −17%, TASI −18% → −9%). Total return is lower.</li>
+<li>A+ setups are taken first when several stocks signal on the same day.</li></ul>
+<h2>Momentum Pulse (the pane under the chart)</h2>
+<p>The pulse measures momentum over 5, 10, 20 and 60 days. Each one is the return divided by the move this stock's own volatility would normally produce over that period (Yang-Zhang, 20 days), so +2σ means "a big move for this stock". The thick line is their smoothed average. The ribbon spans the four horizons: teal or red when all four agree, violet when they disagree, and brighter when the path was straight (Kaufman efficiency ratio). Bars show acceleration (the line now vs 3 days ago). The dotted amber lines are this stock's own 5% and 95% momentum levels over the last two years. Amber glowing dots mark exhaustion (momentum at a 2-year extreme and turning), triangles mark thrusts (crossing ±1σ with all horizons agreeing), and dashed violet lines mark divergences on both panes (price makes a new low or high that momentum does not confirm).</p>
+<p><b>What I tested, and what I found.</b> The design sample was the six long series before 2013; the test was 2013 onward plus the 87 stocks. The results contradict some trading folklore, so the advice follows the evidence:</p>
+<ul>
+<li><b>"Avoid mean reversion in a downtrend" is false on stocks.</b> Reversal setups taken while the pulse showed a strong down-trend did <i>better</i>: +1.70% per trade in the test against +1.09% in no-trend conditions (design: +2.11% vs +1.61%). A strong, straight decline into an oversold close is capitulation. The pulse calls it that and does not warn you off.</li>
+<li><b>What really says "avoid mean reversion" is the market's character.</b> When a market keeps moving the same way from day to day (500-day autocorrelation above 0.08, as TASI does), dip-buying fails and the system switches to momentum. The pulse shows "AVOID MEAN REVERSION" there.</li>
+<li><b>Chasing strength on a reverting stock is bad.</b> After a strong up-trend state, the next 10 days were 0.31% below the stock's average (t = −2.4).</li>
+<li><b>Momentum entries work in momentum markets, not single US stocks.</b> On TASI, the up-trend state was +1.44% over 10 days before 2013 (t = 2.3) but only +0.07% after. That is weak, so treat it as a tilt, not a signal.</li>
+<li><b>Exhaustion, thrusts and divergences had no reliable edge</b> (|t| &lt; 1 in both samples). They are shown because they describe what is happening, and the inspector shows how each one worked on the loaded stock. The engine never trades on them.</li>
+</ul>
 <h2>What works</h2>
 <p><b>1. A short-term oversold trigger with a quick exit.</b> Buy when the 2-day RSI closes below 10 (Connors &amp; Alvarez). Sell on the first close back above the 5-day average, at a 3-ATR stop, or after 10 days. This was profitable on 80% of the 87 stocks and in both Tesla periods (2011–17: +0.56% per trade; 2018–26: +0.23%, about 70% winners). In a portfolio of the 87 stocks, 2015–2017, it earned a Sharpe ratio around 1.6–1.7, against 0.96 for buy &amp; hold. The exit matters more than the entry: holding a fixed 5 days instead cut the Sharpe ratio to about 0.5.</p>
 <p><b>2. Not every setup is equal.</b> Within RSI(2) setups, nine signs pointed the same way in all three samples (87 stocks, Tesla 2011–17, Tesla 2018–26). They are combined into the <b>Reversal Edge Score</b>, with weights fitted on the 87 stocks by non-negative least squares on trade returns:</p>
@@ -1070,7 +1356,7 @@ function renderLive(){renderSigbar();if(!draft.show)defaultLevels();else ticketC
  if(REPLAY){const d=DS[REPLAY.sym];$("rp-date").textContent=d?`${d.d[REPLAY.idx]} · bar ${REPLAY.idx-REPLAY.startIdx>=0?"+":""}${REPLAY.idx-REPLAY.startIdx}`:""}}
 function focusDate(sym,date){if(REPLAY&&REPLAY.sym!==sym)exitReplay();if(sym!==st.sym){st.sym=sym;sel.value=sym;symChanged()}show("chart");const i=idxOf(date);if(i<0)return;
  chart.timeScale().setVisibleLogicalRange({from:i-110,to:i+30});st.pinned=true;st.cursor=i;syncScrub();inspector(i);renderLegend()}
-function renderSymSelect(){const ks=Object.keys(DS).sort();sel.innerHTML=ks.map(k=>`<option ${k===st.sym?"selected":""}>${esc(k)}</option>`).join("")}
+function renderSymSelect(){const ks=Object.keys(DS).sort();sel.innerHTML=ks.map(k=>`<option value="${esc(k)}" ${k===st.sym?"selected":""}>${esc(nameOf(k))}</option>`).join("")}
 function symChanged(){if(REPLAY&&REPLAY.sym!==st.sym)exitReplay();UI.sym=st.sym;saveUI();st.cursor=null;st.pinned=false;hoverIdx=null;draft.show=false;
  if(chart){refreshOverlays();showRange();inspector(cur())}renderLive()}
 function afterDataChange(newSym){if(REPLAY&&!DS[REPLAY.sym]){REPLAY=null;saveReplay();syncMode()}
@@ -1094,6 +1380,339 @@ if(REPLAY&&!DS[REPLAY.sym]){REPLAY=null;saveReplay()}
 renderSymSelect();renderDS();syncMode();renderLive();
 await loadFear();
 if(Object.keys(DS).length)runNow();else await loadSample();
+
+// ------------------------------------------------ v12: Saudi helpers (mirror of the engine's isSaudi) and the Hijri month (Umm al-Qura calendar)
+const SAUDI_NAMES_UI=/^(TASI|TASI_\w+|ARAMCO|ALRAJHI|RAJHI|AL_RAJHI|SABIC|STC|SNB|ALINMA|MAADEN|ACWA|ELM|DRSK|MOUWASAT|SULAIMAN|NOMU|MT30)$/i;
+const saudiSym=sym=>/^\d{4}(_SR|_SE|_SA)?$/i.test(sym)||/(_SR|\.SR|_SE|_SA)$/i.test(sym)||SAUDI_NAMES_UI.test(sym);
+function hijriMonth(iso){try{const p=new Intl.DateTimeFormat("en-u-ca-islamic-umalqura",{month:"numeric",timeZone:"UTC"}).formatToParts(new Date(iso+"T12:00:00Z"));return +p.find(x=>x.type==="month").value}catch(e){return NaN}}
+function saudiNote(sym,date){if(!saudiSym(sym))return "";const s=SY(sym);const i=s?s.d.indexOf(date):-1;const out=[];
+ out.push(`Saudi stock: ${ECFG.saudi==="mom"?"momentum mode. Confirmed on 191 Saudi stocks (2002–2020): momentum beat dip-buying on 75% of them, and its entries beat random days by +0.42%, +0.20% and +0.17% per trade in 2002–07, 2008–13 and 2014–20":"same rules as other stocks (Settings → Saudi stocks → momentum mode is recommended: it beat dip-buying on 75% of 191 Saudi stocks)"}.`);
+ if(s&&i>0){const r=s.c[i]/s.c[i-1]-1,c=s.c[i];
+  if(r>=.095)out.push(`<b>Closed at the +10% limit.</b> Across 191 Saudi stocks the next morning opened +2.6% to +3.4% higher, then faded −0.5% to −1.3% by the close: if you hold it, consider selling into the open; don't buy at the open.`);
+  else if(r<=-.095)out.push(`<b>Closed at the −10% limit.</b> The next morning usually opened 2.3% to 3.8% lower, then rebounded during the day (+1.8% in 2004–12, only +0.1% in 2013–20).`);
+  out.push(`Day-trade idea (not verified live): an open below ${fp(c*.98)} (−2%) was followed by about +1% from open to close on average (191 stocks, 2004–2020; Al Rajhi +0.85% on 16 cases since 2020, Aramco negative on 7); an open above ${fp(c*1.02)} tended to fade.`);
+  const v=s.v.slice(Math.max(0,i-20),i).filter(isF),av=v.length?v.reduce((a,b)=>a+b,0)/v.length:NaN;if(s.msetup&&s.msetup[i]&&isF(av)&&s.v[i]>2*av)out.push(`Today's strength came on ${(s.v[i]/av).toFixed(1)}× normal volume: such signals had no edge across 191 stocks (though not for Al Rajhi and Aramco after 2020).`)}
+ if(hijriMonth(date)===9)out.push("Ramadan: no reliable effect across 191 stocks (the largest names were slightly positive since 2013).");
+ return out.join(" ")}
+// ------------------------------------------------ v10: Bollinger helper, tomorrow planner, Claude analyst
+function bbAt(c,i,n=20,k=2){if(i<n-1)return null;let m=0;for(let j=i-n+1;j<=i;j++)m+=c[j];m/=n;let v=0;for(let j=i-n+1;j<=i;j++)v+=(c[j]-m)**2;const sd=Math.sqrt(v/(n-1));
+ return sd>0?{mid:m,up:m+k*sd,lo:m-k*sd,pb:(c[i]-(m-k*sd))/(2*k*sd),bw:4*sd/m}:null}
+function rsiState(c,i,n=2){let up=NaN,dn=NaN;for(let t=1;t<=i;t++){const d=c[t]-c[t-1],u=Math.max(d,0),w=Math.max(-d,0);up=isF(up)?up+(u-up)/n:u;dn=isF(dn)?dn+(w-dn)/n:w}return {up,dn}}
+// the close tomorrow that would turn RSI(2) into a setup: below it for reversal (RSI2 < trig), above it for momentum (RSI2 > momTrig)
+function triggerClose(s,i){const {up,dn}=rsiState(s.c,i),c=s.c[i];if(!isF(up)||!isF(dn))return {rev:NaN,mom:NaN};
+ const T=ECFG.trig,M=ECFG.momTrig;return {rev:c-Math.max(0,up*(100-T)/T-dn),mom:c+Math.max(0,dn*M/(100-M)-up)}}
+const PRIOR_EDGE={aplus:.025,2:.012,1:.006,0:.003,mom:.003,short:0};   // research per-trade averages (v6-v9 studies) used as the starting estimate
+function ownEdge(s,i,grade){let n=0,sum=0,win=0;
+ for(let j=s.first;j<i;j++){if(grade==="mom"){if(!s.msetup[j]||!isF(s.mret[j])||j+s.mhold[j]>=i)continue;n++;sum+=s.mret[j];win+=s.mret[j]>0;continue}
+  if(!s.setup[j]||!isF(s.tret[j])||j+s.thold[j]>=i)continue;const g=s.aplus&&s.aplus[j]?"aplus":thirdOf(s.score[j]);if(grade==="aplus"?g!=="aplus":(g==="aplus"?2:g)!==grade)continue;n++;sum+=s.tret[j];win+=s.tret[j]>0}
+ const avg=n?sum/n:NaN,K=30,est=(n*(n?avg:0)+K*PRIOR_EDGE[grade])/(n+K);return {n,avg,win:n?win/n:NaN,est}}
+// ---------- v11 short side
+const SHORT_EVIDENCE="Evidence: short rules broke even or lost on the development data (6 long histories, 87 stocks) and paid only in bear markets: 2007–2012 stocks +1.1% per short, the 2020 crash +3.8% (18 shorts, market filter on); China lost. Use shorts when the market itself is falling, keep the stop, half size.";
+function ownShort(s,i){let n=0,sum=0,win=0;if(!s.stret)return {n:0,avg:NaN,win:NaN,est:0};for(let j=s.first;j<i;j++){if(!s.sgood[j]||!isF(s.stret[j])||j+s.sthold[j]>=i)continue;n++;sum+=s.stret[j];win+=s.stret[j]>0}
+ const avg=n?sum/n:NaN,K=30;return {n,avg,win:n?win/n:NaN,est:(n*(n?avg:0)+K*PRIOR_EDGE.short)/(n+K)}}
+function shortSay(s,c,plan){const e=ownShort(s,c),mk=s.mdown?" and the market is below its 200-day average":"",sz=ECFG.shortSize<1?"half":"full";
+ return `RSI(2) is <b>${fmt(s.rsi2[c],0)}</b>: an overbought bounce inside a downtrend (close below its 200-day average ${fp(s.sma200[c])}${mk}). Short score <b>${fmt(s.sscore[c],1)}</b> (${THIRD_NAME[thirdOf(s.sscore[c])]}).`
+  +` Plan: place a <b>limit sell short at ${fp(plan.entry)}</b> (close + ${ECFG.limitATR} ATR), good for tomorrow only; cover on ${EXIT_TEXT.prevlow} (now ${fp(plan.exitLevel)}) or after ${ECFG.maxHold} days; <b>stop ${fp(plan.stop)}</b> (3 ATR); ${sz} size.`
+  +(e.n>=8?` On this stock, past short setups averaged <b class="${cl(e.avg)}">${spct(e.avg,2)}</b> (${e.n} shorts, ${pct(e.win,0)} won).`:"")
+  +(s.mdown?"":` <span class="acc">No market file is set, so the market-downtrend filter is off: choose one (e.g. SPY or TASI) in Settings.</span>`)
+  +(ECFG.shorts==="watch"?` <span class="note">(Shown only: Settings → short trades → trade them, to include shorts in the backtest and plan.)</span>`:"")
+  +` <span class="acc">${SHORT_EVIDENCE}</span>`}
+function planFor(sym){const s=SY(sym);if(!s)return null;const i=s.d.length-1;if(i<s.first)return {sym,s,i,kind:"warm",rank:9};
+ const c=s.c[i],atr=s.atr[i],mom=s.mode[i]===-1,P=s.pulse,bb=bbAt(s.c,i),tc=triggerClose(s,i),warn=[],good=[];
+ const st0=P?P.state[i]:0,isIndex=/^(TASI|SPY|QQQ|DIA|IWM|\^)/i.test(sym);
+ if(mom&&!isIndex&&!saudiSym(sym))warn.push("momentum mode on what may be a single stock: momentum trades lost money on fresh US stocks; consider reversal only");
+ if(!mom&&st0===1)warn.push("strong up-trend on a reverting stock: the next 10 days averaged −0.31% vs normal in tests (don't chase)");
+ if(!mom&&st0===-1)good.push("strong down-momentum: capitulation, reversal setups did better here in tests");
+ if(bb&&bb.pb<0)good.push("closed below the lower Bollinger Band (top-third setups below the band averaged +1.54% vs +0.93% after 2013)");
+ {const newest=RES.syms.map(q=>{const z=SY(q);return z?z.d[z.d.length-1]:""}).sort().pop(),gap=(Date.parse(newest)-Date.parse(s.d[i]))/864e5;if(gap>4)warn.push(`data ends ${s.d[i]}, ${Math.round(gap)} days before your newest file: update this file before trading it`)}
+ if(saudiSym(sym)&&i>0){const r1=s.c[i]/s.c[i-1]-1;if(r1>=.095)warn.push("closed at the +10% limit: next morning usually opens higher then fades; holders consider selling into the open, don't buy the open");
+  if(r1<=-.095)warn.push("closed at the -10% limit: next morning usually opens 2-4% lower");
+  good.push(`day-trade idea (unverified live): an open below ${fp(c*.98)} (-2%) rebounded about +1% open-to-close on average across 191 Saudi stocks`)}
+ let o={sym,s,i,c,atr,mom,bb,tc,warn,good,st0};
+ if(s.sig[i]===1){const ap=!!(s.aplus&&s.aplus[i]),grade=ap?"aplus":thirdOf(s.score[i]),e=ownEdge(s,i,grade);
+  Object.assign(o,{kind:"rev",rank:ap?0:1,action:(ap?"A+ ":"")+(ECFG.entry==="limit"?"limit buy":"buy at open"),entry:ECFG.entry==="limit"?c-ECFG.limitATR*atr:c,
+   exitTxt:EXIT_SHORT[ECFG.exit]+(ECFG.exit==="prevhigh"?` (today's high ${fp(s.h[i])})`:""),maxHold:ECFG.maxHold,grade,edge:e,P:s.P[i]});
+  if(e.n>=10&&e.avg<0)warn.push(`this stock's own past ${ap?"A+":THIRD_NAME[grade]} setups lost on average (${spct(e.avg,2)}, ${e.n} trades)`);
+  if(e.n<10)warn.push(`few own past setups (${e.n}): the estimate leans on research averages`)}
+ else if(s.sig[i]===2){const e=ownEdge(s,i,"mom");Object.assign(o,{kind:"mom",rank:2,action:"momentum buy at open",entry:c,exitTxt:"close below the 5-day average",maxHold:ECFG.momMaxHold,grade:"mom",edge:e,P:NaN});
+  if(e.n>=8&&e.avg<0)warn.push(`past momentum trades here lost (${spct(e.avg,2)}, ${e.n} trades)`)}
+ else if(s.sgood&&s.sgood[i]&&ECFG.shorts!=="off"&&!mom){const e=ownShort(s,i),entry=c+ECFG.limitATR*atr;
+  Object.assign(o,{kind:ECFG.shorts==="trade"?"short":"shortwatch",rank:ECFG.shorts==="trade"?2.5:3.2,action:ECFG.shorts==="trade"?"limit sell short":"short setup (watch only)",entry,exitTxt:`cover below today's low ${fp(s.l[i])}, stop ${fp(entry+3*atr)}`,maxHold:ECFG.maxHold,grade:"short",edge:e,P:s.sP[i]});
+  warn.push("short: research shows shorts only paid in bear markets; half size, keep the stop");if(!s.mdown)warn.push("no market file set: the market-downtrend filter is off")}
+ else if(s.setup[i]){Object.assign(o,{kind:"weak",rank:4,action:"skip: setup below your score filter",edge:null})}
+ else{const trig=mom?tc.mom:tc.rev,dist=isF(trig)&&atr>0?Math.abs(trig-c)/atr:NaN;
+  Object.assign(o,{kind:"watch",rank:3,trig,dist,action:mom?`watch: momentum setup if it closes above ${fp(trig)}`:`watch: setup if it closes below ${fp(trig)}`,edge:null})}
+ return o}
+function tomorrowPlan(){if(!RES)return [];const rows=RES.syms.map(planFor).filter(Boolean);
+ rows.sort((a,b)=>(a.rank-b.rank)||((b.edge?b.edge.est:-1)-(a.edge?a.edge.est:-1))||((a.dist??99)-(b.dist??99)));return rows}
+function drawPlan(){const el=$("plan-t");if(!el)return;if(!RES){el.innerHTML='<tr><td class="empty">Upload stocks in the Data tab (or with the button above) and the plan appears here.</td></tr>';return}
+ const rows=tomorrowPlan(),act=rows.filter(r=>r.kind==="rev"||r.kind==="mom"||r.kind==="short");
+ $("plan-note").innerHTML=`<b>${act.length}</b> trade(s) to place for the next session across ${rows.length} symbol(s)${act.length?`; best estimated edge: <b>${esc(act[0].sym)}</b>`:""}. Estimated edge = this stock's own past average for the same grade, shrunk toward the research average (30-trade weight). Watch rows show the close that would create a setup.`;
+ el.innerHTML="<tr>"+["#","symbol","last close","action","entry","exit","est. edge / trade","own record","chance of profit","pulse","notes"].map(h=>`<th>${h}</th>`).join("")+"</tr>"+rows.map((r,k)=>{
+  if(r.kind==="warm")return `<tr data-s="${esc(r.sym)}"><td>${k+1}</td><td>${esc(r.sym)}</td><td colspan="9" class="note">warming up: needs more history</td></tr>`;
+  const e=r.edge,cls=r.kind==="rev"?(r.grade==="aplus"?"vp long aplus-b":"vp long"):r.kind==="mom"?"vp long":r.kind==="short"||r.kind==="shortwatch"?"vp short":"note";
+  return `<tr data-s="${esc(r.sym)}"><td>${k+1}</td><td><b>${esc(nameOf(r.sym))}</b></td><td>${fp(r.c)}</td><td><span class="${cls}" style="padding:1px 6px${r.kind==="mom"?";color:#c08cff":""}">${esc(r.action)}</span></td>
+   <td>${r.entry!=null?fp(r.entry):"—"}</td><td style="text-align:left">${r.exitTxt?esc(r.exitTxt)+(r.maxHold?`, max ${r.maxHold} days`:""):"—"}</td>
+   <td class="${e?cl(e.est):""}">${e?spct(e.est,2):r.kind==="watch"&&isF(r.dist)?`${r.dist.toFixed(1)} ATR away`:"—"}</td><td>${e&&e.n?`${spct(e.avg,2)} · ${e.n} tr · ${pct(e.win,0)} won`:"—"}</td>
+   <td>${isF(r.P)?pct(r.P,0):"—"}</td><td>${r.s.pulse?PULSE_STATE[r.st0].toLowerCase():"—"}</td>
+   <td style="text-align:left;max-width:420px">${r.good.map(x=>`<div class="up">▲ ${esc(x)}</div>`).join("")}${r.warn.map(x=>`<div class="down">▼ ${esc(x)}</div>`).join("")}</td></tr>`}).join("")}
+
+// ---------- data handed to Claude
+function rsum(a){return a.map(v=>isF(v)?+v.toFixed(4):null)}
+function snapshotFor(sym,iIn){const s=SY(sym);if(!s)return null;const i=iIn==null?s.d.length-1:iIn,c=s.c,P=s.pulse,bb=bbAt(c,i),r=k=>i>=k?c[i]/c[i-k]-1:NaN;
+ const pl=planFor(sym)||{},ev=P?pulseEvidence(s,i).filter(e=>e.cnt>=30).map(e=>({state:e.n,days:e.cnt,next10d_vs_normal:+(100*e.ex).toFixed(2)+"%"})):[];
+ const stp=lastStep(s,i),tr=RES.bt.trades.filter(t=>t.symbol===sym),win=tr.filter(t=>t.pnl>0).length;
+ const third=stp?stp.thirds.map((t,k)=>({third:THIRD_NAME[k],trades:t.n,avg:isF(t.avg)?+(100*t.avg).toFixed(2)+"%":null,won:isF(t.win)?Math.round(100*t.win)+"%":null})):[];
+ return {symbol:sym,date:s.d[i],close:+c[i].toFixed(4),returns:{d1:+(100*r(1)).toFixed(2),d5:+(100*r(5)).toFixed(2),d20:+(100*r(20)).toFixed(2)},
+  atr_pct:+(100*s.atr[i]/c[i]).toFixed(2),rsi2:+s.rsi2[i].toFixed(1),rsi14:+s.rsi14[i].toFixed(1),close_in_range_ibs:+s.ibs[i].toFixed(2),streak:s.streak[i],z20:+s.z20[i].toFixed(2),
+  zone:s.zone[i]>=0?["<2.5%","2.5–10%","10–25%","25–75%","75–90%","90–97.5%",">97.5%"][s.zone[i]]:null,volume_vs_normal_sigma:isF(s.volz[i])?+s.volz[i].toFixed(2):null,
+  bollinger:bb?{upper:+bb.up.toFixed(4),middle:+bb.mid.toFixed(4),lower:+bb.lo.toFixed(4),pct_b:+bb.pb.toFixed(2),bandwidth_pct:+(100*bb.bw).toFixed(1)}:null,
+  character:{autocorr_500d:isF(s.ac[i])?+s.ac[i].toFixed(3):null,mode:s.mode[i]===-1?"momentum":"reversal",switch_above:ECFG.acThr},
+  setup:{reversal_setup:!!s.setup[i],momentum_setup:!!s.msetup[i],system_signal:s.sig[i]===1?"reversal buy":s.sig[i]===2?"momentum buy":"none",edge_score:isF(s.score[i])?+s.score[i].toFixed(2):null,score_third:THIRD_NAME[thirdOf(s.score[i])]||null,chance_of_profit:isF(s.P[i])?Math.round(100*s.P[i])+"%":null,aplus:!!(s.aplus&&s.aplus[i])},
+  plan:{action:pl.action||null,entry:isF(pl.entry)?+pl.entry.toFixed(4):null,exit:pl.exitTxt||null,max_hold_days:pl.maxHold||null,trigger_close_for_reversal_setup:isF(pl.tc&&pl.tc.rev)?+pl.tc.rev.toFixed(4):null,trigger_close_for_momentum_setup:isF(pl.tc&&pl.tc.mom)?+pl.tc.mom.toFixed(4):null,estimated_edge_per_trade:pl.edge?+(100*pl.edge.est).toFixed(2)+"%":null,warnings:pl.warn,positives:pl.good},
+  market_notes:saudiSym(sym)?{market:"Saudi (Tadawul)",mode_used:ECFG.saudi==="mom"?"momentum (Saudi setting)":"same as other stocks",hijri_month:hijriMonth(s.d[i]),ramadan:hijriMonth(s.d[i])===9,daily_price_limit:"±10%"}:{market:"other"},
+  short_side:s.sgood?{enabled:ECFG.shorts,short_setup_now:!!s.sgood[i],below_200d_avg:isF(s.sma200[i])?c[i]<s.sma200[i]:null,market_below_200d:s.mdown?!!s.mdown[i]:"no market file",short_score:isF(s.sscore[i])?+s.sscore[i].toFixed(2):null,short_chance_of_profit:isF(s.sP[i])?Math.round(100*s.sP[i])+"%":null,own_short_record:(()=>{const e=ownShort(s,i);return {shorts:e.n,avg:isF(e.avg)?+(100*e.avg).toFixed(2)+"%":null}})()}:{enabled:"off"},
+  pulse:P?{value_sigma:+P.M[i].toFixed(2),horizons_5_10_20_60:P.mh.map(a=>isF(a[i])?+a[i].toFixed(2):null),agreeing:P.align[i],path_efficiency:isF(P.er[i])?+P.er[i].toFixed(2):null,rank_2y:isF(P.pct[i])?+P.pct[i].toFixed(2):null,accelerating:P.acc[i]>0,state:PULSE_STATE[P.state[i]],divergence_last_10_bars:recentDiv(P,i),evidence_on_this_stock:ev}:null,
+  top_signs:topSigns(s,i,4).map(([k,v])=>chipName(k,v)),
+  volatility:{yz5:+s.yz5[i].toFixed(1),yz20:+s.yz20[i].toFixed(1),yz60:+s.yz60[i].toFixed(1),garch_next_day:+s.garch[i].toFixed(1),vol_rank_2y:isF(s.vrank[i])?+s.vrank[i].toFixed(2):null},
+  fear_vix:isF(s.vix[i])?{vix:+s.vix[i].toFixed(1),rank:+s.frank[i].toFixed(2)}:null,
+  own_setup_record_by_score_third:third,momentum_record:(()=>{const m=momStats(s,i);return {trades:m.n,avg:isF(m.avg)?+(100*m.avg).toFixed(2)+"%":null}})(),
+  system_backtest_on_this_symbol:{trades:tr.length,won:tr.length?Math.round(100*win/tr.length)+"%":null,last5:tr.slice(-5).map(t=>({in:t.entry_date,out:t.exit_date,ret:+(100*(t.exit_price/t.entry_price-1)).toFixed(2)+"%",why:t.exit_reason}))},
+  last_15_bars:s.d.slice(Math.max(0,i-14),i+1).map((d,k)=>{const j=Math.max(0,i-14)+k;return [d,+s.o[j].toFixed(4),+s.h[j].toFixed(4),+s.l[j].toFixed(4),+c[j].toFixed(4)]})}}
+const researchFacts=()=>`SYSTEM (Reversal Edge v10, daily bars, long only):
+- Reversal setup: RSI(2) < ${ECFG.trig}. Trade only top-third Reversal Edge Score (9 signs, fixed research weights). Entry: limit order ${ECFG.limitATR} ATR under the signal close, valid next session only. Exit: first close above the previous day's high, or after ${ECFG.maxHold} days. No price stop (stops cut the edge in every test).
+- A+ grade: top-third setup + close in the bottom 13% of the day's range + Momentum Pulse below -0.5. A+ trades earned about twice the other top-third trades per trade on all six long histories.
+- Market character: 500-day lag-1 autocorrelation above ${ECFG.acThr} -> momentum mode (buy RSI(2) > ${ECFG.momTrig} at the open, exit on a close below the 5-day average).
+EVIDENCE (out of sample; 93 development series + 432 never-seen stocks):
+- The reversal edge is real vs random entries in every period on US stocks (+2.6% per trade 1990-2007, +0.7% 2008-12, +0.8% 2013-17, +0.5% 2018-21, +1.9% 2022-26) but has shrunk since 2008. No edge on China A-shares 2018-21.
+- Reversal setups during a strong down-trend in the Pulse did BETTER (+1.70% vs +1.09% per trade): strong down-momentum is capitulation, not a reason to avoid buying the dip.
+- Strong UP-trend on a stock that reverts: next 10 days were -0.31% vs normal (t -2.4, below average on 75% of 87 stocks): do not chase strength.
+- Momentum-mode trades lost money on individual US stocks (-1.6% per trade on 47 fresh stocks); momentum mode helped index-like markets (TASI). "Reversal only" beat "auto" on all three fresh stock sets.
+- Exhaustion, thrusts and divergences: no reliable edge (|t| < 1). Context only.
+- A close below the lower Bollinger Band inside top-third setups: +1.54% vs +0.93% per trade (2013+), +2.13% vs +1.48% before 2013. Overlaps with depth of the drop; context, not a rule.
+- 200-day average filter, VIX change, longer trends: no consistent effect. Exit at next open, 2-day limit orders, stops: rejected.
+- Position size "others half" (A+ full size, others half) lowered drawdowns on every data set with the same or better Sharpe; "A+ double" raised return with deeper drawdowns.
+- SHORTS (v11, optional): sell an overbought bounce (RSI(2) > 90, top-third short score) only below the 200-day average (and market below its 200-day average if a market file is set); limit 0.5 ATR above the close; cover on the first close below the previous day's low or after the max hold; 3-ATR stop; half size. Short rules broke even or lost on development data (87 stocks, 6 long histories) and paid only in bear markets (2007-12: +1.1% per short; 2020 crash: +3.8% on 18 shorts); China lost. Plain mirrored shorts blew up a test account through a squeeze. Index hedging lowered Sharpe everywhere. Recommend shorts only when the market itself is in a downtrend.
+- SAUDI MARKET (v13 study of 193 Tadawul stocks 2002-2020 plus Al Rajhi, Aramco and TASI to 2026): 89-94% of Saudi stocks trend day to day (median lag-1 autocorrelation +0.08 to +0.09, strongest in the most liquid). Momentum mode (buy after RSI(2) > 90 at the next open, sell on a close below the 5-day average) beat dip-buying on 75% of 191 stocks (mean Sharpe 0.31 vs -0.04; buy & hold 0.22) and in every sector; its entries beat random days by +0.42% (2002-07), +0.20% (2008-13), +0.17% (2014-20) per trade. Not adopted after testing: momentum only in a TASI uptrend, skipping >2x-volume signals, selling at the next open after a limit-up close, adding pullback-turn entries. Limit-up closes: next morning opens +2.6% to +3.4% higher, then fades -0.5% to -1.3% (do not buy that open; holders can sell into it). Limit-down closes: next morning opens 2.3-3.8% lower. Gap-down opens (< -2%) rebounded about +1% open-to-close (t 12-18, all liquidity groups, both periods; not verified with live fills). Last week's winners beat last week's losers by +0.30% the next week; longer-horizon cross-sectional momentum: none. TASI up > 1% today: average stock +0.28% tomorrow; big caps lead small caps. Day before a long holiday +0.51% (t 3.3, n 39). Ramadan: no reliable effect for the average stock. Daily price limit ±10%; retail short selling restricted.
+- Costs matter: 87-stock Sharpe 1.23 at 5bp per side, 0.59 at 20bp.
+- Realistic diversified portfolio Sharpe on fresh data: about 0.45-0.7.`;
+const ANALYST_RULES=`You are the trading analyst built into the Reversal Edge terminal. You see only the data below (computed by the system from the user's own price files) plus the research summary. You cannot browse the web or see news.
+Rules: base every claim on the numbers given or on tool results; quote the numbers. Prefer the evidence on THIS stock when it has enough trades (30+ days for states, 10+ trades for setups), otherwise lean on the research. Say clearly when the evidence is weak. Never invent prices, news or fundamentals. This is decision support, not financial advice; say so in one short line at the end.
+Write plain text with short headings (lines starting with ##) and "- " bullets, no tables, under 350 words unless asked for more.`;
+
+// ---------- tools Claude may call to do research on the user's data
+function studyCondition(a){const sym=String(a.symbol||st.sym||""),s=SY(sym);if(!s)throw new Error("unknown symbol "+sym+"; loaded: "+RES.syms.join(", "));
+ const H=Math.max(1,Math.min(20,Math.round(+a.horizon_days||10))),n=s.d.length,P=s.pulse,cond=a.conditions||{},names={trend_up:1,trend_down:-1,range:0,no_trend:0,exhaustion_up:2,exhaustion_down:-2};
+ const ok=j=>{const c=cond;if(c.rsi2_below!=null&&!(s.rsi2[j]<+c.rsi2_below))return false;if(c.rsi2_above!=null&&!(s.rsi2[j]>+c.rsi2_above))return false;
+  if(c.pulse_state!=null&&P&&P.state[j]!==names[String(c.pulse_state)])return false;if(c.pulse_below!=null&&!(P&&P.M[j]<+c.pulse_below))return false;if(c.pulse_above!=null&&!(P&&P.M[j]>+c.pulse_above))return false;
+  if(c.ibs_below!=null&&!(s.ibs[j]<+c.ibs_below))return false;if(c.ibs_above!=null&&!(s.ibs[j]>+c.ibs_above))return false;
+  if(c.z20_below!=null&&!(s.z20[j]<+c.z20_below))return false;if(c.z20_above!=null&&!(s.z20[j]>+c.z20_above))return false;
+  if(c.below_lower_bollinger||c.above_upper_bollinger){const b=bbAt(s.c,j);if(!b)return false;if(c.below_lower_bollinger&&!(b.pb<0))return false;if(c.above_upper_bollinger&&!(b.pb>1))return false}
+  if(c.one_day_drop_atr_below!=null&&!(s.ret1[j]<+c.one_day_drop_atr_below))return false;if(c.volume_sigma_above!=null&&!(s.volz[j]>+c.volume_sigma_above))return false;
+  if(c.reversal_setup_only&&!s.setup[j])return false;if(c.aplus_only&&!(s.aplus&&s.aplus[j]))return false;if(c.score_third&&THIRD_NAME[thirdOf(s.score[j])]!==String(c.score_third))return false;
+  if(c.mode&&(s.mode[j]===-1?"momentum":"reversal")!==String(c.mode))return false;if(c.from_date&&s.d[j]<String(c.from_date))return false;return true};
+ let N=0,sum=0,w=0,bs=0,bn=0,ss=0;const dates=[],trades=[];
+ for(let j=Math.max(1,s.first-260);j+H<n;j++){const f=Math.log(s.c[j+H]/s.c[j]);bs+=f;bn++;if(!ok(j))continue;N++;sum+=f;ss+=f*f;w+=f>0;dates.push(s.d[j]);if(s.setup[j]&&isF(s.tret[j]))trades.push(s.tret[j])}
+ const avg=N?sum/N:NaN,base=bn?bs/bn:NaN,sd=N>1?Math.sqrt(ss/N-avg*avg):NaN,t=N>1&&sd>0?(avg-base)/sd*Math.sqrt(N/Math.max(1,H)):NaN;
+ return {symbol:sym,horizon_days:H,matches:N,avg_forward_return:N?+(100*avg).toFixed(2)+"%":null,all_days_avg:+(100*base).toFixed(2)+"%",excess:N?+(100*(avg-base)).toFixed(2)+"%":null,
+  t_stat_overlap_adjusted:isF(t)?+t.toFixed(2):null,win_rate:N?Math.round(100*w/N)+"%":null,system_trades_among_matches:{n:trades.length,avg:trades.length?+(100*trades.reduce((x,y)=>x+y,0)/trades.length).toFixed(2)+"%":null,won:trades.length?Math.round(100*trades.filter(x=>x>0).length/trades.length)+"%":null},
+  last_matches:dates.slice(-6),note:"hindsight study over this symbol's own history; each match is a day whose next "+H+" days are known"}}
+const TOOLS=[
+ {name:"study_condition",description:"Research on the user's own price history: for one symbol, find every past day matching the conditions and return the average forward return over horizon_days vs all days (excess, overlap-adjusted t-stat, win rate) plus the system's reversal-trade results among those days. Use it to test ideas like 'does buying below the lower Bollinger Band work on this stock' before advising.",
+  inputSchema:{type:"object",properties:{symbol:{type:"string"},horizon_days:{type:"integer",minimum:1,maximum:20},conditions:{type:"object",description:"Any of: rsi2_below, rsi2_above, pulse_state (trend_up|trend_down|no_trend|exhaustion_up|exhaustion_down), pulse_below, pulse_above, ibs_below, ibs_above, z20_below, z20_above, below_lower_bollinger (bool), above_upper_bollinger (bool), one_day_drop_atr_below, volume_sigma_above, reversal_setup_only (bool), aplus_only (bool), score_third (bottom third|middle third|top third), mode (reversal|momentum), from_date (YYYY-MM-DD)"}},required:["symbol","conditions"]},
+  execute:a=>{aiStatus(`researching ${a.symbol||""}…`);return studyCondition(a)}},
+ {name:"get_snapshot",description:"The full current snapshot (indicators, setup, pulse, Bollinger, plan, own record) of another loaded symbol, to compare.",inputSchema:{type:"object",properties:{symbol:{type:"string"}},required:["symbol"]},
+  execute:a=>{const x=snapshotFor(String(a.symbol));if(!x)throw new Error("not loaded; loaded symbols: "+RES.syms.join(", "));delete x.last_15_bars;return x}},
+ {name:"get_bars",description:"Recent daily bars [date, open, high, low, close, volume] for a loaded symbol (at most 60).",inputSchema:{type:"object",properties:{symbol:{type:"string"},n:{type:"integer",maximum:60}},required:["symbol"]},
+  execute:a=>{const s=SY(String(a.symbol));if(!s)throw new Error("not loaded");const n=Math.max(1,Math.min(60,+a.n||30)),i=s.d.length;return s.d.slice(i-n).map((d,k)=>{const j=i-n+k;return [d,s.o[j],s.h[j],s.l[j],s.c[j],s.v[j]]})}}];
+
+// ---------- UI
+let SAMPLE=null,TOOLS_OK=false,aiCtl=null,aiTurns=[],aiCtxSym=null;
+(async()=>{try{if(!window.claude||!claude.use)return;SAMPLE=await claude.use("sample");if(!SAMPLE)return;const lim=await SAMPLE.limits().catch(()=>null);TOOLS_OK=!!(lim&&lim.tools);
+ document.querySelectorAll(".ai-only").forEach(e=>e.hidden=false);document.querySelectorAll(".ai-off").forEach(e=>e.hidden=true)}catch(e){}})();
+function md(t){const lines=esc(t).split("\n");let h="",inUl=false;const inl=x=>x.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/`([^`]+)`/g,"<code>$1</code>");
+ for(const ln of lines){const m=ln.match(/^\s*[-*]\s+(.*)/);if(m){if(!inUl){h+="<ul>";inUl=true}h+=`<li>${inl(m[1])}</li>`;continue}if(inUl){h+="</ul>";inUl=false}
+  const hd=ln.match(/^#{1,4}\s+(.*)/);if(hd){h+=`<h4>${inl(hd[1])}</h4>`;continue}if(ln.trim())h+=`<p>${inl(ln)}</p>`}
+ if(inUl)h+="</ul>";return h}
+function aiStatus(t){const e=$("ai-status");if(e)e.textContent=t||""}
+const AI_ERR={not_granted:"Claude access was not allowed for this page.",sampling_disabled:"Claude is not available for this account.",rate_limited:"Too many requests or your usage limit was reached. Try again later.",
+ session_expired:"Please sign in to Claude again.",prompt_too_large:"Too much data for one request.",refused:"Claude declined this request.",empty_completion:"Claude returned nothing; try again.",upstream_error:"Connection problem; try again."};
+async function askClaude(outId,input,{tools=false,onDone}={}){if(!SAMPLE)return;aiCtl&&aiCtl.abort();const ctl=aiCtl=new AbortController(),out=$(outId);
+ out.innerHTML='<p class="note">Thinking… (Claude reads the system data and may run research on your files; this can take up to a minute)</p>';aiStatus("thinking…");$("ai-stop").hidden=false;$("plan-stop").hidden=false;
+ const opts={signal:ctl.signal,modelTier:($("ai-tier")||{}).value||"complex",onText:({text})=>{out.innerHTML=md(text);aiStatus("writing…")}};if(tools&&TOOLS_OK)opts.tools=TOOLS;else opts.cache=false;
+ try{const r=await SAMPLE(input,opts);out.innerHTML=md(r.text)+(r.truncated?'<p class="note">(cut short: ask for less)</p>':"");onDone&&onDone(r.text);aiStatus("")}
+ catch(e){out.innerHTML=e.text?md(e.text):"";if(e.code!=="cancelled")out.insertAdjacentHTML("beforeend",`<p class="down">${esc(AI_ERR[e.code]||AI_ERR.upstream_error)}</p>`);aiStatus("");
+  if(["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(e.code))document.querySelectorAll(".ai-only button").forEach(b=>b.disabled=true)}
+ finally{if(aiCtl===ctl){$("ai-stop").hidden=true;$("plan-stop").hidden=true}}}
+function analyseStock(){const sym=st.sym,c=cur(),snap=snapshotFor(sym,c);if(!snap){aiStatus("run the system first");return}
+ const ctx=`${ANALYST_RULES}\n\nRESEARCH SUMMARY:\n${researchFacts()}\n\nSYSTEM DATA FOR ${sym} AS OF ${snap.date}${REPLAY?" (replay: later bars hidden)":""}:\n${JSON.stringify(snap)}`;
+ const task=`Tell me how best to trade ${sym} for the next session. Cover:\n## Verdict (one of: TAKE THE TRADE, WAIT, AVOID) and why\n## How to trade it (exact entry, exit, holding time, size suggestion: full or half)\n## What to avoid on this stock right now (e.g. fading strong momentum, chasing strength) and the evidence\n## What would change the view (trigger prices)\n${TOOLS_OK?"Before writing, use study_condition on this symbol to check one or two conditions that matter most today (for example the current pulse state, a close below the lower Bollinger Band, or the current RSI(2) level) and quote the results.":""}`;
+ aiCtxSym=sym;aiTurns=[{role:"user",content:ctx+"\n\nTASK:\n"+task}];
+ askClaude("ai-out",aiTurns,{tools:true,onDone:t=>{aiTurns.push({role:"assistant",content:t})}})}
+function followUp(){const q=$("ai-q").value.trim();if(!q)return;if(!aiTurns.length||aiCtxSym!==st.sym){analyseStock();return}$("ai-q").value="";
+ $("ai-hist").insertAdjacentHTML("beforeend",`<div class="ai-turn"><b>You:</b> ${esc(q)}</div><div class="ai-turn">${$("ai-out").innerHTML}</div>`);
+ aiTurns.push({role:"user",content:q});if(aiTurns.length>9)aiTurns.splice(1,2);
+ askClaude("ai-out",aiTurns,{tools:true,onDone:t=>aiTurns.push({role:"assistant",content:t})}).then(()=>{if(aiTurns[aiTurns.length-1].role==="user")aiTurns.pop()})}
+function planBrief(){if(!RES){return}const rows=tomorrowPlan(),act=rows.filter(r=>r.kind==="rev"||r.kind==="mom"||r.kind==="short").slice(0,8),watch=rows.filter(r=>r.kind==="watch").slice(0,8);
+ const table=rows.map(r=>({symbol:r.sym,action:r.action||r.kind,entry:isF(r.entry)?+r.entry.toFixed(4):null,exit:r.exitTxt||null,est_edge:r.edge?+(100*r.edge.est).toFixed(2)+"%":null,own_trades:r.edge?r.edge.n:null,own_avg:r.edge&&r.edge.n?+(100*r.edge.avg).toFixed(2)+"%":null,chance:isF(r.P)?Math.round(100*r.P)+"%":null,pulse:r.s.pulse?PULSE_STATE[r.st0]:null,distance_to_trigger_atr:isF(r.dist)?+r.dist.toFixed(2):null,warnings:r.warn,positives:r.good}));
+ const snaps=act.concat(watch.slice(0,3)).map(r=>{const x=snapshotFor(r.sym);if(x){delete x.last_15_bars;delete x.system_backtest_on_this_symbol}return x});
+ const input=`${ANALYST_RULES}\n\nRESEARCH SUMMARY:\n${researchFacts()}\n\nTOMORROW'S PLAN TABLE (all ${rows.length} loaded symbols, ranked by the system):\n${JSON.stringify(table)}\n\nDETAIL FOR THE TOP CANDIDATES:\n${JSON.stringify(snaps).slice(0,40000)}\n\nTASK:\nPick the best trades for the next session.\n## Best trades (ranked, max 3): for each, the order to place (type, price), exit, size (full or half) and the reason in one or two lines with numbers\n## Watch list: stocks that could set up tomorrow and the trigger close\n## Avoid: symbols to stay away from and why (strong up-momentum on reverting stocks, momentum mode on single stocks, weak own record)\n${TOOLS_OK?"Use study_condition to check the most important claim for your top pick before you write.":""}\nIf no trade is worth taking, say so.`;
+ askClaude("plan-ai",input,{tools:true})}
+
+$("ai-go").addEventListener("click",analyseStock);$("ai-stop").addEventListener("click",()=>aiCtl&&aiCtl.abort());$("plan-stop").addEventListener("click",()=>aiCtl&&aiCtl.abort());
+$("ai-send").addEventListener("click",followUp);$("ai-q").addEventListener("keydown",e=>{if(e.key==="Enter")followUp()});
+$("plan-go").addEventListener("click",planBrief);$("plan-upload").addEventListener("click",()=>$("file").click());
+$("plan-t").addEventListener("click",e=>{const tr=e.target.closest("tr[data-s]");if(!tr)return;const sym=tr.dataset.s;focusDate(sym,DS[sym].d[DS[sym].d.length-1])});
+
+// ------------------------------------------------ v13: Tadawul library, safe merging, data updates through a Claude Code session on the viewer's account
+const ART_URL="https://claude.ai/artifact/HQMRJpu3hpLyj7ahSxSQDn",CCR="Claude Code Remote";
+var NAMES;let LIBMETA=null,LIBTEXT=null;NAMES={};
+function nameOf(s){return NAMES&&NAMES[s]?`${s} · ${NAMES[s]}`:s}
+async function libMeta(){if(LIBMETA)return LIBMETA;try{const el=document.getElementById("tadawul-meta");LIBMETA=el?JSON.parse(el.textContent):await (await fetch("tadawul_meta.json")).json()}catch(e){LIBMETA={}}
+ for(const [k,v] of Object.entries(LIBMETA))NAMES[k]=v.name;return LIBMETA}
+async function libText(){if(LIBTEXT)return LIBTEXT;let bytes;const el=document.getElementById("tadawul-b64");
+ if(el){const b=atob(el.textContent.trim());bytes=new Uint8Array(b.length);for(let i=0;i<b.length;i++)bytes[i]=b.charCodeAt(i)}
+ else{const r=await fetch("tadawul_gz_base64.txt");if(!r.ok)throw new Error("library file not found");const b=atob((await r.text()).trim());bytes=new Uint8Array(b.length);for(let i=0;i<b.length;i++)bytes[i]=b.charCodeAt(i)}
+ if(bytes[0]===0x1f&&bytes[1]===0x8b){if(typeof DecompressionStream==="undefined")throw new Error("This browser cannot unpack the library (needs a 2023+ Chrome, Edge, Safari or Firefox).");
+  LIBTEXT=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text()}
+ else LIBTEXT=new TextDecoder().decode(bytes);   // the host already decompressed it
+ return LIBTEXT}
+function libParse(text,want){const out={};let cur=null,s=null;
+ for(const line of text.split("\n")){if(!line)continue;
+  if(line[0]==="#"){const p=line.slice(1).split("|");cur=want.has(p[0])?p[0]:null;if(cur)s=out[cur]={d:[],o:[],h:[],l:[],c:[],v:[],src:"Tadawul library 2001–2020",lib:true};continue}
+  if(!cur)continue;const f=line.split(",");s.d.push(`${f[0].slice(0,4)}-${f[0].slice(4,6)}-${f[0].slice(6,8)}`);s.o.push(+f[1]);s.h.push(+f[2]);s.l.push(+f[3]);s.c.push(+f[4]);s.v.push(f[5]===""?NaN:+f[5])}
+ return out}
+// newer wins where both have data; older history before the newer series starts is rescaled by the price ratio measured on the overlap
+// (providers adjust past prices for bonus shares and splits as of the day you download, so two downloads differ by a constant factor)
+function mergeSeries(base,newer){const bi=new Map(base.d.map((d,i)=>[d,i])),ratios=[];
+ for(let j=0;j<newer.d.length&&ratios.length<10;j++){const i=bi.get(newer.d[j]);if(i!=null&&base.c[i]>0&&newer.c[j]>0)ratios.push(newer.c[j]/base.c[i])}
+ let r=1,note="",ok=true;
+ if(ratios.length>=5){const s=ratios.slice().sort((a,b)=>a-b);r=s[s.length>>1];const disp=ratios.map(x=>Math.abs(x/r-1)).sort((a,b)=>a-b)[ratios.length>>1];
+  if(disp>0.01){ok=false;note=`the two sources disagree on the overlap (median gap ${(100*disp).toFixed(1)}%)`}else if(Math.abs(r-1)>0.003)note=`older history rescaled ×${r.toFixed(4)} for corporate actions since then`}
+ else if(base.d[base.d.length-1]<newer.d[0])note=`no overlap with the older data: history before ${newer.d[0]} may be on a different price basis`;
+ else note=`only ${ratios.length} overlapping days: older history kept unscaled`;
+ const cut=newer.d[0],o={d:[],o:[],h:[],l:[],c:[],v:[]};
+ for(let i=0;i<base.d.length&&base.d[i]<cut;i++){o.d.push(base.d[i]);o.o.push(base.o[i]*r);o.h.push(base.h[i]*r);o.l.push(base.l[i]*r);o.c.push(base.c[i]*r);o.v.push(isF(base.v[i])?base.v[i]/r:NaN)}
+ for(let j=0;j<newer.d.length;j++){o.d.push(newer.d[j]);o.o.push(newer.o[j]);o.h.push(newer.h[j]);o.l.push(newer.l[j]);o.c.push(newer.c[j]);o.v.push(newer.v[j])}
+ return {s:o,ratio:r,note,ok,overlap:ratios.length}}
+function validateSeries(s){const w=[];let big=0,bad=0;for(let i=0;i<s.d.length;i++){if(i&&s.d[i]<=s.d[i-1])bad++;if(!(s.c[i]>0))bad++;if(i&&Math.abs(s.c[i]/s.c[i-1]-1)>.105)big++}
+ if(bad)w.push(`${bad} bad rows`);if(big)w.push(`${big} daily moves above 10.5% (Saudi limit is ±10%; IPO days and old data can exceed it)`);return w}
+
+// ---------- library UI
+const LIB_KEY="qlab-lib";let LIBSEL=new Set(load(LIB_KEY,[]));
+async function drawLibrary(){const m=await libMeta(),el=$("lib-t");if(!el)return;const ks=Object.keys(m);if(!ks.length){$("lib-note").textContent="Library file not available in this copy.";return}
+ const sec=$("lib-sector").value,q=($("lib-q").value||"").toLowerCase();
+ const rows=ks.filter(k=>(!sec||m[k].sector===sec)&&(!q||k.includes(q)||m[k].name.toLowerCase().includes(q)||m[k].full.toLowerCase().includes(q)));
+ if(!$("lib-sector").dataset.ready){const secs=[...new Set(ks.map(k=>m[k].sector))].sort();$("lib-sector").innerHTML='<option value="">all sectors</option>'+secs.map(s=>`<option>${esc(s)}</option>`).join("");$("lib-sector").dataset.ready=1;$("lib-sector").value=sec}
+ $("lib-note").innerHTML=`<b>${ks.length}</b> Tadawul stocks built in (daily prices 2001 → 2020-03-05, adjusted as of 2020). ${[...LIBSEL].filter(k=>DS[k]).length} loaded. Showing ${rows.length}, most traded first. Saudi stocks run in momentum mode (Settings).`;
+ el.innerHTML="<tr><th></th><th>code</th><th>name</th><th>sector</th><th>from</th><th>to</th><th>median daily value (SAR m)</th></tr>"+rows.slice(0,400).map(k=>`<tr><td><input type="checkbox" data-lib="${k}" ${DS[k]?"checked":""} aria-label="select ${esc(k)}"></td><td>${k}</td><td style="text-align:left">${esc(m[k].name)}</td><td style="text-align:left">${esc(m[k].sector)}</td><td>${m[k].start}</td><td>${m[k].end}</td><td>${(m[k].value_med/1e6).toFixed(1)}</td></tr>`).join("")}
+async function loadLibrary(codes,{quiet=false}={}){const want=new Set(codes.filter(Boolean));if(!want.size)return;$("lib-msg").textContent=`Unpacking ${want.size} stock(s)…`;
+ try{const got=libParse(await libText(),want);await libMeta();const msgs=[];
+  for(const [k,v] of Object.entries(got)){LIBSEL.add(k);
+   if(DS[k]&&!DS[k].lib){const m=mergeSeries(v,DS[k]);DS[k]=Object.assign(m.s,{src:`library + ${DS[k].src||"your file"}`,lib:"merged",bad:0});msgs.push(`${k}: joined with your file (${m.note||"same price basis"})`)}
+   else DS[k]=v}
+  store(LIB_KEY,JSON.stringify([...LIBSEL]));applyAllUpdates(false);
+  $("lib-msg").innerHTML=`Loaded ${Object.keys(got).length} stock(s).`+(msgs.length?"<br>"+msgs.map(esc).join("<br>"):"");
+  if(!quiet){if(!DS[st.sym])st.sym=Object.keys(got)[0];saveDS();afterDataChange(true)}}
+ catch(e){$("lib-msg").innerHTML=`<span class="err">${esc(e.message)}</span>`}}
+function unloadLibrary(codes){for(const k of codes){LIBSEL.delete(k);if(DS[k]&&DS[k].lib===true)delete DS[k]}store(LIB_KEY,JSON.stringify([...LIBSEL]));saveDS();afterDataChange()}
+// browser storage cannot hold 193 long histories: plain library series are reloaded from the built-in file instead of being saved
+saveDS=function(){const keep={};for(const [k,v] of Object.entries(DS))if(v.lib!==true)keep[k]=v;
+ if(store("qlab-ds",JSON.stringify(keep))===null&&Object.keys(keep).length)$("parsemsg").innerHTML='<span class="err">The browser would not store these files, so they will need reloading next visit.</span>'};
+
+// ---------- updates written by the Claude Code session into this artifact's database (collection "bars": one document per symbol)
+let DB=null,UPD={},UPDLOG={};
+function updSeries(doc){const rows=doc.rows||[];const s={d:[],o:[],h:[],l:[],c:[],v:[]};
+ for(const r of rows){const t=String(r[0]);if(t.length!==8)continue;s.d.push(`${t.slice(0,4)}-${t.slice(4,6)}-${t.slice(6,8)}`);s.o.push(+r[1]);s.h.push(+r[2]);s.l.push(+r[3]);s.c.push(+r[4]);s.v.push(r[5]==null?NaN:+r[5])}
+ const ix=s.d.map((d,i)=>i).sort((a,b)=>s.d[a]<s.d[b]?-1:1),o={};for(const k of ["d","o","h","l","c","v"])o[k]=ix.map(i=>s[k][i]);return o}
+const UPD_ALIAS={"2222":["ARAMCO","SAUDI ARAMCO","2222.SR"],"1120":["ALRAJHI","AL RAJHI","RAJHI","1120.SR"],"TASI":["^TASI","TASI.SR","^TASI.SR"]};
+function applyUpdate(sym0){const doc=UPD[sym0];if(!doc)return false;let sym=sym0;
+ if(!DS[sym])for(const a of UPD_ALIAS[sym0]||[])if(DS[a]){sym=a;break}
+ if(!DS[sym]){if(LIBMETA&&LIBMETA[sym0]&&!LIBSEL.has(sym0))return false;const nw=updSeries(doc);if(nw.d.length<250)return false;
+  DS[sym]=Object.assign(nw,{src:`update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:"merged",updAt:doc.fetched_at,bad:0});UPDLOG[sym0]={note:"added from update",ok:true,w:validateSeries(nw),last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
+ if(DS[sym].updAt===doc.fetched_at)return false;
+ const nw=updSeries(doc);if(nw.d.length<5){UPDLOG[sym0]={note:"too few rows",ok:false};return false}
+ const w=validateSeries(nw),m=mergeSeries(DS[sym],nw);
+ if(!m.ok&&m.overlap>=5){UPDLOG[sym0]={note:`not applied: ${m.note}`,ok:false,w};return false}
+ const lastOld=DS[sym].d[DS[sym].d.length-1];
+ if(m.overlap<5&&(Date.parse(nw.d[0])-Date.parse(lastOld))/864e5>30){DS[sym]=Object.assign(nw,{src:`update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:"merged",updAt:doc.fetched_at,bad:0});
+  UPDLOG[sym0]={note:`older history ends ${lastOld} and the new source starts ${nw.d[0]}: using the new history only (not joined across the gap)`,ok:true,w,last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
+ DS[sym]=Object.assign(m.s,{src:`${DS[sym].src||""} + update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:"merged",updAt:doc.fetched_at,bad:0});
+ UPDLOG[sym0]={note:m.note||"appended",ok:true,w,last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
+function applyAllUpdates(run=true){let n=0;for(const k of Object.keys(UPD))if(applyUpdate(k))n++;drawUpdates();if(n&&run){saveDS();afterDataChange()}return n}
+function drawUpdates(){const el=$("upd-t");if(!el)return;const ks=Object.keys(UPD).sort();
+ el.innerHTML=ks.length?"<tr><th>symbol</th><th>rows</th><th>to</th><th>source</th><th>fetched</th><th>result</th></tr>"+ks.map(k=>{const d=UPD[k],lg=UPDLOG[k]||{},rows=(d.rows||[]).length,last=rows?String(d.rows[d.rows.length-1][0]):"";
+  return `<tr><td>${esc(nameOf(k))}</td><td>${rows}</td><td>${last?`${last.slice(0,4)}-${last.slice(4,6)}-${last.slice(6,8)}`:"—"}</td><td style="text-align:left">${esc(d.source||"")}</td><td>${esc(String(d.fetched_at||"").slice(0,16))}</td><td style="text-align:left" class="${lg.ok===false?"down":""}">${DS[k]||lg.ok!=null?esc(lg.note||"applied"):"stored (load the stock to use it)"}${lg.w&&lg.w.length?` · ${esc(lg.w.join("; "))}`:""}</td></tr>`}).join(""):'<tr><td class="empty">No updates stored yet.</td></tr>'}
+(async()=>{try{if(!window.claude||!claude.use)return;DB=await claude.use("db");if(!DB)return;
+ DB.collection("bars").onSnapshot(snap=>{for(const d of snap.docs){const b=d.data();if(b)UPD[d.id]=b}applyAllUpdates(true)},e=>{$("upd-msg").textContent="Update store unavailable: "+e.code});
+ DB.collection("runs").orderBy("started","desc").limit(5).onSnapshot(snap=>{const r=snap.docs[0]&&snap.docs[0].data();if(!r)return;
+  const el=$("upd-run");el.innerHTML=`Last update run <b>${esc(snap.docs[0].id)}</b>: <b class="${r.state==="done"?"up":r.state==="blocked"||r.state==="failed"?"down":""}">${esc(r.state||"?")}</b> ${r.done!=null?`· ${r.done}/${r.total} symbols`:""} · ${esc(r.message||"")}`
+   +(r.state==="blocked"?`<br><span class="acc">Fix: open claude.ai/code → your environment (${esc(r.environment||"Default")}) → Edit → Network access → Custom, add <b>${esc(r.host||"query1.finance.yahoo.com")}</b> under Allowed domains (keep the default list), save, then press Update again.</span>`:"")},()=>{});
+ document.querySelectorAll(".db-only").forEach(e=>e.hidden=false)}catch(e){}})();
+
+// ---------- the "Update data" button: start a Claude Code session (your account, your usage) that fetches real prices and writes them here
+let MCP=null;
+(async()=>{try{if(!window.claude||!claude.use)return;MCP=await claude.use("mcp");if(MCP)document.querySelectorAll(".mcp-only").forEach(e=>e.hidden=false),document.querySelectorAll(".mcp-off").forEach(e=>e.hidden=true)}catch(e){}})();
+const MCP_ERR={server_not_connected:`The "${CCR}" connector is not available for your account here.`,needs_reauth:`Reconnect "${CCR}" in claude.ai Settings → Connectors.`,not_in_manifest:"Claude Code access is turned off for this page. Open the page's Permissions menu (top of the artifact view), allow \"Claude Code Remote\", then reload and press \"Ask for Claude Code access\".",
+ blocked_by_policy:"Your account blocks pages from starting Claude Code sessions, so updates run from the Routine \"QuantLab daily data update\" instead: it runs Sunday to Thursday after the market close, and you can start it any time from the Claude app (Routines → QuantLab daily data update → Run now). Results appear here automatically.",approval_required:"Your organization requires approval for this action.",selection_required:"Choose which Claude Code connector to use in the prompt Claude showed, then try again.",
+ tool_error:"Claude Code refused the request: ",server_unavailable:"Claude Code did not answer in time; try again in a minute.",not_granted:"This view cannot use connectors.",capability_disabled:"This view cannot use connectors."};
+const mcpErr=e=>(MCP_ERR[e&&e.code]||"Could not reach Claude Code: ")+(e&&(e.code==="tool_error"||!MCP_ERR[e.code])?String(e.message||e.code||e).slice(0,200):"");
+async function loadEnvs(){if(!MCP)return;const sel=$("upd-env");sel.innerHTML="<option>loading…</option>";
+ try{const r=await MCP.callTool(CCR,"list_environments",{limit:20});const envs=((r.payload||{}).environments)||[];
+  sel.innerHTML=envs.length?envs.map(e=>`<option value="${esc(e.environment_id)}">${esc(e.name||"environment")} · ${esc((e.description||"").slice(0,40))} · …${esc(e.environment_id.slice(-6))}</option>`).join(""):"<option value=''>no environments</option>"}
+ catch(e){sel.innerHTML="<option value=''>unavailable</option>";$("upd-msg").innerHTML=`<span class="err">${esc(mcpErr(e))}</span>`}}
+function updatePrompt(runId,last){
+ const list=Object.entries(last).map(([k,d])=>`${k}: ${d}`).join(", ");
+ return `You are the data updater for the user's QuantLab terminal (a Claude artifact). The user started you from the terminal's "Update data" button. Use real market data only.
+
+TASK: bring daily OHLCV price history up to date for these Saudi (Tadawul) symbols and store it in the terminal's database.
+Artifact: ${ART_URL}
+Write with the ArtifactData tool (load it first with ToolSearch, query "select:ArtifactData"), using the artifact URL above.
+Every write to a document that already exists needs its current version: read it first ("get", or "list" the collection) and pass that version as if_version (in a "batch", on each entry). Documents that do not exist yet are written without it.
+Run id: ${runId}
+Symbols (code: last date the terminal already has): ${list}
+
+STEPS
+1. The terminal already created document runs/${runId} (collection "runs", doc id "${runId}", state "starting"). Read it, then update it (with if_version) to {state:"running", started:"<ISO now>", total:<number of symbols>, done:0, errors:[], message:"fetching"}.
+2. For each symbol download daily bars from 400 calendar days before its last date up to today. Preferred source, the Yahoo Finance chart API, e.g.
+   curl -s -A "Mozilla/5.0" "https://query1.finance.yahoo.com/v8/finance/chart/1120.SR?period1=<unix start>&period2=<unix now>&interval=1d&events=div%2Csplit&includeAdjustedClose=true"
+   (the TASI index is ^TASI.SR). Scale open, high and low by adjclose/close and use adjclose as the close. Drop days without a close.
+   If Yahoo is not reachable you may use another provider that returns machine-readable daily history (CSV or JSON) for Tadawul stocks.
+   NEVER take prices from search-result summaries, news text or memory, and never estimate missing days.
+3. Validate each symbol: dates ascending and unique, close > 0, high >= max(open, close), low <= min(open, close). Note daily moves above 10.5% (the Tadawul limit is ±10%) as warnings.
+4. Write one document per symbol into collection "bars" with doc id = the symbol code exactly as listed: {sym, source:"<provider and URL pattern>", fetched_at:"<ISO time>", adjusted:true, run:"${runId}", rows:[[YYYYMMDD, open, high, low, close, volume], ...], warnings:[...]}; YYYYMMDD as an integer, prices rounded to 4 decimals, oldest row first. Keep each document under 250 KB (drop the oldest rows if needed). Prefer one "batch" call per 10 symbols (write the JSON to a local file and pass file_path if it is large).
+5. After every 10 symbols update runs/${runId} {done, message}. At the end set state "done" (or "partial", with errors naming each failed symbol and why).
+6. If the data source is blocked by the network policy (HTTP 403 from the proxy, "egress blocked", "CONNECT tunnel failed"), do not look for prices elsewhere on the web: set runs/${runId} {state:"blocked", host:"<the blocked host>", message:"The cloud environment's network policy blocks <host>."} and stop.
+Do nothing else: no repository changes, no other artifacts, no messages to anyone.`}
+async function startUpdate(){if(!MCP){$("upd-msg").textContent="Open this page inside Claude to use this button.";return}
+ const scope=$("upd-scope").value,env=$("upd-env").value,model=$("upd-model").value.trim()||"claude-opus-5-5";
+ if(!env){$("upd-msg").innerHTML='<span class="err">Choose a Claude Code environment first.</span>';return}
+ const syms=scope==="all"?Object.keys(await libMeta()).concat(Object.keys(DS).filter(k=>saudiSym(k))):Object.keys(DS);const uniq=[...new Set(syms)].filter(k=>/^\d{4}$/.test(k)||k==="TASI");
+ if(!uniq.length){$("upd-msg").innerHTML='<span class="err">No Saudi symbols to update: load stocks from the library or upload files first.</span>';return}
+ const last={};for(const k of uniq){const d=DS[k];last[k]=d?d.d[d.d.length-1]:((LIBMETA||{})[k]||{}).end||"2020-03-05"}
+ const runId="run-"+new Date().toISOString().slice(0,16).replace(/[-:T]/g,"")+"-"+Math.random().toString(36).slice(2,6);
+ $("upd-go").disabled=true;$("upd-msg").textContent=`Starting a ${model} session for ${uniq.length} symbol(s)…`;
+ try{if(DB)await DB.doc("runs/"+runId).set({state:"starting",started:new Date().toISOString(),total:uniq.length,done:0,message:"session starting",environment:$("upd-env").selectedOptions[0].textContent.split(" · ")[0]});
+  let r;const args={environment_id:env,prompt:updatePrompt(runId,last),title:`QuantLab data update ${new Date().toISOString().slice(0,10)}`,model,tags:["quantlab-update"]};
+  try{r=await MCP.callTool(CCR,"create_session",Object.assign({permission_mode:"auto"},args))}catch(e){if(e&&e.code==="tool_error")r=await MCP.callTool(CCR,"create_session",args);else throw e}
+  const pl=r.payload||{},sid=(typeof pl==="object"&&((pl.ccr&&pl.ccr.id)||pl.session_id||pl.id||(pl.session&&pl.session.id)))||(JSON.stringify(r.payload||r.content||"").match(/\bsession_(?!id\b)[A-Za-z0-9]{6,}/)||[""])[0];
+  $("upd-msg").innerHTML=`Session started${sid?` (<a href="https://claude.ai/code/${esc(sid)}" target="_blank" rel="noopener">${esc(sid)}</a>)`:""}. It fetches the prices and writes them here; new bars appear below and in the charts automatically. A full library update can take 10–30 minutes.`}
+ catch(e){$("upd-msg").innerHTML=`<span class="err">${esc(mcpErr(e))}</span>`}
+ finally{$("upd-go").disabled=false}}
+
+// ---------- wiring
+$("lib-sector").addEventListener("change",drawLibrary);$("lib-q").addEventListener("input",()=>{clearTimeout(drawLibrary.t);drawLibrary.t=setTimeout(drawLibrary,200)});
+$("lib-t").addEventListener("change",e=>{const k=e.target.dataset.lib;if(!k)return;if(e.target.checked)loadLibrary([k]);else unloadLibrary([k])});
+$("lib-top30").addEventListener("click",async()=>{const m=await libMeta();loadLibrary(Object.keys(m).slice(0,30))});
+$("lib-shown").addEventListener("click",()=>loadLibrary([...document.querySelectorAll("#lib-t input[data-lib]")].map(x=>x.dataset.lib)));
+$("lib-none").addEventListener("click",()=>unloadLibrary([...LIBSEL]));
+async function permState(){try{const P=await claude.use("permissions");if(!P)return "unavailable";return await P.state("mcp:"+CCR)}catch(e){return "unavailable"}}
+async function showPerm(){const st=await permState(),el=$("upd-perm");if(!el)return;
+ el.innerHTML=st==="granted"?'<span class="up">Claude Code access: allowed.</span>':st==="prompt"?'Claude Code access: not asked yet (you will be asked on the first use).':
+  st==="denied"?'<span class="down">Claude Code access is blocked for this page.</span> To undo: open this artifact\'s <b>Permissions</b> menu at the top of the artifact view and allow "Claude Code Remote", then reload the page and press "Ask for Claude Code access".':'Claude Code access: not available in this view.'}
+async function askPerm(){try{const P=await claude.use("permissions");if(P)await P.request(["mcp:"+CCR])}catch(e){}showPerm()}
+$("upd-go").addEventListener("click",startUpdate);$("upd-ask").addEventListener("click",askPerm);setTimeout(showPerm,1500);$("upd-envs").addEventListener("click",loadEnvs);
+(async()=>{await libMeta();drawLibrary();renderSymSelect();if(LIBSEL.size)await loadLibrary([...LIBSEL],{quiet:true}).then(()=>afterDataChange())})();
 
 })();
 </script>
