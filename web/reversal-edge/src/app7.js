@@ -79,7 +79,7 @@ function drawUpdates(){const el=$("upd-t");if(!el)return;const ks=Object.keys(UP
 // ---------- the "Update data" button: start a Claude Code session (your account, your usage) that fetches real prices and writes them here
 let MCP=null;
 (async()=>{try{if(!window.claude||!claude.use)return;MCP=await claude.use("mcp");if(MCP)document.querySelectorAll(".mcp-only").forEach(e=>e.hidden=false),document.querySelectorAll(".mcp-off").forEach(e=>e.hidden=true)}catch(e){}})();
-const MCP_ERR={server_not_connected:`The "${CCR}" connector is not available for your account here.`,needs_reauth:`Reconnect "${CCR}" in claude.ai Settings → Connectors.`,not_in_manifest:"You declined Claude Code access for this page. Reload to be asked again.",
+const MCP_ERR={server_not_connected:`The "${CCR}" connector is not available for your account here.`,needs_reauth:`Reconnect "${CCR}" in claude.ai Settings → Connectors.`,not_in_manifest:"Claude Code access is turned off for this page. Open the page's Permissions menu (top of the artifact view), allow \"Claude Code Remote\", then reload and press \"Ask for Claude Code access\".",
  blocked_by_policy:"Your organization's policy blocks starting Claude Code sessions from pages.",approval_required:"Your organization requires approval for this action.",selection_required:"Choose which Claude Code connector to use in the prompt Claude showed, then try again.",
  tool_error:"Claude Code refused the request: ",server_unavailable:"Claude Code did not answer in time; try again in a minute.",not_granted:"This view cannot use connectors.",capability_disabled:"This view cannot use connectors."};
 const mcpErr=e=>(MCP_ERR[e&&e.code]||"Could not reach Claude Code: ")+(e&&(e.code==="tool_error"||!MCP_ERR[e.code])?String(e.message||e.code||e).slice(0,200):"");
@@ -132,5 +132,10 @@ $("lib-t").addEventListener("change",e=>{const k=e.target.dataset.lib;if(!k)retu
 $("lib-top30").addEventListener("click",async()=>{const m=await libMeta();loadLibrary(Object.keys(m).slice(0,30))});
 $("lib-shown").addEventListener("click",()=>loadLibrary([...document.querySelectorAll("#lib-t input[data-lib]")].map(x=>x.dataset.lib)));
 $("lib-none").addEventListener("click",()=>unloadLibrary([...LIBSEL]));
-$("upd-go").addEventListener("click",startUpdate);$("upd-envs").addEventListener("click",loadEnvs);
+async function permState(){try{const P=await claude.use("permissions");if(!P)return "unavailable";return await P.state("mcp:"+CCR)}catch(e){return "unavailable"}}
+async function showPerm(){const st=await permState(),el=$("upd-perm");if(!el)return;
+ el.innerHTML=st==="granted"?'<span class="up">Claude Code access: allowed.</span>':st==="prompt"?'Claude Code access: not asked yet (you will be asked on the first use).':
+  st==="denied"?'<span class="down">Claude Code access is blocked for this page.</span> To undo: open this artifact\'s <b>Permissions</b> menu at the top of the artifact view and allow "Claude Code Remote", then reload the page and press "Ask for Claude Code access".':'Claude Code access: not available in this view.'}
+async function askPerm(){try{const P=await claude.use("permissions");if(P)await P.request(["mcp:"+CCR])}catch(e){}showPerm()}
+$("upd-go").addEventListener("click",startUpdate);$("upd-ask").addEventListener("click",askPerm);setTimeout(showPerm,1500);$("upd-envs").addEventListener("click",loadEnvs);
 (async()=>{await libMeta();drawLibrary();renderSymSelect();if(LIBSEL.size)await loadLibrary([...LIBSEL],{quiet:true}).then(()=>afterDataChange())})();

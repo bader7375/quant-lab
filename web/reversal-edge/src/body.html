@@ -100,11 +100,11 @@
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0">
               <label for="upd-env" class="note">Claude Code environment</label><select id="upd-env"><option value="">press Find</option></select><button class="btn ghost sm" id="upd-envs">Find my environments</button>
-              <button class="btn sm" id="upd-go">Update data</button>
+              <button class="btn sm" id="upd-go">Update data</button><button class="btn ghost sm" id="upd-ask">Ask for Claude Code access</button>
             </div>
             <p class="note">The environment must allow the data provider in its network settings (claude.ai/code → environment → Edit → Network access → Custom → add <b>query1.finance.yahoo.com</b>). Otherwise the session stops and tells you which host was blocked.</p>
           </div>
-          <div class="status" id="upd-msg"></div><div class="status" id="upd-run"></div>
+          <div class="status" id="upd-perm"></div><div class="status" id="upd-msg"></div><div class="status" id="upd-run"></div>
           <div class="db-only" hidden><div class="tw" style="max-height:220px;overflow:auto;margin-top:6px"><table class="bl" id="upd-t"></table></div></div>
           <p class="note">Or update by hand: download newer daily prices (Saudi Exchange website, your broker) and drop the files above. A file that overlaps the stored history is joined to it automatically, and the older prices are rescaled for bonus shares and splits.</p>
         </div>
