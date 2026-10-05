@@ -19,9 +19,9 @@ function libParse(text,want){const out={};let cur=null,s=null;
 // newer wins where both have data; older history before the newer series starts is rescaled by the price ratio measured on the overlap
 // (providers adjust past prices for bonus shares and splits as of the day you download, so two downloads differ by a constant factor)
 function mergeSeries(base,newer){const bi=new Map(base.d.map((d,i)=>[d,i])),ratios=[];
- for(let j=0;j<newer.d.length&&ratios.length<60;j++){const i=bi.get(newer.d[j]);if(i!=null&&base.c[i]>0&&newer.c[j]>0)ratios.push(newer.c[j]/base.c[i])}
+ for(let j=0;j<newer.d.length&&ratios.length<10;j++){const i=bi.get(newer.d[j]);if(i!=null&&base.c[i]>0&&newer.c[j]>0)ratios.push(newer.c[j]/base.c[i])}
  let r=1,note="",ok=true;
- if(ratios.length>=10){const s=ratios.slice().sort((a,b)=>a-b);r=s[s.length>>1];const disp=ratios.map(x=>Math.abs(x/r-1)).sort((a,b)=>a-b)[ratios.length>>1];
+ if(ratios.length>=5){const s=ratios.slice().sort((a,b)=>a-b);r=s[s.length>>1];const disp=ratios.map(x=>Math.abs(x/r-1)).sort((a,b)=>a-b)[ratios.length>>1];
   if(disp>0.01){ok=false;note=`the two sources disagree on the overlap (median gap ${(100*disp).toFixed(1)}%)`}else if(Math.abs(r-1)>0.003)note=`older history rescaled ×${r.toFixed(4)} for corporate actions since then`}
  else if(base.d[base.d.length-1]<newer.d[0])note=`no overlap with the older data: history before ${newer.d[0]} may be on a different price basis`;
  else note=`only ${ratios.length} overlapping days: older history kept unscaled`;
@@ -59,16 +59,24 @@ let DB=null,UPD={},UPDLOG={};
 function updSeries(doc){const rows=doc.rows||[];const s={d:[],o:[],h:[],l:[],c:[],v:[]};
  for(const r of rows){const t=String(r[0]);if(t.length!==8)continue;s.d.push(`${t.slice(0,4)}-${t.slice(4,6)}-${t.slice(6,8)}`);s.o.push(+r[1]);s.h.push(+r[2]);s.l.push(+r[3]);s.c.push(+r[4]);s.v.push(r[5]==null?NaN:+r[5])}
  const ix=s.d.map((d,i)=>i).sort((a,b)=>s.d[a]<s.d[b]?-1:1),o={};for(const k of ["d","o","h","l","c","v"])o[k]=ix.map(i=>s[k][i]);return o}
-function applyUpdate(sym){const doc=UPD[sym];if(!doc||!DS[sym])return false;if(DS[sym].updAt===doc.fetched_at)return false;
- const nw=updSeries(doc);if(nw.d.length<5){UPDLOG[sym]={note:"too few rows",ok:false};return false}
+const UPD_ALIAS={"2222":["ARAMCO","SAUDI ARAMCO","2222.SR"],"1120":["ALRAJHI","AL RAJHI","RAJHI","1120.SR"],"TASI":["^TASI","TASI.SR","^TASI.SR"]};
+function applyUpdate(sym0){const doc=UPD[sym0];if(!doc)return false;let sym=sym0;
+ if(!DS[sym])for(const a of UPD_ALIAS[sym0]||[])if(DS[a]){sym=a;break}
+ if(!DS[sym]){if(LIBMETA&&LIBMETA[sym0]&&!LIBSEL.has(sym0))return false;const nw=updSeries(doc);if(nw.d.length<250)return false;
+  DS[sym]=Object.assign(nw,{src:`update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:"merged",updAt:doc.fetched_at,bad:0});UPDLOG[sym0]={note:"added from update",ok:true,w:validateSeries(nw),last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
+ if(DS[sym].updAt===doc.fetched_at)return false;
+ const nw=updSeries(doc);if(nw.d.length<5){UPDLOG[sym0]={note:"too few rows",ok:false};return false}
  const w=validateSeries(nw),m=mergeSeries(DS[sym],nw);
- if(!m.ok&&m.overlap>=10){UPDLOG[sym]={note:`not applied: ${m.note}`,ok:false,w};return false}
+ if(!m.ok&&m.overlap>=5){UPDLOG[sym0]={note:`not applied: ${m.note}`,ok:false,w};return false}
+ const lastOld=DS[sym].d[DS[sym].d.length-1];
+ if(m.overlap<5&&(Date.parse(nw.d[0])-Date.parse(lastOld))/864e5>30){DS[sym]=Object.assign(nw,{src:`update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:"merged",updAt:doc.fetched_at,bad:0});
+  UPDLOG[sym0]={note:`older history ends ${lastOld} and the new source starts ${nw.d[0]}: using the new history only (not joined across the gap)`,ok:true,w,last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
  DS[sym]=Object.assign(m.s,{src:`${DS[sym].src||""} + update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:"merged",updAt:doc.fetched_at,bad:0});
- UPDLOG[sym]={note:m.note||"appended",ok:true,w,last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
+ UPDLOG[sym0]={note:m.note||"appended",ok:true,w,last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
 function applyAllUpdates(run=true){let n=0;for(const k of Object.keys(UPD))if(applyUpdate(k))n++;drawUpdates();if(n&&run){saveDS();afterDataChange()}return n}
 function drawUpdates(){const el=$("upd-t");if(!el)return;const ks=Object.keys(UPD).sort();
  el.innerHTML=ks.length?"<tr><th>symbol</th><th>rows</th><th>to</th><th>source</th><th>fetched</th><th>result</th></tr>"+ks.map(k=>{const d=UPD[k],lg=UPDLOG[k]||{},rows=(d.rows||[]).length,last=rows?String(d.rows[d.rows.length-1][0]):"";
-  return `<tr><td>${esc(nameOf(k))}</td><td>${rows}</td><td>${last?`${last.slice(0,4)}-${last.slice(4,6)}-${last.slice(6,8)}`:"—"}</td><td style="text-align:left">${esc(d.source||"")}</td><td>${esc(String(d.fetched_at||"").slice(0,16))}</td><td style="text-align:left" class="${lg.ok===false?"down":""}">${DS[k]?esc(lg.note||"applied"):"stored (load the stock to use it)"}${lg.w&&lg.w.length?` · ${esc(lg.w.join("; "))}`:""}</td></tr>`}).join(""):'<tr><td class="empty">No updates stored yet.</td></tr>'}
+  return `<tr><td>${esc(nameOf(k))}</td><td>${rows}</td><td>${last?`${last.slice(0,4)}-${last.slice(4,6)}-${last.slice(6,8)}`:"—"}</td><td style="text-align:left">${esc(d.source||"")}</td><td>${esc(String(d.fetched_at||"").slice(0,16))}</td><td style="text-align:left" class="${lg.ok===false?"down":""}">${DS[k]||lg.ok!=null?esc(lg.note||"applied"):"stored (load the stock to use it)"}${lg.w&&lg.w.length?` · ${esc(lg.w.join("; "))}`:""}</td></tr>`}).join(""):'<tr><td class="empty">No updates stored yet.</td></tr>'}
 (async()=>{try{if(!window.claude||!claude.use)return;DB=await claude.use("db");if(!DB)return;
  DB.collection("bars").onSnapshot(snap=>{for(const d of snap.docs){const b=d.data();if(b)UPD[d.id]=b}applyAllUpdates(true)},e=>{$("upd-msg").textContent="Update store unavailable: "+e.code});
  DB.collection("runs").orderBy("started","desc").limit(5).onSnapshot(snap=>{const r=snap.docs[0]&&snap.docs[0].data();if(!r)return;
