@@ -11,7 +11,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "yahoo")
 START = int(dt.datetime(2019, 2, 1, tzinfo=dt.timezone.utc).timestamp())
 END = int(time.time()) + 86400
-UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36"
+UA = "Mozilla/5.0"
 
 
 def get(sym):
@@ -35,6 +35,9 @@ def main():
     syms = [s.strip() for s in open(os.path.join(HERE, "symbols.txt")) if s.strip()]
     log = {"fetched_at": dt.datetime.now(dt.timezone.utc).isoformat(), "ok": {}, "failed": {}}
     for s in syms:
+        path = os.path.join(OUT, s.replace("^", "").replace(".SR", "") + ".csv")
+        if os.environ.get("RESUME") and os.path.exists(path):
+            continue
         try:
             j = get(s)
             res = (j.get("chart") or {}).get("result")
