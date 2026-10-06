@@ -11,3 +11,9 @@ Z = (log price - 250-day mean) / 250-day std. Per trade (net 0.40%): Z<=-2.5 & M
 As a 10-slot portfolio: +1.4%/yr, DD -32% (signals cluster in sell-offs); every variant (confirmation, sizing, pacing, market filter) lowered the Core Strategy
 (Sharpe 1.55 -> 0.88..1.16, DD -17% -> -30..-35%). Z>+2..3 skip filters: no gain. 60-day Z: loses. => Z is context + small-size deep-value watch.
 Saudi signal in the engine: trend breakout (55d high > SMA200, trailing 3 ATR) replaces RSI momentum: +2.54%/trade (win 42%) vs +0.08%.
+
+## Saudi reversal search (s_rev.py .. s_rev4.py)
+Plain dip-buys lose (RSI2<10 -0.66%/trade; in uptrends, ML-top, 3 down days, 20d lows, capitulation: all negative).
+Industry-relative dip works: 10-day return 7%+ below the industry (code-group) median, ML >= 50%: +2.24% / +2.35% per trade (2013-19 / 2020-26, hold 20); all 36 variants positive in 2020-26.
+With the market model positive, hold 10: +2.1%/trade, 10x5% sleeve +7.4%/yr Sharpe 1.06 DD -15%. Combined with Core: Sharpe 1.55 -> 1.36 => optional half-size sleeve.
+US check: TSLA/AAPL/AMZN/MSFT/F identical trades before/after v14; TASI index kept on RSI momentum (Sharpe 1.53 vs 0.96 with trend).
