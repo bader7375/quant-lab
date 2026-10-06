@@ -299,6 +299,8 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
     <div class="planbox"><div class="ai-head"><b>Tomorrow's plan</b><button class="btn ghost sm" id="plan-upload">Upload stocks…</button>
       <span class="ai-only" hidden><button class="btn sm" id="plan-go">Ask Claude: best trades for tomorrow</button><button class="btn ghost sm" id="plan-stop" hidden>Stop</button></span><span class="note ai-off">Open inside Claude to get a written brief.</span></div>
       <div class="note" id="plan-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="plan-t"></table></div><div class="ai-out" id="plan-ai"></div></div>
+    <div class="planbox" id="core-box" hidden><div class="ai-head"><b>Saudi Core Strategy</b><span class="note">ML ranking + trend breakouts + market model · tested 2013–2026</span></div>
+      <div class="note" id="core-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="core-t"></table></div></div>
     <div class="planbox" id="ml-box" hidden><div class="ai-head"><b>Saudi ML monthly portfolio</b><span class="note">walk-forward tested 2013–2026, no intraday trading</span></div>
       <div class="note" id="ml-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="ml-t"></table></div><div class="tw"><table class="bl" id="ml-rec"></table></div></div>
     <div class="planbox" id="auction-box" hidden><div class="ai-head"><b>Saudi opening-auction plan</b><span class="note">validated on 270 stocks, 2020–2026</span></div>
@@ -1165,6 +1167,16 @@ window.claude?.use?.("downloads").then(dl=>{if(!dl)return;const b=$("dlcsv");b.h
 $("research").innerHTML=`
 <h2 style="font-size:18px">How this system was built, and what the evidence says (v14)</h2>
 <p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>v14: the Saudi Core Strategy (best of six strategy families)</h2>
+<p><b>Search:</b> one simulator for every idea (weights decided at the close, traded at the next open, 0.40% round-trip costs, idle cash at the 13-week T-bill rate since the riyal is pegged to the dollar), on 270 stocks 2013–2026, liquid names only (SAR 3m+ a day). Benchmark: the equal-weight liquid market, +1.7% a year, Sharpe 0.19, worst drawdown −55%.</p>
+<table class="bl"><tr><th>family</th><th>best honest version</th><th>2013–2026</th><th>verdict</th></tr>
+<tr><td style="text-align:left">ML portfolio</td><td style="text-align:left">top 10, 4 staggered weekly tranches held 20 days, cash when the market model is negative</td><td style="text-align:left">+15.2%/yr, vol 10.5%, Sharpe 1.41, DD −15%</td><td class="up">kept</td></tr>
+<tr><td style="text-align:left">trend breakouts</td><td style="text-align:left">55-day high above the 200-day average, ML top 30%, market positive, 3-ATR trailing stop, 10 slots</td><td style="text-align:left">+10.9%/yr, vol 7.3%, Sharpe 1.45, DD −8% (without the ML and market filters: Sharpe 0.55, DD −37%)</td><td class="up">kept</td></tr>
+<tr><td style="text-align:left">dividend run-up</td><td style="text-align:left">+1.7% vs market in the 20 days before ex-dates (both periods), but only with the exact date known 20 days ahead; with last year's dates +0.6% / +0.2%</td><td style="text-align:left">not testable without announcement dates</td><td class="note">info only</td></tr>
+<tr><td style="text-align:left">dividend capture</td><td style="text-align:left">buy the close before the ex-date: +0.45% / +0.33% before costs (the price drops 1.63% on an average 2.40% dividend)</td><td style="text-align:left">about zero after costs</td><td class="down">rejected</td></tr>
+<tr><td style="text-align:left">volume-spike events</td><td style="text-align:left">3x volume and a 4%+ move: the stock lagged the market −1.7% to −3.6% over 60 days, up or down</td><td style="text-align:left">avoid signal</td><td class="note">warning</td></tr>
+<tr><td style="text-align:left">opening auction</td><td style="text-align:left">see the edge study below (intraday: not used)</td><td></td><td class="note">excluded</td></tr></table>
+<p><b>The Core Strategy runs the two kept sleeves in one account</b> (daily returns correlate only 0.34): <b>+19.6% a year, volatility 12%, Sharpe 1.55, worst drawdown −17%, no losing calendar year 2013–2026</b> (2015 0% vs market −17%, 2022 +4% vs −18%, 2025 +8% vs −22%). 2013–19: +13.6%, Sharpe 1.18; 2020–26: +26.4%, Sharpe 1.91. Stress: 0.6% costs +18.3%; 1% costs +15.8%; cash earning nothing +18.4%; without 2020 +16.4%. About 49% invested on average, 17 positions when invested, turnover 5.5x a year. A 50/50 capital split instead of one account: +13.2%, Sharpe 1.72, worst drawdown −9% (the cautious version).</p>
 <h2>v14: Saudi machine-learning portfolio (2013–2026 walk-forward)</h2>
 <p><b>Data and features:</b> 270 Saudi stocks, 2011–2026, about 150 tradable each day; 58 inputs known at the close: returns over 1 day to 12 months, overnight vs intraday returns, volatility, biggest up/down days, RSI, Bollinger %b, distance to 20/50/200-day averages and 52-week high/low, volume surges, liquidity and size, close location, limit hits, listing age, industry-relative returns, plus market breadth, market volatility, oil, S&amp;P 500, VIX and the New York Saudi ETF for the market model. Stock inputs are ranked across stocks each day. <b>Target:</b> the stock's return from the next open over 20 trading days, ranked against the other stocks.</p>
 <p><b>Walk-forward:</b> each year from 2013 to 2026 was predicted by a LightGBM model trained only on earlier data (with a gap so no training target overlaps the test year). The ranking worked in all 14 years (daily rank correlation +0.02 to +0.19, average about +0.09); the best-ranked tenth beat the market by about +1.0% per 20 days and the worst tenth lagged by about −1.2%, in both 2013–2019 and 2020–2026. A second walk-forward model on market-wide inputs forecasts the equal-weight market's next 20 days and decides whether to be invested.</p>
@@ -1777,6 +1789,28 @@ function mlGate(sym){const mode=ECFG.mlf||"on";if(!MLPF||!MLPF.ranks)return {ok:
  if(pct<.7)return {ok:false,why:`ML rank ${Math.round(100*pct)}th percentile, below the top 30%`,pct};
  if(mode==="on"&&!(MLPF.pm>0))return {ok:false,why:`market model negative (20-day forecast ${spct(MLPF.pm,1)})`,pct};
  return {ok:true,why:"",pct,mkt:MLPF.pm>0}}
+
+// ---------- v14: Saudi Core Strategy = ML sleeve (4 weekly tranches of the top 10) + trend sleeve (55-day breakouts, ML top 30%, 3-ATR trailing stop), both only while the market model is positive
+function coreRows(){if(!RES)return [];const out=[];
+ for(const sym of RES.syms){if(!saudiSym(sym)||/^TASI/i.test(sym))continue;const s=SY(sym);if(!s||s.d.length<220)continue;const i=s.d.length-1,c=s.c[i];
+  let hi=-1e99;for(let k=i-54;k<=i;k++)hi=Math.max(hi,s.c[k]);let m=0;for(let k=i-199;k<=i;k++)m+=s.c[k];m/=200;
+  let a=0,n=0;for(let k=i-19;k<=i;k++){const tr=Math.max(s.h[k]-s.l[k],Math.abs(s.h[k]-s.c[k-1]),Math.abs(s.l[k]-s.c[k-1]));if(isF(tr)){a+=tr;n++}}a=n?a/n:NaN;
+  const pct=MLPF&&MLPF.ranks?MLPF.ranks[sym]:NaN;  out.push({sym,s,i,c,hi,sma:m,atr:a,pct,brk:c>=hi&&c>m,up:c>m,date:s.d[i]})}
+ return out.sort((x,y)=>(y.brk-x.brk)||((isF(y.pct)?y.pct:-1)-(isF(x.pct)?x.pct:-1)))}
+function drawCore(){const box=$("core-box");if(!box)return;if(!MLPF){box.hidden=true;return}box.hidden=false;const on=MLPF.pm>0,R=coreRows();
+ const top10=(MLPF.picks||[]).slice(0,10).map(p=>esc(nameOf(p.sym))).join(", ");
+ $("core-note").innerHTML=`<b>How it works</b> (one account, swing trades only, decisions at the close, orders at the next open):<br>
+ <b>1 · ML sleeve:</b> the account is split into 4 tranches of 25%. Every 5 trading days one tranche is re-invested in the current ML top 10 (equal weight, about 2.5% of the account per stock) and held 20 trading days; if the market model is negative that tranche goes to cash instead.<br>
+ <b>2 · Trend sleeve:</b> buy a stock (10% of the account, at most 10) when it closes at its 55-day high, above its 200-day average, ranks in the ML top 30% and the market model is positive. Exit at the next open after a close below (highest close since entry − 3 × ATR20). If both sleeves together would exceed 100%, scale them down.<br>
+ <b>Cash</b> (most of the time) goes to a money-market or sukuk fund.<br>
+ <b>Test 2013–2026</b> (walk-forward, 0.40% costs, cash at T-bill rates): <b>+19.6% a year, volatility 12%, Sharpe 1.55, worst drawdown −17%, no losing calendar year</b> (market: +1.7% a year, −55%). 2013–19 +13.6% (Sharpe 1.18), 2020–26 +26.4% (Sharpe 1.91). At 1% costs: +15.8%; without 2020: +16.4%. Caveats: survivorship (stocks delisted before 2026 are missing), filters partly chosen with the whole period in view, not yet traded live.<br>
+ <b>Now (${esc(MLPF.date)}): market model ${on?'<span class="up">POSITIVE: both sleeves active':'<span class="down">NEGATIVE: hold cash, no new positions'}</span></b> (20-day forecast ${spct(MLPF.pm,1)}). ML sleeve list: ${top10}.`;
+ $("core-t").innerHTML=R.length?"<tr>"+["stock","close","trend-sleeve signal today","55-day high (buy trigger: close at or above)","200-day avg","ML rank","stop if bought now (close − 3 ATR)","in ML top 10?"].map(h=>`<th>${h}</th>`).join("")+"</tr>"+R.map(r=>{
+  const okml=isF(r.pct)&&r.pct>=.7,inTop=(MLPF.picks||[]).slice(0,10).some(p=>p.sym===r.sym),sig=r.brk&&okml;
+  return `<tr data-s="${esc(r.sym)}"><td><b>${esc(nameOf(r.sym))}</b> <span class="note">${r.date}</span></td><td>${fp(r.c)}</td><td>${sig?(on?'<span class="up">BUY at next open</span>':'<span class="note">signal, but market model negative</span>'):r.brk?'<span class="note">breakout, ML rank too low</span>':'—'}</td>
+   <td>${fp(r.hi)}</td><td class="${r.up?"up":"down"}">${fp(r.sma)}</td><td class="${okml?"up":""}">${isF(r.pct)?Math.round(100*r.pct)+"th":"—"}</td><td>${isF(r.atr)?fp(r.c-3*r.atr):"—"}</td><td>${inTop?(on?'<span class="up">yes: buy/hold</span>':'yes (cash for now)'):"—"}</td></tr>`}).join(""):'<tr><td class="empty">Load Saudi stocks (Data tab → Tadawul library, or upload files) to see trend-sleeve signals.</td></tr>'}
+{const _dm=drawML;drawML=function(){_dm.apply(this,arguments);try{drawCore()}catch(e){}}}
+{const _dp2=drawPlan;drawPlan=function(){_dp2.apply(this,arguments);try{drawCore()}catch(e){}}}
 
 })();
 </script>

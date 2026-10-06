@@ -168,3 +168,25 @@ function mlGate(sym){const mode=ECFG.mlf||"on";if(!MLPF||!MLPF.ranks)return {ok:
  if(pct<.7)return {ok:false,why:`ML rank ${Math.round(100*pct)}th percentile, below the top 30%`,pct};
  if(mode==="on"&&!(MLPF.pm>0))return {ok:false,why:`market model negative (20-day forecast ${spct(MLPF.pm,1)})`,pct};
  return {ok:true,why:"",pct,mkt:MLPF.pm>0}}
+
+// ---------- v14: Saudi Core Strategy = ML sleeve (4 weekly tranches of the top 10) + trend sleeve (55-day breakouts, ML top 30%, 3-ATR trailing stop), both only while the market model is positive
+function coreRows(){if(!RES)return [];const out=[];
+ for(const sym of RES.syms){if(!saudiSym(sym)||/^TASI/i.test(sym))continue;const s=SY(sym);if(!s||s.d.length<220)continue;const i=s.d.length-1,c=s.c[i];
+  let hi=-1e99;for(let k=i-54;k<=i;k++)hi=Math.max(hi,s.c[k]);let m=0;for(let k=i-199;k<=i;k++)m+=s.c[k];m/=200;
+  let a=0,n=0;for(let k=i-19;k<=i;k++){const tr=Math.max(s.h[k]-s.l[k],Math.abs(s.h[k]-s.c[k-1]),Math.abs(s.l[k]-s.c[k-1]));if(isF(tr)){a+=tr;n++}}a=n?a/n:NaN;
+  const pct=MLPF&&MLPF.ranks?MLPF.ranks[sym]:NaN;  out.push({sym,s,i,c,hi,sma:m,atr:a,pct,brk:c>=hi&&c>m,up:c>m,date:s.d[i]})}
+ return out.sort((x,y)=>(y.brk-x.brk)||((isF(y.pct)?y.pct:-1)-(isF(x.pct)?x.pct:-1)))}
+function drawCore(){const box=$("core-box");if(!box)return;if(!MLPF){box.hidden=true;return}box.hidden=false;const on=MLPF.pm>0,R=coreRows();
+ const top10=(MLPF.picks||[]).slice(0,10).map(p=>esc(nameOf(p.sym))).join(", ");
+ $("core-note").innerHTML=`<b>How it works</b> (one account, swing trades only, decisions at the close, orders at the next open):<br>
+ <b>1 · ML sleeve:</b> the account is split into 4 tranches of 25%. Every 5 trading days one tranche is re-invested in the current ML top 10 (equal weight, about 2.5% of the account per stock) and held 20 trading days; if the market model is negative that tranche goes to cash instead.<br>
+ <b>2 · Trend sleeve:</b> buy a stock (10% of the account, at most 10) when it closes at its 55-day high, above its 200-day average, ranks in the ML top 30% and the market model is positive. Exit at the next open after a close below (highest close since entry − 3 × ATR20). If both sleeves together would exceed 100%, scale them down.<br>
+ <b>Cash</b> (most of the time) goes to a money-market or sukuk fund.<br>
+ <b>Test 2013–2026</b> (walk-forward, 0.40% costs, cash at T-bill rates): <b>+19.6% a year, volatility 12%, Sharpe 1.55, worst drawdown −17%, no losing calendar year</b> (market: +1.7% a year, −55%). 2013–19 +13.6% (Sharpe 1.18), 2020–26 +26.4% (Sharpe 1.91). At 1% costs: +15.8%; without 2020: +16.4%. Caveats: survivorship (stocks delisted before 2026 are missing), filters partly chosen with the whole period in view, not yet traded live.<br>
+ <b>Now (${esc(MLPF.date)}): market model ${on?'<span class="up">POSITIVE: both sleeves active':'<span class="down">NEGATIVE: hold cash, no new positions'}</span></b> (20-day forecast ${spct(MLPF.pm,1)}). ML sleeve list: ${top10}.`;
+ $("core-t").innerHTML=R.length?"<tr>"+["stock","close","trend-sleeve signal today","55-day high (buy trigger: close at or above)","200-day avg","ML rank","stop if bought now (close − 3 ATR)","in ML top 10?"].map(h=>`<th>${h}</th>`).join("")+"</tr>"+R.map(r=>{
+  const okml=isF(r.pct)&&r.pct>=.7,inTop=(MLPF.picks||[]).slice(0,10).some(p=>p.sym===r.sym),sig=r.brk&&okml;
+  return `<tr data-s="${esc(r.sym)}"><td><b>${esc(nameOf(r.sym))}</b> <span class="note">${r.date}</span></td><td>${fp(r.c)}</td><td>${sig?(on?'<span class="up">BUY at next open</span>':'<span class="note">signal, but market model negative</span>'):r.brk?'<span class="note">breakout, ML rank too low</span>':'—'}</td>
+   <td>${fp(r.hi)}</td><td class="${r.up?"up":"down"}">${fp(r.sma)}</td><td class="${okml?"up":""}">${isF(r.pct)?Math.round(100*r.pct)+"th":"—"}</td><td>${isF(r.atr)?fp(r.c-3*r.atr):"—"}</td><td>${inTop?(on?'<span class="up">yes: buy/hold</span>':'yes (cash for now)'):"—"}</td></tr>`}).join(""):'<tr><td class="empty">Load Saudi stocks (Data tab → Tadawul library, or upload files) to see trend-sleeve signals.</td></tr>'}
+{const _dm=drawML;drawML=function(){_dm.apply(this,arguments);try{drawCore()}catch(e){}}}
+{const _dp2=drawPlan;drawPlan=function(){_dp2.apply(this,arguments);try{drawCore()}catch(e){}}}
