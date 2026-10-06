@@ -44,8 +44,12 @@ function planFor(sym){const s=SY(sym);if(!s)return null;const i=s.d.length-1;if(
  {const newest=RES.syms.map(q=>{const z=SY(q);return z?z.d[z.d.length-1]:""}).sort().pop(),gap=(Date.parse(newest)-Date.parse(s.d[i]))/864e5;if(gap>4)warn.push(`data ends ${s.d[i]}, ${Math.round(gap)} days before your newest file: update this file before trading it`)}
  if(saudiSym(sym)&&i>0){const r1=s.c[i]/s.c[i-1]-1;if(r1>=.095)warn.push("closed at the +10% limit: next morning usually opens higher then fades; holders consider selling into the open, don't buy the open");
   if(r1<=-.095)warn.push("closed at the -10% limit: next morning usually opens 2-4% lower");
-  good.push(`opening-auction rule (validated 2020-2026): if it opens at or below ${fp(c*.97)} (-3%), buying in the opening auction and selling at the close earned +0.6% to +2.8% gross depending on gap depth; see the auction plan below`)}
+}
  let o={sym,s,i,c,atr,mom,bb,tc,warn,good,st0};
+ const gate=saudiSym(sym)&&!isIndex&&(ECFG.mlf||"on")!=="off"?mlGate(sym):null;
+ if(gate&&!gate.ok&&(s.sig[i]===1||s.sig[i]===2)){Object.assign(o,{kind:"weak",rank:4,action:`skip: ML filter (${gate.why})`,edge:null});
+  warn.push(s.sig[i]===2?`momentum signal filtered out: ${gate.why}. In the 2013–2026 test momentum trades outside the ML top 30% averaged −0.04% net and those in the top 30% during a negative market forecast +0.02%, vs +0.65% when both conditions held`:`reversal signal filtered out: Saudi dip-buys lost −0.67% net per trade in 2013–2026 (−0.36% even in the ML top 30%)`);return o}
+ if(gate&&gate.ok&&s.sig[i]===2)good.push(`passes the ML filter: rank ${Math.round(100*gate.pct)}th percentile${gate.mkt?", market model positive":""} (such trades averaged +0.65% net in 2013–2026, both halves)`);
  if(s.sig[i]===1){const ap=!!(s.aplus&&s.aplus[i]),grade=ap?"aplus":thirdOf(s.score[i]),e=ownEdge(s,i,grade);
   Object.assign(o,{kind:"rev",rank:ap?0:1,action:(ap?"A+ ":"")+(ECFG.entry==="limit"?"limit buy":"buy at open"),entry:ECFG.entry==="limit"?c-ECFG.limitATR*atr:c,
    exitTxt:EXIT_SHORT[ECFG.exit]+(ECFG.exit==="prevhigh"?` (today's high ${fp(s.h[i])})`:""),maxHold:ECFG.maxHold,grade,edge:e,P:s.P[i]});

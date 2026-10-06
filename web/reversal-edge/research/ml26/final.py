@@ -22,3 +22,10 @@ print(top[["rank", "sym", "score", "val"] + cols].round(3).to_string(index=False
 json.dump({"date": str(pd.Timestamp(last).date()), "pm": pm, "pm_hist": {str(k.date()): round(float(v), 5) for k, v in hist.items()},
            "universe": int(len(liq)), "picks": [{"sym": r.sym, "rank": int(r["rank"]), "score": round(float(r.score), 4), "val_m": round(float(r.val) / 1e6, 1),
              **{c: round(float(r[c]) + .5, 3) for c in cols}} for _, r in liq.head(30).iterrows()]}, open("today.json", "w"), indent=1)
+# full ranking of every eligible stock for the terminal's ML filter (percentile among eligible stocks, 1 = best)
+allr = today.copy(); allr["pct"] = allr.score.rank(pct=True)
+T = json.load(open("today.json")); T["ranks"] = {r.sym: round(float(r.pct), 3) for _, r in allr.iterrows()}; T["ranked"] = int(len(allr))
+old = json.load(open("today_record.json")) if __import__("os").path.exists("today_record.json") else {}
+T.update({k: old[k] for k in ("record", "summary") if k in old})
+T["filter_test"] = {"mom_all": 0.0008, "mom_top30": 0.0031, "mom_top30_mkt_pos": 0.0065, "rev_all": -0.0067, "rev_top30": -0.0036}
+json.dump(T, open("today.json", "w"), indent=1); print("ranked", len(allr))
