@@ -353,9 +353,20 @@ function buildRev(ds, fear, cfg) {
     for (let t = 250; t < n; t++) { let sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0, m = 0;
       for (let k = Math.max(2, t - 499); k <= t; k++) { const a = r[k - 1], b = r[k]; if (!isF(a) || !isF(b)) continue; m++; sx += a; sy += b; sxx += a * a; syy += b * b; sxy += a * b; }
       if (m >= 250) { const cv = sxy / m - sx * sy / m / m, va = sxx / m - (sx / m) ** 2, vb = syy / m - (sy / m) ** 2; if (va > 0 && vb > 0) R.ac[t] = cv / Math.sqrt(va * vb); } } }
-  R.mode = R.ac.map((a) => s < 0 || cfg.mode === "rev" ? 1 : cfg.mode === "mom" ? -1 : isF(a) && a > cfg.acThr ? -1 : 1);   // 1 reversal, -1 momentum
+  R.trendMode = s > 0 && cfg.mode === "trend";
+  R.mode = R.ac.map((a) => s < 0 || cfg.mode === "rev" ? 1 : cfg.mode === "mom" || cfg.mode === "trend" ? -1 : isF(a) && a > cfg.acThr ? -1 : 1);   // 1 reversal, -1 momentum
   R.setup = R.rsi2.map((x, i) => isF(x) && R.mode[i] === 1 && (s > 0 ? x < cfg.trig : x > 100 - cfg.trig) ? 1 : 0);
-  R.msetup = R.rsi2.map((x, i) => isF(x) && R.mode[i] === -1 && x > cfg.momTrig ? 1 : 0);
+  // v14 long-term Z-score: distance of log price from its 250-day mean in 250-day standard deviations
+  { const W = 250; R.z250 = nanArr(n); let sx = 0, sxx = 0, m = 0; for (let i = 0; i < n; i++) { const v = lc[i]; if (isF(v)) { sx += v; sxx += v * v; m++; }
+      if (i >= W) { const u = lc[i - W]; if (isF(u)) { sx -= u; sxx -= u * u; m--; } }
+      if (m >= 200 && isF(v)) { const mu = sx / m, sd = Math.sqrt(Math.max(1e-12, sxx / m - mu * mu)); R.z250[i] = (v - mu) / sd; } }
+    // deep-value watch: Z turns back up through -2.5 after being at or below it within the last 20 bars
+    R.zwatch = new Array(n).fill(0); for (let i = 21; i < n; i++) { if (!isF(R.z250[i]) || !isF(R.z250[i - 1])) continue;
+      if (R.z250[i - 1] <= -2.5 && R.z250[i] > -2.5) R.zwatch[i] = 1; } }
+  R.sma200 = rollMean(c, 200);
+  if (R.trendMode) {   // v14 Saudi trend breakout: close at the 55-day high and above the 200-day average
+    R.msetup = c.map((x, i) => { if (i < 200 || !isF(x) || !isF(R.sma200[i]) || x <= R.sma200[i]) return 0; for (let k = i - 54; k < i; k++) if (c[k] > x) return 0; return 1; });
+  } else R.msetup = R.rsi2.map((x, i) => isF(x) && R.mode[i] === -1 && x > cfg.momTrig ? 1 : 0);
   R.sma10 = rollMean(c, 10);
   const exitHit = (j) => cfg.exit === "prevhigh" ? (s > 0 ? c[j] > h[j - 1] : c[j] < l[j - 1]) : cfg.exit === "rsi70" ? (s > 0 ? R.rsi2[j] > 70 : R.rsi2[j] < 30)
     : cfg.exit === "sma10" ? (s > 0 ? c[j] > R.sma10[j] : c[j] < R.sma10[j]) : (s > 0 ? c[j] > R.sma5[j] : c[j] < R.sma5[j]);
@@ -379,7 +390,9 @@ function buildRev(ds, fear, cfg) {
   // momentum trade outcome (hindsight): buy the next open after a strong close, exit on a close below the 5-day average or after momMaxHold bars
   R.mret = nanArr(n); R.mhold = nanArr(n);
   if (s > 0) for (let t = 0; t < n - 2; t++) { const e = o[t + 1]; let x = null, j = t + 1;
-    for (; j < Math.min(n, t + 1 + cfg.momMaxHold); j++) { if (c[j] < R.sma5[j] || j === t + cfg.momMaxHold) { x = c[j]; break; } }
+    if (R.trendMode) { let pk = c[t]; const a0 = atr[t]; if (!isF(a0)) continue;
+      for (; j < Math.min(n, t + 251); j++) { pk = Math.max(pk, c[j]); if (c[j] < pk - 3 * a0 || j === t + 250) { x = c[j]; break; } } }
+    else for (; j < Math.min(n, t + 1 + cfg.momMaxHold); j++) { if (c[j] < R.sma5[j] || j === t + cfg.momMaxHold) { x = c[j]; break; } }
     if (x != null) { R.mret[t] = Math.log(x / e) - cost; R.mhold[t] = j - t; } }
   R.pulse = pulseCalc(R, h, l, c);
   // A+ quality (study 11/12): the day closed in the bottom 13% of its range and the Momentum Pulse is below -0.5 (mirror for shorts)
@@ -492,17 +505,17 @@ function backtest(syms, rev, M, cfg, thr, revS, MS) {
       if (p.kind === 3) { const lim = p.c + cfg.limitATR * p.atr; if (R.h[i] < lim) continue; fill = Math.max(op, lim); }
       const equity = cash + Object.values(pos).reduce((a, x) => a + (isF(px(x.s, t, "o")) ? x.q * px(x.s, t, "o") : x.last), 0);
       const dist = (cfg.stopATR > 0 ? cfg.stopATR : 3) * p.atr / fill; let notional = cfg.sizeMode === "fixed" ? equity * Math.min(cfg.maxW, 1 / Math.max(1, Math.min(cfg.maxPos, syms.length))) : Math.min(equity * cfg.riskPct / Math.max(dist, 1e-4), equity * cfg.maxW); const am = p.ap ? (cfg.aplusMult || 1) : (cfg.otherMult == null ? 1 : cfg.otherMult); notional *= am; if (p.kind === 3) notional *= cfg.shortSize == null ? 0.5 : cfg.shortSize; notional = Math.min(notional, Math.max(0, s > 0 && p.kind !== 3 ? cash : equity)); if (notional < 100) continue;
-      const q = (p.kind === 3 ? -1 : s) * notional / fill; cash -= q * fill + notional * cost; pos[p.s] = { s: p.s, kind: p.kind, q, ep: fill, ti: t, stop: p.kind === 3 ? fill + (cfg.shortStopATR || 3) * p.atr : cfg.stopATR > 0 && p.kind === 1 ? fill - s * cfg.stopATR * p.atr : null, last: q * fill, sc: p.sc, P: p.P, z: p.z, fear: p.fear, risk: notional * dist, c0: notional * cost }; }
+      const q = (p.kind === 3 ? -1 : s) * notional / fill; cash -= q * fill + notional * cost; pos[p.s] = { s: p.s, kind: p.kind, q, ep: fill, ti: t, atr0: p.atr, peak: Math.max(fill, p.c || fill), stop: p.kind === 3 ? fill + (cfg.shortStopATR || 3) * p.atr : cfg.stopATR > 0 && p.kind === 1 ? fill - s * cfg.stopATR * p.atr : null, last: q * fill, sc: p.sc, P: p.P, z: p.z, fear: p.fear, risk: notional * dist, c0: notional * cost }; }
     pend = keep;
     // intraday stop (if any), then close-based exits
     for (const q of Object.keys(pos)) { const p = pos[q], i = idx[q].get(cal[t]); if (i == null) continue; const R = rev[q]; let x = null, why = "";
-      if (p.kind === 2) { if (R.c[i] < R.sma5[i]) { x = R.c[i]; why = "MOM-SMA5"; } else if (t - p.ti + 1 >= cfg.momMaxHold) { x = R.c[i]; why = "TIME"; } }
+      if (p.kind === 2) { if (R.trendMode) { p.peak = Math.max(p.peak, R.c[i]); if (R.c[i] < p.peak - 3 * p.atr0) { x = R.c[i]; why = "TRAIL-3ATR"; } else if (t - p.ti + 1 >= 250) { x = R.c[i]; why = "TIME"; } } else if (R.c[i] < R.sma5[i]) { x = R.c[i]; why = "MOM-SMA5"; } else if (t - p.ti + 1 >= cfg.momMaxHold) { x = R.c[i]; why = "TIME"; } }
       else if (p.kind === 3) { if (R.h[i] >= p.stop) { x = t > p.ti ? Math.max(R.o[i], p.stop) : p.stop; why = "STOP"; } else if (i > 0 && R.c[i] < R.l[i - 1]) { x = R.c[i]; why = "PREV-LOW"; } else if (t - p.ti + 1 >= cfg.maxHold) { x = R.c[i]; why = "TIME"; } }
       else if (p.stop != null && ((s > 0 && R.l[i] <= p.stop) || (s < 0 && R.h[i] >= p.stop))) { x = t > p.ti ? (s > 0 ? Math.min(R.o[i], p.stop) : Math.max(R.o[i], p.stop)) : p.stop; why = "STOP"; }
       else { const ex = cfg.exit === "prevhigh" ? (i > 0 && (s > 0 ? R.c[i] > R.h[i - 1] : R.c[i] < R.l[i - 1])) : cfg.exit === "rsi70" ? (s > 0 ? R.rsi2[i] > 70 : R.rsi2[i] < 30) : cfg.exit === "sma10" ? (s > 0 ? R.c[i] > R.sma10[i] : R.c[i] < R.sma10[i]) : (s > 0 ? R.c[i] > R.sma5[i] : R.c[i] < R.sma5[i]);
         if (ex) { x = R.c[i]; why = R.exitName; } else if (t - p.ti + 1 >= cfg.maxHold) { x = R.c[i]; why = "TIME"; } }
       if (x != null) { const fee = Math.abs(p.q * x) * cost + (p.q < 0 ? Math.abs(p.q * p.ep) * (cfg.borrowBps == null ? 50 : cfg.borrowBps) / 1e4 * (t - p.ti + 1) / 252 : 0); cash += p.q * x - fee; const pnl = p.q * (x - p.ep) - fee - p.c0;
-        trades.push({ trade_id: trades.length + 1, symbol: q, direction: p.kind === 2 ? "momentum" : p.kind === 3 || s < 0 ? "short" : "long", entry_date: cal[p.ti], exit_date: cal[t], bars_held: t - p.ti, exit_reason: why, entry_price: p.ep, exit_price: x, R: p.risk > 0 ? pnl / p.risk : NaN_, pnl, weight: Math.abs(p.q * p.ep) / 1e6, p: p.P, score: p.sc, z_entry: p.z, fear: p.fear }); delete pos[q]; } }
+        trades.push({ trade_id: trades.length + 1, symbol: q, direction: p.kind === 2 ? (rev[q].trendMode ? "trend" : "momentum") : p.kind === 3 || s < 0 ? "short" : "long", entry_date: cal[p.ti], exit_date: cal[t], bars_held: t - p.ti, exit_reason: why, entry_price: p.ep, exit_price: x, R: p.risk > 0 ? pnl / p.risk : NaN_, pnl, weight: Math.abs(p.q * p.ep) / 1e6, p: p.P, score: p.sc, z_entry: p.z, fear: p.fear }); delete pos[q]; } }
     let held = 0; for (const q of Object.keys(pos)) { const v = px(q, t, "c"); if (isF(v)) pos[q].last = pos[q].q * v; held += pos[q].last; }
     eq.push(cash + held); days.push(cal[t]); if (Object.keys(pos).length) inMkt++; syms.forEach((q, k) => { const v = px(q, t, "c"); if (isF(v)) lastC[k] = v; }); bh.push(1e6 * syms.reduce((a, q, k) => a + (isF(lastC[k]) ? lastC[k] : bh0[k]) / bh0[k], 0) / syms.length);
     if (t === n - 1) break;
@@ -562,7 +575,7 @@ function contextMeans(ds, mkt) { // fair-value means and stationarity statistics
 // v12: Saudi stocks trend day to day; dip-buys showed no edge there while momentum signals did (Al Rajhi, TASI), so they can run in momentum mode
 const SAUDI_NAMES = /^(TASI|TASI_\w+|ARAMCO|ALRAJHI|RAJHI|AL_RAJHI|SABIC|STC|SNB|ALINMA|MAADEN|ACWA|ELM|DRSK|MOUWASAT|SULAIMAN|NOMU|MT30)$/i;
 function isSaudi(sym) { return /^\d{4}(_SR|_SE|_SA)?$/i.test(sym) || /(_SR|\.SR|_SE|_SA)$/i.test(sym) || SAUDI_NAMES.test(sym); }
-function symCfg(sym, cfg) { return cfg.saudi === "mom" && isSaudi(sym) && cfg.mode !== "rev" ? Object.assign({}, cfg, { mode: "mom" }) : cfg; }
+function symCfg(sym, cfg) { return (cfg.saudi === "trend" || cfg.saudi === "mom") && isSaudi(sym) && cfg.mode !== "rev" ? Object.assign({}, cfg, { mode: cfg.saudi === "trend" ? "trend" : "mom" }) : cfg; }
 function run(datasets, cfg, fear) {
   const all = Object.keys(datasets), mkt = cfg.market && datasets[cfg.market] ? datasets[cfg.market] : null;
   const syms = all.filter((s) => s !== cfg.market || all.length === 1);
@@ -602,10 +615,11 @@ function run(datasets, cfg, fear) {
     out.metrics.symbols[s] = { classification: classMetrics(yy, pp, pp, PRIOR.calib.a ? sigm(PRIOR.calib.a + PRIOR.calib.b * cfg.scoreThr) : 0.6), trading: tm(str), tradingAll: tm(strAll), signals: bt.sig[s].filter((v) => v > 0).length, setups: R.setup.reduce((a, b) => a + b, 0), msetups: R.msetup.reduce((a, b) => a + b, 0) };
     const S = { first, side: cfg.side, exitName: R.exitName, steps: m.steps, garchSteps: R.garchSteps, harSteps: R.harSteps, sig: bt.sig[s] };
     for (const k of ["d", "o", "h", "l", "c", "v", "atr", "rsi2", "rsi14", "streak", "ibs", "lwick", "uwick", "ret1", "gap", "rangex", "volz", "m20", "s20", "z20", "sma5", "vterm", "vrank", "vix", "frank", "setup",
-      "y", "tret", "thold", "texit", "tentry", "unfilled", "ac", "mode", "msetup", "mret", "mhold", "sma10", "zone", "ztouch", "zn", "zfwd", "touch", "fwd5", "r", "rv", "cc20", "park20", "gk20", "rs20", "yz5", "yz20", "yz60", "garch", "har5"]) S[k] = Array.from(R[k]);
+      "y", "tret", "thold", "texit", "tentry", "unfilled", "ac", "mode", "msetup", "mret", "mhold", "z250", "zwatch", "sma200", "sma10", "zone", "ztouch", "zn", "zfwd", "touch", "fwd5", "r", "rv", "cc20", "park20", "gk20", "rs20", "yz5", "yz20", "yz60", "garch", "har5"]) S[k] = Array.from(R[k]);
+    S.trendMode = !!R.trendMode;
     S.zq = R.zq.map((a) => Array.from(a)); S.pulse = R.pulse; S.X = {}; S.Z = {}; for (const q of SKEYS) { S.X[q] = Array.from(R.X[q]); S.Z[q] = Array.from(R.Z[q]); }
     if (revS) { const RS = revS[s], ms = MS[s]; S.ssetup = Array.from(RS.setup); S.sscore = ms.score; S.sP = ms.P; S.stret = Array.from(RS.tret); S.sthold = Array.from(RS.thold);
-      S.sgood = RS.setup.map((v, i) => v && isF(ms.score[i]) && ms.score[i] >= cfg.scoreThr ? 1 : 0); S.mdown = RS.mdown ? Array.from(RS.mdown) : null; S.sma200 = Array.from(rollMean(R.c, 200)); }
+      S.sgood = RS.setup.map((v, i) => v && isF(ms.score[i]) && ms.score[i] >= cfg.scoreThr ? 1 : 0); S.mdown = RS.mdown ? Array.from(RS.mdown) : null; }
     S.aplus = R.setup.map((v, i) => v && R.aq[i] && isF(m.score[i]) && m.score[i] >= PRIOR.thirds[1] ? 1 : 0); S.aq = Array.from(R.aq); S.score = m.score; S.P = m.P; S.Pr = m.Pr; S.C = m.C;
     Object.assign(S, C);
     S.lv_primary = R.m20.map(Math.exp); S.sg_primary = R.s20; S.z = R.z20;

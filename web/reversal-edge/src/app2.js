@@ -83,7 +83,7 @@ function pulseAdvice(s,i){const P=s.pulse,st0=P.state[i],momMkt=s.mode[i]===-1,d
   else if(st0===-1){a="Momentum market falling: avoid buying dips here; they tend to keep falling.";tone="bad"}
   else if(st0===2){a="Up-move at a 2-year momentum extreme and turning: a warning to tighten, not a proven sell signal.";tone="mid"}
   else if(st0===-2){a="Down-move at a 2-year extreme and turning: possible exhaustion; no proven edge on its own.";tone="mid"}
-  else{a="Momentum market without a trend: wait for a strong close (momentum setup).";tone="mid"}
+  else{a=s.trendMode?"No trend right now: wait for a close at the 55-day high above the 200-day average (trend breakout).":"Momentum market without a trend: wait for a strong close (momentum setup).";tone="mid"}
   a="Avoid mean reversion: this market keeps moving the same way day to day. "+a}
  else{
   if(st0===-1){a="Strong down-momentum. In tests on 87 stocks and 6 long histories, reversal setups in this state did better (+1.70% vs +1.09% per trade): capitulation, not a reason to avoid.";tone="good"}
@@ -111,7 +111,7 @@ function renderPulseHud(i){const hud=$("pulse-hud"),s=S();if(!s||!s.pulse||!UI.p
 let chart=null,SER={},MK=null,PLINES=[],ARR=null,hoverIdx=null;
 const OVL=[["bb","Bollinger Bands (20, 2)","#7aa7e0"],["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
  ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["pdiv","Divergence lines","#a77bea"],["mine","My trades",TV.you]];
-const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
+const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones (20d)"],["zl","Long-term Z (250d)"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
 $("ov").innerHTML=`<span class="lab">on price</span>`+OVL.map(([k,n,c])=>`<label><input type="checkbox" data-ov="${k}" ${UI.ov[k]?"checked":""}><span style="color:${c}">■</span>${n}</label>`).join("");
 $("pn").innerHTML=`<span class="lab">panels</span>`+PNS.map(([k,n])=>`<label><input type="checkbox" data-pn="${k}" ${UI.pn[k]?"checked":""}>${n}</label>`).join("");
 $("ov").addEventListener("change",e=>{const k=e.target.dataset.ov;if(!k)return;UI.ov[k]=e.target.checked;saveUI();applyVisibility();annotate()});
@@ -134,7 +134,7 @@ function buildArrays(){
  A.edgeH=d.d.map((t,i)=>s&&s.setup[i]&&isF(s.score[i])?{time:t,value:s.score[i],color:THIRD_COL[thirdOf(s.score[i])]}:{time:t});
  A.edgeL=L(s&&s.score);
  A.rsi=L(s?s.rsi2:null);
- A.z=L(A.zArr);for(let k=0;k<6;k++)A["zq"+k]=L(s&&s.zq[k]);
+ A.z=L(A.zArr);A.zl=L(s&&s.z250);for(let k=0;k<6;k++)A["zq"+k]=L(s&&s.zq[k]);
  if(s&&s.pulse){const P=s.pulse;A.pulse=d.d.map((t,i)=>{if(!isF(P.M[i]))return {time:t};const mh=P.mh.map(a=>a[i]),ok=mh.every(isF);
    const o={time:t,M:P.M[i],lo:ok?Math.min(...mh,P.M[i]):P.M[i],hi:ok?Math.max(...mh,P.M[i]):P.M[i],al:P.align[i]*(P.M[i]>=0?1:-1),er:P.er[i],acc:P.acc[i],st:P.state[i],th:P.thrust[i],q95:P.q95[i],q05:P.q05[i]};
    if(P.div[i])o.dv={type:P.div[i],b0:i-P.dp0[i],b1:i-P.dp1[i],M0:P.M[P.dp0[i]],M1:P.M[P.dp1[i]]};return o});
@@ -143,10 +143,11 @@ function buildArrays(){
  A.yz=L(s&&s.yz20);A.garch=L(s&&s.garch);A.har=L(s&&s.har5);A.cc=L(s&&s.cc20);
  A.hurst=L(s&&s.hurst);A.adf=L(s&&s.adf);A.vr4=L(s&&s.vr4);A.vix=L(s&&s.vix);
  return A}
+var CHART_TRM=null;
 function buildChart(keep){
  const range=keep&&chart?chart.timeScale().getVisibleLogicalRange():null;
  if(chart){chart.remove();chart=null}
- const np=Object.values(UI.pn).filter(Boolean).length;$("lwc-wrap").style.height=(470+np*105+(UI.pn.pulse?60:0))+"px";
+ const TRM0=!!(S()&&S().trendMode),np=Object.entries(UI.pn).filter(([k,v])=>v&&!(TRM0&&(k==="edge"||k==="rsi"||k==="z"))).length;$("lwc-wrap").style.height=(470+np*105+(UI.pn.pulse?60:0))+"px";
  chart=LW.createChart($("lwc"),{autoSize:true,
   layout:{background:{type:"solid",color:C.surface},textColor:C.muted,fontFamily:"'JetBrains Mono',ui-monospace,monospace",fontSize:11,attributionLogo:true,panes:{separatorColor:C.axis,separatorHoverColor:"rgba(57,135,229,.3)",enableResize:true}},
   grid:{vertLines:{color:"#222220"},horzLines:{color:"#222220"}},
@@ -164,12 +165,15 @@ function buildChart(keep){
  let pane=1;const P={};
  SER.pdiv=chart.addCustomSeries(new PriceDivView(),{},0);
  if(UI.pn.pulse){P.pulse=pane++;SER.pulse=chart.addCustomSeries(new PulseView(),{priceFormat:{type:"price",precision:2,minMove:.01}},P.pulse);SER.pulsePane=P.pulse}else SER.pulsePane=null;
- if(UI.pn.edge){P.edge=pane++;SER.edgeL=line("rgba(195,194,183,.35)",{},P.edge);SER.edgeH=chart.addSeries(LW.HistogramSeries,{lastValueVisible:false,priceLineVisible:false,title:"edge score",priceFormat:{type:"price",precision:1,minMove:.1}},P.edge);
+ const TRM=!!(S()&&S().trendMode);CHART_TRM=TRM;
+ if(UI.pn.edge&&!TRM){P.edge=pane++;SER.edgeL=line("rgba(195,194,183,.35)",{},P.edge);SER.edgeH=chart.addSeries(LW.HistogramSeries,{lastValueVisible:false,priceLineVisible:false,title:"edge score",priceFormat:{type:"price",precision:1,minMove:.1}},P.edge);
   SER.edgeL.createPriceLine({price:THIRDS[1],color:"rgba(79,209,165,.6)",lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:"top ⅓"});SER.edgeL.createPriceLine({price:THIRDS[0],color:"rgba(138,138,133,.6)",lineWidth:1,lineStyle:LW.LineStyle.Dotted,axisLabelVisible:false})}
- if(UI.pn.rsi){P.rsi=pane++;SER.rsi=line("#c3c2b7",{lineWidth:1.5,title:"RSI(2)",lastValueVisible:true,priceFormat:{type:"price",precision:0,minMove:1}},P.rsi)}
- if(UI.pn.z){P.z=pane++;const zc=["rgba(79,150,240,.9)","rgba(79,150,240,.55)","rgba(79,150,240,.3)","rgba(240,110,110,.3)","rgba(240,110,110,.55)","rgba(240,110,110,.9)"];
+ if(UI.pn.rsi&&!TRM){P.rsi=pane++;SER.rsi=line("#c3c2b7",{lineWidth:1.5,title:"RSI(2)",lastValueVisible:true,priceFormat:{type:"price",precision:0,minMove:1}},P.rsi)}
+ if(UI.pn.z&&!TRM){P.z=pane++;const zc=["rgba(79,150,240,.9)","rgba(79,150,240,.55)","rgba(79,150,240,.3)","rgba(240,110,110,.3)","rgba(240,110,110,.55)","rgba(240,110,110,.9)"];
   for(let k=0;k<6;k++)SER["zq"+k]=line(zc[k],{lineStyle:k===0||k===5?LW.LineStyle.Solid:LW.LineStyle.Dashed},P.z);
   SER.z=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"z20",topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.18)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.18)",priceFormat:{type:"price",precision:2,minMove:.01}},P.z)}
+ if(UI.pn.zl){P.zl=pane++;SER.zl=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"Z 250d",topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.15)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.15)",priceFormat:{type:"price",precision:2,minMove:.01}},P.zl);
+  for(const [p,c,t] of [[2.5,"rgba(230,103,103,.8)","+2.5"],[2,"rgba(230,103,103,.4)",""],[-1,"rgba(195,194,183,.45)","exit −1"],[-2,"rgba(79,150,240,.4)",""],[-2.5,"rgba(79,150,240,.8)","−2.5"]])SER.zl.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:!!t,title:t})}
  if(UI.pn.vol){P.vol=pane++;SER.cc=line("rgba(137,135,129,.6)",{},P.vol);SER.yz=line("#3987e5",{lineWidth:1.5,title:"YZ20",lastValueVisible:true},P.vol);SER.garch=line("#fab219",{lineWidth:1.5,title:"GARCH",lastValueVisible:true},P.vol);SER.har=line("#c08cff",{title:"HAR 5d",lastValueVisible:true},P.vol)}
  if(UI.pn.reg){P.reg=pane++;SER.hurst=line(C.ink,{lineWidth:1.5,title:"Hurst",lastValueVisible:true},P.reg);SER.adf=line(C.mean.ou,{title:"ADF p",lastValueVisible:true},P.reg);SER.vr4=line(C.mean.kalman,{title:"VR(4)",lastValueVisible:true},P.reg);
   SER.hurst.createPriceLine({price:.5,color:C.axis,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:false})}
@@ -178,7 +182,7 @@ function buildChart(keep){
  MK=LW.createSeriesMarkers(SER.candle,[]);PLINES=[];
  chart.subscribeCrosshairMove(onCross);chart.subscribeClick(onChartClick);
  refreshOverlays(range);if(!range)showRange()}
-const DKEYS=["bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
+const DKEYS=["zl","bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
 function setAllData(upto){if(!ARR)return;for(const k of DKEYS)if(SER[k]&&ARR[k])SER[k].setData(upto>=ARR.n-1?ARR[k]:ARR[k].slice(0,upto+1))}
 function stepData(i){for(const k of DKEYS)if(SER[k]&&ARR[k]&&ARR[k][i])SER[k].update(ARR[k][i])}
 function applyVisibility(){const v=UI.ov,set=(k,on)=>SER[k]&&SER[k].applyOptions({visible:!!on});
@@ -200,7 +204,8 @@ function annotate(){
  if(s){const lo=Math.max(s.first,0);
   for(let i=lo;i<=c;i++){
    if(s.sig[i]===1&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${s.aplus&&s.aplus[i]?"A+ ":""}${Math.round(100*s.P[i])}%`,size:s.aplus&&s.aplus[i]?1.9:1.4})}
-   else if(s.sig[i]===2&&UI.ov.sys){mk.push({time:d.d[i],position:"belowBar",shape:"arrowUp",color:"#c08cff",text:"MOM",size:1.3})}
+   else if(s.sig[i]===2&&UI.ov.sys&&!(s.trendMode&&s.msetup.slice(Math.max(0,i-10),i).some(Boolean))){mk.push({time:d.d[i],position:"belowBar",shape:"arrowUp",color:"#c08cff",text:s.trendMode?"TREND":"MOM",size:1.3})}
+   else if(s.zwatch&&s.zwatch[i]&&UI.ov.sys&&saudiSym(st.sym))mk.push({time:d.d[i],position:"belowBar",shape:"circle",color:"#4f96f0",text:"Z",size:1});
    else if(s.setup[i]&&UI.ov.setups)mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:"circle",color:THIRD_COL[thirdOf(s.score[i])],size:.5});
    else if(s.sig[i]===3&&UI.ov.sys)mk.push({time:d.d[i],position:"aboveBar",shape:"arrowDown",color:"#ef5350",text:"SHORT",size:1.3});
    else if(s.sgood&&s.sgood[i]&&ECFG.shorts!=="off"&&UI.ov.setups)mk.push({time:d.d[i],position:"aboveBar",shape:"circle",color:"#ef5350",size:.5});

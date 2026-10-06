@@ -76,12 +76,12 @@ let arm={};function armed(btn,fn){if(arm[btn.id]){clearTimeout(arm[btn.id].t);bt
 $("clear").addEventListener("click",e=>armed(e.target,()=>{DS={};saveDS();RES=null;afterDataChange()}));
 
 // ------------------------------------------------ settings + worker
-const NUMS=["trig","n0","pool","testDays","stopATR","maxHold","slippage","riskPct","maxW","maxPos","acThr","limitATR","momTrig","momMaxHold"],SELS=["saudi","mlf","shorts","shortSize","apsize","scoreThr","side","adapt","sizeMode","mode","entry","exit"];
-try{const s=JSON.parse(store("qlab-cfg4")||(()=>{const o=JSON.parse(store("qlab-cfg3")||"{}");delete o.adapt;return JSON.stringify(o)})());for(const [k,v] of Object.entries(s)){const el=$("c-"+k);if(el&&k!=="market")el.value=v}}catch(e){}
+const NUMS=["trig","n0","pool","testDays","stopATR","maxHold","slippage","riskPct","maxW","maxPos","acThr","limitATR","momTrig","momMaxHold"],SELS=["saudi","mlf","apsize","scoreThr","side","adapt","sizeMode","mode","entry","exit"];
+try{const s=JSON.parse(store("qlab-cfg5")||(()=>{const o=JSON.parse(store("qlab-cfg3")||"{}");delete o.adapt;return JSON.stringify(o)})());for(const [k,v] of Object.entries(s)){const el=$("c-"+k);if(el&&k!=="market")el.value=v}}catch(e){}
 (()=>{const a=load("desk-acct",{});if(a.start)$("a-start").value=a.start;if(a.fill)$("a-fill").value=a.fill;if(a.lev)$("a-lev").value=a.lev;if(a.risk)$("t-risk").value=a.risk})();
 function readCfg(){const c={market:$("c-market").value||null};NUMS.forEach(k=>c[k]=+$("c-"+k).value);
- c.scoreThr=+$("c-scoreThr").value;c.shorts=$("c-shorts").value;c.saudi=$("c-saudi").value;c.mlf=$("c-mlf").value;c.shortSize=+$("c-shortSize").value;{const [am,om]=$("c-apsize").value.split(",").map(Number);c.aplusMult=am;c.otherMult=om;c.grade=om===0?"aplus":"all"}c.sizeMode=$("c-sizeMode").value;c.mode=$("c-mode").value;c.entry=$("c-entry").value;c.exit=$("c-exit").value;c.side=+$("c-side").value;c.adapt=$("c-adapt").value==="1";c.riskPct/=100;c.maxW/=100;
- const s={};[...NUMS,...SELS].forEach(k=>s[k]=$("c-"+k).value);store("qlab-cfg4",JSON.stringify(s));return c}
+ c.scoreThr=+$("c-scoreThr").value;c.shorts="off";c.saudi=$("c-saudi").value;c.mlf=$("c-mlf").value;c.shortSize=.5;{const [am,om]=$("c-apsize").value.split(",").map(Number);c.aplusMult=am;c.otherMult=om;c.grade=om===0?"aplus":"all"}c.sizeMode=$("c-sizeMode").value;c.mode=$("c-mode").value;c.entry=$("c-entry").value;c.exit=$("c-exit").value;c.side=+$("c-side").value;c.adapt=$("c-adapt").value==="1";c.riskPct/=100;c.maxW/=100;
+ const s={};[...NUMS,...SELS].forEach(k=>s[k]=$("c-"+k).value);store("qlab-cfg5",JSON.stringify(s));return c}
 const ACCT=()=>({start:Math.max(1000,+$("a-start").value||100000),fill:$("a-fill").value,cost:Math.max(0,+$("c-slippage").value||0)/1e4,lev:Math.max(.5,+$("a-lev").value||1)});
 const saveAcct=()=>store("desk-acct",JSON.stringify({start:$("a-start").value,fill:$("a-fill").value,lev:$("a-lev").value,risk:$("t-risk").value}));
 let ECFG=readCfg();
@@ -107,7 +107,7 @@ document.querySelectorAll("#settings input,#settings select").forEach(el=>el.add
 // ------------------------------------------------ state
 const sel=$("sym");const st={sym:null,n:252,tab:"data",cursor:null,pinned:false};
 const UI=load("qlab-ui2",{});UI.ov=Object.assign({bb:true,pdiv:true,zones:true,mean:true,exit:true,kalman:false,trend:false,ou:false,ema20:false,factor:false,vol:true,sys:true,setups:true,signs:true,mine:true},UI.ov||{});
-UI.pn=Object.assign({pulse:true,edge:true,rsi:true,z:true,vol:true,reg:false,fear:false},UI.pn||{});
+UI.pn=Object.assign({pulse:true,edge:true,rsi:true,z:true,zl:true,vol:true,reg:false,fear:false},UI.pn||{});
 const saveUI=()=>store("qlab-ui2",JSON.stringify(UI));
 let ORDERS=load("desk-orders",[]),HLINES=load("desk-hlines",{}),REPLAY=load("desk-replay",null);
 const saveOrders=()=>store("desk-orders",JSON.stringify(ORDERS));

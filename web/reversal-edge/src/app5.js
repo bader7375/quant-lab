@@ -2,6 +2,17 @@
 $("research").innerHTML=`
 <h2 style="font-size:18px">How this system was built, and what the evidence says (v14)</h2>
 <p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>v14: long-term Z-score and the new Saudi signals</h2>
+<p><b>Long-term Z</b> = (log price − its 250-day average) ÷ its 250-day standard deviation. Tested on 270 Saudi stocks 2013–2026, buy at the next open, 0.40% costs, 2013–19 for design and 2020–26 to validate:</p>
+<table class="bl"><tr><th>rule</th><th>per trade (net)</th><th>2013–19 / 2020–26</th><th>as a portfolio</th></tr>
+<tr><td style="text-align:left">60-day Z ≤ −2, sell at Z 0</td><td>−1.12%</td><td>−2.32% / −0.30%</td><td class="down">loses</td></tr>
+<tr><td style="text-align:left">250-day Z ≤ −2.5, sell at Z 0</td><td>+3.29%, 56% win, ~97 days</td><td>+6.04% / +1.38%</td><td></td></tr>
+<tr><td style="text-align:left">250-day Z ≤ −2.5, ML ≥ 50%, sell at Z −1 or 60 days</td><td>+6.58%, 69% win, ~41 days (random entries +0.75%)</td><td>+9.82% / +4.34%</td><td class="down">+1.4%/yr, −32% drawdown</td></tr>
+<tr><td style="text-align:left">same, but buy the turn back above −2.5</td><td>+4.98%, 68% win</td><td>+9.20% / +2.09%</td><td class="down">+2.0%/yr, −34%</td></tr>
+<tr><td style="text-align:left">industry-relative 250-day Z ≤ −2, ML ≥ 50%</td><td>+5.29%, 62% win (228 trades)</td><td>+7.05% / +4.24%</td><td></td></tr>
+<tr><td style="text-align:left">skip trend/ML buys when Z &gt; +2 / +2.5 / +3</td><td colspan="2">no improvement (Core Sharpe 1.49–1.52 vs 1.55)</td><td class="note">not used</td></tr></table>
+<p><b>Why the per-trade numbers did not survive in a portfolio:</b> deep Z signals arrive in clusters during market sell-offs; a 10-slot account fills with the first falling knives, and those crash trades carry the losses, while the per-trade average is lifted by the few big rebounds. Adding the Z sleeve to the Core Strategy lowered its Sharpe from 1.55 to 0.88–1.16 and deepened the worst drawdown to −30% to −35% in every variant (stops, confirmation, smaller size, at most 2 new trades a week, market filter). So the long-term Z is shown as <b>context</b> (chart panel, inspector, plan notes) and as a <b>deep-value watch</b> (turn back above −2.5): a discretionary, small-size idea, not an automatic trade.</p>
+<p><b>Saudi signals now:</b> the RSI(2) momentum signal (+0.08% per trade) is replaced by the <b>trend breakout</b>: close at the 55-day high above the 200-day average, buy the next open, exit on a close below (highest close since entry − 3 ATR). Real engine, 257 stocks, 2013–2026: +2.54% net per trade (42% winners, average win +15.3%, average loss −6.6%; 2013–19 +1.7%, 2020–26 +3.3%); with the ML top-30% + market filter: +3.50% (average loss −4.6%). <b>Removed:</b> the opening-auction plan (intraday), short selling (paid only in bear markets), the RSI momentum mode for Saudi stocks, and the reversal panels/inspector blocks for Saudi stocks (dip-buys lost −0.67% per trade there).</p>
 <h2>v14: the Saudi Core Strategy (best of six strategy families)</h2>
 <p><b>Search:</b> one simulator for every idea (weights decided at the close, traded at the next open, 0.40% round-trip costs, idle cash at the 13-week T-bill rate since the riyal is pegged to the dollar), on 270 stocks 2013–2026, liquid names only (SAR 3m+ a day). Benchmark: the equal-weight liquid market, +1.7% a year, Sharpe 0.19, worst drawdown −55%.</p>
 <table class="bl"><tr><th>family</th><th>best honest version</th><th>2013–2026</th><th>verdict</th></tr>
@@ -220,7 +231,7 @@ $("research").innerHTML=`
 </ol>`;
 
 // ------------------------------------------------ wiring
-function renderLive(){renderSigbar();if(!draft.show)defaultLevels();else ticketChanged(false);if(st.tab==="mine")drawMine();
+function renderLive(){if(chart&&CHART_TRM!==!!(S()&&S().trendMode))buildChart(true);renderSigbar();if(!draft.show)defaultLevels();else ticketChanged(false);if(st.tab==="mine")drawMine();
  if(REPLAY){const d=DS[REPLAY.sym];$("rp-date").textContent=d?`${d.d[REPLAY.idx]} · bar ${REPLAY.idx-REPLAY.startIdx>=0?"+":""}${REPLAY.idx-REPLAY.startIdx}`:""}}
 function focusDate(sym,date){if(REPLAY&&REPLAY.sym!==sym)exitReplay();if(sym!==st.sym){st.sym=sym;sel.value=sym;symChanged()}show("chart");const i=idxOf(date);if(i<0)return;
  chart.timeScale().setVisibleLogicalRange({from:i-110,to:i+30});st.pinned=true;st.cursor=i;syncScrub();inspector(i);renderLegend()}

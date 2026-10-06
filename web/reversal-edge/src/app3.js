@@ -6,20 +6,20 @@ function levelsAt(o,k){let stop=o.stop,target=o.target;for(const m of o.mods||[]
 function setLevel(o,key,price,persist=true){const d=DS[o.sym],c=REPLAY&&REPLAY.sym===o.sym?REPLAY.idx:d.d.length-1,date=d.d[c];o.mods=o.mods||[];let m=o.mods.find(x=>x.date===date);if(!m){m={date};o.mods.push(m)}m[key]=price;if(persist)saveOrders()}
 const smaCache={};
 function smaOf(sym,w){const d=DS[sym];if(!d)return [];const key=sym+":"+w+":"+d.d.length;if(smaCache[key])return smaCache[key];const a=new Array(d.c.length).fill(NaN);let s=0;for(let i=0;i<d.c.length;i++){s+=d.c[i];if(i>=w)s-=d.c[i-w];if(i>=w-1)a[i]=s/w}return smaCache[key]=a}
-const EXIT_TEXT={prevlow:"the first close below the previous day's low",prevhigh:"the first close above the previous day's high",sma5:"the first close above the 5-day average",sma10:"the first close above the 10-day average",rsi70:"the first close with RSI(2) above 70",mom:"the first close below the 5-day average"};
-const EXIT_SHORT={prevlow:"prev low",prevhigh:"prev high",sma5:"5d avg",sma10:"10d avg",rsi70:"RSI70",mom:"below 5d avg"};
+const EXIT_TEXT={trend:"the first close below the highest close since entry minus 3 ATR (trailing stop)",prevlow:"the first close below the previous day's low",prevhigh:"the first close above the previous day's high",sma5:"the first close above the 5-day average",sma10:"the first close above the 10-day average",rsi70:"the first close with RSI(2) above 70",mom:"the first close below the 5-day average"};
+const EXIT_SHORT={trend:"trail 3 ATR",prevlow:"prev low",prevhigh:"prev high",sma5:"5d avg",sma10:"10d avg",rsi70:"RSI70",mom:"below 5d avg"};
 function simulate(o,upto){
  const d=DS[o.sym];if(!d)return {o,status:"hidden"};const p=idxIn(o.sym,o.date);if(p<0||p>upto)return {o,status:"hidden"};
  if(o.cancelled)return {o,status:"cancelled"};const cost=o.cost!=null?o.cost:ACCT().cost;let ei,ep;
  if(o.fill==="close"){ei=p;ep=d.c[p]}
  else{if(p+1>upto)return {o,status:"pending"};ei=p+1;
   if(o.fill==="limit"){const lim=o.limit,hit=o.side>0?d.l[p+1]<=lim:d.h[p+1]>=lim;if(!hit)return {o,status:"expired"};ep=o.side>0?Math.min(d.o[p+1],lim):Math.max(d.o[p+1],lim)}else ep=d.o[p+1]}
- const sx=o.sysExit===true?"sma5":o.sysExit||null,s5=sx==="sma5"||sx==="mom"?smaOf(o.sym,5):null,s10=sx==="sma10"?smaOf(o.sym,10):null,rs=sx==="rsi70"?(SY(o.sym)||{}).rsi2:null;
+ const sx=o.sysExit===true?"sma5":o.sysExit||null,tA=sx==="trend"?((SY(o.sym)||{}).atr||[])[Math.max(0,p)]:NaN;let tPk=-Infinity;const s5=sx==="sma5"||sx==="mom"?smaOf(o.sym,5):null,s10=sx==="sma10"?smaOf(o.sym,10):null,rs=sx==="rsi70"?(SY(o.sym)||{}).rsi2:null;
  const sg=o.side,q=o.qty,risk0=isF(o.stop)?Math.abs(ep-o.stop)*q:NaN,ci=o.closeDate?idxIn(o.sym,o.closeDate):-1,cf=o.closeFill||(o.fill==="limit"?"open":o.fill);let xi=-1,xp=NaN,why="";
  for(let k=p+1;k<=upto;k++){const {stop,target}=levelsAt(o,k),op=d.o[k],hi=d.h[k],lo=d.l[k],c=d.c[k];
   if(isF(stop)&&(sg>0?lo<=stop:hi>=stop)){xi=k;xp=(k>ei&&(sg>0?op<=stop:op>=stop))?op:stop;why="Stop";break}
   if(isF(target)&&(sg>0?hi>=target:lo<=target)){xi=k;xp=(k>ei&&(sg>0?op>=target:op<=target))?op:target;why="Target";break}
-  if(sx&&k>=ei){const hit=sx==="prevlow"?c<d.l[k-1]:sx==="prevhigh"?(sg>0?c>d.h[k-1]:c<d.l[k-1]):sx==="sma5"?(sg>0?c>s5[k]:c<s5[k]):sx==="sma10"?(sg>0?c>s10[k]:c<s10[k]):sx==="rsi70"?(rs&&(sg>0?rs[k]>70:rs[k]<30)):sx==="mom"?(sg>0?c<s5[k]:c>s5[k]):false;
+  if(sx&&k>=ei){const hit=sx==="prevlow"?c<d.l[k-1]:sx==="prevhigh"?(sg>0?c>d.h[k-1]:c<d.l[k-1]):sx==="sma5"?(sg>0?c>s5[k]:c<s5[k]):sx==="sma10"?(sg>0?c>s10[k]:c<s10[k]):sx==="rsi70"?(rs&&(sg>0?rs[k]>70:rs[k]<30)):sx==="mom"?(sg>0?c<s5[k]:c>s5[k]):sx==="trend"?(tPk=Math.max(tPk,c,ep),isF(tA)&&c<tPk-3*tA):false;
    if(hit){xi=k;xp=c;why=EXIT_SHORT[sx];break}}
   if(o.time>0&&k-ei>=o.time){xi=k;xp=c;why="Time";break}
   if(ci>=ei){if(cf==="close"&&k===ci){xi=k;xp=c;why="Manual";break}if(cf!=="close"&&k===ci+1){xi=k;xp=op;why="Manual";break}}}
@@ -41,12 +41,12 @@ function sysPlan(c){const d=D();if(!d||!ARR)return null;const s=S(),sd=s?s.side:
  if(s&&s.sgood&&ECFG.shorts!=="off"&&!mom&&!s.setup[c]&&s.sgood[c]){const entry=e+ECFG.limitATR*atr,stop=entry+3*atr,lvl=d.l[c];
   return {lg:false,mom:false,kind:"short",e,entry,limit:true,stop,hasStop:true,target:lvl<entry?lvl:NaN,exitKey:"prevlow",exitLevel:lvl,mean:ARR.meanArr[c],atr,maxHold:ECFG.maxHold}}
  const limit=!mom&&ECFG.entry==="limit",entry=limit?e-sd*ECFG.limitATR*atr:e,hasStop=!mom&&ECFG.stopATR>0,stop=entry-sd*(hasStop?ECFG.stopATR:3)*atr;
- const exitKey=mom?"mom":ECFG.exit,s10=smaOf(st.sym,10);
- const exitLevel=mom?ARR.sma5Arr[c]:exitKey==="prevhigh"?(sd>0?d.h[c]:d.l[c]):exitKey==="sma5"?ARR.sma5Arr[c]:exitKey==="sma10"?s10[c]:NaN;
+ const tm=!!(s&&s.trendMode),exitKey=tm?"trend":mom?"mom":ECFG.exit,s10=smaOf(st.sym,10);
+ const exitLevel=tm?e-3*atr:mom?ARR.sma5Arr[c]:exitKey==="prevhigh"?(sd>0?d.h[c]:d.l[c]):exitKey==="sma5"?ARR.sma5Arr[c]:exitKey==="sma10"?s10[c]:NaN;
  const target=!mom&&isF(exitLevel)&&sd*(exitLevel-entry)>0?exitLevel:NaN;
- return {lg:sd>0,mom,kind:mom?"mom":"rev",e,entry,limit,stop,hasStop,target,exitKey,exitLevel,mean:ARR.meanArr[c],atr,maxHold:mom?ECFG.momMaxHold:ECFG.maxHold}}
+ return {lg:sd>0,mom,tm,kind:tm?"trend":mom?"mom":"rev",e,entry,limit,stop:tm?e-3*atr:stop,hasStop:tm||hasStop,target,exitKey,exitLevel,mean:ARR.meanArr[c],atr,maxHold:tm?0:mom?ECFG.momMaxHold:ECFG.maxHold}}
 function defaultLevels(){const d=D();if(!d||!ARR)return;const p=sysPlan(cur());if(!p)return;const e=refPrice(),atr=p.atr,dg=pdig(e);
- const stop=e-side*(p.hasStop?ECFG.stopATR:3)*atr,tg=isF(p.target)&&side*(p.target-e)>0?p.target:e+side*1.5*atr;
+ const stop=p.tm?e-side*3*atr:e-side*(p.hasStop?ECFG.stopATR:3)*atr,tg=isF(p.target)&&side*(p.target-e)>0?p.target:e+side*1.5*atr;
  $("t-stop").value=stop.toFixed(dg);$("t-target").value=tg.toFixed(dg);ticketChanged(false)}
 function sizing(){const t=readTicket(),e=refPrice(),A=ACCT(),acc=account(),per=isF(t.stop)?Math.abs(e-t.stop):NaN;let qty=t.qty;
  if(autoQty){qty=per>0?Math.floor(acc.eq*t.risk/per):0;const cap=Math.floor(acc.eq*A.lev/e);if(qty>cap)qty=cap;qty=Math.max(0,qty)}return {t,e,per,qty,acc,A}}
@@ -64,7 +64,7 @@ function ticketChanged(user=true){if(user)draft.show=true;
  const risk=per*qty,reward=isF(t.target)?Math.abs(t.target-e)*qty:NaN,notional=e*qty;
  $("t-sum").innerHTML=`risk <b>${money(risk)}</b> (${pct(risk/acc.eq,2)}) · reward <b>${money(reward)}</b><br>R:R <b>${isF(reward)&&risk>0?(reward/risk).toFixed(2):"—"}</b> · size <b>${money(notional)}</b> (${pct(notional/acc.eq,0)} of equity)`;
  if(autoQty&&qty>0&&per>0&&Math.floor(acc.eq*t.risk/per)>qty)warn.push(`Size capped at ${A.lev}× equity.`);
- if($("t-sys").checked)warn.push(`System exit on: ${planKind==="mom"?EXIT_TEXT.mom:planKind==="short"?EXIT_TEXT.prevlow:EXIT_TEXT[ECFG.exit]}. The edge comes from winning often with small gains; the stop line here is mainly for sizing.`);
+ if($("t-sys").checked)warn.push(planKind==="trend"?`System exit on: ${EXIT_TEXT.trend}. Trend trades win about 42% of the time; the winners (average +15%) pay for the small losses (average −6.6%).`:`System exit on: ${planKind==="mom"?EXIT_TEXT.mom:planKind==="short"?EXIT_TEXT.prevlow:EXIT_TEXT[ECFG.exit]}. The edge comes from winning often with small gains; the stop line here is mainly for sizing.`);
  if(!REPLAY)warn.push(ticketType()==="limit"?"Live: the limit order is checked against the next bar you upload; if price never reaches it, it expires.":A.fill==="open"?"Live: fills at the open of the next bar you upload.":"");
  $("t-msg").innerHTML=errs.map(x=>`<div class="er">${esc(x)}</div>`).join("")+warn.filter(Boolean).map(x=>`<div class="wn">${esc(x)}</div>`).join("");
  const pl=$("t-place");pl.disabled=errs.length>0;pl.textContent=`${side>0?"Buy":"Sell short"} ${qty>0?qty.toLocaleString():""} ${st.sym||""}${ticketType()==="limit"?" (limit)":""}`;
@@ -76,7 +76,7 @@ $("t-type").addEventListener("change",()=>{if(ticketType()==="limit"&&!(parseFlo
 $("t-qty").addEventListener("input",()=>{autoQty=false;$("t-auto").classList.remove("on");ticketChanged(true)});
 $("t-auto").addEventListener("click",()=>{autoQty=!autoQty;$("t-auto").classList.toggle("on",autoQty);ticketChanged(true)});
 $("t-place").addEventListener("click",()=>{const {t,qty,A}=sizing(),d=D(),c=cur();if(!(qty>0))return;const s=S(),lim=ticketType()==="limit";
- ORDERS.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),sym:st.sym,side,qty,stop:t.stop,target:isF(t.target)?t.target:NaN,time:t.time,sysExit:$("t-sys").checked?(planKind==="mom"?"mom":planKind==="short"?"prevlow":ECFG.exit):false,
+ ORDERS.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),sym:st.sym,side,qty,stop:t.stop,target:isF(t.target)?t.target:NaN,time:t.time,sysExit:$("t-sys").checked?(planKind==="trend"?"trend":planKind==="mom"?"mom":planKind==="short"?"prevlow":ECFG.exit):false,
   date:d.d[c],fill:lim?"limit":A.fill,limit:lim?parseFloat($("t-limit").value):undefined,cost:A.cost,mode:mode(),sid:REPLAY?REPLAY.sid:null,note:$("t-note").value.trim(),
   sys:s?{setup:s.setup[c],msetup:s.msetup&&s.msetup[c],score:s.score[c],P:s.P[c],sig:s.sig[c]}:null});
  saveOrders();draft.show=false;$("t-note").value="";renderLive();annotate();
@@ -89,7 +89,7 @@ function lastStep(s,c){let st0=null;for(const x of s.steps)if(x.i<=c)st0=x;retur
 function chipName(k,v){if(k==="gap_size")return v>0?"No news-like gap":"News-like gap";if(k==="lower_wick")return v>0?"No long lower wick":"Long lower wick";return signLabel(k)}
 function topSigns(s,i,n=4){return RES.names.map(k=>[k,s.C[k][i]]).filter(x=>isF(x[1])).sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,n)}
 function momStats(s,c){let n=0,sum=0,win=0;for(let j=0;j<c;j++)if(s.msetup[j]&&isF(s.mret[j])&&j+s.mhold[j]<c){n++;sum+=s.mret[j];if(s.mret[j]>0)win++}return {n,avg:n?sum/n:NaN,win:n?win/n:NaN}}
-function charText(s,c){const a=s.ac[c],m=s.mode[c];return `${m===-1?"<b style=\"color:#c08cff\">trends day to day → momentum mode</b>":"<b>reverts → reversal mode</b>"} <span class="note">(500-day autocorrelation ${isF(a)?(a>=0?"+":"")+a.toFixed(3):"—"}, switch above ${(+ECFG.acThr).toFixed(2)}${ECFG.mode!=="auto"?`, mode fixed to ${ECFG.mode==="rev"?"reversal":"momentum"} in Settings`:""})</span>`}
+function charText(s,c){const a=s.ac[c],m=s.mode[c];if(s.trendMode)return `<b style="color:#c08cff">Saudi stock → trend-breakout signals</b> <span class="note">(Settings → Saudi signals)</span>`;return `${m===-1?"<b style=\"color:#c08cff\">trends day to day → momentum mode</b>":"<b>reverts → reversal mode</b>"} <span class="note">(500-day autocorrelation ${isF(a)?(a>=0?"+":"")+a.toFixed(3):"—"}, switch above ${(+ECFG.acThr).toFixed(2)}${ECFG.mode!=="auto"?`, mode fixed to ${ECFG.mode==="rev"?"reversal":"momentum"} in Settings`:""})</span>`}
 function renderSigbar(){
  const d=D(),el=$("sigbar");if(!d){el.innerHTML='<span class="note">Load a price file in the Data tab.</span>';return}
  const c=cur(),s=S(),when=REPLAY?`as of ${d.d[c]} (replay)`:`after the close of ${d.d[c]}`;
@@ -98,7 +98,15 @@ function renderSigbar(){
  const sd=s.side,plan=sysPlan(c);if(!plan){el.innerHTML='<span class="note">Open the Chart tab to see the plan.</span>';return}const mom=plan.mom;planKind=plan.kind;
  const rsiTxt=`RSI(2) is <b>${fmt(s.rsi2[c],0)}</b>`;let cls="none",lab="No setup",say,gauge="";
  const exitTxt=EXIT_TEXT[plan.exitKey],stopTxt=plan.hasStop?`stop ${fp(plan.stop)} (${ECFG.stopATR} ATR)`:"no price stop (research: stops cut the edge; gaps cause the big losses anyway)";
- if(mom){
+ if(plan.tm){
+  const ms=momStats(s,c),z=s.z250?s.z250[c]:NaN;let hi=-Infinity;for(let k=Math.max(0,c-53);k<=c;k++)hi=Math.max(hi,d.c[k]);
+  if(s.msetup[c]){cls="long";lab="Trend buy";say=`<b>Trend breakout:</b> closed at its 55-day high (${fp(d.c[c])}) above the 200-day average (${fp(s.sma200[c])}). Plan: buy at the next open; trailing stop = highest close since entry − 3 ATR (starts at ${fp(d.c[c]-3*plan.atr)}); no profit target, let winners run.`}
+  else if(s.zwatch&&s.zwatch[c]){cls="long";lab="Deep-value watch";say=`<b>Long-term Z turned up through −2.5</b> (now ${fmt(z,2)}). Such turns averaged +5.0% net, 68% winners, about 39 days (sell at Z −1 or after 60 days), but they cluster in sell-offs: small size only.`}
+  else say=`No trend signal. A breakout needs a close at or above <b>${fp(Math.max(hi,s.sma200[c]||0))}</b> (55-day high${isF(s.sma200[c])&&d.c[c]<s.sma200[c]?" and the 200-day average":""}).`;
+  say+=` Long-term Z (250d): <b>${fmt(z,2)}</b>.`;
+  if(ms.n>=5)say+=` Past trend trades on this stock: <b class="${cl(ms.avg)}">${spct(ms.avg,2)}</b> average (${ms.n} trades, ${pct(ms.win,0)} won).`;
+  say+=` Research, 257 Saudi stocks 2013–2026: +2.5% net per trade unfiltered; +3.5% when the stock is in the ML top 30% and the market model is positive (see the Core Strategy panel).`}
+ else if(mom){
   const ms=momStats(s,c);
   if(s.msetup[c]){cls="long";lab="Momentum buy";
    say=`${rsiTxt}: a strong close in a market that keeps moving the same way. Plan: buy at the next open, sell on ${exitTxt} (now ${fp(plan.exitLevel)}) or after ${ECFG.momMaxHold} days; ${stopTxt}.`}
@@ -161,6 +169,9 @@ function inspector(i){const el=$("inspbody"),d=D();if(!d){el.innerHTML="";return
  const s=S();let h=`<div class="ih"><b>${esc(st.sym)}</b><span>${d.d[i]}</span><span class="pin ${st.pinned?"on":""}">${st.pinned?"PINNED":"hover"}</span></div>`;
  if(!s){el.innerHTML=h+`<div class="note">O ${fp(d.o[i])} · H ${fp(d.h[i])} · L ${fp(d.l[i])} · C ${fp(d.c[i])}<br>Reversal details appear once the system has run.</div>`;return}
  const sc=s.score[i],th=thirdOf(sc),P=s.P[i];
+ if(s.trendMode){const z=s.z250?s.z250[i]:NaN;let hi=-Infinity;for(let k=Math.max(0,i-54);k<=i;k++)hi=Math.max(hi,d.c[k]);const s2=s.sma200?s.sma200[i]:NaN,pct0=typeof MLPF!=="undefined"&&MLPF&&MLPF.ranks?MLPF.ranks[st.sym]:NaN;
+  h+=`<div class="top2"><div><div class="lab">long-term Z (250 days)</div><div class="bigp" style="color:${z<=-2.5?"#4f96f0":z>=2.5?"#e66767":"inherit"}">${fmt(z,2)}</div><div class="note">${z<=-2.5?"deep below its yearly mean":z>=2.5?"far above its yearly mean":"within ±2.5 of its yearly mean"}${s.zwatch&&s.zwatch[i]?" · deep-value watch fired":""}</div></div><div><div class="lab">trend signal</div><div class="act" style="color:${s.msetup[i]?"#c08cff":"inherit"}">${s.msetup[i]?"breakout today":d.c[i]>s2?"uptrend, no breakout":"below 200-day avg"}</div><div class="note">55-day high ${fp(hi)} · 200-day avg ${fp(s2)}${isF(pct0)?` · ML rank ${Math.round(100*pct0)}%`:""}</div></div></div>`}
+ else{
  h+=`<div class="top2"><div><div class="lab">chance of profit (bounce trade)</div><div class="bigp">${isF(P)?pct(P,0):"—"}</div><div class="note">research weights alone: ${isF(s.Pr[i])?pct(s.Pr[i],0):"—"}</div></div><div><div class="lab">reversal edge score</div><div class="act" style="color:${THIRD_COL[th]||"inherit"}">${fmt(sc,2)} · ${THIRD_NAME[th]||"—"}</div><div class="note">${s.setup[i]?(s.sig[i]?"setup · passes your filter":"setup · below your filter"):"no RSI(2) setup on this bar"}</div></div></div>`;
  // radar: weighted contributions
  const mx=Math.max(.5,...RES.names.map(k=>Math.abs(s.C[k][i]||0)));
@@ -168,6 +179,7 @@ function inspector(i){const el=$("inspbody"),d=D();if(!d){el.innerHTML="";return
   const shown=k==="fear_rank"||k==="vol_rank"?pct(raw,0):k==="down_streak"?fmt(raw,0):k==="lower_wick"?pct(raw,0):fmt(raw,2);
   return `<div class="rr" title="${esc(signMeaning(k))} Research: top-vs-bottom-third trade difference ${ev?ev.map(x=>(x>0?"+":"")+x+"bp").join(" / "):""} (87 stocks / TSLA 11-17 / TSLA 18-26)."><span class="nm">${esc(signLabel(k))}</span><span class="vv">${shown}</span><div class="cb"><i style="left:${(v||0)>=0?50:50-w}%;width:${w}%;background:${(v||0)>=0?"#4fd1a5":"#e66767"}"></i></div></div>`}).join("")+`</div>`;
  const stp=lastStep(s,i);if(stp)h+=`<div class="note" style="margin-top:4px">weights: ${!ECFG.adapt?`fixed research weights (v9) · ${stp.own} own setups used for the chance-of-profit calibration`:stp.own<30?"research (not enough own setups yet)":`${Math.round(100*(1-stp.lam))}% research, ${Math.round(100*stp.lam)}% this stock (${stp.own} own setups)`} · updated ${stp.d}</div>`;
+ }
  // other quick reads
  h+=`<div class="sec">quick read</div><table class="t">${(()=>{const b=bbAt(d.c,i);return b?`<tr><td>Bollinger %B · band width</td><td class="n">${b.pb.toFixed(2)} · ${(100*b.bw).toFixed(1)}%</td></tr>`:""})()}<tr><td>RSI(2) / RSI(14)</td><td class="n">${fmt(s.rsi2[i],0)} / ${fmt(s.rsi14[i],0)}</td></tr><tr><td>streak · close in range (IBS)</td><td class="n">${fmt(s.streak[i],0)} · ${pct(s.ibs[i],0)}</td></tr>
   <tr><td>volume vs normal</td><td class="n">${isF(s.volz[i])?(s.volz[i]>=0?"+":"")+s.volz[i].toFixed(1)+"σ":"—"}</td></tr><tr><td>range / gap (ATR)</td><td class="n">${fmt(s.rangex[i],2)} / ${fmt(s.gap[i],2)}</td></tr>
