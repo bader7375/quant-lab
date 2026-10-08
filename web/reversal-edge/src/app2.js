@@ -109,7 +109,7 @@ function renderPulseHud(i){const hud=$("pulse-hud"),s=S();if(!s||!s.pulse||!UI.p
   <span class="st" style="color:${col};border-color:${col}">${PULSE_STATE[st0]}</span>${s.mode[i]===-1?'<span class="st" style="color:#a77bea;border-color:#a77bea">AVOID MEAN REVERSION</span>':""}`}
 
 let chart=null,SER={},MK=null,PLINES=[],ARR=null,hoverIdx=null;
-const OVL=[["zb","Long-term Z bands (250d: mean, −1, ±2.5σ)","#b39dff"],["bb","Bollinger Bands (20, 2)","#7aa7e0"],["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
+const OVL=[["sect","Sector index (scaled to the stock)","#8fd19e"],["vwy","VWAP yearly ±1σ/±2σ","#ffb74d"],["vwm","VWAP monthly ±1σ/±2σ","#4dd0e1"],["zb","Long-term Z bands (250d: mean, −1, ±2.5σ)","#b39dff"],["bb","Bollinger Bands (20, 2)","#7aa7e0"],["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
  ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["pdiv","Divergence lines","#a77bea"],["mine","My trades",TV.you]];
 const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones (20d)"],["zl","Long-term Z (250d)"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
 $("ov").innerHTML=`<span class="lab">on price</span>`+OVL.map(([k,n,c])=>`<label><input type="checkbox" data-ov="${k}" ${UI.ov[k]?"checked":""}><span style="color:${c}">■</span>${n}</label>`).join("");
@@ -134,6 +134,14 @@ function buildArrays(){
   for(let i=0;i<n;i++){const v=Math.log(c[i]);if(isF(v)){sx+=v;sxx+=v*v;k++}if(i>=W){const u=Math.log(c[i-W]);if(isF(u)){sx-=u;sxx-=u*u;k--}}if(k>=200){m[i]=sx/k;sd[i]=Math.sqrt(Math.max(1e-12,sxx/k-m[i]*m[i]))}}
   const B=f=>m.map((x,i)=>isF(x)?Math.exp(x+f*sd[i]):NaN);A.zbArr={m,sd};A.zbu=L(B(2.5));A.zbm=L(B(0));A.zbx=L(B(-1));A.zbl=L(B(-2.5));
   A.zlArr=m.map((x,i)=>isF(x)?(Math.log(c[i])-x)/sd[i]:NaN)}
+ {const n=d.c.length,vw=(keyLen)=>{const m=new Array(n).fill(NaN),sd=new Array(n).fill(NaN);let k0=null,s1=0,s0=0,s2=0,cnt=0;
+   for(let i=0;i<n;i++){const key=d.d[i].slice(0,keyLen);if(key!==k0){k0=key;s1=s0=s2=0;cnt=0}const tp=(d.h[i]+d.l[i]+d.c[i])/3,v=d.v[i];
+    if(isF(tp)&&isF(v)&&v>0){s1+=tp*v;s0+=v;s2+=tp*tp*v;cnt++}if(s0>0&&cnt>=(keyLen===7?5:20)){m[i]=s1/s0;sd[i]=Math.sqrt(Math.max(0,s2/s0-m[i]*m[i]))}}return {m,sd}};
+  for(const [p,kl] of [["vwy",4],["vwm",7]]){const V=vw(kl);A[p+"M"]=L(V.m);for(const f of [1,2]){A[p+"U"+f]=L(V.m.map((x,i)=>x+f*V.sd[i]));A[p+"L"+f]=L(V.m.map((x,i)=>x-f*V.sd[i]))}A[p+"Arr"]=V}
+  const X=typeof sectorInfo==="function"?sectorInfo(st.sym):null;A.sect=d.d.map(t=>({time:t}));
+  if(X&&X.idx&&X.idx.length){const mp=new Map(X.idx.map(([dt,v])=>{const q=String(dt);return [`${q.slice(0,4)}-${q.slice(4,6)}-${q.slice(6,8)}`,v]}));let f=NaN;
+   for(let i=n-1;i>=0;i--){const v=mp.get(d.d[i]);if(isF(v)&&isF(d.c[i])){f=d.c[i]/v;break}}
+   if(isF(f))A.sect=d.d.map(t=>{const v=mp.get(t);return isF(v)?{time:t,value:v*f}:{time:t}})}}
  A.kalman=L(s&&s.lv_kalman);A.trend=L(s&&s.lv_trend);A.ou=L(s&&s.lv_ou);A.ema20=L(s&&s.lv_ema20);A.factor=L(s&&s.lv_factor);
  A.edgeH=d.d.map((t,i)=>s&&s.setup[i]&&isF(s.score[i])?{time:t,value:s.score[i],color:THIRD_COL[thirdOf(s.score[i])]}:{time:t});
  A.edgeL=L(s&&s.score);
@@ -163,6 +171,9 @@ function buildChart(keep){
  SER.candle=chart.addSeries(LW.CandlestickSeries,{upColor:TV.up,downColor:TV.down,borderUpColor:TV.up,borderDownColor:TV.down,wickUpColor:TV.up,wickDownColor:TV.down},0);
  SER.vol=chart.addSeries(LW.HistogramSeries,{priceScaleId:"vol",priceFormat:{type:"volume"},lastValueVisible:false,priceLineVisible:false},0);SER.vol.priceScale().applyOptions({scaleMargins:{top:.84,bottom:0}});
  for(const k of ["kalman","trend","ou","ema20","factor"])SER[k]=line(C.mean[k]);
+ SER.sect=line("rgba(143,209,158,.9)",{lineWidth:1.5,title:"sector",lastValueVisible:true});
+ for(const [p,col] of [["vwy","255,183,77"],["vwm","77,208,225"]]){SER[p+"M"]=line(`rgba(${col},.95)`,{lineWidth:1.5,title:p==="vwy"?"VWAP Y":"VWAP M",lastValueVisible:true});
+  for(const f of [1,2]){SER[p+"U"+f]=line(`rgba(${col},${f===1?.45:.7})`,{lineStyle:f===1?LW.LineStyle.Dotted:LW.LineStyle.Dashed});SER[p+"L"+f]=line(`rgba(${col},${f===1?.45:.7})`,{lineStyle:f===1?LW.LineStyle.Dotted:LW.LineStyle.Dashed,title:f===2?(p==="vwy"?"Y−2σ":"M−2σ"):"",lastValueVisible:f===2})}}
  SER.zbu=line("rgba(230,103,103,.75)",{lineStyle:LW.LineStyle.Dashed,title:"Z+2.5",lastValueVisible:true});SER.zbm=line("rgba(179,157,255,.8)",{lineWidth:1.5,title:"250d mean",lastValueVisible:true});
  SER.zbx=line("rgba(195,194,183,.6)",{lineStyle:LW.LineStyle.Dotted,title:"Z−1",lastValueVisible:true});SER.zbl=line("rgba(79,150,240,.85)",{lineStyle:LW.LineStyle.Dashed,title:"Z−2.5",lastValueVisible:true});
  SER.bbu=line("rgba(122,167,224,.9)",{title:"BB",lastValueVisible:true});SER.bbl=line("rgba(122,167,224,.9)",{lastValueVisible:true});SER.bbm=line("rgba(122,167,224,.55)",{lineStyle:LW.LineStyle.Dotted});
@@ -188,16 +199,16 @@ function buildChart(keep){
  MK=LW.createSeriesMarkers(SER.candle,[]);PLINES=[];
  chart.subscribeCrosshairMove(onCross);chart.subscribeClick(onChartClick);
  refreshOverlays(range);if(!range)showRange()}
-const DKEYS=["zl","zbu","zbm","zbx","zbl","bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
+const DKEYS=["sect","vwyM","vwyU1","vwyL1","vwyU2","vwyL2","vwmM","vwmU1","vwmL1","vwmU2","vwmL2","zl","zbu","zbm","zbx","zbl","bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
 function setAllData(upto){if(!ARR)return;for(const k of DKEYS)if(SER[k]&&ARR[k])SER[k].setData(upto>=ARR.n-1?ARR[k]:ARR[k].slice(0,upto+1))}
 function stepData(i){for(const k of DKEYS)if(SER[k]&&ARR[k]&&ARR[k][i])SER[k].update(ARR[k][i])}
 function applyVisibility(){const v=UI.ov,set=(k,on)=>SER[k]&&SER[k].applyOptions({visible:!!on});
- for(const k of ["zbu","zbm","zbx","zbl"])set(k,v.zb);set("bbu",v.bb);set("bbm",v.bb);set("bbl",v.bb);set("zones",v.zones);set("pdiv",v.pdiv);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
+ for(const k of ["zbu","zbm","zbx","zbl"])set(k,v.zb);set("sect",v.sect);for(const p of ["vwy","vwm"])for(const k of ["M","U1","L1","U2","L2"])set(p+k,v[p]);set("bbu",v.bb);set("bbm",v.bb);set("bbl",v.bb);set("zones",v.zones);set("pdiv",v.pdiv);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
 function refreshOverlays(range){
  if(!chart)return;const d=D();
  if(!d){ARR=null;for(const k of DKEYS)SER[k]&&SER[k].setData([]);annotate();renderLegend();return}
  ARR=buildArrays();const dg=pdig(d.c[d.c.length-1]),pf={type:"price",precision:dg,minMove:Math.pow(10,-dg)};
- for(const k of ["candle","mean","exit","kalman","trend","ou","ema20","factor","bbu","bbm","bbl","zbu","zbm","zbx","zbl"])SER[k].applyOptions({priceFormat:pf});
+ for(const k of ["candle","mean","exit","kalman","trend","ou","ema20","factor","bbu","bbm","bbl","zbu","zbm","zbx","zbl","sect","vwyM","vwyU1","vwyL1","vwyU2","vwyL2","vwmM","vwmU1","vwmL1","vwmU2","vwmL2"])SER[k].applyOptions({priceFormat:pf});
  if(SER.rsi){(SER.rl||[]).forEach(l=>SER.rsi.removePriceLine(l));SER.rl=[ECFG.trig,100-ECFG.trig].map((v,k)=>SER.rsi.createPriceLine({price:v,color:k?"rgba(230,103,103,.5)":"rgba(79,209,165,.7)",lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:k?"":"setup"}))}
  if(SER.edgeL){SER.thrLine&&SER.edgeL.removePriceLine(SER.thrLine);SER.thrLine=ECFG.scoreThr>-50&&ECFG.scoreThr!==THIRDS[1]?SER.edgeL.createPriceLine({price:ECFG.scoreThr,color:C.warn,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:"your filter"}):null}
  setAllData(cur());applyVisibility();if(range)chart.timeScale().setVisibleLogicalRange(range);

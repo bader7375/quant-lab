@@ -106,7 +106,7 @@ document.querySelectorAll("#settings input,#settings select").forEach(el=>el.add
 
 // ------------------------------------------------ state
 const sel=$("sym");const st={sym:null,n:252,tab:"data",cursor:null,pinned:false};
-const UI=load("qlab-ui2",{});UI.ov=Object.assign({zb:true,bb:true,pdiv:true,zones:true,mean:true,exit:true,kalman:false,trend:false,ou:false,ema20:false,factor:false,vol:true,sys:true,setups:true,signs:true,mine:true},UI.ov||{});
+const UI=load("qlab-ui2",{});UI.ov=Object.assign({sect:true,vwy:true,vwm:false,zb:true,bb:true,pdiv:true,zones:true,mean:true,exit:true,kalman:false,trend:false,ou:false,ema20:false,factor:false,vol:true,sys:true,setups:true,signs:true,mine:true},UI.ov||{});
 UI.pn=Object.assign({pulse:true,edge:true,rsi:true,z:true,zl:true,vol:true,reg:false,fear:false},UI.pn||{});
 const saveUI=()=>store("qlab-ui2",JSON.stringify(UI));
 let ORDERS=load("desk-orders",[]),HLINES=load("desk-hlines",{}),REPLAY=load("desk-replay",null);

@@ -17,3 +17,13 @@ Plain dip-buys lose (RSI2<10 -0.66%/trade; in uptrends, ML-top, 3 down days, 20d
 Industry-relative dip works: 10-day return 7%+ below the industry (code-group) median, ML >= 50%: +2.24% / +2.35% per trade (2013-19 / 2020-26, hold 20); all 36 variants positive in 2020-26.
 With the market model positive, hold 10: +2.1%/trade, 10x5% sleeve +7.4%/yr Sharpe 1.06 DD -15%. Combined with Core: Sharpe 1.55 -> 1.36 => optional half-size sleeve.
 US check: TSLA/AAPL/AMZN/MSFT/F identical trades before/after v14; TASI index kept on RSI momentum (Sharpe 1.53 vs 0.96 with trend).
+
+## User ideas (v14): VWAP bands and sector relationship (ideas.py, t_vwap*.py, sectors.py, t_sector*.py)
+VWAP (daily typical price x volume; anchored monthly/yearly and rolling 21/250; sigma and ATR bands):
+raw reversion loses on Saudi stocks (-0.7% to -1.2%/trade); filtered (ML>=50% + market) gains match random entries with the same filters
+(+3.3% at 44 days) -> no added edge; VWAP-ATR trend +2.3% raw but lowers the Core (1.55 -> 1.34). US: VWAP reversion beat random in
+2012-17 (+0.3..0.9%) but not on 106 fresh stocks 2018+ (-0.03..-1.2%). => chart context only.
+Sector relationship: equal-weight industry indices, leave-one-out, 120d beta/corr, residual = r - beta x sector.
+Sector laggard (10d residual z <= -2, corr >= .4, ML >= .5, market positive, hold 10): +3.1%/trade, 65% win (2013-19 +3.8%, 2020-26 +2.7%;
+filtered random +0.9%/+1.1%); 10x5% sleeve Sharpe 1.08 DD -12%; Core + it CAGR +20.8% Sharpe 1.46. Raw: laggard hold 20 +1.5%;
+sector 55d high + lagging stock +1.9%/20d; sector +2% day lead-lag +1.2%/10d. Daily export: sector_export.py -> ml/sectors.
