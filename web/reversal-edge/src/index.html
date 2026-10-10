@@ -76,6 +76,7 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
 
 
 <style>
+.grid2>*{min-width:0}   /* wide tables scroll inside their box instead of widening the page on phones */
 /* additions: TradingView-style chart, signal strip, order ticket, replay, paper trades, reversal radar, volatility */
 .sigbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px 18px;align-items:center;background:var(--surface);border:1px solid var(--hair);border-radius:6px;padding:10px 12px;margin-bottom:8px}
 .sigbar .say{min-width:0;font-size:13px;color:var(--ink2);line-height:1.5}.sigbar .say b{color:var(--ink)}
@@ -160,7 +161,7 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
           <div class="status" id="fearmsg"></div>
         </div>
         <div class="panel" style="margin-top:14px">
-          <h3>Tadawul library · 193 Saudi stocks built in</h3>
+          <h3>Stock library · 193 Saudi stocks built in, plus newer listings and US stocks from updates</h3>
           <div class="note" id="lib-note">Loading the library list…</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;align-items:center"><button class="btn sm" id="lib-top30">Load the 30 most traded</button><button class="btn ghost sm" id="lib-shown">Load all shown</button><button class="btn ghost sm" id="lib-none">Unload library stocks</button>
             <select id="lib-sector" aria-label="Filter by sector"></select><input id="lib-q" placeholder="code or name" aria-label="Search the library" style="width:130px"></div>
@@ -183,7 +184,7 @@ table.bl th:nth-child(-n+3),table.bl td:nth-child(-n+3){text-align:left}
           </div>
           <div class="status" id="upd-perm"></div><div class="status" id="upd-msg"></div><div class="status" id="upd-run"></div>
           <div class="db-only" hidden><div class="tw" style="max-height:220px;overflow:auto;margin-top:6px"><table class="bl" id="upd-t"></table></div></div>
-          <p class="note"><b>Automatic updates:</b> the Routine "QuantLab daily data update" refreshes all 193 stocks and TASI every Sunday to Thursday after the close (15:48 Riyadh) and notifies your phone. Run it any time from the Claude app: Routines → QuantLab daily data update → Run now. New prices show up here by themselves.</p>
+          <p class="note"><b>Automatic updates:</b> the Routine "QuantLab daily data update" refreshes the 193 built-in Saudi stocks and TASI every Sunday to Thursday after the close (15:48 Riyadh) and notifies your phone. Run it any time from the Claude app: Routines → QuantLab daily data update → Run now. New prices show up here by themselves. The newer Saudi listings, Aramco (2222) and the US stocks in the library are not on the Routine yet: ask Claude to refresh them.</p>
           <p class="note">Or update by hand: download newer daily prices (Saudi Exchange website, your broker) and drop the files above. A file that overlaps the stored history is joined to it automatically, and the older prices are rescaled for bonus shares and splits.</p>
         </div>
         <div class="panel" style="margin-top:14px">
@@ -1716,29 +1717,40 @@ function mergeSeries(base,newer){const bi=new Map(base.d.map((d,i)=>[d,i])),rati
  for(let i=0;i<base.d.length&&base.d[i]<cut;i++){o.d.push(base.d[i]);o.o.push(base.o[i]*r);o.h.push(base.h[i]*r);o.l.push(base.l[i]*r);o.c.push(base.c[i]*r);o.v.push(isF(base.v[i])?base.v[i]/r:NaN)}
  for(let j=0;j<newer.d.length;j++){o.d.push(newer.d[j]);o.o.push(newer.o[j]);o.h.push(newer.h[j]);o.l.push(newer.l[j]);o.c.push(newer.c[j]);o.v.push(newer.v[j])}
  return {s:o,ratio:r,note,ok,overlap:ratios.length}}
-function validateSeries(s){const w=[];let big=0,bad=0;for(let i=0;i<s.d.length;i++){if(i&&s.d[i]<=s.d[i-1])bad++;if(!(s.c[i]>0))bad++;if(i&&Math.abs(s.c[i]/s.c[i-1]-1)>.105)big++}
- if(bad)w.push(`${bad} bad rows`);if(big)w.push(`${big} daily moves above 10.5% (Saudi limit is ±10%; IPO days and old data can exceed it)`);return w}
+function validateSeries(s,sym){const sa=!sym||/^\d{4}/.test(sym)||/TASI|ARAMCO|RAJHI|[_.]S[RAE]$/i.test(sym),lim=sa?.105:.25;let big=0,bad=0;const w=[];   // US stocks have no daily limit: flag only 25%+ moves (possible split errors)
+ for(let i=0;i<s.d.length;i++){if(i&&s.d[i]<=s.d[i-1])bad++;if(!(s.c[i]>0))bad++;if(i&&Math.abs(s.c[i]/s.c[i-1]-1)>lim)big++}
+ if(bad)w.push(`${bad} bad rows`);if(big)w.push(sa?`${big} daily moves above 10.5% (Saudi limit is ±10%; IPO days and old data can exceed it)`:`${big} daily moves above 25% (check for split errors)`);return w}
 
 // ---------- library UI
 const LIB_KEY="qlab-lib";let LIBSEL=new Set(load(LIB_KEY,[]));
+const LIB_NEW="New listings 2020+",LIB_US="US stocks",LIB_MIN=250;
+function ymd(x){x=String(x);return `${x.slice(0,4)}-${x.slice(4,6)}-${x.slice(6,8)}`}
+function dbLib(m){const o={};for(const [k,d] of Object.entries(UPD)){const r=d.rows||[];if(m[k]||/^\^?TASI/i.test(k)||!r.length)continue;
+  const us=d.market==="US"||!/^\d{4}$/.test(k),t=r.slice(-250).map(x=>x[4]*(x[5]||0)).sort((a,b)=>a-b);
+  o[k]={name:d.name||EXTRA_NAMES[k]||k,full:d.name||"",sector:us?LIB_US:LIB_NEW,ind:us?"":(SECT&&SECT.groups&&SECT.groups[k])||"",start:ymd(r[0][0]),end:ymd(r[r.length-1][0]),bars:r.length,value_med:t.length?t[t.length>>1]:0,cur:us?"USD":"SAR",db:true}}
+ return o}
 async function drawLibrary(){const m=await libMeta(),el=$("lib-t");if(!el)return;const ks=Object.keys(m);if(!ks.length){$("lib-note").textContent="Library file not available in this copy.";return}
- const sec=$("lib-sector").value,q=($("lib-q").value||"").toLowerCase();
- const rows=ks.filter(k=>(!sec||m[k].sector===sec)&&(!q||k.includes(q)||m[k].name.toLowerCase().includes(q)||m[k].full.toLowerCase().includes(q)));
- if(!$("lib-sector").dataset.ready){const secs=[...new Set(ks.map(k=>m[k].sector))].sort();$("lib-sector").innerHTML='<option value="">all sectors</option>'+secs.map(s=>`<option>${esc(s)}</option>`).join("");$("lib-sector").dataset.ready=1;$("lib-sector").value=sec}
- $("lib-note").innerHTML=`<b>${ks.length}</b> Tadawul stocks built in (daily prices 2001 → 2020-03-05, adjusted as of 2020). ${[...LIBSEL].filter(k=>DS[k]).length} loaded. Showing ${rows.length}, most traded first. Saudi stocks run in momentum mode (Settings).`;
- el.innerHTML="<tr><th></th><th>code</th><th>name</th><th>sector</th><th>from</th><th>to</th><th>median daily value (SAR m)</th></tr>"+rows.slice(0,400).map(k=>`<tr><td><input type="checkbox" data-lib="${k}" ${DS[k]?"checked":""} aria-label="select ${esc(k)}"></td><td>${k}</td><td style="text-align:left">${esc(m[k].name)}</td><td style="text-align:left">${esc(m[k].sector)}</td><td>${m[k].start}</td><td>${m[k].end}</td><td>${(m[k].value_med/1e6).toFixed(1)}</td></tr>`).join("")}
-async function loadLibrary(codes,{quiet=false}={}){const want=new Set(codes.filter(Boolean));if(!want.size)return;$("lib-msg").textContent=`Unpacking ${want.size} stock(s)…`;
- try{const got=libParse(await libText(),want);await libMeta();const msgs=[];
+ const sec=$("lib-sector").value,q=($("lib-q").value||"").toLowerCase(),x=dbLib(m),M=Object.assign({},m,x),by=g=>Object.keys(x).filter(k=>x[k].sector===g).sort((a,b)=>x[b].value_med-x[a].value_med);
+ const xs=[...by(LIB_NEW),...by(LIB_US)],rows=[...ks,...xs].filter(k=>(!sec||M[k].sector===sec)&&(!q||k.toLowerCase().includes(q)||M[k].name.toLowerCase().includes(q)||M[k].full.toLowerCase().includes(q)));
+ if(!$("lib-sector").dataset.ready){const secs=[...new Set(ks.map(k=>m[k].sector))].sort();$("lib-sector").innerHTML='<option value="">all sectors</option>'+secs.map(s=>`<option>${esc(s)}</option>`).join("")+`<option>${LIB_NEW}</option><option>${LIB_US}</option>`;$("lib-sector").dataset.ready=1;$("lib-sector").value=sec}
+ const nN=by(LIB_NEW).length,nU=by(LIB_US).length,last=xs.map(k=>x[k].end).sort().pop();
+ $("lib-note").innerHTML=`<b>${ks.length}</b> Tadawul stocks built in (daily prices 2001 → 2020-03-05, adjusted as of 2020)${xs.length?`, plus <b>${nN}</b> newer Saudi listings and <b>${nU}</b> US stocks from stored updates (2015 → ${last})`:""}. ${[...LIBSEL].filter(k=>DS[k]).length} loaded. Showing ${rows.length}, most traded first; tick a row to load it. Saudi stocks (except the TASI index) use trend-breakout signals (Settings); US stocks keep the mean-reversion signals.`;
+ el.innerHTML="<tr><th></th><th>code</th><th>name</th><th>sector</th><th>from</th><th>to</th><th>median daily value (m, SAR unless marked)</th></tr>"+rows.slice(0,400).map(k=>{const r=M[k],short=r.db&&r.bars<LIB_MIN;
+  return `<tr><td><input type="checkbox" data-lib="${k}" ${DS[k]?"checked":""} ${short&&!DS[k]?`disabled title="only ${r.bars} trading days: the signals need at least ${LIB_MIN}"`:""} aria-label="select ${esc(k)}"></td><td>${k}</td><td style="text-align:left">${esc(r.name)}</td><td style="text-align:left">${esc(r.sector)}${r.ind?` · ${esc(r.ind)}`:""}${short?` · <span class="muted">${r.bars} days, too short</span>`:""}</td><td>${r.start}</td><td>${r.end}</td><td>${(r.value_med/1e6).toFixed(1)}${r.cur==="USD"?" USD":""}</td></tr>`}).join("")}
+async function loadLibrary(codes,{quiet=false}={}){const want=new Set(codes.filter(Boolean));if(!want.size)return;await libMeta();
+ const dbOnly=[...want].filter(k=>!LIBMETA[k]);for(const k of dbOnly){want.delete(k);LIBSEL.add(k)}   // newer listings and US stocks come from the stored updates, not the 2001-2020 file
+ $("lib-msg").textContent=`Unpacking ${want.size+dbOnly.length} stock(s)…`;
+ try{const got=want.size?libParse(await libText(),want):{};const msgs=[];
   for(const [k,v] of Object.entries(got)){LIBSEL.add(k);
    if(DS[k]&&!DS[k].lib){const m=mergeSeries(v,DS[k]);DS[k]=Object.assign(m.s,{src:`library + ${DS[k].src||"your file"}`,lib:"merged",bad:0});msgs.push(`${k}: joined with your file (${m.note||"same price basis"})`)}
    else DS[k]=v}
-  store(LIB_KEY,JSON.stringify([...LIBSEL]));applyAllUpdates(false);
-  $("lib-msg").innerHTML=`Loaded ${Object.keys(got).length} stock(s).`+(msgs.length?"<br>"+msgs.map(esc).join("<br>"):"");
-  if(!quiet){if(!DS[st.sym])st.sym=Object.keys(got)[0];saveDS();afterDataChange(true)}}
+  store(LIB_KEY,JSON.stringify([...LIBSEL]));applyAllUpdates(false);const nDb=dbOnly.filter(k=>DS[k]).length,miss=dbOnly.filter(k=>!DS[k]);
+  $("lib-msg").innerHTML=`Loaded ${Object.keys(got).length+nDb} stock(s).`+(miss.length&&Object.keys(UPD).length?` Not loaded (no stored history of ${LIB_MIN}+ days): ${miss.map(esc).join(", ")}.`:"")+(msgs.length?"<br>"+msgs.map(esc).join("<br>"):"");
+  if(!quiet){if(!DS[st.sym])st.sym=Object.keys(got)[0]||dbOnly.find(k=>DS[k])||st.sym;saveDS();afterDataChange(true)}}
  catch(e){$("lib-msg").innerHTML=`<span class="err">${esc(e.message)}</span>`}}
-function unloadLibrary(codes){for(const k of codes){LIBSEL.delete(k);if(DS[k]&&DS[k].lib===true)delete DS[k]}store(LIB_KEY,JSON.stringify([...LIBSEL]));saveDS();afterDataChange()}
+function unloadLibrary(codes){for(const k of codes){LIBSEL.delete(k);const s=DS[k];if(s&&(s.lib===true||s.lib==="db"||(LIBMETA&&!LIBMETA[k]&&UPD[k]&&/^update /.test(s.src||""))))delete DS[k]}store(LIB_KEY,JSON.stringify([...LIBSEL]));saveDS();afterDataChange()}
 // browser storage cannot hold 193 long histories: plain library series are reloaded from the built-in file instead of being saved
-saveDS=function(){const keep={};for(const [k,v] of Object.entries(DS))if(v.lib!==true)keep[k]=v;
+saveDS=function(){const keep={};for(const [k,v] of Object.entries(DS))if(v.lib!==true&&v.lib!=="db")keep[k]=v;   // "db" series are rebuilt from the stored update on every visit
  if(store("qlab-ds",JSON.stringify(keep))===null&&Object.keys(keep).length)$("parsemsg").innerHTML='<span class="err">The browser would not store these files, so they will need reloading next visit.</span>'};
 
 // ---------- updates written by the Claude Code session into this artifact's database (collection "bars": one document per symbol)
@@ -1749,11 +1761,13 @@ function updSeries(doc){const rows=doc.rows||[];const s={d:[],o:[],h:[],l:[],c:[
 const UPD_ALIAS={"2222":["ARAMCO","SAUDI ARAMCO","2222.SR"],"1120":["ALRAJHI","AL RAJHI","RAJHI","1120.SR"],"TASI":["^TASI","TASI.SR","^TASI.SR"]};
 function applyUpdate(sym0){const doc=UPD[sym0];if(!doc)return false;let sym=sym0;
  if(!DS[sym])for(const a of UPD_ALIAS[sym0]||[])if(DS[a]){sym=a;break}
- if(!DS[sym]){if(LIBMETA&&LIBMETA[sym0]&&!LIBSEL.has(sym0))return false;const nw=updSeries(doc);if(nw.d.length<250)return false;
-  DS[sym]=Object.assign(nw,{src:`update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:"merged",updAt:doc.fetched_at,bad:0});UPDLOG[sym0]={note:"added from update",ok:true,w:validateSeries(nw),last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
+ if(DS[sym]&&DS[sym].lib==="db"){if(DS[sym].updAt===doc.fetched_at)return false;const nw=updSeries(doc);   // the stored document holds the whole history: replace, no joining needed
+  DS[sym]=Object.assign(nw,{src:`update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:"db",updAt:doc.fetched_at,bad:0});UPDLOG[sym0]={note:"loaded from stored update",ok:true,w:validateSeries(nw,sym0),last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
+ if(!DS[sym]){if(!LIBSEL.has(sym0))return false;const nw=updSeries(doc);if(nw.d.length<LIB_MIN)return false;
+  DS[sym]=Object.assign(nw,{src:`update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:LIBMETA&&LIBMETA[sym0]?"merged":"db",updAt:doc.fetched_at,bad:0});UPDLOG[sym0]={note:"loaded from stored update",ok:true,w:validateSeries(nw,sym0),last:nw.d[nw.d.length-1],rows:nw.d.length};return true}
  if(DS[sym].updAt===doc.fetched_at)return false;
  const nw=updSeries(doc);if(nw.d.length<5){UPDLOG[sym0]={note:"too few rows",ok:false};return false}
- const w=validateSeries(nw),m=mergeSeries(DS[sym],nw);
+ const w=validateSeries(nw,sym0),m=mergeSeries(DS[sym],nw);
  if(!m.ok&&m.overlap>=5){UPDLOG[sym0]={note:`not applied: ${m.note}`,ok:false,w};return false}
  const lastOld=DS[sym].d[DS[sym].d.length-1];
  if(m.overlap<5&&(Date.parse(nw.d[0])-Date.parse(lastOld))/864e5>30){DS[sym]=Object.assign(nw,{src:`update ${String(doc.fetched_at||"").slice(0,10)} (${doc.source||"?"})`,lib:"merged",updAt:doc.fetched_at,bad:0});
@@ -1763,9 +1777,9 @@ function applyUpdate(sym0){const doc=UPD[sym0];if(!doc)return false;let sym=sym0
 function applyAllUpdates(run=true){let n=0;for(const k of Object.keys(UPD))if(applyUpdate(k))n++;drawUpdates();if(n&&run){saveDS();afterDataChange()}return n}
 function drawUpdates(){const el=$("upd-t");if(!el)return;const ks=Object.keys(UPD).sort();
  el.innerHTML=ks.length?"<tr><th>symbol</th><th>rows</th><th>to</th><th>source</th><th>fetched</th><th>result</th></tr>"+ks.map(k=>{const d=UPD[k],lg=UPDLOG[k]||{},rows=(d.rows||[]).length,last=rows?String(d.rows[d.rows.length-1][0]):"";
-  return `<tr><td>${esc(nameOf(k))}</td><td>${rows}</td><td>${last?`${last.slice(0,4)}-${last.slice(4,6)}-${last.slice(6,8)}`:"—"}</td><td style="text-align:left">${esc(d.source||"")}</td><td>${esc(String(d.fetched_at||"").slice(0,16))}</td><td style="text-align:left" class="${lg.ok===false?"down":""}">${DS[k]||lg.ok!=null?esc(lg.note||"applied"):"stored (load the stock to use it)"}${lg.w&&lg.w.length?` · ${esc(lg.w.join("; "))}`:""}</td></tr>`}).join(""):'<tr><td class="empty">No updates stored yet.</td></tr>'}
+  return `<tr><td>${esc(nameOf(k))}</td><td>${rows}</td><td>${last?`${last.slice(0,4)}-${last.slice(4,6)}-${last.slice(6,8)}`:"—"}</td><td style="text-align:left">${esc(d.source||"")}</td><td>${esc(String(d.fetched_at||"").slice(0,16))}</td><td style="text-align:left" class="${lg.ok===false?"down":""}">${DS[k]||lg.ok!=null?esc(lg.note||"applied"):"stored (tick it in the library table to load it)"}${lg.w&&lg.w.length?` · ${esc(lg.w.join("; "))}`:""}</td></tr>`}).join(""):'<tr><td class="empty">No updates stored yet.</td></tr>'}
 (async()=>{try{if(!window.claude||!claude.use)return;DB=await claude.use("db");if(!DB)return;
- DB.collection("bars").onSnapshot(snap=>{for(const d of snap.docs){const b=d.data();if(b)UPD[d.id]=b}applyAllUpdates(true)},e=>{$("upd-msg").textContent="Update store unavailable: "+e.code});
+ DB.collection("bars").onSnapshot(snap=>{for(const d of snap.docs){const b=d.data();if(b){UPD[d.id]=b;if(b.name&&!NAMES[d.id])NAMES[d.id]=b.name}}applyAllUpdates(true);drawLibrary()},e=>{$("upd-msg").textContent="Update store unavailable: "+e.code});
  DB.collection("ml").onSnapshot(snap=>{for(const d of snap.docs){if(d.id==="latest"){MLPF=d.data();try{drawML()}catch(e){};try{if(RES)drawPlan()}catch(e){}}if(d.id==="sectors"){SECT=d.data();try{drawSectors()}catch(e){};try{if(RES){drawPlan();if(st.tab==="chart")buildChart(true)}}catch(e){}}}},()=>{});
  DB.collection("runs").orderBy("started","desc").limit(5).onSnapshot(snap=>{const r=snap.docs[0]&&snap.docs[0].data();if(!r)return;
   const el=$("upd-run");el.innerHTML=`Last update run <b>${esc(snap.docs[0].id)}</b>: <b class="${r.state==="done"?"up":r.state==="blocked"||r.state==="failed"?"down":""}">${esc(r.state||"?")}</b> ${r.done!=null?`· ${r.done}/${r.total} symbols`:""} · ${esc(r.message||"")}`
