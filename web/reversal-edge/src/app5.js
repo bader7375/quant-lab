@@ -1,0 +1,279 @@
+// ------------------------------------------------ Research tab
+$("research").innerHTML=`
+<h2 style="font-size:18px">How this system was built, and what the evidence says (v14)</h2>
+<p>I tested the main short-term reversal ideas from academic papers and trading books on real daily prices: 87 large US stocks (2012–2017, Yahoo prices from the StockNet dataset), Tesla (2010–2026) and the VIX (1990–2026). Every number below is out of sample. Either the model was trained only on earlier years, or it was trained on the 87 stocks and then tested on Tesla, a stock it had never seen. Costs of 10 basis points per round trip are included.</p>
+<h2>v14: your ideas tested — VWAP bands and the sector relationship</h2>
+<p>Same rules as every other test: 270 Saudi stocks, signal at the close, buy at the next open, 0.40% round-trip costs, design 2013–19, validate 2020–26, then a portfolio test against the Core Strategy (+19.6% a year, Sharpe 1.55, worst drawdown −17%). Daily bars only, so the VWAP uses each day's typical price (high+low+close)/3 weighted by volume.</p>
+<table class="bl"><tr><th>idea</th><th>per trade (net)</th><th>2013–19 / 2020–26</th><th>verdict</th></tr>
+<tr><td style="text-align:left">monthly VWAP −2σ → back to VWAP</td><td>−1.06%</td><td>−0.95% / −1.15%</td><td class="down">loses</td></tr>
+<tr><td style="text-align:left">yearly VWAP −2σ → back to VWAP (60 days)</td><td>−0.75%</td><td>+0.05% / −1.24%</td><td class="down">loses</td></tr>
+<tr><td style="text-align:left">same with ML ≥ 50% + market positive</td><td>+4.9%</td><td>+8.5% / +3.2%</td><td class="down">the filters alone give +3.3% (random entries); VWAP adds 0 in 2020–26</td></tr>
+<tr><td style="text-align:left">monthly VWAP − 2 ATR → back to VWAP</td><td>−0.72%</td><td>−0.20% / −1.14%</td><td class="down">loses</td></tr>
+<tr><td style="text-align:left">VWAP trend: close crosses above yearly VWAP + 1 ATR</td><td>+2.3%</td><td>+0.8% / +3.5%</td><td class="note">positive, but lowers the Core (Sharpe 1.55 → 1.34) and is worse than the 55-day breakout</td></tr>
+<tr><td style="text-align:left">US stocks: monthly / rolling / yearly VWAP −2σ</td><td colspan="2">beat random entries by +0.3% to +0.9% on 2012–17 stocks, but −0.03% to −1.2% on 106 fresh stocks (2018+)</td><td class="down">no edge</td></tr>
+<tr><td style="text-align:left"><b>sector laggard</b>: 10-day residual vs beta × sector ≤ −2σ, correlation ≥ 0.4, ML ≥ 50%, market positive, hold 10 days</td><td><b>+3.1%</b>, 65% win</td><td>+3.8% / +2.7% (filters alone +0.9% / +1.1%)</td><td class="up">kept: optional sleeve</td></tr>
+<tr><td style="text-align:left">sector laggard, no filters, hold 20 days</td><td>+1.5%</td><td>+1.3% / +1.7% (random +0.2%)</td><td class="up">real effect</td></tr>
+<tr><td style="text-align:left">sector at a 55-day high, correlated stock lagging 5%+, hold 20 days</td><td>+1.9%</td><td>+1.3% / +2.3% (random +0.1%)</td><td class="note">real, but did not improve the Core</td></tr>
+<tr><td style="text-align:left">sector +2% today, correlated stock moved less than half, hold 10 days</td><td>+1.2%</td><td>+0.8% / +1.7% (random −0.1%)</td><td class="note">real; as a sleeve weak in 2013–19 (Sharpe 0.35)</td></tr></table>
+<p><b>Sector indices:</b> equal-weight industry groups (Banks, Insurance, Cement, Petrochem &amp; Materials, Energy, Telecom, REITs, Food &amp; Staples, Health Care, Real Estate, Industrials &amp; Transport, Consumer &amp; Retail, Diversified Financials, Software &amp; IT, Utilities), each stock measured against its sector <b>without itself</b>. Strongest relationships: banks (median beta 0.80, correlation 0.57) and insurance (0.96 / 0.52); REITs and energy stocks mostly move on their own. As a 10 × 5% sleeve the sector laggard made +5.4% a year with Sharpe 1.08 and a −12% worst drawdown (better than the industry dip it replaces: Sharpe 1.06, −15%); added to the Core, return rose to +20.8% a year while the Sharpe dipped to 1.46, so it stays optional and half size. <b>On the terminal:</b> the Sectors table and laggard list (Scanner &amp; plan), the sector index drawn on each Saudi stock's chart, a sector section in the inspector (beta, correlation, expected vs actual move, residual Z), and VWAP yearly/monthly bands as chart context.</p>
+<h2>v14: a reversal strategy for Saudi stocks</h2>
+<p>Tested on 270 Saudi stocks 2013–2026 (signal at the close, buy the next open, 0.40% costs; designed on 2013–19, validated on 2020–26). <b>Plain dip-buying loses</b>: RSI(2) &lt; 10 −0.66% per trade; in uptrends −0.41%; in ML-top stocks above the 200-day average −0.36%; three down days −0.35%; 20-day lows −0.32%; capitulation days on 2x volume −1.06%. Market-wide panics and lower-Bollinger touches worked only in 2020–26.</p>
+<p><b>What works: the industry-relative dip.</b> A good stock (ML rank ≥ 50%) that fell 7%+ more than its own industry over 10 days, bought while the market model is positive and held 10 days: <b>+2.1% net per trade, 58% winners</b> (2013–19 +2.0%, 2020–26 +2.2%). All 36 variants of thresholds, look-backs and holding periods were positive in 2020–26. As a portfolio (10 positions × 5%): +7.4% a year, Sharpe 1.06, worst drawdown −15%, worst year −1%. Without the market filter the per-trade edge is smaller (+1.1% to +2.3%) and the portfolio drawdown reaches −22% to −41%. Combined with the Core Strategy it lowered the Core's Sharpe (1.55 → 1.36) because both earn in the same rising markets, so it is offered as an <b>optional half-size sleeve</b> (Scanner &amp; plan → Core panel → reversal sleeve; plan rows "industry-dip buy").</p>
+<p><b>US stocks:</b> the v14 changes do not touch them. TSLA, AAPL, AMZN, MSFT and F produce exactly the same trades as before (AAPL 55 trades, Sharpe 0.87; TSLA 54, Sharpe 0.40); the TASI index keeps its momentum rule (Sharpe 1.53).</p>
+<h2>v14: long-term Z-score and the new Saudi signals</h2>
+<p><b>Long-term Z</b> = (log price − its 250-day average) ÷ its 250-day standard deviation. Tested on 270 Saudi stocks 2013–2026, buy at the next open, 0.40% costs, 2013–19 for design and 2020–26 to validate:</p>
+<table class="bl"><tr><th>rule</th><th>per trade (net)</th><th>2013–19 / 2020–26</th><th>as a portfolio</th></tr>
+<tr><td style="text-align:left">60-day Z ≤ −2, sell at Z 0</td><td>−1.12%</td><td>−2.32% / −0.30%</td><td class="down">loses</td></tr>
+<tr><td style="text-align:left">250-day Z ≤ −2.5, sell at Z 0</td><td>+3.29%, 56% win, ~97 days</td><td>+6.04% / +1.38%</td><td></td></tr>
+<tr><td style="text-align:left">250-day Z ≤ −2.5, ML ≥ 50%, sell at Z −1 or 60 days</td><td>+6.58%, 69% win, ~41 days (random entries +0.75%)</td><td>+9.82% / +4.34%</td><td class="down">+1.4%/yr, −32% drawdown</td></tr>
+<tr><td style="text-align:left">same, but buy the turn back above −2.5</td><td>+4.98%, 68% win</td><td>+9.20% / +2.09%</td><td class="down">+2.0%/yr, −34%</td></tr>
+<tr><td style="text-align:left">industry-relative 250-day Z ≤ −2, ML ≥ 50%</td><td>+5.29%, 62% win (228 trades)</td><td>+7.05% / +4.24%</td><td></td></tr>
+<tr><td style="text-align:left">skip trend/ML buys when Z &gt; +2 / +2.5 / +3</td><td colspan="2">no improvement (Core Sharpe 1.49–1.52 vs 1.55)</td><td class="note">not used</td></tr></table>
+<p><b>Why the per-trade numbers did not survive in a portfolio:</b> deep Z signals arrive in clusters during market sell-offs; a 10-slot account fills with the first falling knives, and those crash trades carry the losses, while the per-trade average is lifted by the few big rebounds. Adding the Z sleeve to the Core Strategy lowered its Sharpe from 1.55 to 0.88–1.16 and deepened the worst drawdown to −30% to −35% in every variant (stops, confirmation, smaller size, at most 2 new trades a week, market filter). So the long-term Z is shown as <b>context</b> (chart panel, inspector, plan notes) and as a <b>deep-value watch</b> (turn back above −2.5): a discretionary, small-size idea, not an automatic trade.</p>
+<p><b>Saudi signals now:</b> the RSI(2) momentum signal (+0.08% per trade) is replaced by the <b>trend breakout</b>: close at the 55-day high above the 200-day average, buy the next open, exit on a close below (highest close since entry − 3 ATR). Real engine, 257 stocks, 2013–2026: +2.54% net per trade (42% winners, average win +15.3%, average loss −6.6%; 2013–19 +1.7%, 2020–26 +3.3%); with the ML top-30% + market filter: +3.50% (average loss −4.6%). <b>Removed:</b> the opening-auction plan (intraday), short selling (paid only in bear markets), the RSI momentum mode for Saudi stocks, and the reversal panels/inspector blocks for Saudi stocks (dip-buys lost −0.67% per trade there).</p>
+<h2>v14: the Saudi Core Strategy (best of six strategy families)</h2>
+<p><b>Search:</b> one simulator for every idea (weights decided at the close, traded at the next open, 0.40% round-trip costs, idle cash at the 13-week T-bill rate since the riyal is pegged to the dollar), on 270 stocks 2013–2026, liquid names only (SAR 3m+ a day). Benchmark: the equal-weight liquid market, +1.7% a year, Sharpe 0.19, worst drawdown −55%.</p>
+<table class="bl"><tr><th>family</th><th>best honest version</th><th>2013–2026</th><th>verdict</th></tr>
+<tr><td style="text-align:left">ML portfolio</td><td style="text-align:left">top 10, 4 staggered weekly tranches held 20 days, cash when the market model is negative</td><td style="text-align:left">+15.2%/yr, vol 10.5%, Sharpe 1.41, DD −15%</td><td class="up">kept</td></tr>
+<tr><td style="text-align:left">trend breakouts</td><td style="text-align:left">55-day high above the 200-day average, ML top 30%, market positive, 3-ATR trailing stop, 10 slots</td><td style="text-align:left">+10.9%/yr, vol 7.3%, Sharpe 1.45, DD −8% (without the ML and market filters: Sharpe 0.55, DD −37%)</td><td class="up">kept</td></tr>
+<tr><td style="text-align:left">dividend run-up</td><td style="text-align:left">+1.7% vs market in the 20 days before ex-dates (both periods), but only with the exact date known 20 days ahead; with last year's dates +0.6% / +0.2%</td><td style="text-align:left">not testable without announcement dates</td><td class="note">info only</td></tr>
+<tr><td style="text-align:left">dividend capture</td><td style="text-align:left">buy the close before the ex-date: +0.45% / +0.33% before costs (the price drops 1.63% on an average 2.40% dividend)</td><td style="text-align:left">about zero after costs</td><td class="down">rejected</td></tr>
+<tr><td style="text-align:left">volume-spike events</td><td style="text-align:left">3x volume and a 4%+ move: the stock lagged the market −1.7% to −3.6% over 60 days, up or down</td><td style="text-align:left">avoid signal</td><td class="note">warning</td></tr>
+<tr><td style="text-align:left">opening auction</td><td style="text-align:left">see the edge study below (intraday: not used)</td><td></td><td class="note">excluded</td></tr></table>
+<p><b>The Core Strategy runs the two kept sleeves in one account</b> (daily returns correlate only 0.34): <b>+19.6% a year, volatility 12%, Sharpe 1.55, worst drawdown −17%, no losing calendar year 2013–2026</b> (2015 0% vs market −17%, 2022 +4% vs −18%, 2025 +8% vs −22%). 2013–19: +13.6%, Sharpe 1.18; 2020–26: +26.4%, Sharpe 1.91. Stress: 0.6% costs +18.3%; 1% costs +15.8%; cash earning nothing +18.4%; without 2020 +16.4%. About 49% invested on average, 17 positions when invested, turnover 5.5x a year. A 50/50 capital split instead of one account: +13.2%, Sharpe 1.72, worst drawdown −9% (the cautious version).</p>
+<h2>v14: Saudi machine-learning portfolio (2013–2026 walk-forward)</h2>
+<p><b>Data and features:</b> 270 Saudi stocks, 2011–2026, about 150 tradable each day; 58 inputs known at the close: returns over 1 day to 12 months, overnight vs intraday returns, volatility, biggest up/down days, RSI, Bollinger %b, distance to 20/50/200-day averages and 52-week high/low, volume surges, liquidity and size, close location, limit hits, listing age, industry-relative returns, plus market breadth, market volatility, oil, S&amp;P 500, VIX and the New York Saudi ETF for the market model. Stock inputs are ranked across stocks each day. <b>Target:</b> the stock's return from the next open over 20 trading days, ranked against the other stocks.</p>
+<p><b>Walk-forward:</b> each year from 2013 to 2026 was predicted by a LightGBM model trained only on earlier data (with a gap so no training target overlaps the test year). The ranking worked in all 14 years (daily rank correlation +0.02 to +0.19, average about +0.09); the best-ranked tenth beat the market by about +1.0% per 20 days and the worst tenth lagged by about −1.2%, in both 2013–2019 and 2020–2026. A second walk-forward model on market-wide inputs forecasts the equal-weight market's next 20 days and decides whether to be invested.</p>
+<p><b>Strategy:</b> monthly, top 10 liquid stocks (≥ SAR 3m a day), equal weight, buy at the open, hold 20 trading days, only when the market forecast is positive (in the market about 44% of the time), 0.40% round-trip costs. Averaged over 10 different rebalance days: <b>+14.8% a year, Sharpe 0.91, worst drawdown −17%</b> (always invested: +15.8%, Sharpe 0.72, −49%; the equal-weight market: about +4% a year, −57%). Only stocks with SAR 30m+ a day: +14.6%, Sharpe 0.88, −11%. It lagged in strong bull years (2013, 2019, 2023, 2024) and protected in crashes (2015 −3% vs −38%, 2022 +7% vs −22%, 2025 +10% vs −22%).</p>
+<p><b>What it learned:</b> calm stocks (low volatility, narrow ranges, no lottery-style spikes) in long-term uptrends (near the 52-week high, positive 12-month momentum, above the 200-day average) that paused in the last few days. Each ingredient alone was worth only ±0.3–0.7% per 20 days; combined, the model roughly doubled that. <b>Caveats:</b> survivorship (stocks delisted before 2026 are missing, which flatters the market and the strategy alike); the timing layer was chosen among 7 variants; one random rebalance day can make anything from +9% to +20% a year; picks are refreshed when the models are rerun, not live in the page.</p>
+<h2>v14: the 2026 Saudi edge study (fresh data 2020–2026)</h2>
+<p><b>Data:</b> Yahoo Finance daily prices adjusted for splits and dividends for 270 Saudi stocks (the 2020 library names still listed plus 93 new listings found by probing every code range), hourly bars (2023-11 → 2026-10), 5-minute bars (last 60 days), Brent, WTI, S&amp;P 500, VIX, the Saudi ETFs listed in New York (KSA, FLSA), emerging markets, dollar, gold and US yields. <b>Method:</b> ideas were screened on 2004–2020 only with tradable timing (signal at the close, trade at the next open or later, 0.40% round-trip cost); the survivors were written down and committed (<i>research/edge26/PREREG.md</i>) before any 2020–2026 return was computed, then run once.</p>
+<table class="bl"><tr><th>pre-registered test</th><th>fresh-period result</th><th>verdict</th></tr>
+<tr><td style="text-align:left">H1 opening gap-down rebound: buy opens ≤ −3% (liquid two-thirds, 5 deepest), sell at the close</td><td style="text-align:left">CAGR +55%, Sharpe 1.72, max DD −24%, t 4.2; both halves +0.17% / +0.21% a day; every year positive (2022 the weakest, +2%). Market: +3.9% a year</td><td class="up">PASSED</td></tr>
+<tr><td style="text-align:left">H2 same trades bought at ~11:00 instead of the open</td><td style="text-align:left">−0.05% gross per trade (open entry on the same trades: +1.34%). 5-minute bars: +1.1% from the open, +0.1% from 10:05</td><td class="down">FAILED: the edge lives in the opening auction only</td></tr>
+<tr><td style="text-align:left">H3 illiquidity premium (most illiquid fifth, monthly)</td><td style="text-align:left">−0.42% a month vs the market</td><td class="down">FAILED</td></tr>
+<tr><td style="text-align:left">H4 day before a long holiday</td><td style="text-align:left">+0.12% (t 0.9); Yahoo's missing days blur the holiday dates</td><td class="note">inconclusive</td></tr>
+<tr><td style="text-align:left">H5 the terminal's Saudi momentum mode vs reversal mode</td><td style="text-align:left">momentum better on 54% of 251 stocks; mean Sharpe 0.04 vs 0.04 (buy &amp; hold 0.13); entries beat random days by +0.11% (t 0.5)</td><td class="down">FAILED</td></tr></table>
+<p><b>What it means:</b> Saudi opening prices overshoot. Stocks that open 3%+ down rebound +1.3% by the close (+2.8% when the open is 7%+ down) and stocks that open 3%+ up fall −1.0%. Both effects held in 2004–2020 and again in 2020–2026, but they are almost completely gone 5 minutes after the open. A trader who places limit orders in the opening auction (9:30–10:00) can use it; one who trades after the open cannot. Capacity is small (the first 5 minutes trade about SAR 1.2m in these stocks) and the break-even cost is about 1% round trip. Holding the rebound overnight gave it back (−1.1% close to next open in 2004–2020).</p>
+<p><b>Rejected with tradable timing on 2004–2020</b> (so not retested): weekly, monthly, 3-month and 12-1-month momentum, 1-week reversal, low volatility, MAX, 52-week high, volume surge and industry momentum (all ≤ 0 net when bought at the next open: the earlier "+0.30% a week" momentum lived in the overnight gap), salary days, IPO drift, US / oil / emerging-market overnight moves (they explain the Saudi opening gap, correlation +0.4 to +0.6, but nothing after it), and buying strong closes for the overnight gap (only limit-locked closes continue, and those cannot be bought). Intraday on hourly bars: the weakest first-hour stocks bounced +0.3% to +0.6% into the close, too little for costs.</p>
+<p><b>Not tested and why:</b> fundamentals, earnings dates and order-book data (not available from the allowed source); short selling (not practical for most Saudi accounts). Survivorship: stocks delisted during 2020–2026 (12 known) are missing.</p>
+<h2>v13: 193 Tadawul stocks, 2002–2020</h2>
+<p><b>Data:</b> the Tadawul file (199 stocks; 193 with 300+ days), 2001-12-31 to 2020-03-05. Prices are already adjusted for corporate actions as of 2020.</p>
+<ul><li>Removed: 1,165 zero-price rows, 2 spike glitches, and flat no-trade rows.</li>
+<li>Al Rajhi and Aramco were used to design the v12 rule, so every decision test below uses the other 191 stocks.</li>
+<li>Only companies still listed in 2020 are included (survivorship).</li></ul>
+<p><b>The v12 Saudi rule passed on fresh stocks</b> (test written down first):</p>
+<table class="t"><tr><th>191 stocks, real engine</th><th>momentum mode</th><th>dip-buy mode</th><th>auto</th><th>buy &amp; hold</th></tr>
+<tr><td>mean Sharpe</td><td><b>0.31</b></td><td>−0.04</td><td>0.16</td><td>0.22</td></tr><tr><td>stocks with Sharpe &gt; 0</td><td>72%</td><td>40%</td><td></td><td></td></tr></table>
+<ul><li>Momentum beat dip-buying on 75% of stocks, in every sector (Materials 90%, Consumer Staples 94%, Financials 76%) and every liquidity group.</li>
+<li>Momentum entries beat random days by <b>+0.42%</b> (2002–07), <b>+0.20%</b> (2008–13) and <b>+0.17%</b> (2014–20) per trade, all significant. The edge is shrinking as the market matures.</li></ul>
+<p><b>Behaviour:</b></p>
+<ul><li>89–94% of stocks trend day to day in every period. The effect is strongest in the most liquid names.</li>
+<li><b>Limit-up close:</b> the next morning opens +2.6% to +3.4% higher, then fades 0.5–1.3% by the close. Buying that open loses; holders can sell into it.</li>
+<li><b>Limit-down close:</b> the next morning opens 2.3–3.8% lower.</li>
+<li><b>Gap-down opens</b> (&lt; −2%) rebounded about +1% open-to-close in every liquidity group and both periods (t 12–18). Gap-up opens faded −0.7% after 2013. Daily data can't prove these open prices were fillable, so it's shown as a day-trade idea only.</li>
+<li><b>Weekly momentum:</b> last week's top fifth beat last week's bottom fifth by +0.30% the next week (t 2.4). One-month to one-year rankings showed nothing.</li>
+<li><b>Lead-lag:</b> after TASI rises more than 1%, the average stock gains +0.28% the next day (t 4.2). Big caps lead small caps.</li>
+<li><b>Calendar:</b> the day before a long holiday averaged +0.51% (t 3.3, n 39). Ramadan showed no reliable effect for the average stock. The earlier Ramadan finding came from three large names only, so it's withdrawn.</li></ul>
+<p><b>Tested and not adopted</b> (each had to help in both halves and on the post-2020 Al Rajhi, Aramco and TASI data):</p>
+<ul><li>Momentum only in a TASI uptrend: helped before 2013, hurt after.</li>
+<li>Skipping signals on more than 2× normal volume: helped in both halves (+0.1 Sharpe) but hurt Al Rajhi and Aramco after 2020.</li>
+<li>Selling at the next open after a limit-up close.</li>
+<li>Pullback-turn entries: better on only 42% and 49% of stocks.</li></ul>
+<p><b>Built in:</b> all 193 stocks are in the Data tab library. The "Update data with Claude" button starts a Claude Code session on your account that downloads newer prices and writes them into the terminal. Older history is rescaled automatically for bonus shares and splits.</p>
+<h2>v12: the Saudi market</h2>
+<p><b>Data:</b> Al Rajhi Bank (1120, 2013–2026), Saudi Aramco (2222, Dec 2019 – Dec 2025) and the TASI index (2001–2026). The Al Rajhi file contained 17 corrupt rows from an unadjusted feed (prices about 2.46× too high, no volume), mostly in 2013. Aramco had 35 flat holiday rows. The importer now drops such rows and reads volumes written as "5.05M".</p>
+<p><b>Character:</b> Saudi stocks trend from one day to the next, the opposite of US stocks.</p>
+<table class="t"><tr><th></th><th>lag-1 autocorrelation</th><th>CAGR</th><th>max drawdown</th></tr>
+<tr><td>Al Rajhi</td><td>+0.03 to +0.14 by period</td><td>10.3%</td><td>−45%</td></tr><tr><td>Aramco</td><td>+0.07 / +0.17</td><td>1.1%</td><td>−29%</td></tr><tr><td>TASI</td><td>+0.03 to +0.14</td><td>6.0%</td><td>−80%</td></tr></table>
+<p><b>Dip-buying has little or no edge here.</b> After RSI(2) &lt; 10, the next 5 and 10 days were normal (t ≈ 0) on all three. The engine's dip trades made Sharpe 0.14 on Al Rajhi and 0.03 on Aramco.</p>
+<p><b>Momentum works.</b> Buying the open after RSI(2) &gt; 90 and selling on a close below the 5-day average, compared with random days:</p>
+<ul><li><b>Al Rajhi:</b> +0.49% per trade (2013–19) and +0.56% (2020–26). As a system: Sharpe 0.94, 11.0% a year, max drawdown −13%, vs buy &amp; hold 0.56, 10.5%, −45%.</li>
+<li><b>TASI:</b> +0.81%, +0.29%, +0.27% per trade across periods.</li>
+<li><b>Aramco:</b> +0.16%, not significant. As a system: Sharpe 0.36 vs buy &amp; hold 0.12.</li></ul>
+<p>The default "auto" mode missed this: Saudi stocks' autocorrelation (about +0.06) sits just under the 0.08 switch. So v12 runs Saudi symbols in momentum mode (Settings → Saudi stocks).</p>
+<p><b>Calendar:</b></p>
+<ul><li><b>Ramadan:</b> +0.13% to +0.17% a day vs about 0 in other months, on all three (t 1.5–2.1). Shown as a note, not a rule.</li>
+<li><b>Weekdays:</b> Sunday weak and Tuesday strong, but none is reliable (|t| ≤ 2).</li></ul>
+<p><b>Shorts:</b> too few signals to judge, and retail short selling in Saudi is restricted.</p>
+<p><b>Limits:</b> this is two stocks. Upload 20–30 Saudi stocks to confirm that momentum mode suits the market broadly. Your Aramco file ends on 2025-12-31.</p>
+<h2>v11: short trades (optional, off by default)</h2>
+<p><b>The rule.</b> Sell an overbought bounce: RSI(2) above 90 with a top-third short score, only while the stock is below its 200-day average. When you choose a market file, the market must also be below its 200-day average. The order is a limit sell 0.5 ATR above the close, valid for the next session. Cover on the first close below the previous day's low or after the max hold. Every short has a 3-ATR stop and uses half a slot.</p>
+<p><b>What the tests found</b> (written down before testing, same protocol as v9):</p>
+<table class="t"><tr><th>short rule</th><th>6 long histories, test Sharpe</th><th>87 stocks Sharpe</th><th>verdict</th></tr>
+<tr><td>Plain mirror (sell RSI(2) &gt; 90)</td><td>−0.30</td><td>−0.91</td><td>loses; a squeeze blew up a test account</td></tr>
+<tr><td>Only below the 200-day average</td><td>−0.13</td><td>−0.45</td><td>loses</td></tr>
+<tr><td>Only when the Pulse is negative</td><td>−0.04</td><td>−0.74</td><td>loses</td></tr>
+<tr><td>Below 200-day + 3-ATR stop</td><td>−0.14</td><td>−0.38</td><td>loses</td></tr>
+<tr><td>+ market below its 200-day average</td><td>−0.08</td><td>−0.67</td><td>loses in bull periods</td></tr></table>
+<p>On fresh stocks, shorts paid only in bear markets: +1.1% per short on 2007–2012 stocks (2008 inside), and +3.8% on 18 shorts in the 2020 crash with the market filter. China lost (−6.9% on 5 shorts).</p>
+<p>Inside the full long + short book (half size, stop, downtrend only), Sharpe changed by −0.06 to +0.07. That's roughly nothing in normal markets and a small help in crashes.</p>
+<p><b>Hedging instead</b> (short the index while long trades are open) lowered Sharpe on all four data sets, because much of the dip-buy profit comes from the market bouncing too.</p>
+<p><b>Use shorts as a bear-market tool.</b> Turn them on when your market file is below its 200-day average, keep the stop, and keep them small. Short losses are open-ended.</p>
+<p><b>Bug fixed in v11.</b> When a held stock did not trade on a given day (TASI vs US holidays), its value was miscounted while sizing a new trade. Long trades were capped by cash so the effect was small: the 6-market Sharpe went 0.77 → 0.76, drawdown −15.0% → −14.5%. All single-market and same-calendar results are unchanged.</p>
+<h2>v9: whole-system stress test</h2>
+<p><b>Method.</b> I tested the full engine, the same code that runs in this page, on two kinds of data:</p>
+<ul><li><b>Development data:</b> your 6 long histories (before 2013 = design, 2013+ = test) and the 87 StockNet stocks.</li>
+<li><b>Lockbox:</b> 432 stocks the system had never seen, run once after the changes were frozen. These were KDD17 (47 US stocks, 2007–2012/16), CMIN-US (106 US large caps, 2018–2021) and CMIN-CN (279 China CSI 300 stocks, 2018–2021, with T+1 and 10bp costs).</li></ul>
+<p>I wrote the candidate list and the acceptance rule before running them. A change had to improve Sharpe in the design period, the test period, the 6-market portfolio and the 87-stock portfolio. It also could not worsen drawdown by more than 20%, and had to win on at least 4 of 6 markets.</p>
+<p><b>Is the edge real?</b> I replaced the signals with random entry days at the same frequency, keeping the same exits:</p>
+<ul><li>The real system beat all 20 random runs on the long histories (Sharpe 0.53 vs 0.28 average), on the 87 stocks (1.23 vs 0.72) and on KDD17 (0.45 vs −0.09).</li>
+<li>Per reversal trade on US stocks, the edge over random entries was:</li></ul>
+<table class="t"><tr><th>period</th><th>real</th><th>random</th><th>edge per trade</th></tr>
+<tr><td>1990–2007</td><td>+3.01%</td><td>+0.45%</td><td>+2.56% ± 0.86</td></tr><tr><td>2008–2012</td><td>+1.28%</td><td>+0.54%</td><td>+0.74% ± 0.62</td></tr>
+<tr><td>2013–2017</td><td>+1.16%</td><td>+0.33%</td><td>+0.82% ± 0.26</td></tr><tr><td>2018–2021</td><td>+1.06%</td><td>+0.59%</td><td>+0.47% ± 0.43</td></tr><tr><td>2022–2026</td><td>+2.28%</td><td>+0.37%</td><td>+1.90% ± 1.29</td></tr></table>
+<p>The edge is real in every period but smaller since 2008. In the 2018–2021 US bull market, random entries made twice as many trades and so a higher portfolio Sharpe. In China the reversal signal had <b>no edge</b> over random (0.73% vs 0.81% per trade), so do not use it there without more testing.</p>
+<p><b>Robustness of v8</b> (plateaus, not spikes, are what you want):</p>
+<ul><li>RSI(2) trigger 5–20, limit depth 0–1 ATR, max hold 10–20 and the exit rule all gave similar results. Nothing hinges on one exact value.</li>
+<li>Price stops hurt in every test.</li>
+<li>Costs matter. At 5 / 10 / 20bp per side, the 87-stock Sharpe was 1.23 / 1.02 / 0.59. Use limit orders and liquid stocks.</li></ul>
+<table class="t"><tr><th>candidate</th><th>development result</th><th>decision</th></tr>
+<tr><td>Fixed research weights (no per-stock refit)</td><td>better on all 6 markets, both periods, both portfolios</td><td><b>adopted</b></td></tr>
+<tr><td>Refit with n0 = 1000</td><td>passed, but fixed weights are simpler and as good</td><td>not needed</td></tr>
+<tr><td>Exit on RSI(2) &gt; 70</td><td>passed alone; no gain on top of fixed weights. Lockbox: mixed.</td><td>kept as an option</td></tr>
+<tr><td>Exit at the next open</td><td>higher Sharpe, but 6-market drawdown −16% → −22%. Lockbox: worse on US 2018–21 and China.</td><td>rejected</td></tr>
+<tr><td>Momentum only if autocorrelation is significant</td><td>worse in the test period</td><td>rejected</td></tr>
+<tr><td>Inverse-volatility position size</td><td>lower drawdowns, slightly lower Sharpe on single markets</td><td>rejected</td></tr>
+<tr><td>Limit order valid 2 days</td><td>worse on 4 of 4 measures</td><td>rejected</td></tr></table>
+<p><b>Lockbox</b> (10-slot portfolios, never seen before; v8 → v9, with equal-weight buy &amp; hold):</p>
+<ul><li>KDD17: Sharpe 0.45 → 0.45, drawdown −14.8% → −13.0% (buy &amp; hold 0.27, −46%)</li>
+<li>CMIN-US: 0.65 → 0.67 (buy &amp; hold 1.19)</li>
+<li>CMIN-CN: 0.66 → 0.72 (buy &amp; hold 1.69)</li></ul>
+<p>v9 met the rule, but the gain is small. The honest expectation for a diversified portfolio on new data is a <b>Sharpe of about 0.45–0.7</b> (KDD17 95% interval 0.09–0.90), not the 1.3 seen on the 87 development stocks. Those 87 trained the score weights, so they flatter it. The fresh sets are today's big companies looked at backwards (survivorship bias), which flatters buy &amp; hold, and the period matters.</p>
+<p><b>Your six markets, v8 → v9 Sharpe (all years):</b> AAPL 0.71 → 0.87, AMZN 0.58 → 0.64, F 0.34 → 0.45, MSFT 0.53 → 0.54, TASI 0.63 → 0.71, TSLA 0.37 → 0.40.</p>
+<p><b>Bug fixed in v9.</b> In a portfolio mixing TASI with US stocks, a limit order was dropped when the next calendar day was a US-only trading day. Fixing it raised the 6-market Sharpe from 0.63 to 0.72.</p>
+<p><b>What the tests say about the options:</b></p>
+<ul><li><b>Others half size</b> lowered drawdowns on every data set with the same or better Sharpe: fresh portfolios −13%/−21%/−17% → −9%/−14%/−13%, single stocks about −30%. Total return is lower. It's the best choice if drawdowns bother you.</li>
+<li><b>Reversal only</b> beat "auto" on all three fresh stock sets (KDD17 0.45 → 0.56). Momentum mode helps index-like markets such as TASI and F, but on individual stocks its trades lost money.</li>
+<li><b>Idle cash in an index fund</b> roughly doubles return (CMIN-US 9.5% → 25.6% a year), but drawdowns become index-sized (−21% → −39%). That's more money, not better risk-adjusted money.</li>
+<li><b>More slots</b> (more stocks at once) give a smoother ride and lower drawdowns, but each trade is smaller.</li></ul>
+<h2>v8: the A+ grade</h2>
+<p><b>Definition.</b> An A+ setup is a top-third reversal setup that also closed in the bottom 13% of the day's range (internal bar strength ≤ 0.13) <i>and</i> has a Momentum Pulse below −0.5σ. The two thresholds are the medians of the setups before 2013. Both conditions were chosen from 14 candidates because they held in both periods. A 200-day-average filter, VIX change, volatility of volatility and longer trends did not.</p>
+<p><b>Per trade it is clearly better.</b> In the engine's own backtest, A+ trades averaged roughly twice the return of the other top-third trades on every long history:</p>
+<table class="t"><tr><th></th><th>A+</th><th>other top-third</th></tr>
+<tr><td>TSLA</td><td>+5.3% (8 trades, 88% won)</td><td>+2.6% (33, 76%)</td></tr><tr><td>MSFT</td><td>+2.4% (33, 76%)</td><td>+1.6% (93, 72%)</td></tr>
+<tr><td>AMZN</td><td>+6.7% (15, 93%)</td><td>+2.6% (55, 76%)</td></tr><tr><td>AAPL</td><td>+3.3% (16, 75%)</td><td>+1.7% (29, 72%)</td></tr>
+<tr><td>F</td><td>+2.3% (45, 67%)</td><td>+0.8% (115, 71%)</td></tr><tr><td>TASI</td><td>+1.6% (8, 75%)</td><td>−1.1% (20, 50%)</td></tr></table>
+<p><b>But as a filter it makes less money.</b> The other top-third trades are still profitable, so skipping them halves total return. On the 6-market portfolio, "A+ only" made +428% (Sharpe 0.58) against +952% (Sharpe 0.63). <b>Putting the two signs into the score did not help either.</b> A refit with 11 signs scored slightly worse out of sample than the current 9 weights, so the score is unchanged.</p>
+<p><b>How to use it: position size</b> (Settings → position size):</p>
+<ul><li><b>A+ double size:</b> on the 6-market portfolio, total +952% → +1,521% and CAGR 4.3% → 5.1%, with the same Sharpe (0.63) and a deeper max drawdown (−16.5% → −18.9%). This is more money, not better risk-adjusted money.</li>
+<li><b>Others half size:</b> on single markets, Sharpe stays the same or improves on all six (TSLA 0.37 → 0.43, TASI 0.63 → 0.67) and drawdowns shrink sharply (F −54% → −31%, TSLA −34% → −17%, TASI −18% → −9%). Total return is lower.</li>
+<li>A+ setups are taken first when several stocks signal on the same day.</li></ul>
+<h2>Momentum Pulse (the pane under the chart)</h2>
+<p>The pulse measures momentum over 5, 10, 20 and 60 days. Each one is the return divided by the move this stock's own volatility would normally produce over that period (Yang-Zhang, 20 days), so +2σ means "a big move for this stock". The thick line is their smoothed average. The ribbon spans the four horizons: teal or red when all four agree, violet when they disagree, and brighter when the path was straight (Kaufman efficiency ratio). Bars show acceleration (the line now vs 3 days ago). The dotted amber lines are this stock's own 5% and 95% momentum levels over the last two years. Amber glowing dots mark exhaustion (momentum at a 2-year extreme and turning), triangles mark thrusts (crossing ±1σ with all horizons agreeing), and dashed violet lines mark divergences on both panes (price makes a new low or high that momentum does not confirm).</p>
+<p><b>What I tested, and what I found.</b> The design sample was the six long series before 2013; the test was 2013 onward plus the 87 stocks. The results contradict some trading folklore, so the advice follows the evidence:</p>
+<ul>
+<li><b>"Avoid mean reversion in a downtrend" is false on stocks.</b> Reversal setups taken while the pulse showed a strong down-trend did <i>better</i>: +1.70% per trade in the test against +1.09% in no-trend conditions (design: +2.11% vs +1.61%). A strong, straight decline into an oversold close is capitulation. The pulse calls it that and does not warn you off.</li>
+<li><b>What really says "avoid mean reversion" is the market's character.</b> When a market keeps moving the same way from day to day (500-day autocorrelation above 0.08, as TASI does), dip-buying fails and the system switches to momentum. The pulse shows "AVOID MEAN REVERSION" there.</li>
+<li><b>Chasing strength on a reverting stock is bad.</b> After a strong up-trend state, the next 10 days were 0.31% below the stock's average (t = −2.4).</li>
+<li><b>Momentum entries work in momentum markets, not single US stocks.</b> On TASI, the up-trend state was +1.44% over 10 days before 2013 (t = 2.3) but only +0.07% after. That is weak, so treat it as a tilt, not a signal.</li>
+<li><b>Exhaustion, thrusts and divergences had no reliable edge</b> (|t| &lt; 1 in both samples). They are shown because they describe what is happening, and the inspector shows how each one worked on the loaded stock. The engine never trades on them.</li>
+</ul>
+<h2>What works</h2>
+<p><b>1. A short-term oversold trigger with a quick exit.</b> Buy when the 2-day RSI closes below 10 (Connors &amp; Alvarez). Sell on the first close back above the 5-day average, at a 3-ATR stop, or after 10 days. This was profitable on 80% of the 87 stocks and in both Tesla periods (2011–17: +0.56% per trade; 2018–26: +0.23%, about 70% winners). In a portfolio of the 87 stocks, 2015–2017, it earned a Sharpe ratio around 1.6–1.7, against 0.96 for buy &amp; hold. The exit matters more than the entry: holding a fixed 5 days instead cut the Sharpe ratio to about 0.5.</p>
+<p><b>2. Not every setup is equal.</b> Within RSI(2) setups, nine signs pointed the same way in all three samples (87 stocks, Tesla 2011–17, Tesla 2018–26). They are combined into the <b>Reversal Edge Score</b>, with weights fitted on the 87 stocks by non-negative least squares on trade returns:</p>
+<ul>
+<li><b>Market fear (VIX rank)</b>, weight 1.95. Reversal profits are pay for providing liquidity, and they are highest when the market is scared (Nagel 2012, "Evaporating Liquidity"). In the 87 stocks, a stretched stock bounced +0.85% more over 5 days when the VIX was in its top 20%, and it <i>underperformed</i> by 0.23% when the VIX was calm.</li>
+<li><b>News-like gap</b>, counts against the trade, weight 2.16. Moves with news tend to drift, while moves without news reverse (Chan 2003). A big opening gap is the best daily-data proxy for news.</li>
+<li><b>Rising volatility</b> (5-day above 60-day), weight 1.59, and <b>high volatility rank</b>. Stress periods pay the most. Recent work finds volatility, more than volume, drives reversals (Bogousslavsky, LeBaron &amp; Pontiff 2024).</li>
+<li><b>Down streak</b>, weight 0.93. Consecutive lower closes.</li>
+<li><b>Relative volume</b>, weight 0.84, and <b>range expansion</b>, weight 0.76. Price drops on heavy volume reverse more (Campbell, Grossman &amp; Wang 1993; Conrad, Hameed &amp; Niden 1994). In the 87 stocks, stretched drops on above-normal volume bounced about +0.5% more over 5 days (t≈3); drops on low volume showed no bounce at all.</li>
+<li><b>Lower wick</b>, counts against the trade, weight 0.77. A long lower wick ("hammer") means the bounce already happened during the day.</li>
+</ul>
+<p>The score transferred to Tesla without any Tesla training. The top third of setups averaged <b>+1.64%</b> per trade (2011–17) and <b>+1.12%</b> (2018–26); the bottom third −0.09% and −0.46%. On the 87 stocks, walk-forward, the top third beat the bottom third in every year. Its probabilities are calibrated: it predicted 61% / 66% / 70% winners by third, and the actual rates were 61% / 65% / 71% (87 stocks) and 66% / 68% / 72% (Tesla).</p>
+<h2>Round 2 (v6): fixing the failures on Ford and TASI</h2>
+<p>Tested on new files the system had never seen, v5 failed twice. Ford (1978–2026) roughly broke even (−1% a year). TASI (2002–2026) lost money in every period. I searched the literature on the reasons, then tested every candidate fix. I designed on data before 2013 and judged only on 2013–2026 plus the 87 stocks: 92 series in all.</p>
+<ul>
+<li><b>Saudi stocks and TASI move with momentum, not reversal.</b> Their daily returns are positively autocorrelated, most of all in volatile periods (studies of the Saudi market from MPRA and the <i>Review of Accounting and Finance</i>). TASI's own 500-day lag-1 autocorrelation is about +0.12; US stocks sit near 0. Buying strength (RSI(2) above 90, sell on a close below the 5-day average) earned <b>Sharpe 2.0 on TASI before 2013 and 1.4 after</b> (10.4% a year while in the market 32% of the time), against 0.19 for holding it. The same rule lost money on MSFT, AMZN and Ford. So v6 checks each market's character every day. Above +0.08 it trades momentum setups; otherwise it trades reversal setups (the <b>Auto</b> mode).</li>
+<li><b>Stops hurt mean reversion.</b> The literature finds this repeatedly. Removing the 3-ATR stop raised the average trade from +0.45% to +0.62% (t 7.6 → 10.4). Wide 4–6 ATR stops still cost about 0.15% a trade and did not reduce the worst loss, which comes from gaps. v6 uses a 10-day time limit and no price stop by default; a stop is still available in Settings.</li>
+<li><b>Buy at a discount.</b> A limit order 0.5 ATR under the signal close, valid for the next day only, fills on about half the setups, but those trades averaged <b>+1.13%</b> instead of +0.62% (t 10.9).</li>
+<li><b>Exit on strength.</b> Selling on the first close above the previous day's high beat the 5-day-average exit: +1.18% a trade and 0.27% per day held, against 0.13% per day for v5.</li>
+<li><b>What did not help:</b> the 200-day trend filter, a filter on the stock's own short-window autocorrelation, and a "recent results" filter. All were inconsistent out of sample.</li>
+</ul>
+<p><b>v6 on your six files</b> (default settings, 100% of equity per trade, costs included):</p>
+<ul>
+<li>Ford: +546% total, Sharpe 0.34 (v5: −38%, Sharpe 0.02).</li>
+<li>TASI: +195%, Sharpe 0.63, worst drawdown −18% (v5: −42%; buy &amp; hold drew down −80%).</li>
+<li>AAPL: Sharpe 0.71, drawdown −14% (v5: 0.59, −25%).</li>
+<li>MSFT: Sharpe 0.53, drawdown −28% (v5: 0.48, −34%).</li>
+<li>AMZN: Sharpe 0.58, drawdown −23% (v5: 0.62, −35%).</li>
+<li>TSLA got worse (Sharpe 0.37 vs 0.61). Its v5 result relied on the 3-ATR stop and the 5-day exit, a combination that did not hold up across the other 91 series.</li>
+</ul>
+<p>Average Sharpe across the six rose from 0.36 to 0.53. The momentum rule was validated mainly on one market (TASI) plus the published evidence, so treat momentum mode with more caution than reversal mode.</p>
+<h2>The full system on Tesla (in this terminal, 2011–2026)</h2>
+<p>Trading RSI(2) setups in the top third of the score, 100% of equity per trade, with the 5-day-average exit, a 3-ATR stop and costs: <b>+375% total (11.1% a year)</b>, Sharpe 0.61, maximum drawdown −37%, 91 trades, 71% won, in the market about 6% of the time. Trading every setup instead: +247%, Sharpe 0.44, drawdown −61%, 206 trades. Fewer, better trades made more money with less pain. Buy &amp; hold made far more on Tesla (about 43% a year) but fell 74% on the way.</p>
+<h2>What does not work (so the system does not use it)</h2>
+<ul>
+<li><b>Shorting stocks that rose.</b> It lost money in every test, and badly on Tesla. The system buys drops only; shorting stays available, with a warning.</li>
+<li><b>Candlestick patterns</b> (hammer, engulfing, key reversal) as signals on their own: no reliable edge.</li>
+<li><b>Deeper z-score stretch</b> and <b>the 200-day trend filter</b>: they helped on some samples and hurt on others, so they are shown for context but not scored. A deep z-score of −2 or lower actually lost money on Tesla.</li>
+<li><b>The earlier 22-feature machine-learning model</b> on the Kalman fair value: about 0.57 AUC on Tesla with no calibrated edge. It was replaced.</li>
+</ul>
+<h2>The adaptive zones</h2>
+<p>Each stock has its own "normal" stretch. The zones on the chart are the stock's own percentiles of its 20-day z-score over the last three years (2.5%, 10%, 25%, 75%, 90%, 97.5%), recomputed every day from past data only. The inspector shows, for each zone, how often price got back to its 20-day mean within 10 days, and the average 5-day move, using only outcomes known before the bar you are looking at.</p>
+<h2>Volatility</h2>
+<p>The Volatility tab follows the professional toolkit:</p>
+<ul>
+<li>Five realised-volatility estimators: close-to-close, Parkinson (1980), Garman–Klass (1980), Rogers–Satchell (1991) and Yang–Zhang (2000). Yang–Zhang is the most efficient estimator that handles both overnight gaps and drift.</li>
+<li>A GARCH(1,1) model (Bollerslev 1986) fitted by maximum likelihood every 250 days, with its forecast term structure, persistence and shock half-life.</li>
+<li>A HAR forecast (Corsi 2009) on an OHLC daily-variance proxy.</li>
+<li>A volatility cone (Burghardt &amp; Lane 1990).</li>
+<li>Fat-tail statistics (skew, kurtosis, Hill tail index, VaR and expected shortfall), volatility clustering and the leverage effect.</li>
+<li>An out-of-sample check of which forecast was most accurate on your stock.</li>
+</ul>
+<h2>Honest limits</h2>
+<ul>
+<li>The edge is real but modest and noisy: a few tenths of a percent per trade on average, more in the top third.</li>
+<li>Tesla buy &amp; hold made about 43% a year from 2011 to 2026; no strategy that is in the market 10–20% of the time beats that in total return. Its value is in risk-adjusted return, smaller drawdowns, and capital that is free between trades.</li>
+<li>The 87-stock sample covers a bull market (2013–2017). Past results do not guarantee future ones. Practise in bar replay, compare your journal with the system, and size small. This is research software, not financial advice.</li>
+</ul>
+<h2>References</h2>
+<ol class="ref">
+<li>Nagel, S. (2012). Evaporating Liquidity. <i>Review of Financial Studies</i> 25(7). <a href="https://www.nber.org/papers/w17653" target="_blank" rel="noopener">NBER w17653</a></li>
+<li>Campbell, J., Grossman, S. &amp; Wang, J. (1993). Trading Volume and Serial Correlation in Stock Returns. <i>Quarterly Journal of Economics</i> 108(4). <a href="https://dash.harvard.edu/bitstream/1/3128710/2/campbell_trading.pdf" target="_blank" rel="noopener">PDF</a></li>
+<li>Conrad, J., Hameed, A. &amp; Niden, C. (1994). Volume and Autocovariances in Short-Horizon Individual Security Returns. <i>Journal of Finance</i> 49(4).</li>
+<li>Gervais, S., Kaniel, R. &amp; Mingelgrin, D. (2001). The High-Volume Return Premium. <i>Journal of Finance</i> 56(3). <a href="https://rodneywhitecenter.wharton.upenn.edu/wp-content/uploads/2014/04/9901.pdf" target="_blank" rel="noopener">PDF</a></li>
+<li>Chan, W. (2003). Stock Price Reaction to News and No-News: Drift and Reversal after Headlines. <i>Journal of Financial Economics</i> 70(2).</li>
+<li>Bogousslavsky, V., LeBaron, B. &amp; Pontiff, J. (2024). A Century of Market Reversals: Resurrecting Volatility. <a href="https://abfer.org/component/edocman/main-annual-conference/a-century-of-market-reversals-resurrecting-volatility" target="_blank" rel="noopener">ABFER 2024</a></li>
+<li>Lehmann, B. (1990). Fads, Martingales, and Market Efficiency. <i>QJE</i> 105(1); Jegadeesh, N. (1990). Evidence of Predictable Behavior of Security Returns. <i>Journal of Finance</i> 45(3).</li>
+<li>Connors, L. &amp; Alvarez, C. (2008). <i>Short Term Trading Strategies That Work</i> (RSI(2), 5-day-average exit).</li>
+<li>Pagonidis, A. (2013). The IBS Effect: Mean Reversion in Equity ETFs; replication: <a href="https://arxiv.org/abs/2306.12434" target="_blank" rel="noopener">arXiv 2306.12434</a></li>
+<li>Avellaneda, M. &amp; Lee, J. (2010). Statistical Arbitrage in the US Equities Market. <i>Quantitative Finance</i> 10(7).</li>
+<li>Yang, D. &amp; Zhang, Q. (2000). Drift-Independent Volatility Estimation Based on High, Low, Open and Close Prices. <i>Journal of Business</i> 73(3).</li>
+<li>Parkinson, M. (1980); Garman, M. &amp; Klass, M. (1980); Rogers, L. &amp; Satchell, S. (1991): range-based volatility estimators.</li>
+<li>Bollerslev, T. (1986). Generalized Autoregressive Conditional Heteroskedasticity. <i>Journal of Econometrics</i> 31(3).</li>
+<li>Corsi, F. (2009). A Simple Approximate Long-Memory Model of Realized Volatility. <i>Journal of Financial Econometrics</i> 7(2).</li>
+<li>Burghardt, G. &amp; Lane, M. (1990). How to Tell if Options Are Cheap. <i>Journal of Portfolio Management</i> 16(2). <a href="https://www.m-x.ca/f_publications_en/cone_vol_en.pdf" target="_blank" rel="noopener">volatility cones</a></li>
+<li>López de Prado, M. (2018). <i>Advances in Financial Machine Learning</i> (walk-forward testing, triple-barrier labels).</li>
+<li>Data: <a href="https://github.com/yumoxu/stocknet-dataset" target="_blank" rel="noopener">StockNet price data</a> (87 stocks); <a href="https://github.com/datasets/finance-vix" target="_blank" rel="noopener">datasets/finance-vix</a> (CBOE VIX).</li>
+</ol>`;
+
+// ------------------------------------------------ wiring
+function renderLive(){if(chart&&CHART_TRM!==!!(S()&&S().trendMode))buildChart(true);renderSigbar();if(!draft.show)defaultLevels();else ticketChanged(false);if(st.tab==="mine")drawMine();
+ if(REPLAY){const d=DS[REPLAY.sym];$("rp-date").textContent=d?`${d.d[REPLAY.idx]} · bar ${REPLAY.idx-REPLAY.startIdx>=0?"+":""}${REPLAY.idx-REPLAY.startIdx}`:""}}
+function focusDate(sym,date){if(REPLAY&&REPLAY.sym!==sym)exitReplay();if(sym!==st.sym){st.sym=sym;sel.value=sym;symChanged()}show("chart");const i=idxOf(date);if(i<0)return;
+ chart.timeScale().setVisibleLogicalRange({from:i-110,to:i+30});st.pinned=true;st.cursor=i;syncScrub();inspector(i);renderLegend()}
+function renderSymSelect(){const ks=Object.keys(DS).sort();sel.innerHTML=ks.map(k=>`<option value="${esc(k)}" ${k===st.sym?"selected":""}>${esc(nameOf(k))}</option>`).join("")}
+function symChanged(){if(REPLAY&&REPLAY.sym!==st.sym)exitReplay();UI.sym=st.sym;saveUI();st.cursor=null;st.pinned=false;hoverIdx=null;draft.show=false;
+ if(chart){refreshOverlays();showRange();inspector(cur())}renderLive()}
+function afterDataChange(newSym){if(REPLAY&&!DS[REPLAY.sym]){REPLAY=null;saveReplay();syncMode()}
+ if(!DS[st.sym])st.sym=Object.keys(DS)[0]||null;renderSymSelect();renderDS();symChanged();if(Object.keys(DS).length)runNow();else{RES=null;$("snap").textContent="No data yet: upload price history in the Data tab."}}
+function show(t){st.tab=t;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+ ["data","chart","scan","mine","vol","model","perf","trades","about"].forEach(k=>$("t-"+k).hidden=k!==t);
+ if(t!=="chart"){setClickMode(null);stopPlay()}
+ if(t==="chart"){if(!chart)buildChart(false);renderLive();inspector(st.cursor!=null?Math.min(st.cursor,cur()):cur())}
+ if(t==="scan")drawScan();
+ if(t==="mine")drawMine();
+ if(t==="model"||t==="perf"||t==="vol"){const id={model:"cards",perf:"pk",vol:"v-est"}[t];if(!window.Plotly)clr(id,'<div class="empty">Loading charts…</div>');
+  needPlotly().then(()=>{if(st.tab!==t)return;if(t==="model"){drawModel();drawEdge()}else if(t==="perf")drawPerf();else drawVol()}).catch(e=>clr(id,`<div class="empty">${esc(e.message)}</div>`))}
+ if(t==="trades")drawTrades()}
+document.querySelectorAll("#tabs button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.t)));
+sel.addEventListener("change",()=>{st.sym=sel.value;symChanged();if(!["chart","data","about","scan"].includes(st.tab))show(st.tab)});
+document.querySelectorAll("#rng button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("#rng button").forEach(x=>x.classList.remove("on"));b.classList.add("on");st.n=+b.dataset.n;showRange();if(st.tab==="vol"&&window.Plotly)drawVol()}));
+
+// boot
+st.sym=REPLAY&&DS[REPLAY.sym]?REPLAY.sym:(UI.sym&&DS[UI.sym]?UI.sym:Object.keys(DS)[0]||null);
+if(REPLAY&&!DS[REPLAY.sym]){REPLAY=null;saveReplay()}
+renderSymSelect();renderDS();syncMode();renderLive();
+await loadFear();
+if(Object.keys(DS).length)runNow();else await loadSample();
