@@ -2,76 +2,63 @@
 
 Handoff notes so any later session can continue without re-deriving context.
 
-## What exists
+## Status (2026-10-11)
 
-A single-page coaching app (`index.html`) published as a claude.ai Artifact. Everything runs in the browser:
+All training modes are built. The user asked for two changes, both done:
+1. **No typing anywhere.** Every answer is a tap on the board or on a choice.
+2. **No analysis of their own games for now** ("we will come to this when I learn"). The game-diagnosis engine from the first commit (`33e8e7f`, old `index.html`: PGN import, per-ply Stockfish, cause classification, weakness profile) is out of the UI. Mode 6 is marked "later". Bring both back when the user asks.
 
-| Piece | Where | Notes |
+Published Artifact: https://claude.ai/artifact/TadVmUrWnp6NqKukFfP6Fb
+
+## Files
+
+| Path | What |
+|---|---|
+| `index.html` | markup, design tokens, CSS, piece SVGs (cburnett, data URIs); loads the scripts below |
+| `js/core.js` | helpers, `Store` (Artifact db / localStorage), `Engine` (Stockfish worker queue), Claude wrapper (`sample`), data loading, `Board`, `judgeMove`, SM-2, Elo, `Solver` (tap-only puzzle solver with the Socratic ladder) |
+| `js/modes.js` | curated `LIB`, `CHUNKS` catalogue (34 patterns), modes: `ThinkMode`, `CalcMode`, `VizMode`/`Blindfold`, `GuessMode`, `PlayoutMode`, `StructQuestion`, `PatternTestItem` |
+| `js/app.js` | state `S`, `record()` (attempts, ratings, cards), task runner, daily session builder, hubs, pattern catalogue, dashboard, plan page, boot |
+| `data/puzzles.json` | 2,303 Lichess puzzles (CC0) rated 450-1650, 40 per theme where available. Fields: `i` id, `f` FEN (solver to move), `l`/`ls` opponent's last move, `s` solution UCI, `r` rating, `t` themes |
+| `data/playout.json` | 45 winning positions: 5 basic mates/endings + 40 puzzle end positions Stockfish rates +3.5 to +25 for the solver |
+| `data/structures.json` | 53 positions from real games: IQP (white/black), Carlsbad, and "none" controls, all with abs(eval) < 2.5 |
+| `data/opposition.json` | 13 K+P vs K positions where exactly one king move keeps the result (generated and verified by Stockfish) |
+| `data/masters.json` | 7 master games, replayed with chess.js (any illegal move aborts the build) |
+| `tools/build_data.mjs` | rebuilds the data files from the flattened Lichess puzzle dump |
+| `tools/masters.mjs` | builds `masters.json` |
+| `tools/verify.mjs` | Stockfish multipv check for any JSON list of `{id, fen, expect}` |
+
+Data source for puzzles: `github.com/mcognetta/lichess-combined-puzzle-game-db` (first 50k Lichess puzzles + games). lichess.org itself is blocked in this container.
+
+## Modes (all tap-only)
+
+| # | Mode | How it works |
 |---|---|---|
-| Board + move logic | `chess.js` (chess.js 0.10.3, published next to the page) | own click-to-pick board; pieces are cburnett SVGs embedded as data URIs |
-| Engine | `stockfish.js` (Stockfish.js 10, asm.js build, runs in a Web Worker) | ~380k nodes/s in Node; no WASM needed |
-| Storage | Artifact `db` capability, owner-only rules | falls back to browser storage when `db` is unavailable |
-| Coach | Artifact `sample` capability (Claude on the viewer's account) | every prompt carries Stockfish lines and forbids inventing variations |
+| 1 | Thought process | 5 steps: opponent's threat (choice; truth from a null-move search), candidates (tap 2-4 on a static board), choose, blunder check (tap the opponent's best reply on the post-move board, may change move), evaluation (5 choices) + confidence. Scored 0-2 per step, then Claude critiques the process |
+| 2 | Calculation | Enter up to 3 lines by tapping on a board that does not move (no legal-move dots). Pick main line, evaluate its end, confidence. Engine walks the main line ply by ply: where it broke (own move loses ≥8 points, or assumed reply ≥10 points worse than best), depth, missed candidates. Peeks are counted |
+| 3 | Visualization | 10 levels: square colour, find square (white/black side), knight distance, mental lines of 2/4/6/8 plies from master games, blindfold KQK mate, blindfold 10 moves vs weak engine. ≥80% moves up, <50% moves down |
+| 4 | Guess the move | Tap prediction + reason chip. 2 pts for the master's move, 1 if Stockfish rates it within 4 points. Claude explains misses |
+| 5 | Play-out | vs Stockfish at chosen Skill Level. Success = mate. Fails if eval drops below +1.5, draw, or move limit. Claude reviews the 3 biggest drops |
+| 6 | Self-analysis | **later**, by the user's request |
+| 7 | Calibration | Confidence 1-5 before every result. Curve and over/under-confidence gap on the dashboard |
+| 8 | Patterns | Learn a chunk with 5 labelled positions, then mixed unlabelled tests (identify the pattern, then solve). Structures: identify + choose the plan |
+| 9 | Daily session | ~45 min: viz → review → think (weakest skill) → patterns → review → calc → think (2nd weakest) → 4 timed → review → guess 4 moves → play-out → review |
+| 10 | Socratic | Fail 1: find the refutation yourself on the board. Fail 2: move-type hint + Claude question + "show solution" button. Fail 3: solution with a stepper |
+| 11 | SRS | Any failure (q<4) becomes a card due in 10 minutes, then SM-2 |
+| 12 | Timed | 30/45/60 s by rating, no ladder, separate Elo; dashboard compares timed vs untimed accuracy |
 
-### Why not Python/FastAPI/SQLite as the brief described
-The user asked for an Artifact connected to Claude. So the stack maps like this:
-- SQLite → the Artifact `db`. Same data model, and Claude Code sessions can read and write it with the `ArtifactData` tool.
-- Local Stockfish → Stockfish.js in a worker. Weaker than native SF 16+, but fine for beginner-level diagnosis. Upgrading to a WASM NNUE build is a later step.
-- Claude API → `sample` capability. No API key; it uses the viewer's Claude account and asks for consent on first use.
-- Lichess/Chess.com APIs → **not reachable** from the Artifact (CSP blocks fetch) or from this cloud container (egress policy returned 403 for lichess.org and api.chess.com). The user downloads PGN from links the page builds from their username, then uploads or pastes it.
+## Data model (Artifact db, owner-only rules)
 
-## Data model (Artifact db)
+- `coach/profile`: `ratings{tactics,timed}{r,n}`, `rhist[]`, `viz.level`, `chunks{k:{learned,tests,rec,sol}}`, `guess{gameId:{ply,pts,max}}`, `sessions[]`
+- `attempts/<id>`: one per task. Common: `mode, itemId, skill, correct, solvedAt, confidence, seconds, review, session`. Mode-specific: `scores` (think), `depth/length/missed/peeks` (calc), `level/acc` (viz), `pts/max` (guess), `result/strength` (playout), `recognized/chunk/learning` (pattern)
+- `cards/<id>`: `type` (solve/calc/playout/struct), `item`, SM-2 fields
 
-- `coach/profile`: `{username, platform, created, stats: <buildProfile output>, report, reportAt}`
-- `games/<id>`: one analysed game. `evals[]` (white-POV cp per ply), `mistakes[]` (`ply, fen, played, best, bestLine, refutation, drop, sev, causes[], phase, clock, lastMove`), `accuracy`, `acpl`, `maxWp`, `outcome`, `rating`
-- `cards/<id>`: SRS card. `g-<gameId>-<ply>` for game mistakes, `lib-<positionId>` for failed library positions. SM-2 fields `ef, reps, interval, lapses, due, history`
-- `attempts/<id>`: one think-aloud attempt. `reasoning` (the 6 written fields), `confidence`, `firstCorrect`, `solvedAt`, `tries[]` (with Socratic Q&A), `scores` (5 process steps, 0-2), `process` (0-100), `critique`, `skill`
+## Testing
+Headless Chromium runs (scripts were in the scratchpad, not committed) drove every mode end to end: think (incl. ladder), calc, viz, guess, play-out, timed, learning two chunks, mixed test, a failure creating a card, the card's review being rescheduled to 24 h, and state surviving reload. No page errors. Claude calls could not be exercised headless (no viewer); they degrade to Stockfish-only text when `sample` is unavailable.
 
-## Diagnosis engine: how causes are assigned
-Win probability uses the Lichess formula `50 + 50*(2/(1+e^(-0.00368208*cp))-1)`. A drop of 10 or more points is a mistake, 15 or more a blunder. For each such move, causes are tested in this order (several can apply):
-1. `time`: clock < 30 s or < 10% of the base time
-2. `missed_opportunity`: the opponent's previous move dropped ≥15 and the engine's best move here was forcing
-3. `missed_threat`: a null-move search shows the opponent already had a threat worth ≥15, and the engine's reply to the user's move is that threat (same move or same target square)
-4. `blunder_check`: otherwise, if the opponent's best reply is forcing (the user's own move created the tactic; "hope chess")
-5. `visualization`: the error came in the middle of a forcing sequence (the two previous plies were both forcing)
-6. `calculation`: otherwise, if the user's move itself was a capture or check
-7. `conversion`: added when the user was at ≥75% before the move
-8. `opening` (ply < 20) or `plan`: when nothing tactical applies
+Bugs found and fixed during testing: an engine-queue deadlock, inverted square colours in viz level 1, and a mixed test that returned one item per chunk.
 
-These are heuristics and the UI says so. Mode 6 (self-analysis) should later let the user re-label causes, and the profile should then prefer user labels where they match the engine.
-
-## Status by module
-
-| # | Module | Status |
-|---|---|---|
-| D | Diagnosis engine (PGN import, Stockfish per ply, cause classification, weakness profile, Claude report) | **built** |
-| 1 | Think-aloud with process critique | **built** |
-| 7 | Confidence calibration (curve on the Progress page) | **built** |
-| 10 | Socratic coaching (one question per failed try, solution only after 2 failures or 3 tries) | **built** |
-| 11 | SRS of own mistakes (SM-2; failed items also come back at the end of the same session) | **built** |
-| 9 | Interleaving | partial: sessions mix skills and never show the theme. The full ~45 min daily session waits for the other modes |
-| 2 | Calculation (tree vs engine tree) | next |
-| 3 | Visualization and blindfold | next |
-| 4 | Guess-the-move with master games | next (master games must be embedded as PGN; the explorer API is unreachable) |
-| 5 | Play-out sparring vs Stockfish (Skill Level) | next |
-| 6 | Self-analysis before the engine | next |
-| 8 | Pattern chunking (5+ positions per chunk, then mixed tests) | next |
-| 12 | Time pressure | next |
-
-The library holds 14 positions in `LIB` inside `index.html`, each checked with `tools/verify.mjs` at depth 20-22. Two drafts were rejected on verification: one had no black king, and one left a rook hanging.
-
-## Working rules carried forward
-- Never show a solution before the user has written reasoning and a move.
-- Every chess claim shown to the user must come from Stockfish output (see `LANG_RULES` in the page and `tools/verify.mjs`).
-- Explanations in Arabic; notation, opening names and code in English.
-- Show data, not encouragement.
-- Commit after each working module.
-
-## How to continue
-1. Ask the user how the first diagnosis went. Read their data with `ArtifactData` (`list` on `games`, `cards`, `attempts`; `get` on `coach/profile`).
-2. Build the next module in order: **2 Calculation**, then 6, 5, 3, 4, 8, 12, then the 45-minute daily session.
-3. To add or verify positions: put them in a JSON file and run `node tools/verify.mjs file.json 20`.
-4. Republish: Artifact publish of `index.html` with `files: {"chess.js": "chess.js", "stockfish.js": "stockfish.js"}` to the same URL.
-
-## Log
-- 2026-10-11: RESEARCH.md written. Diagnosis engine, think-aloud, Socratic loop, SM-2 review, calibration and dashboard built and tested in headless Chromium. Published as an Artifact.
+## Next steps
+1. Read the user's data (`ArtifactData` list on `attempts`, `cards`; get `coach/profile`) and tune session weights.
+2. When the user asks: re-enable game import + diagnosis (from `33e8e7f`) and build mode 6 tap-only (tap the moves you think were mistakes, then compare).
+3. More master games for guess-the-move, chosen per concept; more strategic positions (STS-style) for mode 1.
+4. Republish: `index.html` with `files` for `chess.js`, `stockfish.js`, `js/*.js`, `data/*.json`, to the same URL.
