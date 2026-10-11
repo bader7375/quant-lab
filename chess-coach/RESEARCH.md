@@ -1,0 +1,166 @@
+# RESEARCH.md: الأساس العلمي لنظام التدريب
+
+هذا الملف يجمع ما اعتمدناه من علم التعلّم ومن مدارس تدريب الشطرنج، والدليل وراء كل تقنية، وأين تظهر في النظام. المصطلحات وأسماء الكتب بالإنجليزية، والشرح بالعربية.
+
+**معيار القبول:** نعتمد التقنية إذا كان لها دليل تجريبي قوي (تجارب مضبوطة، أو تحليلات تجميعية meta-analyses، أو مراجعة Dunlosky et al. 2013 صنّفتها "high utility")، أو إذا اتفق عليها كبار المدربين في مدارس مختلفة. التقنية التي يتبنّاها مدرب واحد فقط، أو التي لا يسندها إلا الحدس، تذهب إلى قائمة المرفوضات أو تُعتمد بحذر مع ذكر ذلك.
+
+---
+
+## الجزء الأول: علم التعلّم
+
+### 1. Retrieval practice (التذكّر النشط)
+- **الدليل:** Roediger & Karpicke (2006): الطلاب الذين اختبروا أنفسهم تذكّروا بعد أسبوع أكثر بكثير ممن أعادوا القراءة، رغم أن إعادة القراءة "شعرت" أنها أنجح. Dunlosky et al. (2013) صنّفوا practice testing ضمن أعلى تقنيتين فائدة. Adesope et al. (2017) في تحليل تجميعي أكدوا الأثر عبر المواد والأعمار.
+- **في النظام:** لا يُعرض أي حل قبل أن تكتب إجابتك. كل وضع تدريب يبدأ بسؤال، لا بشرح. هذه قاعدة صلبة في الكود، لا مجرد توصية.
+
+### 2. Spaced repetition (التكرار المتباعد)
+- **الدليل:** Cepeda et al. (2006) في تحليل تجميعي لأكثر من 300 تجربة: توزيع المراجعة على فترات يتفوّق على المراجعة المكثفة. Cepeda et al. (2008): الفاصل الأمثل يكبر كلما طالت المدة التي تريد أن تتذكر خلالها.
+- **في النظام:** كل موقف أخطأت فيه، سواء من مباراة حقيقية أو من أي وضع تدريب، يتحوّل إلى بطاقة مراجعة بجدول SM-2 (Wozniak 1990). أخطاؤك أنت لها الأولوية القصوى. (وضع 11)
+
+### 3. Interleaving (الخلط بين الأنواع)
+- **الدليل:** Rohrer & Taylor (2007) في الرياضيات، و Kornell & Bjork (2008) في تمييز الأنماط البصرية: الخلط يحسّن القدرة على **تحديد نوع المسألة**، وهي بالضبط المهارة الناقصة عندما تأتيك التمارين مرتّبة حسب الموضوع ("هذا فصل الشوكة، إذن الحل شوكة"). Brunmair & Richter (2019) في تحليل تجميعي: الأثر قوي في المواد التي تتشابه فئاتها، وأضعف في غيرها. الشطرنج من النوع الأول.
+- **في النظام:** المواقف تأتي بلا عنوان. لا تعرف إن كان الموقف تكتيكًا أم نهاية أم خطة. عليك أن تحدد نوعه أولًا. (وضع 9)
+
+### 4. Desirable difficulties (الصعوبات المفيدة)
+- **الدليل:** Bjork (1994)، Bjork & Bjork (2011): الظروف التي تُبطئ الأداء أثناء التدريب (التباعد، الخلط، التوليد، تغيير السياق) تحسّن الاحتفاظ والنقل. التحذير المهم: الصعوبة مفيدة فقط إذا كان المتعلم قادرًا على تجاوزها. الصعوبة الزائدة تصبح مجرد فشل.
+- **في النظام:** التدريب بدون تحريك القطع، والتمارين العمياء، والتحليل قبل المحرك. ونضبط المستوى حسب دقتك (هدفنا نحو 70 إلى 85 بالمئة نجاح)، حتى لا تتحول الصعوبة إلى إحباط.
+
+### 5. Generation effect (أثر التوليد)
+- **الدليل:** Slamecka & Graf (1978) وتحليل Bertsch et al. (2007): ما تولّده بنفسك تتذكره أفضل مما تقرؤه، وحجم الأثر متوسط تقريبًا (d ≈ 0.4).
+- **في النظام:** أنت تكتب التهديدات والنقلات المرشحة والخطوط قبل أي تدخل. وحتى في الحوار السقراطي، السؤال يدفعك لتوليد الإجابة بنفسك.
+
+### 6. Elaborative interrogation و Self-explanation (السؤال "لماذا؟" وشرح الذات)
+- **الدليل:** Chi et al. (1994): الطلاب الذين شرحوا لأنفسهم كل خطوة فهموا أعمق. Dunlosky et al. (2013) صنّفوهما "moderate utility". الأثر أقوى عندما يملك المتعلم معرفة أساسية كافية ليجيب.
+- **في النظام:** خانة "لماذا هذه النقلة؟" إلزامية. في "خمّن النقلة" تشرح سبب توقعك قبل رؤية نقلة الأستاذ. في التحليل الذاتي تكتب خطتك وأين تظن أنك أخطأت.
+
+### 7. Deliberate practice (الممارسة المتعمدة، Ericsson)
+- **الدليل:** Ericsson, Krampe & Tesch-Römer (1993): الأداء المتميز يرتبط بممارسة مصممة لتحسين نقطة ضعف محددة، مع تغذية راجعة فورية وتكرار، وليس بمجرد عدد ساعات اللعب. في الشطرنج تحديدًا، Charness et al. (2005) وجدوا أن الدراسة الجادة الفردية هي أقوى متنبئ بالتصنيف، أقوى من عدد المباريات.
+- **ملاحظة صادقة:** Hambrick et al. (2014) و Macnamara et al. (2014) أظهروا أن الممارسة المتعمدة تفسر جزءًا كبيرًا من الفروق في الشطرنج (حوالي ثلث التباين) لكن ليس كلها. لذلك لا نعِد بنتيجة مضمونة. نعِد بأفضل استخدام لوقتك.
+- **في النظام:** محرك التشخيص يحدد أضعف مهاراتك، والجلسة اليومية تتجه نحوها. كل محاولة تأخذ تغذية راجعة مبنية على Stockfish.
+
+### 8. Chunking و pattern recognition (التقطيع والتعرّف على الأنماط)
+- **الدليل:** de Groot (1946/1965): الأساتذة لا يحسبون أعمق من اللاعبين الأقوياء بكثير، لكنهم **يرون** النقلات الصحيحة أسرع. Chase & Simon (1973): الأستاذ يعيد بناء موقف حقيقي بعد 5 ثوان بدقة عالية، لكن ليس موقفًا عشوائيًا. أي أن المعرفة مخزنة على شكل "قطع" (chunks) ذات معنى. Gobet & Simon (1996) طوّرا نظرية القوالب (templates)، وقدّروا أن الأستاذ يملك عشرات الآلاف من هذه القطع.
+- **في النظام:** نعلّمك الأنماط بأسمائها (IQP، minority attack، Greek gift، back-rank، opposition...) مع 5 مواقف أو أكثر لكل نمط، ثم نختبر التعرف عليها في مواقف مختلطة بلا عناوين. (وضع 8)
+
+### 9. Metacognition و confidence calibration (ما وراء المعرفة ومعايرة الثقة)
+- **الدليل:** Lichtenstein, Fischhoff & Phillips (1982): الناس عادة مفرطون في الثقة في الأسئلة الصعبة. Kruger & Dunning (1999): المبتدئون أقل قدرة على تقدير أخطائهم. التغذية الراجعة المتكررة على الثقة تحسّن المعايرة (Lichtenstein & Fischhoff 1980). وفي الشطرنج، معرفة متى تثق بحسابك ومتى تتحقق مرة أخرى مهارة عملية مباشرة.
+- **في النظام:** كل إجابة معها درجة ثقة من 1 إلى 5. لوحة التحكم ترسم منحنى المعايرة لكل مهارة. (وضع 7)
+
+---
+
+## الجزء الثاني: مدارس تدريب الشطرنج
+
+### A. Kotov: النقلات المرشحة وشجرة التحليل (*Think Like a Grandmaster*, 1971)
+- **ما نأخذه:** قبل أن تحسب أي خط، اكتب **كل** النقلات المرشحة. هذا يمنع الخطأ الأشهر: أن تحسب أول نقلة خطرت ببالك ثم تلعبها.
+- **ما نعدّله:** قاعدة Kotov الصارمة ("احسب كل فرع مرة واحدة فقط ولا تعد إليه") انتقدها Tisdall (*Improve Your Chess Now*, 1997) و Aagaard، لأن الأقوياء فعليًا يعودون ويقارنون. نعتمد القائمة الكاملة للمرشحات، ونترك لك حرية العودة.
+- **في النظام:** وضع الحساب (وضع 2): تكتب كل المرشحات وتحسب كل خط حتى موقف هادئ، ثم نقارن شجرتك بشجرة المحرك.
+
+### B. Aagaard: *Calculation* (2012) و *Excelling at Chess Calculation* (2004)
+- **ما نأخذه:**
+  - الأسئلة الثلاثة: أين نقاط الضعف؟ ما أسوأ قطعة لديّ؟ ماذا يريد الخصم؟
+  - البحث عن النقلات **القسرية** أولًا (checks, captures, threats)، ثم الهادئة.
+  - **Candidates, Comparison, Elimination**: لا تبحث عن النقلة المثالية، بل قارن واستبعد.
+  - Prophylaxis: اسأل دائمًا ماذا يريد الخصم.
+- **في النظام:** نموذج التفكير بصوت عالٍ (وضع 1) مبني على هذه الأسئلة. النقد يسأل تحديدًا: هل فحصت النقلات القسرية للطرفين؟
+
+### C. Heisman: عملية التفكير وفحص الخطأ (*The Improving Chess Thinker*، مقالات *Novice Nook*)
+- **ما نأخذه:**
+  - **Hope chess**: أن تلعب نقلة دون أن تفحص ردود الخصم القسرية عليها. هذا، حسب Heisman، أكبر سبب لخسارة المبتدئين. نحن نتفق، والبيانات من مبارياتك ستؤكد أو تنفي ذلك.
+  - **Blunder check**: قبل كل نقلة، اسأل: بعد نقلتي، ما كل الكشات والأسر والتهديدات المتاحة للخصم؟
+  - "ماذا تغيّر بنقلة الخصم الأخيرة؟" سؤال أول إلزامي.
+- **في النظام:** خانة "تهديدات الخصم" إلزامية في التفكير بصوت عالٍ، وخانة "فحص الخطأ" منفصلة. النقد يكشف إن تخطيتها. ومحرك التشخيص يصنّف "تهديد فائت" كسبب مستقل.
+
+### D. Dvoretsky: طرق التدريب (*Secrets of Chess Training*, *School of Chess Excellence*)
+- **ما نأخذه:**
+  - التحليل الذاتي لمبارياتك **قبل** المحرك، ومقارنة رأيك بالحقيقة.
+  - لعب مواقف محددة حتى النهاية ضد خصم قوي (play-out / sparring)، لأن تحويل التفوق إلى فوز مهارة منفصلة.
+  - بناء ملف ضعف شخصي، وتصميم التمارين حوله.
+- **في النظام:** وضع 5 (لعب الموقف حتى التحويل) ووضع 6 (التحليل الذاتي قبل المحرك) ومحرك التشخيص كله.
+
+### E. Yusupov (السلسلة: *Build Up Your Chess*، *Boost Your Chess*، *Evolution*) و Steps Method (Brunia & van Wijgerden)
+- **ما نأخذه:** تقدّم منظم: كل مفهوم يُشرح ثم يُختبر بتمارين متدرجة، ثم يعود في مراجعة مختلطة. Steps Method تحديدًا تعلّم التكتيك كأنماط مسماة صغيرة (double attack، pin، X-ray...) مبنية على بعضها.
+- **في النظام:** ترتيب الأنماط في وضع 8 يتبع هذا التدرج. الأنماط الأساسية (back-rank، fork، pin، opposition) قبل المتقدمة (IQP، minority attack).
+
+### F. Woodpecker Method (Smith & Tikkanen, 2018)
+- **ما نأخذه:** حل مجموعة ثابتة من التمارين عدة مرات بسرعة متزايدة يرسّخ الأنماط حتى تصبح تلقائية. هذا يتسق مع أبحاث chunking.
+- **ما نعدّله:** المنهج الأصلي (1128 تمرينًا، ثم دورات مضغوطة) مصمم لمن هم فوق 2000 تقريبًا، وليس عليه دليل تجريبي مضبوط. نأخذ المبدأ (إعادة حل نفس المواقف حتى تصبح سريعة) عبر التكرار المتباعد، وعلى مجموعة أصغر بكثير.
+
+### G. Silman: عدم التوازن (*How to Reassess Your Chess*)
+- **ما نأخذه:** عندما لا توجد تكتيكات، قيّم الموقف عبر الفروقات: البنية، القطع الخفيفة (فيل مقابل حصان)، المساحة، الأعمدة، المربعات الضعيفة، التطور، المادة، أمان الملك. ثم ضع خطة تستغل الفروقات التي في صالحك.
+- **في النظام:** هذا بالضبط علاج مشكلتك الأولى: "أريد أن ألعب بخطة". خانة "التقييم" في التفكير بصوت عالٍ تطلب منك تسمية الفروقات، والنقد يقيّم ذلك.
+
+### H. التصوّر واللعب الأعمى
+- **الدليل:** الأساتذة يستخدمون تمثيلًا مجردًا للموقف وليس صورة دقيقة (Chabris & Hearst 2003 أظهروا أن اللعب الأعمى لا يضعف جودة نقلات الأساتذة كثيرًا، مما يعني أن التمثيل الذهني قوي). وتمارين التصور التدريجية مستخدمة عند معظم المدربين (Dvoretsky، Aagaard، مدرسة المدربين الروس).
+- **في النظام:** وضع 3: ألوان المربعات، ثم مسارات القطع، ثم خط من N نقلات في الذهن، ثم مباريات عمياء قصيرة. الصعوبة تزيد مع الدقة.
+
+### I. Guess-the-move مع مباريات الأساتذة
+- **الدليل:** طريقة كلاسيكية (Chernev، *Logical Chess Move by Move*، و Dvoretsky)، وتجمع بين التوليد والتغذية الراجعة الفورية وتعلّم الخطط من سياق حقيقي.
+- **في النظام:** وضع 4، مع اختيار المباريات حسب المفهوم الذي تدرسه.
+
+### J. الضغط الزمني
+- **الدليل:** أخطاء الضغط الزمني شائعة عند كل المستويات، والقرار العملي تحت الوقت مهارة منفصلة (Moxley et al. 2012 وجدوا أن الأقوياء يحافظون على جودة أعلى عندما يقل الوقت لأنهم يعتمدون على التعرف السريع على الأنماط).
+- **في النظام:** وضع 12 يكرر نفس المهارات تحت ساعة، ويحسب الفرق بين دقتك بدون وقت ومع وقت.
+
+---
+
+## خريطة التقنيات إلى أوضاع التدريب
+
+| الوضع | التقنيات الأساسية |
+|---|---|
+| 1. التفكير بصوت عالٍ | Heisman blunder check، Aagaard الأسئلة الثلاثة، Silman imbalances، self-explanation، generation |
+| 2. الحساب | Kotov candidate moves (معدّلة)، Aagaard CCE، desirable difficulty (بدون تحريك القطع) |
+| 3. التصور والعمياء | Visualization progression، desirable difficulty، تدرّج الصعوبة حسب الدقة |
+| 4. خمّن النقلة | Generation، elaborative interrogation، chunking من مباريات حقيقية |
+| 5. لعب الموقف حتى التحويل | Dvoretsky sparring، deliberate practice |
+| 6. التحليل الذاتي قبل المحرك | Dvoretsky، metacognition، retrieval |
+| 7. معايرة الثقة | Calibration research |
+| 8. الأنماط | de Groot، Chase & Simon، Steps Method، Woodpecker (معدّل) |
+| 9. الجلسات المختلطة | Interleaving |
+| 10. التدريب السقراطي | Generation، self-explanation، scaffolding |
+| 11. التكرار المتباعد لأخطائك | Spacing، SM-2، retrieval practice |
+| 12. الضغط الزمني | Moxley et al.، النقل إلى ظروف المباراة |
+
+---
+
+## المرفوضات ولماذا
+
+| المرفوض | السبب |
+|---|---|
+| **Learning styles** (بصري، سمعي...) | لا يوجد دليل تجريبي على أن مطابقة "نمط التعلم" تحسن النتائج (Pashler et al. 2008). |
+| **إعادة القراءة والتظليل** كطريقة دراسة | Dunlosky et al. (2013) صنّفوهما "low utility". مشاهدة الفيديوهات وقراءة الكتب بدون حل نشط تقع في نفس الفئة. |
+| **حفظ خطوط افتتاح طويلة** في مرحلة المبتدئ | الأخطاء في هذا المستوى تحسمها التكتيكات وأمان القطع، لا الافتتاح. نعلّم مبادئ الافتتاح وخطط الافتتاحات التي تلعبها فقط. يتفق على هذا Heisman و Yusupov ومعظم المدربين. |
+| **قاعدة Kotov الصارمة للشجرة** | انتقدها Tisdall و Aagaard، ولا تعكس طريقة تفكير الأقوياء فعليًا (انظر A). |
+| **Puzzle rush والتمارين السريعة كتدريب أساسي** | تكافئ السرعة على حساب العملية، وتشجع التخمين. نستخدم الوقت فقط في وضع 12، وبعد إتقان المهارة بدون وقت. |
+| **Woodpecker بحجمه الأصلي للمبتدئ** | مصمم لمستوى أعلى بكثير وبدون دليل مضبوط. نأخذ المبدأ فقط (انظر F). |
+| **التحليل بالمحرك أولًا** | يقتل التوليد والتفكير الذاتي. المحرك يأتي دائمًا بعد رأيك. |
+| **الادعاء بأن الشطرنج يرفع الذكاء العام** | لا يوجد نقل قوي إلى مهارات أخرى (Sala & Gobet 2016). ليس هدفنا هنا، لكن نذكره للأمانة. |
+| **التدريب المكثف على موضوع واحد** (blocked practice) | يعطي شعورًا بالتقدم لكن احتفاظه ونقله أضعف (انظر Interleaving). يُستخدم فقط عند أول تعريف بالنمط الجديد، ثم ينتقل فورًا إلى الخلط. |
+
+---
+
+## المراجع الأساسية
+- Adesope, Trevisan & Sundararajan (2017). Rethinking the use of tests: A meta-analysis of practice testing. *Review of Educational Research*.
+- Bertsch et al. (2007). The generation effect: A meta-analytic review. *Memory & Cognition*.
+- Bjork (1994); Bjork & Bjork (2011). Desirable difficulties.
+- Brunmair & Richter (2019). Similarity matters: A meta-analysis of interleaved learning. *Psychological Bulletin*.
+- Cepeda et al. (2006, 2008). Distributed practice / spacing effects.
+- Charness, Tuffiash, Krampe, Reingold & Vasyukova (2005). The role of deliberate practice in chess expertise. *Applied Cognitive Psychology*.
+- Chase & Simon (1973). Perception in chess. *Cognitive Psychology*.
+- Chi et al. (1994). Eliciting self-explanations improves understanding. *Cognitive Science*.
+- Chabris & Hearst (2003). Visualization, pattern recognition, and forward search: Effects of playing speed and sight of the position on grandmaster chess errors. *Cognitive Science*.
+- de Groot (1965). *Thought and Choice in Chess*.
+- Dunlosky et al. (2013). Improving students' learning with effective learning techniques. *Psychological Science in the Public Interest*.
+- Ericsson, Krampe & Tesch-Römer (1993). The role of deliberate practice. *Psychological Review*.
+- Gobet & Simon (1996). Templates in chess memory. *Cognitive Psychology*.
+- Hambrick et al. (2014). Deliberate practice: Is that all it takes to become an expert? *Intelligence*.
+- Kornell & Bjork (2008). Learning concepts and categories: Is spacing the "enemy of induction"? *Psychological Science*.
+- Kruger & Dunning (1999); Lichtenstein, Fischhoff & Phillips (1982).
+- Macnamara, Hambrick & Oswald (2014). Deliberate practice and performance. *Psychological Science*.
+- Moxley, Ericsson, Charness & Krampe (2012). The role of intuition and deliberative thinking in experts' superior tactical decision-making. *Cognition*.
+- Pashler et al. (2008). Learning styles: Concepts and evidence.
+- Roediger & Karpicke (2006). Test-enhanced learning. *Psychological Science*.
+- Rohrer & Taylor (2007). The shuffling of mathematics problems improves learning. *Instructional Science*.
+- Sala & Gobet (2016). Do the benefits of chess instruction transfer? *Educational Research Review*.
+- Slamecka & Graf (1978). The generation effect.
+- Chess books: Kotov, *Think Like a Grandmaster*; Tisdall, *Improve Your Chess Now*; Aagaard, *Calculation* and *Excelling at Chess Calculation*; Dvoretsky & Yusupov, *Secrets of Chess Training*; Yusupov, *Build Up / Boost / Evolution* series; Brunia & van Wijgerden, *Steps Method*; Smith & Tikkanen, *The Woodpecker Method*; Heisman, *The Improving Chess Thinker*; Silman, *How to Reassess Your Chess*.
+
+> ملاحظة: هذه القائمة كُتبت من المعرفة المتاحة لي، ولم أتمكن من التحقق من كل رقم صفحة أو حجم أثر عبر الإنترنت في هذه الجلسة. أسماء الدراسات والاستنتاجات العامة دقيقة، وأي رقم محدد (مثل d ≈ 0.4) هو تقريب من التحليل التجميعي المذكور.

@@ -1,0 +1,1077 @@
+<title>مدرّب التفكير الشطرنجي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@500;600;700&display=swap">
+<style>
+/* Layout: a training desk. Board on one side, the thinking sheet on the other; dashboards are scoresheet-like tables and small to-scale charts. */
+:root {
+  --paper: #f3f5f2; --surface: #ffffff; --sunk: #e9ede8; --ink: #17201c; --muted: #5a6962; --line: #d3dbd5;
+  --accent: #1d6a56; --accent-soft: #d5e9e1; --accent-ink: #ffffff;
+  --sq-light: #e8ece2; --sq-dark: #87a393; --sq-sel: #e9c46a; --sq-last: #c9d98a; --sq-dot: rgba(23,32,28,.28);
+  --blunder: #b8382b; --mistake: #cf7a26; --inacc: #b8961f; --good: #2a7f50;
+  --f-display: "Reem Kufi", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f1412; --surface: #171f1b; --sunk: #1f2924; --ink: #e2e9e5; --muted: #9aaba2; --line: #2b3732;
+  --accent: #5cc4a2; --accent-soft: #1d3a31; --accent-ink: #0d1411;
+  --sq-light: #c7d1c2; --sq-dark: #6b8878; --sq-sel: #d9b24f; --sq-last: #a9bd6b; --sq-dot: rgba(10,16,13,.35);
+  --blunder: #e0675a; --mistake: #e69a4f; --inacc: #d6b54a; --good: #5bbf85; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0f1412; --surface: #171f1b; --sunk: #1f2924; --ink: #e2e9e5; --muted: #9aaba2; --line: #2b3732;
+  --accent: #5cc4a2; --accent-soft: #1d3a31; --accent-ink: #0d1411;
+  --sq-light: #c7d1c2; --sq-dark: #6b8878; --sq-sel: #d9b24f; --sq-last: #a9bd6b; --sq-dot: rgba(10,16,13,.35);
+  --blunder: #e0675a; --mistake: #e69a4f; --inacc: #d6b54a; --good: #5bbf85; color-scheme: dark }
+
+[hidden] { display: none !important; }
+html, body { background: var(--paper); color: var(--ink); }
+body { font-family: var(--f-body); font-size: 15px; line-height: 1.65; }
+#app { max-width: 1120px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 48px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; line-height: 1.3; text-wrap: balance; margin: 0; }
+h2 { font-size: 1.45rem; } h3 { font-size: 1.1rem; }
+p { margin: 0; }
+.mv, code, .mono { font-family: var(--f-mono); direction: ltr; unicode-bidi: isolate; font-size: .92em; }
+a { color: var(--accent); }
+button, input, textarea, select { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, .sq:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 8px 14px; border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand img { width: 34px; height: 34px; }
+.brand h1 { font-size: 1.35rem; }
+.brand small { display: block; color: var(--muted); font-size: .8rem; font-family: var(--f-body); font-weight: 400; }
+nav { display: flex; flex-wrap: wrap; gap: 4px; }
+nav button { border: 0; background: transparent; padding: 6px 12px; border-radius: 999px; cursor: pointer; color: var(--muted); font-weight: 500; }
+nav button[aria-current="page"] { background: var(--accent); color: var(--accent-ink); }
+nav button:hover:not([aria-current="page"]) { background: var(--sunk); color: var(--ink); }
+
+.status { display: flex; flex-wrap: wrap; gap: 6px; padding-block: 10px; font-size: .8rem; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; background: var(--sunk); color: var(--muted); }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+.chip.ok::before { background: var(--good); } .chip.warn::before { background: var(--mistake); } .chip.bad::before { background: var(--blunder); }
+
+main section { display: grid; gap: 18px; padding-block: 8px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 12px; min-width: 0; }
+.lead { color: var(--muted); max-width: 68ch; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.btn { border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn.quiet { border-color: var(--line); background: var(--surface); color: var(--ink); font-weight: 500; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+label.f { display: grid; gap: 4px; font-weight: 600; font-size: .92rem; }
+label.f span.hint { font-weight: 400; color: var(--muted); font-size: .82rem; }
+input[type=text], textarea, select { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; box-sizing: border-box; }
+textarea { min-height: 64px; resize: vertical; line-height: 1.6; }
+.note { font-size: .85rem; color: var(--muted); }
+.err { color: var(--blunder); font-size: .9rem; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; display: grid; gap: 2px; }
+.kpi b { font-family: var(--f-mono); font-size: 1.5rem; font-weight: 500; font-variant-numeric: tabular-nums; direction: ltr; text-align: end; }
+.kpi span { color: var(--muted); font-size: .82rem; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td { text-align: start; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 500; font-size: .8rem; }
+td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; direction: ltr; text-align: end; }
+.sev { display: inline-block; padding: 0 8px; border-radius: 999px; font-size: .78rem; color: #fff; }
+.sev.blunder { background: var(--blunder); } .sev.mistake { background: var(--mistake); } .sev.inacc { background: var(--inacc); }
+.tag { display: inline-block; padding: 0 8px; border-radius: 6px; background: var(--accent-soft); color: var(--ink); font-size: .78rem; margin-inline-end: 4px; }
+.progress { height: 8px; background: var(--sunk); border-radius: 999px; overflow: hidden; }
+.progress > i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+
+/* board */
+.train { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 820px) { .train { grid-template-columns: minmax(0, 1fr); } }
+.boardwrap { display: grid; gap: 8px; position: sticky; top: env(safe-area-inset-top, 0px); }
+@media (max-width: 820px) { .boardwrap { position: static; } }
+.board { direction: ltr; display: grid; grid-template-columns: repeat(8, 1fr); aspect-ratio: 1; width: 100%; max-width: 100%; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); user-select: none; }
+.sq { position: relative; border: 0; padding: 0; margin: 0; cursor: pointer; display: block; aspect-ratio: 1; }
+.sq.l { background: var(--sq-light); } .sq.d { background: var(--sq-dark); }
+.sq.last { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--sq-last) 55%, transparent); }
+.sq.sel, .sq.pick { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--sq-sel) 70%, transparent); }
+.sq img { position: absolute; inset: 4%; width: 92%; height: 92%; pointer-events: none; }
+.sq.dot::after { content: ""; position: absolute; inset: 38%; border-radius: 50%; background: var(--sq-dot); }
+.sq.dot.cap::after { inset: 4%; background: transparent; border: 4px solid var(--sq-dot); }
+.sq .co { position: absolute; font: 600 10px/1 var(--f-mono); opacity: .7; pointer-events: none; color: var(--ink); }
+.sq .co.f { bottom: 2px; right: 3px; } .sq .co.r { top: 2px; left: 3px; }
+.sq.l .co { color: var(--sq-dark); } .sq.d .co { color: var(--sq-light); }
+.boardcap { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: .88rem; color: var(--muted); }
+.turn { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--ink); }
+.turn i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--muted); }
+.conf { display: flex; gap: 6px; flex-wrap: wrap; }
+.conf label { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 36px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; font-family: var(--f-mono); }
+.conf input { position: absolute; opacity: 0; pointer-events: none; }
+.conf input:checked + span { color: var(--accent-ink); }
+.conf label:has(input:checked) { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.coach { border-inline-start: 3px solid var(--accent); padding-inline-start: 12px; display: grid; gap: 8px; }
+.coach .who { font-size: .78rem; color: var(--muted); letter-spacing: .02em; }
+.lines { display: grid; gap: 4px; }
+.lines div { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.lines .ev { font-family: var(--f-mono); min-width: 58px; direction: ltr; text-align: end; font-variant-numeric: tabular-nums; }
+.scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; }
+.scores div { background: var(--sunk); border-radius: 8px; padding: 6px 10px; font-size: .85rem; display: flex; justify-content: space-between; gap: 6px; }
+.scores b { font-family: var(--f-mono); }
+.prewrap { white-space: pre-wrap; }
+.mode { display: grid; grid-template-columns: auto 1fr auto; gap: 10px 14px; align-items: start; padding-block: 10px; border-bottom: 1px solid var(--line); }
+.mode:last-child { border-bottom: 0; }
+.mode .n { font-family: var(--f-mono); color: var(--muted); }
+.state { font-size: .78rem; padding: 1px 10px; border-radius: 999px; white-space: nowrap; }
+.state.on { background: var(--accent); color: var(--accent-ink); } .state.part { background: var(--accent-soft); color: var(--ink); } .state.next { background: var(--sunk); color: var(--muted); }
+svg text { fill: var(--muted); font-family: var(--f-mono); font-size: 11px; }
+svg .ax { stroke: var(--line); } svg .bar { fill: var(--accent); } svg .ln { stroke: var(--accent); fill: none; stroke-width: 2; }
+svg .ref { stroke: var(--muted); stroke-dasharray: 4 4; fill: none; } svg .pt { fill: var(--accent); } svg .area { fill: var(--accent-soft); }
+.chart { overflow-x: auto; }
+.empty { color: var(--muted); padding: 14px; border: 1px dashed var(--line); border-radius: var(--r); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div id="app" dir="rtl" lang="ar">
+  <header class="top">
+    <div class="brand"><img id="brandimg" alt=""><div><h1>مدرّب التفكير الشطرنجي</h1><small>العملية قبل النقلة، والبيانات قبل التشجيع</small></div></div>
+    <nav id="nav">
+      <button data-view="today" aria-current="page">اليوم</button>
+      <button data-view="diag">التشخيص</button>
+      <button data-view="train">التدريب</button>
+      <button data-view="progress">التقدم</button>
+      <button data-view="plan">المنهج</button>
+    </nav>
+  </header>
+  <div class="status" id="status"><span class="chip" id="st-store">التخزين: جارٍ التحميل</span><span class="chip" id="st-engine">Stockfish: جارٍ التشغيل</span><span class="chip" id="st-claude">Claude: جارٍ الاتصال</span></div>
+  <main>
+    <section id="v-today"></section>
+    <section id="v-diag" hidden></section>
+    <section id="v-train" hidden></section>
+    <section id="v-progress" hidden></section>
+    <section id="v-plan" hidden></section>
+  </main>
+</div>
+
+<script src="chess.js"></script>
+<script>
+"use strict";
+const PIECES = {"wp":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==","wb":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiNmZmYiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PC9nPjwvc3ZnPg==","wn":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjMDAwIi8+PC9nPjwvc3ZnPg==","wr":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik05IDM5aDI3di0zSDl2M3ptMy0zdi00aDIxdjRIMTJ6bS0xLTIyVjloNHYyaDVWOWg1djJoNVY5aDR2NSIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNMzQgMTRsLTMgM0gxNGwtMy0zIi8+PHBhdGggZD0iTTMxIDE3djEyLjVIMTRWMTciIHN0cm9rZS1saW5lY2FwPSJidXR0IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTMxIDI5LjVsMS41IDIuNWgtMjBsMS41LTIuNSIvPjxwYXRoIGQ9Ik0xMSAxNGgyMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjwvZz48L3N2Zz4=","wq":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik04IDEyYTIgMiAwIDEgMS00IDAgMiAyIDAgMSAxIDQgMHptMTYuNS00LjVhMiAyIDAgMSAxLTQgMCAyIDIgMCAxIDEgNCAwek00MSAxMmEyIDIgMCAxIDEtNCAwIDIgMiAwIDEgMSA0IDB6TTE2IDguNWEyIDIgMCAxIDEtNCAwIDIgMiAwIDEgMSA0IDB6TTMzIDlhMiAyIDAgMSAxLTQgMCAyIDIgMCAxIDEgNCAweiIvPjxwYXRoIGQ9Ik05IDI2YzguNS0xLjUgMjEtMS41IDI3IDBsMi0xMi03IDExVjExbC01LjUgMTMuNS0zLTE1LTMgMTUtNS41LTE0VjI1TDcgMTRsMiAxMnoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTkgMjZjMCAyIDEuNSAyIDIuNSA0IDEgMS41IDEgMSAuNSAzLjUtMS41IDEtMS41IDIuNS0xLjUgMi41LTEuNSAxLjUuNSAyLjUuNSAyLjUgNi41IDEgMTYuNSAxIDIzIDAgMCAwIDEuNS0xIDAtMi41IDAgMCAuNS0xLjUtMS0yLjUtLjUtMi41LS41LTIgLjUtMy41IDEtMiAyLjUtMiAyLjUtNC04LjUtMS41LTE4LjUtMS41LTI3IDB6IiBzdHJva2UtbGluZWNhcD0iYnV0dCIvPjxwYXRoIGQ9Ik0xMS41IDMwYzMuNS0xIDE4LjUtMSAyMiAwTTEyIDMzLjVjNi0xIDE1LTEgMjEgMCIgZmlsbD0ibm9uZSIvPjwvZz48L3N2Zz4=","wk":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMi41IDExLjYzVjZNMjAgOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTIyLjUgMjVzNC41LTcuNSAzLTEwLjVjMCAwLTEtMi41LTMtMi41cy0zIDIuNS0zIDIuNWMtMS41IDMgMyAxMC41IDMgMTAuNSIgZmlsbD0iI2ZmZiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMTEuNSAzN2M1LjUgMy41IDE1LjUgMy41IDIxIDB2LTdzOS00LjUgNi0xMC41Yy00LTYuNS0xMy41LTMuNS0xNiA0VjI3di0zLjVjLTMuNS03LjUtMTMtMTAuNS0xNi00LTMgNiA1IDEwIDUgMTBWMzd6IiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTExLjUgMzBjNS41LTMgMTUuNS0zIDIxIDBtLTIxIDMuNWM1LjUtMyAxNS41LTMgMjEgMG0tMjEgMy41YzUuNS0zIDE1LjUtMyAyMSAwIi8+PC9nPjwvc3ZnPg==","bp":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==","bb":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIGZpbGw9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJidXR0Ij48cGF0aCBkPSJNOSAzNmMzLjM5LS45NyAxMC4xMS40MyAxMy41LTIgMy4zOSAyLjQzIDEwLjExIDEuMDMgMTMuNSAyIDAgMCAxLjY1LjU0IDMgMi0uNjguOTctMS42NS45OS0zIC41LTMuMzktLjk3LTEwLjExLjQ2LTEzLjUtMS0zLjM5IDEuNDYtMTAuMTEuMDMtMTMuNSAxLTEuMzU0LjQ5LTIuMzIzLjQ3LTMtLjUgMS4zNTQtMS45NCAzLTIgMy0yeiIvPjxwYXRoIGQ9Ik0xNSAzMmMyLjUgMi41IDEyLjUgMi41IDE1IDAgLjUtMS41IDAtMiAwLTIgMC0yLjUtMi41LTQtMi41LTQgNS41LTEuNSA2LTExLjUtNS0xNS41LTExIDQtMTAuNSAxNC01IDE1LjUgMCAwLTIuNSAxLjUtMi41IDQgMCAwLS41LjUgMCAyeiIvPjxwYXRoIGQ9Ik0yNSA4YTIuNSAyLjUgMCAxIDEtNSAwIDIuNSAyLjUgMCAxIDEgNSAweiIvPjwvZz48cGF0aCBkPSJNMTcuNSAyNmgxME0xNSAzMGgxNW0tNy41LTE0LjV2NU0yMCAxOGg1IiBzdHJva2U9IiNlY2VjZWMiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48L2c+PC9zdmc+","bn":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMiAxMGMxMC41IDEgMTYuNSA4IDE2IDI5SDE1YzAtOSAxMC02LjUgOC0yMSIgZmlsbD0iIzAwMCIvPjxwYXRoIGQ9Ik0yNCAxOGMuMzggMi45MS01LjU1IDcuMzctOCA5LTMgMi0yLjgyIDQuMzQtNSA0LTEuMDQyLS45NCAxLjQxLTMuMDQgMC0zLTEgMCAuMTkgMS4yMy0xIDItMSAwLTQuMDAzIDEtNC00IDAtMiA2LTEyIDYtMTJzMS44OS0xLjkgMi0zLjVjLS43My0uOTk0LS41LTItLjUtMyAxLTEgMyAyLjUgMyAyLjVoMnMuNzgtMS45OTIgMi41LTNjMSAwIDEgMyAxIDMiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNOS41IDI1LjVhLjUuNSAwIDEgMS0xIDAgLjUuNSAwIDEgMSAxIDB6bTUuNDMzLTkuNzVhLjUgMS41IDMwIDEgMS0uODY2LS41LjUgMS41IDMwIDEgMSAuODY2LjV6IiBmaWxsPSIjZWNlY2VjIiBzdHJva2U9IiNlY2VjZWMiLz48cGF0aCBkPSJNMjQuNTUgMTAuNGwtLjQ1IDEuNDUuNS4xNWMzLjE1IDEgNS42NSAyLjQ5IDcuOSA2Ljc1UzM1Ljc1IDI5LjA2IDM1LjI1IDM5bC0uMDUuNWgyLjI1bC4wNS0uNWMuNS0xMC4wNi0uODgtMTYuODUtMy4yNS0yMS4zNC0yLjM3LTQuNDktNS43OS02LjY0LTkuMTktNy4xNmwtLjUxLS4xeiIgZmlsbD0iI2VjZWNlYyIgc3Ryb2tlPSJub25lIi8+PC9nPjwvc3ZnPg==","br":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik05IDM5aDI3di0zSDl2M3ptMy41LTdsMS41LTIuNWgxN2wxLjUgMi41aC0yMHptLS41IDR2LTRoMjF2NEgxMnoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTE0IDI5LjV2LTEzaDE3djEzSDE0eiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMTQgMTYuNUwxMSAxNGgyM2wtMyAyLjVIMTR6TTExIDE0VjloNHYyaDVWOWg1djJoNVY5aDR2NUgxMXoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTEyIDM1LjVoMjFtLTIwLTRoMTltLTE4LTJoMTdtLTE3LTEzaDE3TTExIDE0aDIzIiBmaWxsPSJub25lIiBzdHJva2U9IiNlY2VjZWMiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjwvZz48L3N2Zz4=","bq":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIHN0cm9rZT0ibm9uZSI+PGNpcmNsZSBjeD0iNiIgY3k9IjEyIiByPSIyLjc1Ii8+PGNpcmNsZSBjeD0iMTQiIGN5PSI5IiByPSIyLjc1Ii8+PGNpcmNsZSBjeD0iMjIuNSIgY3k9IjgiIHI9IjIuNzUiLz48Y2lyY2xlIGN4PSIzMSIgY3k9IjkiIHI9IjIuNzUiLz48Y2lyY2xlIGN4PSIzOSIgY3k9IjEyIiByPSIyLjc1Ii8+PC9nPjxwYXRoIGQ9Ik05IDI2YzguNS0xLjUgMjEtMS41IDI3IDBsMi41LTEyLjVMMzEgMjVsLS4zLTE0LjEtNS4yIDEzLjYtMy0xNC41LTMgMTQuNS01LjItMTMuNkwxNCAyNSA2LjUgMTMuNSA5IDI2eiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNOSAyNmMwIDIgMS41IDIgMi41IDQgMSAxLjUgMSAxIC41IDMuNS0xLjUgMS0xLjUgMi41LTEuNSAyLjUtMS41IDEuNS41IDIuNS41IDIuNSA2LjUgMSAxNi41IDEgMjMgMCAwIDAgMS41LTEgMC0yLjUgMCAwIC41LTEuNS0xLTIuNS0uNS0yLjUtLjUtMiAuNS0zLjUgMS0yIDIuNS0yIDIuNS00LTguNS0xLjUtMTguNS0xLjUtMjcgMHoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTExIDM4LjVhMzUgMzUgMSAwIDAgMjMgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNMTEgMjlhMzUgMzUgMSAwIDEgMjMgMG0tMjEuNSAyLjVoMjBtLTIxIDNhMzUgMzUgMSAwIDAgMjIgMG0tMjMgM2EzNSAzNSAxIDAgMCAyNCAwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlY2VjZWMiLz48L2c+PC9zdmc+","bk":"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMi41IDExLjYzVjYiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMjIuNSAyNXM0LjUtNy41IDMtMTAuNWMwIDAtMS0yLjUtMy0yLjVzLTMgMi41LTMgMi41Yy0xLjUgMyAzIDEwLjUgMyAxMC41IiBmaWxsPSIjMDAwIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjxwYXRoIGQ9Ik0xMS41IDM3YzUuNSAzLjUgMTUuNSAzLjUgMjEgMHYtN3M5LTQuNSA2LTEwLjVjLTQtNi41LTEzLjUtMy41LTE2IDRWMjd2LTMuNWMtMy41LTcuNS0xMy0xMC41LTE2LTQtMyA2IDUgMTAgNSAxMFYzN3oiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNMjAgOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTMyIDI5LjVzOC41LTQgNi4wMy05LjY1QzM0LjE1IDE0IDI1IDE4IDIyLjUgMjQuNWwuMDEgMi4xLS4wMS0yLjFDMjAgMTggOS45MDYgMTQgNi45OTcgMTkuODVjLTIuNDk3IDUuNjUgNC44NTMgOSA0Ljg1MyA5IiBzdHJva2U9IiNlY2VjZWMiLz48cGF0aCBkPSJNMTEuNSAzMGM1LjUtMyAxNS41LTMgMjEgMG0tMjEgMy41YzUuNS0zIDE1LjUtMyAyMSAwbS0yMSAzLjVjNS41LTMgMTUuNS0zIDIxIDAiIHN0cm9rZT0iI2VjZWNlYyIvPjwvZz48L3N2Zz4="};
+const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+/* ---------- curated positions (each verified with Stockfish 10, depth 20-22; see tools/verify.mjs) ---------- */
+const LIB = [
+  { id: "opposition-1", fen: "8/8/4k3/8/8/4K3/4P3/8 w - - 0 1", skill: "endgame", chunk: "King in front of the pawn",
+    note: "في نهاية ملك وبيدق ضد ملك، تقدّم بالملك أمام البيدق أولًا. Stockfish يؤكد أن Ke4 وKd4 وKf4 كلها تفوز. أما دفع البيدق e4 أولًا فيعطي تعادلًا (0.00) لأن الملك الأسود يأخذ المعارضة." },
+  { id: "scholar-defence", fen: "r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 3 3", skill: "defence", chunk: "Mate threat on f7",
+    note: "الأبيض يهدد Qxf7# لأن الوزير والفيل يهاجمان f7 معًا. أفضل الدفاعات حسب Stockfish هي Qe7 وg6، وg6 يطرد الوزير أيضًا." },
+  { id: "backrank-sac", fen: "3r2k1/2q2ppp/8/8/8/8/3Q1PPP/3R2K1 w - - 0 1", skill: "tactics", chunk: "Back-rank mate",
+    note: "الملك الأسود محبوس خلف بيادقه. Qxd8+ Qxd8 Rxd8# كش مات في نقلتين. الدرس: إذا كان صف الخصم الأخير يحرسه قطعة واحدة، اسأل: هل أستطيع إزالة الحارس؟" },
+  { id: "knight-fork", fen: "r3k2r/ppp2ppp/2n5/3N4/8/8/PPP2PPP/R3K2R w KQkq - 0 1", skill: "tactics", chunk: "Knight fork",
+    note: "Nxc7+ يكش الملك ويهاجم الرخ في a8 في نفس الوقت. Stockfish يقيّم الموقف بعدها بحوالي +4.5." },
+  { id: "fried-liver-defence", fen: "r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R b KQkq - 5 4", skill: "defence", chunk: "Attack on f7",
+    note: "الحصان في g5 والفيل في c4 يهاجمان f7. الدفاع الصحيح d5 يقطع قطر الفيل. Nxe4 وQe7 يخسران بعد Bxf7+ (حوالي -2 حسب Stockfish)." },
+  { id: "greek-gift", fen: "rnbq1rk1/pppn1ppp/4p3/3pP3/1b1P4/2NB1N2/PPP2PPP/R1BQK2R w KQ - 0 7", skill: "tactics", chunk: "Greek gift sacrifice",
+    note: "Bxh7+ Kxh7 Ng5+ هي تضحية الهدية اليونانية. شروطها: فيل يرى h7، حصان يصل إلى g5، الوزير يلحق بالهجوم، ولا يوجد حصان أسود على f6 ليدافع. Stockfish يقيّمها بحوالي +6." },
+  { id: "lucena", fen: "1K6/1P1k4/8/8/8/8/r7/2R5 w - - 0 1", skill: "endgame", chunk: "Lucena position",
+    note: "موقف Lucena، وهو فوز للأبيض. الطريقة: أبعد الملك الأسود بكش (Rd1+)، ثم أخرج ملكك واستخدم رخك كجسر يحجب كشات الرخ الأسود. Stockfish يقبل أيضًا Rc7+ كبداية." },
+  { id: "philidor", fen: "3k4/8/r7/3PK3/8/8/8/7R b - - 0 1", skill: "endgame", chunk: "Philidor defence",
+    note: "تعادل إذا دافع الأسود بطريقة Philidor: الرخ يبقى على الصف السادس ليمنع الملك الأبيض من التقدم. إذا تقدّم البيدق إلى d6 ينزل الرخ إلى الصف الأول ويكش من الخلف. Stockfish يعطي 0.0 تقريبًا لعدة نقلات تحافظ على هذا الترتيب." },
+  { id: "iqp-plan", fen: "r1bq1rk1/pp2bppp/2n1pn2/8/2BP4/2N2N2/PP3PPP/R1BQ1RK1 w - - 0 9", skill: "strategy", chunk: "Isolated queen pawn (IQP)",
+    note: "الأبيض لديه بيدق وزير معزول على d4. الخطة الكلاسيكية: نشاط القطع، الهجوم على الملك، والتحضير للدفعة d5. Stockfish يفضل Re1 ثم a3 وBe3، وكلها نقلات هادئة متقاربة. السؤال هنا عن الخطة، لا عن نقلة وحيدة." },
+  { id: "carlsbad-plan", fen: "r1bq1rk1/pp1nbppp/2p2n2/3p2B1/3P4/2NBPN2/PPQ2PPP/R3K2R w KQ - 0 9", skill: "strategy", chunk: "Carlsbad structure",
+    note: "بنية Carlsbad. Stockfish يفضل h3 وBh4 وBf4، ثم التبييت. الخطط المعروفة للأبيض: هجوم الأقلية b4-b5، أو التبييت الطويل والهجوم على الجناح الملكي." },
+  { id: "smothered", fen: "5r1k/6pp/8/6N1/8/1Q6/8/6K1 w - - 0 1", skill: "tactics", chunk: "Smothered mate",
+    note: "Nf7+ Kg8 Nh6+ (كش مزدوج) Kh8 Qg8+ Rxg8 Nf7# هو الكش المخنوق. لاحظ أن Qg8+ مباشرة لا تنجح، لأن الملك يأخذ الوزير." },
+  { id: "italian-plan", fen: "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4", skill: "strategy", chunk: "Italian Game centre plan",
+    note: "Stockfish يفضل c3 للتحضير للدفعة d4 وبناء مركز بيادق، ثم O-O وd3 كخطة أهدأ. الفكرة: كل نقلة في الافتتاح تخدم المركز أو التطوير أو أمان الملك." },
+  { id: "fork-trick", fen: "r1bqkb1r/pppp1ppp/2n5/4p3/2B1n3/2N2N2/PPPP1PPP/R1BQK2R w KQkq - 0 5", skill: "tactics", chunk: "Fork trick",
+    note: "الأسود أخذ e4. الأصح Nxe4، وبعد d5 يستعيد الأسود القطعة بشوكة البيدق والموقف متساوٍ تقريبًا. أما Qe2 أو O-O فيعطيان الأسود أفضلية (حوالي -0.6)." },
+  { id: "kp-defence", fen: "8/8/8/3k4/8/8/3PK3/8 b - - 0 1", skill: "endgame", chunk: "Opposition (defence)",
+    note: "الأسود يدافع. Ke4 يقف أمام الملك الأبيض مباشرة ويأخذ المعارضة، فيضمن التعادل." },
+];
+
+/* ---------- error causes ---------- */
+const CAUSES = {
+  missed_threat:      { ar: "تهديد فائت من الخصم", fix: "التفكير بصوت عالٍ مع التركيز على سؤال: ماذا يريد الخصم؟", mode: 1 },
+  blunder_check:      { ar: "نقلة بلا فحص لرد الخصم (hope chess)", fix: "فحص الخطأ قبل كل نقلة: كل الكشات والأسر والتهديدات للخصم", mode: 1 },
+  calculation:        { ar: "خطأ في الحساب", fix: "تدريب الحساب: كل المرشحات وكل خط حتى موقف هادئ", mode: 2 },
+  visualization:      { ar: "فقدان صورة الموقف أثناء التبادل", fix: "تمارين التصور واللعب الأعمى", mode: 3 },
+  plan:               { ar: "خطة أو تقدير موضعي خاطئ", fix: "خمّن النقلة مع مباريات الأساتذة، وسؤال الفروقات (Silman)", mode: 4 },
+  conversion:         { ar: "إضاعة موقف رابح", fix: "لعب المواقف الرابحة ضد Stockfish حتى التحويل", mode: 5 },
+  time:               { ar: "ضغط الوقت", fix: "تدريب القرار تحت الساعة", mode: 12 },
+  opening:            { ar: "خطأ في أول 10 نقلات", fix: "مبادئ الافتتاح وخطط افتتاحاتك أنت فقط", mode: 8 },
+  missed_opportunity: { ar: "فرصة ضائعة لعقاب خطأ الخصم", fix: "الأنماط التكتيكية بأسمائها، ثم اختبار مختلط", mode: 8 },
+};
+const SKILL_AR = { tactics: "تكتيك", endgame: "نهايات", strategy: "استراتيجية", defence: "دفاع" };
+const CHECK_AR = { threats: "تهديدات الخصم", candidates: "المرشحات", calculation: "الحساب", evaluation: "التقييم والخطة", blunder_check: "فحص الخطأ" };
+
+const MODES = [
+  [1, "التفكير بصوت عالٍ", "on", "تكتب التهديدات والمرشحات والخطوط والتقييم، والمدرّب ينقد العملية لا النقلة فقط."],
+  [2, "الحساب (Kotov/Aagaard)", "next", "شجرة المرشحات كاملة بدون تحريك القطع، ثم مقارنتها بشجرة المحرك."],
+  [3, "التصور واللعب الأعمى", "next", "ألوان المربعات، مسارات القطع، خطوط ذهنية، ثم مباريات عمياء قصيرة."],
+  [4, "خمّن النقلة", "next", "مباريات أساتذة مشروحة، تتوقع كل نقلة وتشرح السبب."],
+  [5, "لعب الموقف حتى التحويل", "next", "مواقف رابحة من مبارياتك تلعبها ضد Stockfish حتى تفوز."],
+  [6, "التحليل الذاتي قبل المحرك", "next", "تشرح مباراتك بنفسك أولًا، ثم نقارن بالمحرك ونقيس دقة تقديرك."],
+  [7, "معايرة الثقة", "on", "كل إجابة معها ثقة من 1 إلى 5، ومنحنى المعايرة في صفحة التقدم."],
+  [8, "الأنماط بأسمائها", "next", "IQP، هجوم الأقلية، الهدية اليونانية، الصف الأخير، المعارضة... ثم اختبار مختلط."],
+  [9, "جلسات مختلطة", "part", "الجلسة الحالية تخلط التكتيك والنهايات والاستراتيجية والدفاع بلا عناوين. الجلسة اليومية الكاملة (45 دقيقة) بعد اكتمال الأوضاع."],
+  [10, "التدريب السقراطي", "on", "عندما تخطئ يسألك المدرّب سؤالًا موجّهًا، والحل يظهر فقط بعد محاولتين أو ثلاث."],
+  [11, "التكرار المتباعد لأخطائك", "on", "كل موقف أخطأت فيه، من مبارياتك أو من التدريب، يصبح بطاقة مراجعة بجدول SM-2."],
+  [12, "التدريب تحت الوقت", "next", "نفس المهارات تحت ساعة، مع قياس الفرق بين دقتك بوقت وبدون وقت."],
+];
+
+/* ---------- small helpers ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const mv = (s) => `<bdi class="mv">${esc(s)}</bdi>`;
+const DAY = 86400000;
+const now = () => Date.now();
+const pct = (x) => (x == null || isNaN(x) ? "–" : Math.round(x) + "%");
+const fmtEval = (cp) => cp == null ? "–" : Math.abs(cp) >= 9000 ? (cp > 0 ? "#" : "-#") + (10000 - Math.abs(cp)) / 10 : (cp > 0 ? "+" : "") + (cp / 100).toFixed(2);
+function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
+function wp(cp) { return 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * cp)) - 1); }
+function sideOf(fen) { return fen.split(" ")[1]; }
+function uciMove(game, uci) { return game.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || "q" }); }
+function pvToSan(fen, pv, max = 8) {
+  const g = new Chess(fen); const out = [];
+  for (const u of (pv || []).slice(0, max)) { const m = uciMove(g, u); if (!m) break; out.push(m.san); }
+  return out;
+}
+function numberedLine(fen, sans) {
+  const parts = fen.split(" "); let n = +parts[5] || 1; let white = parts[1] === "w"; const out = [];
+  sans.forEach((s, i) => { if (white) out.push(n + ". " + s); else out.push(i === 0 ? n + "... " + s : s); if (!white) n++; white = !white; });
+  return out.join(" ");
+}
+function pieceList(fen) {
+  const g = new Chess(fen); const W = [], B = []; const names = { k: "K", q: "Q", r: "R", b: "B", n: "N", p: "" };
+  for (const f of "abcdefgh") for (let r = 1; r <= 8; r++) { const p = g.get(f + r); if (p) (p.color === "w" ? W : B).push(names[p.type] + f + r); }
+  return `White: ${W.join(", ")} | Black: ${B.join(", ")}`;
+}
+function isForcing(fen, uci) { const g = new Chess(fen); const m = uciMove(g, uci); return !!m && (/[x+#]/.test(m.san)); }
+
+/* ---------- storage: artifact db when available, browser storage otherwise ---------- */
+const Store = {
+  db: null, kind: "none",
+  async init() {
+    try { this.db = window.claude ? await window.claude.use("db") : null; } catch { this.db = null; }
+    this.kind = this.db ? "db" : (this.lsOk() ? "local" : "memory");
+    this.mem = {};
+  },
+  lsOk() { try { localStorage.setItem("cc:t", "1"); localStorage.removeItem("cc:t"); return true; } catch { return false; } },
+  async get(path) {
+    if (this.kind === "db") { const s = await this.db.doc(path).get(); return s.exists ? s.data() : null; }
+    if (this.kind === "local") { try { const v = localStorage.getItem("cc:" + path); return v ? JSON.parse(v) : null; } catch { return null; } }
+    return this.mem[path] ?? null;
+  },
+  async set(path, data) {
+    const body = JSON.parse(JSON.stringify(data));
+    if (this.kind === "db") { try { return await this.db.doc(path).set(body); } catch (e) { if (e && e.code === "unavailable") { await new Promise((r) => setTimeout(r, 600 + Math.random() * 600)); return this.db.doc(path).set(body); } throw e; } }
+    if (this.kind === "local") { try { localStorage.setItem("cc:" + path, JSON.stringify(body)); } catch {} return; }
+    this.mem[path] = body;
+  },
+  async list(coll) {
+    if (this.kind === "db") { const s = await this.db.collection(coll).limit(1000).get(); return s.docs.map((d) => d.data()); }
+    const out = [];
+    if (this.kind === "local") { try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith("cc:" + coll + "/")) out.push(JSON.parse(localStorage.getItem(k))); } } catch {} return out; }
+    for (const [k, v] of Object.entries(this.mem)) if (k.startsWith(coll + "/")) out.push(v);
+    return out;
+  },
+};
+
+/* ---------- Stockfish in a worker ---------- */
+function parseInfo(l) {
+  if (/ (lower|upper)bound/.test(l)) return null;
+  const d = l.match(/\bdepth (\d+)/), mp = l.match(/\bmultipv (\d+)/), sc = l.match(/\bscore (cp|mate) (-?\d+)/), pv = l.match(/ pv (.+?)(?: bmc .*)?$/);
+  if (!d || !sc || !pv) return null;
+  return { depth: +d[1], multipv: mp ? +mp[1] : 1, cp: sc[1] === "cp" ? +sc[2] : null, mate: sc[1] === "mate" ? +sc[2] : null, pv: pv[1].trim().split(/\s+/) };
+}
+const scoreCp = (s) => s.mate != null ? (s.mate > 0 ? 10000 - s.mate * 10 : -10000 - s.mate * 10) : s.cp;
+const Engine = {
+  w: null, onLine: null, chain: Promise.resolve(), ok: false,
+  async start() {
+    const boot = (w) => new Promise((res, rej) => {
+      const t = setTimeout(() => rej(new Error("timeout")), 25000);
+      w.onerror = (e) => { clearTimeout(t); rej(e); };
+      w.onmessage = (e) => { const l = String(e.data); if (l === "uciok") { clearTimeout(t); res(w); } };
+      w.postMessage("uci");
+    });
+    try { this.w = await boot(new Worker("stockfish.js")); }
+    catch {
+      const src = await (await fetch("stockfish.js")).text();
+      this.w = await boot(new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" }))));
+    }
+    this.w.onmessage = (e) => { const l = String(e.data); if (this.onLine) this.onLine(l); };
+    this.ok = true;
+  },
+  // Score in result is from WHITE's point of view (centipawns; mate encoded as ±(10000 - 10n)).
+  analyse(fen, { movetime = 0, depth = 0, multipv = 1 } = {}) {
+    const job = () => new Promise((res) => {
+      const g = new Chess(fen);
+      if (g.game_over()) { const cpStm = g.in_checkmate() ? -10000 : 0; const cp = sideOf(fen) === "w" ? cpStm : -cpStm; return res({ best: null, cp, lines: [], terminal: true }); }
+      const lines = {};
+      this.onLine = (l) => {
+        if (l.startsWith("info")) { const p = parseInfo(l); if (p) lines[p.multipv] = p; }
+        else if (l.startsWith("bestmove")) {
+          this.onLine = null;
+          const flip = sideOf(fen) === "w" ? 1 : -1;
+          const ls = Object.values(lines).sort((a, b) => a.multipv - b.multipv).map((x) => ({ ...x, cpWhite: flip * scoreCp(x) }));
+          res({ best: l.split(" ")[1], cp: ls[0] ? ls[0].cpWhite : 0, lines: ls });
+        }
+      };
+      this.w.postMessage("setoption name MultiPV value " + multipv);
+      this.w.postMessage("position fen " + fen);
+      let go = "go"; if (depth) go += " depth " + depth; if (movetime) go += " movetime " + movetime;
+      this.w.postMessage(go);
+    });
+    const p = this.chain.then(job, job); this.chain = p.catch(() => {}); return p;
+  },
+};
+
+/* ---------- Claude ---------- */
+let SAMPLE = null;
+const CLAUDE_ERR = {
+  not_granted: "لم تسمح لهذه الصفحة باستخدام Claude. التغذية الراجعة ستأتي من Stockfish فقط.",
+  sampling_disabled: "Claude غير متاح لهذا الحساب.",
+  rate_limited: "طلبات كثيرة في وقت قصير. انتظر قليلًا ثم اضغط مرة أخرى.",
+  session_expired: "انتهت الجلسة. سجّل الدخول من جديد.",
+  invalid_json: "رد Claude لم يكن بالصيغة المتوقعة. اضغط مرة أخرى.",
+  refused: "Claude رفض هذا الطلب. جرّب صياغة مختلفة.",
+  upstream_error: "انقطع الاتصال بـ Claude. اضغط مرة أخرى.",
+};
+const claudeMsg = (e) => CLAUDE_ERR[e && e.code] || CLAUDE_ERR.upstream_error;
+const LANG_RULES = `LANGUAGE: Write all explanations in clear Modern Standard Arabic for a beginner. Keep chess notation (SAN like Nf3, Bxh7+), opening names and English chess terms (fork, pin, opposition, IQP) in English inside the Arabic text.
+GROUNDING: You must not invent chess variations. Only cite moves and lines that appear in the ENGINE DATA below or in the student's own text. If an idea needs a line that is not provided, describe the idea in words without concrete moves. Never contradict the engine evaluations.`;
+
+/* ---------- state ---------- */
+const S = { profile: null, games: {}, cards: {}, attempts: [], view: "today" };
+let T = null;   // current training session
+let D = null;   // current diagnosis job
+
+/* ---------- PGN parsing ---------- */
+function splitPgn(text) {
+  const games = []; let cur = { h: [], m: [] }; let inMoves = false;
+  for (const line of text.replace(/\r/g, "").split("\n")) {
+    if (/^\s*\[\w+\s+"/.test(line)) { if (inMoves) { games.push(cur); cur = { h: [], m: [] }; inMoves = false; } cur.h.push(line); }
+    else if (line.trim()) { inMoves = true; cur.m.push(line); }
+  }
+  if (cur.h.length || cur.m.length) games.push(cur);
+  return games.filter((g) => g.m.length);
+}
+function parseClock(s) { const m = s.match(/\[%clk\s+(\d+):(\d+):(\d+(?:\.\d+)?)\]/); return m ? +m[1] * 3600 + +m[2] * 60 + +m[3] : null; }
+function parseGame(raw) {
+  const H = {}; for (const l of raw.h) { const m = l.match(/\[(\w+)\s+"(.*)"\]/); if (m) H[m[1]] = m[2]; }
+  const text = raw.m.join("\n");
+  const sans = [], clocks = []; let i = 0, depth = 0;
+  while (i < text.length) {
+    const c = text[i];
+    if (c === "{") { const j = text.indexOf("}", i); const body = text.slice(i, j < 0 ? text.length : j); if (!depth && sans.length) { const k = parseClock(body); if (k != null) clocks[sans.length - 1] = k; } i = j < 0 ? text.length : j + 1; continue; }
+    if (c === ";") { const j = text.indexOf("\n", i); i = j < 0 ? text.length : j + 1; continue; }
+    if (c === "(") { depth++; i++; continue; }
+    if (c === ")") { depth--; i++; continue; }
+    if (/\s/.test(c)) { i++; continue; }
+    let j = i; while (j < text.length && !/[\s{}();]/.test(text[j])) j++;
+    const tok = text.slice(i, j); i = j;
+    if (depth) continue;
+    if (/^\$\d+$/.test(tok) || /^(1-0|0-1|1\/2-1\/2|\*)$/.test(tok)) continue;
+    const t = tok.replace(/^\d+\.+/, "").replace(/[!?]+$/, "");
+    if (t) sans.push(t);
+  }
+  const g = new Chess(H.FEN || START_FEN); const ucis = [], sanOk = [];
+  for (const s of sans) { const m = g.move(s, { sloppy: true }); if (!m) break; ucis.push(m.from + m.to + (m.promotion || "")); sanOk.push(m.san); }
+  const tc = H.TimeControl && /^\d+/.test(H.TimeControl) ? +H.TimeControl.split("+")[0] : null;
+  const id = hash([H.Site, H.Link, H.Date, H.UTCTime, H.White, H.Black, sanOk.slice(0, 30).join(" ")].join("|"));
+  return { id, H, start: H.FEN || START_FEN, ucis, sans: sanOk, clocks: clocks.slice(0, sanOk.length), tc };
+}
+
+/* ---------- diagnosis engine ---------- */
+function phaseOf(fen, ply) {
+  if (ply < 20) return "opening";
+  const board = fen.split(" ")[0]; let mat = 0; const v = { q: 9, r: 5, b: 3, n: 3 };
+  for (const ch of board.toLowerCase()) if (v[ch]) mat += v[ch];
+  return mat <= 26 ? "endgame" : "middlegame";
+}
+function nullMoveFen(fen) { const p = fen.split(" "); p[1] = p[1] === "w" ? "b" : "w"; p[3] = "-"; return p.join(" "); }
+
+async function analyseGame(pg, userColor, movetime, onPly, signal) {
+  const fens = [pg.start]; const g = new Chess(pg.start);
+  for (const u of pg.ucis) { uciMove(g, u); fens.push(g.fen()); }
+  const ev = [];
+  for (let i = 0; i < fens.length; i++) {
+    if (signal.aborted) throw new Error("stopped");
+    ev[i] = await Engine.analyse(fens[i], { movetime, depth: 16 });
+    onPly && onPly(i, fens.length);
+  }
+  const sgn = userColor === "w" ? 1 : -1;
+  const uWp = (i) => wp(sgn * ev[i].cp);
+  const mistakes = []; let lossSum = 0, accSum = 0, n = 0, inacc = 0, maxWp = 0;
+  const startWhite = sideOf(pg.start) === "w";
+  for (let i = 0; i < pg.ucis.length; i++) {
+    const mover = (i % 2 === 0) === startWhite ? "w" : "b";
+    if (mover !== userColor) continue;
+    const before = uWp(i), after = uWp(i + 1); maxWp = Math.max(maxWp, before);
+    const drop = Math.max(0, before - after);
+    const cpLoss = Math.min(1000, Math.max(0, sgn * (ev[i].cp - ev[i + 1].cp)));
+    lossSum += cpLoss; n++;
+    accSum += Math.max(0, Math.min(100, 103.1668 * Math.exp(-0.04354 * drop) - 3.1669));
+    if (pg.ucis[i] === ev[i].best) continue;
+    if (drop >= 5 && drop < 10) inacc++;
+    if (drop < 10) continue;
+    // classify the cause
+    const fen = fens[i], causes = [];
+    const clock = pg.clocks[i];
+    if (clock != null && pg.tc && (clock < 30 || clock < pg.tc * 0.1)) causes.push("time");
+    const prevOppDrop = i >= 1 ? Math.max(0, (100 - uWp(i - 1)) - (100 - before)) : 0;
+    if (prevOppDrop >= 15 && ev[i].best && isForcing(fen, ev[i].best)) causes.push("missed_opportunity");
+    let hadThreat = false, threatMove = null;
+    if (!new Chess(fen).in_check()) {
+      const nf = nullMoveFen(fen);
+      if (new Chess(nf).validate_fen(nf).valid) {
+        const ne = await Engine.analyse(nf, { movetime: Math.max(120, movetime), depth: 14 });
+        hadThreat = before - wp(sgn * ne.cp) >= 15; threatMove = ne.best;
+      }
+    }
+    const reply = ev[i + 1].best;
+    const replyForcing = reply ? isForcing(fens[i + 1], reply) : false;
+    if (hadThreat && reply && threatMove && (reply === threatMove || reply.slice(2, 4) === threatMove.slice(2, 4))) causes.push("missed_threat");
+    else if (replyForcing && !hadThreat) causes.push("blunder_check");
+    const userForcing = isForcing(fen, pg.ucis[i]);
+    const inSequence = i >= 2 && isForcing(fens[i - 2], pg.ucis[i - 2]) && isForcing(fens[i - 1], pg.ucis[i - 1]);
+    if (inSequence && !causes.includes("missed_threat")) causes.push("visualization");
+    else if (userForcing) causes.push("calculation");
+    if (before >= 75) causes.push("conversion");
+    if (!causes.some((c) => c !== "conversion" && c !== "time")) causes.push(i < 20 ? "opening" : "plan");
+    const bestLine = ev[i].lines[0] ? pvToSan(fen, ev[i].lines[0].pv, 6) : [];
+    mistakes.push({
+      ply: i, fen, played: pg.sans[i], playedUci: pg.ucis[i], best: bestLine[0] || null, bestUci: ev[i].best, bestLine,
+      refutation: reply ? pvToSan(fens[i + 1], ev[i + 1].lines[0] ? ev[i + 1].lines[0].pv : [reply], 6) : [],
+      before: Math.round(before), after: Math.round(after), drop: Math.round(drop),
+      sev: drop >= 15 ? "blunder" : "mistake", causes, phase: phaseOf(fen, i), clock: clock ?? null,
+      lastMove: i >= 1 ? pg.ucis[i - 1] : null, lastSan: i >= 1 ? pg.sans[i - 1] : null,
+    });
+  }
+  const res = (pg.H.Result || "*");
+  const outcome = res === "1/2-1/2" ? "d" : (res === "1-0") === (userColor === "w") ? (res === "*" ? "?" : "w") : "l";
+  const oppName = userColor === "w" ? pg.H.Black : pg.H.White;
+  const rating = +(userColor === "w" ? pg.H.WhiteElo : pg.H.BlackElo) || null;
+  return {
+    id: pg.id, date: (pg.H.UTCDate || pg.H.Date || "").replace(/\./g, "-"), white: pg.H.White, black: pg.H.Black, opp: oppName, userColor,
+    result: res, outcome, rating, tc: pg.H.TimeControl || null, opening: pg.H.Opening || pg.H.ECOUrl?.split("/").pop()?.replace(/-/g, " ") || pg.H.ECO || "",
+    site: pg.H.Site || pg.H.Link || "", termination: pg.H.Termination || "", moves: n, sans: pg.sans, start: pg.start,
+    evals: ev.map((e) => e.cp), acpl: n ? Math.round(lossSum / n) : 0, accuracy: n ? Math.round(accSum / n) : 0,
+    inaccuracies: inacc, mistakes, maxWp: Math.round(maxWp), movetime, analysedAt: now(),
+  };
+}
+
+function buildProfile(games) {
+  const P = { games: games.length, moves: 0, accuracy: 0, acpl: 0, blunders: 0, mistakes: 0, inaccuracies: 0, causes: {}, phases: {}, conversion: { chances: 0, converted: 0 }, results: { w: 0, d: 0, l: 0 }, ratings: [], timeLosses: 0 };
+  for (const k of Object.keys(CAUSES)) P.causes[k] = { n: 0, w: 0 };
+  for (const ph of ["opening", "middlegame", "endgame"]) P.phases[ph] = { errors: 0, weight: 0 };
+  let accW = 0, acplW = 0;
+  for (const g of games) {
+    P.moves += g.moves; accW += g.accuracy * g.moves; acplW += g.acpl * g.moves; P.inaccuracies += g.inaccuracies;
+    if (P.results[g.outcome] != null) P.results[g.outcome]++;
+    if (g.maxWp >= 85) { P.conversion.chances++; if (g.outcome === "w") P.conversion.converted++; }
+    if (/time/i.test(g.termination) && g.outcome === "l") P.timeLosses++;
+    if (g.rating && g.date) P.ratings.push({ d: g.date, r: g.rating, tc: g.tc });
+    for (const m of g.mistakes) {
+      m.sev === "blunder" ? P.blunders++ : P.mistakes++;
+      const sw = m.sev === "blunder" ? 3 : 2;
+      m.causes.forEach((c, idx) => { if (!P.causes[c]) return; P.causes[c].n++; P.causes[c].w += sw * (idx === 0 ? 1 : 0.5); });
+      P.phases[m.phase].errors++; P.phases[m.phase].weight += sw;
+    }
+  }
+  P.accuracy = P.moves ? Math.round(accW / P.moves) : 0; P.acpl = P.moves ? Math.round(acplW / P.moves) : 0;
+  P.per100 = P.moves ? +(100 * (P.blunders + P.mistakes) / P.moves).toFixed(1) : 0;
+  P.ratings.sort((a, b) => a.d.localeCompare(b.d));
+  const tot = Object.values(P.causes).reduce((s, c) => s + c.w, 0) || 1;
+  P.ranked = Object.entries(P.causes).filter(([, c]) => c.n).map(([k, c]) => ({ k, n: c.n, share: Math.round(100 * c.w / tot) })).sort((a, b) => b.share - a.share);
+  P.updatedAt = now();
+  return P;
+}
+
+/* ---------- spaced repetition (SM-2) ---------- */
+function sm2(card, q) {
+  card.ef = card.ef ?? 2.5; card.reps = card.reps ?? 0; card.interval = card.interval ?? 0; card.lapses = card.lapses ?? 0;
+  if (q < 3) { card.reps = 0; card.interval = 1; card.lapses++; }
+  else { card.reps++; card.interval = card.reps === 1 ? 1 : card.reps === 2 ? 3 : Math.round(card.interval * card.ef); }
+  card.ef = Math.max(1.3, card.ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)));
+  card.due = now() + card.interval * DAY;
+  card.history = [...(card.history || []), { t: now(), q }].slice(-30);
+  return card;
+}
+function skillFromCauses(m) {
+  if (m.phase === "endgame") return "endgame";
+  const c = m.causes[0];
+  if (c === "missed_threat" || c === "blunder_check") return "defence";
+  if (c === "plan" || c === "opening" || c === "conversion") return "strategy";
+  return "tactics";
+}
+function cardFromMistake(g, m) {
+  return { id: "g-" + g.id + "-" + m.ply, source: "game", fen: m.fen, lastMove: m.lastMove, lastSan: m.lastSan, played: m.played, best: m.best, bestUci: m.bestUci,
+    causes: m.causes, skill: skillFromCauses(m), sev: m.sev, opp: g.opp, date: g.date, ef: 2.5, reps: 0, interval: 0, lapses: 0, due: now(), created: now() };
+}
+
+/* ---------- board ---------- */
+function Board(el, { fen, orient, last, onPick }) {
+  const game = new Chess(fen); let sel = null; let pick = null;
+  const files = "abcdefgh";
+  function draw() {
+    const legal = sel ? game.moves({ square: sel, verbose: true }) : [];
+    let html = "";
+    for (let row = 0; row < 8; row++) for (let col = 0; col < 8; col++) {
+      const f = orient === "w" ? col : 7 - col, r = orient === "w" ? 7 - row : row;
+      const sq = files[f] + (r + 1); const p = game.get(sq); const light = (f + r) % 2 === 1;
+      const cls = ["sq", light ? "l" : "d"];
+      if (last && (last.slice(0, 2) === sq || last.slice(2, 4) === sq)) cls.push("last");
+      if (sel === sq) cls.push("sel");
+      if (pick && (pick.from === sq || pick.to === sq)) cls.push("pick");
+      const lm = legal.find((m) => m.to === sq); if (lm) cls.push("dot", lm.captured ? "cap" : "");
+      const co = (col === 0 ? `<span class="co r">${r + 1}</span>` : "") + (row === 7 ? `<span class="co f">${files[f]}</span>` : "");
+      html += `<button type="button" class="${cls.join(" ")}" data-sq="${sq}" aria-label="${sq}${p ? " " + p.color + p.type : ""}">${p ? `<img alt="" src="${PIECES[p.color + p.type]}">` : ""}${co}</button>`;
+    }
+    el.innerHTML = html;
+  }
+  el.onclick = (e) => {
+    const b = e.target.closest(".sq"); if (!b) return; const sq = b.dataset.sq; const p = game.get(sq);
+    if (sel) {
+      const m = game.moves({ square: sel, verbose: true }).find((x) => x.to === sq);
+      if (m) { const g2 = new Chess(fen); const made = g2.move({ from: m.from, to: m.to, promotion: "q" }); pick = { from: m.from, to: m.to, san: made.san, uci: m.from + m.to + (made.promotion || "") }; sel = null; draw(); onPick && onPick(pick); return; }
+    }
+    sel = p && p.color === game.turn() && sel !== sq ? sq : null; draw();
+  };
+  draw();
+  return { setPick(p) { pick = p; draw(); }, };
+}
+
+/* ---------- views ---------- */
+function show(view) {
+  S.view = view;
+  for (const b of $$("#nav button")) { if (b.dataset.view === view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); }
+  for (const v of ["today", "diag", "train", "progress", "plan"]) $("#v-" + v).hidden = v !== view;
+  ({ today: renderToday, diag: renderDiag, train: renderTrain, progress: renderProgress, plan: renderPlan })[view]();
+  try { localStorage.setItem("cc:view", view); } catch {}
+}
+const dueCards = () => Object.values(S.cards).filter((c) => (c.due ?? 0) <= now());
+
+function renderToday() {
+  const el = $("#v-today"); const P = S.profile?.stats; const due = dueCards();
+  if (!S.profile?.username || !P) {
+    el.innerHTML = `<div class="panel"><h2>نبدأ بالتشخيص</h2><p class="lead">قبل أي منهج، أحتاج أن أرى مبارياتك. اكتب اسم المستخدم في Lichess أو Chess.com، ثم استورد آخر مبارياتك. Stockfish سيحلّل كل نقلة لعبتها ويصنّف أخطاءك حسب <b>السبب</b>: تهديد فائت، حساب، تصوّر، خطة، تحويل، وقت، افتتاح. من هذه البيانات تُبنى خطة تدريبك.</p>
+      <div class="row"><button class="btn" data-go="diag">ابدأ التشخيص</button><button class="btn quiet" data-go="train">جرّب التفكير بصوت عالٍ أولًا</button></div></div>
+      ${planPanel()}`;
+  } else {
+    const top = P.ranked.slice(0, 3);
+    const lastR = P.ratings.length ? P.ratings[P.ratings.length - 1].r : null;
+    el.innerHTML = `<div class="kpis">
+        ${kpi(lastR ?? "–", "آخر تصنيف في المباريات المستوردة")}${kpi(P.accuracy + "%", "دقة متوسطة (صيغة Lichess)")}
+        ${kpi(P.per100, "أخطاء وأخطاء فادحة لكل 100 نقلة")}${kpi(due.length, "مراجعات مستحقة الآن")}</div>
+      <div class="panel"><h2>جلسة اليوم</h2>
+        <p class="lead">${due.length ? `لديك ${due.length} موقفًا مستحق المراجعة، معظمها من أخطائك في مبارياتك. هذه أعلى أولوية.` : "لا توجد مراجعات مستحقة الآن. الجلسة ستأخذ مواقف جديدة."} كل موقف يبدأ بتفكيرك أنت: التهديدات، المرشحات، الحساب، ثم النقلة ودرجة الثقة.</p>
+        <div class="row"><button class="btn" data-go="train">ابدأ الجلسة</button><span class="note">6 مواقف مختلطة، حوالي 25 إلى 35 دقيقة</span></div></div>
+      <div class="panel"><h2>أكبر نقاط الضعف حسب مبارياتك</h2>
+        ${top.length ? `<div class="tbl"><table><thead><tr><th>السبب</th><th>نسبة الوزن</th><th>عدد</th><th>العلاج المقترح</th></tr></thead><tbody>
+        ${top.map((t) => `<tr><td><b>${CAUSES[t.k].ar}</b></td><td class="num">${t.share}%</td><td class="num">${t.n}</td><td>${CAUSES[t.k].fix} <span class="state ${MODES[CAUSES[t.k].mode - 1][2]}">${modeState(CAUSES[t.k].mode)}</span></td></tr>`).join("")}
+        </tbody></table></div>` : `<p class="empty">لم تظهر أخطاء مصنّفة بعد.</p>`}
+        <p class="note">التصنيف آلي: يعتمد على تقييمات Stockfish وساعة المباراة وطبيعة النقلة. تحليلك الذاتي لاحقًا (وضع 6) سيصحّحه.</p></div>`;
+  }
+  wireGo(el);
+}
+const kpi = (v, l) => `<div class="kpi"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
+const modeState = (n) => ({ on: "متاح", part: "جزئي", next: "قيد البناء" })[MODES[n - 1][2]];
+function wireGo(el) { for (const b of $$("[data-go]", el)) b.onclick = () => show(b.dataset.go); }
+
+function planPanel() {
+  return `<div class="panel"><h2>أوضاع التدريب الاثنا عشر</h2><p class="lead">النظام يُبنى على مراحل: التشخيص أولًا، ثم التفكير بصوت عالٍ، ثم الباقي. كل وضع يجعلك تولّد الإجابة وتشرح تفكيرك قبل رؤية الحل.</p>
+    <div>${MODES.map(([n, name, st, d]) => `<div class="mode"><span class="n">${String(n).padStart(2, "0")}</span><div><b>${name}</b><p class="note">${d}</p></div><span class="state ${st}">${modeState(n)}</span></div>`).join("")}</div></div>`;
+}
+function renderPlan() {
+  $("#v-plan").innerHTML = planPanel() + `<div class="panel"><h3>لماذا هذا الترتيب؟</h3><p class="lead">الأساس العلمي لكل وضع موجود في <code>RESEARCH.md</code>: التذكّر النشط، التكرار المتباعد، الخلط، أثر التوليد، الممارسة المتعمدة، والتقطيع عند الخبراء. ما رفضناه ولماذا موجود هناك أيضًا.</p></div>`;
+}
+
+/* ----- diagnosis view ----- */
+function renderDiag() {
+  const el = $("#v-diag"); const p = S.profile || {};
+  const u = p.username || "";
+  const ym = new Date(); const y = ym.getUTCFullYear(), m = String(ym.getUTCMonth() + 1).padStart(2, "0");
+  const pm = new Date(Date.UTC(y, ym.getUTCMonth() - 1, 1)); const py = pm.getUTCFullYear(), pmm = String(pm.getUTCMonth() + 1).padStart(2, "0");
+  const games = Object.values(S.games).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  el.innerHTML = `
+  <div class="panel"><h2>1. اسم المستخدم</h2>
+    <div class="row"><label class="f" style="flex:1 1 220px">اسمك في Lichess أو Chess.com<input type="text" id="d-user" dir="ltr" value="${esc(u)}" placeholder="username"></label>
+    <label class="f" style="flex:0 1 180px">المنصة<select id="d-plat"><option value="lichess">Lichess</option><option value="chesscom">Chess.com</option><option value="both">الاثنتان</option></select></label>
+    <button class="btn" id="d-save" style="align-self:end">حفظ</button></div>
+    <p class="note" id="d-saved"></p></div>
+  <div class="panel" ${u ? "" : "hidden"} id="d-import"><h2>2. استيراد المباريات</h2>
+    <p class="lead">هذه الصفحة لا تستطيع الاتصال بـ Lichess أو Chess.com مباشرة (المتصفح يمنعها). افتح الرابط، سيُنزَّل ملف PGN، ثم ارفعه أو الصق محتواه هنا.</p>
+    <ul class="note">
+      <li>Lichess، آخر 40 مباراة مع الساعة: <a target="_blank" rel="noopener" href="https://lichess.org/api/games/user/${encodeURIComponent(u)}?max=40&clocks=true&opening=true&perfType=bullet,blitz,rapid,classical">lichess.org/api/games/user/${esc(u)}</a></li>
+      <li>Chess.com، هذا الشهر: <a target="_blank" rel="noopener" href="https://api.chess.com/pub/player/${encodeURIComponent(u.toLowerCase())}/games/${y}/${m}/pgn">${y}/${m}</a>، والشهر الماضي: <a target="_blank" rel="noopener" href="https://api.chess.com/pub/player/${encodeURIComponent(u.toLowerCase())}/games/${py}/${pmm}/pgn">${py}/${pmm}</a></li>
+    </ul>
+    <div class="row"><input type="file" id="d-file" accept=".pgn,.txt,text/plain" multiple></div>
+    <label class="f">أو الصق PGN هنا<textarea id="d-pgn" dir="ltr" rows="5" placeholder='[Event "Rated Blitz game"] ...'></textarea></label>
+    <div class="row"><button class="btn quiet" id="d-parse">اقرأ المباريات</button><span class="note" id="d-found"></span></div>
+    <div id="d-run" hidden class="row">
+      <label class="f">عدد المباريات<select id="d-n"><option>10</option><option selected>20</option><option>30</option><option>50</option></select></label>
+      <label class="f">دقة التحليل<select id="d-speed"><option value="120">سريع (0.12 ث لكل موقف)</option><option value="250" selected>متوازن (0.25 ث)</option><option value="600">دقيق (0.6 ث)</option></select></label>
+      <button class="btn" id="d-go" style="align-self:end">حلّل بـ Stockfish</button></div>
+    <div id="d-prog" hidden><div class="progress"><i id="d-bar"></i></div><div class="row"><span class="note" id="d-ptext"></span><button class="btn quiet" id="d-stop">إيقاف</button></div></div>
+  </div>
+  <div id="d-results"></div>`;
+  $("#d-plat").value = p.platform || "lichess";
+  $("#d-save").onclick = async () => {
+    const name = $("#d-user").value.trim(); if (!name) { $("#d-saved").textContent = "اكتب اسم المستخدم أولًا."; return; }
+    S.profile = { ...(S.profile || {}), username: name, platform: $("#d-plat").value, created: S.profile?.created || now() };
+    await Store.set("coach/profile", S.profile); renderDiag();
+  };
+  let parsed = [];
+  $("#d-file").onchange = async (e) => { const texts = await Promise.all([...e.target.files].map((f) => f.text())); $("#d-pgn").value = texts.join("\n\n"); $("#d-parse").click(); };
+  $("#d-parse").onclick = () => {
+    const raw = splitPgn($("#d-pgn").value); const me = (S.profile?.username || "").toLowerCase();
+    parsed = raw.map(parseGame).filter((g) => g.ucis.length >= 10);
+    const mine = parsed.filter((g) => [g.H.White, g.H.Black].some((n) => (n || "").toLowerCase() === me));
+    const fresh = mine.filter((g) => !S.games[g.id]);
+    $("#d-found").textContent = `وجدت ${parsed.length} مباراة، ${mine.length} منها باسمك، ${fresh.length} لم تُحلَّل بعد.` + (mine.length < parsed.length ? " المباريات التي لا تحمل اسمك تُتجاهل." : "");
+    parsed = fresh.sort((a, b) => ((b.H.UTCDate || b.H.Date || "") + (b.H.UTCTime || "")).localeCompare((a.H.UTCDate || a.H.Date || "") + (a.H.UTCTime || "")));
+    $("#d-run").hidden = !fresh.length;
+  };
+  $("#d-go").onclick = () => runDiagnosis(parsed.slice(0, +$("#d-n").value), +$("#d-speed").value);
+  $("#d-stop").onclick = () => D && D.ctl.abort();
+  if (D && (D.running || D.msg)) { $("#d-prog").hidden = false; $("#d-ptext").textContent = D.running ? "جارٍ التحليل..." : D.msg; $("#d-stop").hidden = !D.running; $("#d-go").disabled = D.running; }
+  renderDiagResults(games);
+}
+
+async function runDiagnosis(list, movetime) {
+  if (!Engine.ok) { $("#d-ptext").textContent = "Stockfish لم يعمل بعد."; return; }
+  const me = S.profile.username.toLowerCase();
+  D = { ctl: new AbortController(), running: true };
+  $("#d-prog").hidden = false; $("#d-go").disabled = true;
+  const totalPlies = list.reduce((s, g) => s + g.ucis.length + 1, 0); let done = 0; const t0 = now();
+  try {
+    for (let k = 0; k < list.length; k++) {
+      const pg = list[k]; const color = (pg.H.White || "").toLowerCase() === me ? "w" : "b";
+      const res = await analyseGame(pg, color, movetime, (i) => {
+        done++; const bar = $("#d-bar"); if (bar) bar.style.width = (100 * done / totalPlies).toFixed(1) + "%";
+        const eta = Math.max(0, Math.round(((now() - t0) / done) * (totalPlies - done) / 1000));
+        const t = $("#d-ptext"); if (t) t.textContent = `المباراة ${k + 1} من ${list.length} ضد ${color === "w" ? pg.H.Black : pg.H.White}: الموقف ${i + 1}. الوقت المتبقي تقريبًا ${Math.floor(eta / 60)} د ${eta % 60} ث`;
+      }, D.ctl.signal);
+      S.games[res.id] = res; await Store.set("games/" + res.id, res);
+      for (const m of res.mistakes) { const c = cardFromMistake(res, m); if (!S.cards[c.id]) { S.cards[c.id] = c; await Store.set("cards/" + c.id, c); } }
+      S.profile.stats = buildProfile(Object.values(S.games)); await Store.set("coach/profile", S.profile);
+      if (S.view === "diag") renderDiagResults(Object.values(S.games).sort((a, b) => (b.date || "").localeCompare(a.date || "")));
+    }
+  } catch (e) { if (e.message !== "stopped") console.error(e); }
+  D.running = false; D.msg = D.ctl.signal.aborted ? "توقف التحليل. المباريات التي اكتملت محفوظة." : "انتهى التحليل. النتائج أدناه، والأخطاء أُضيفت إلى بطاقات المراجعة.";
+  if (S.view === "diag") renderDiag();
+}
+
+function renderDiagResults(games) {
+  const el = $("#d-results"); if (!el) return; const P = S.profile?.stats;
+  if (!games.length || !P) { el.innerHTML = ""; return; }
+  const allM = games.flatMap((g) => g.mistakes.map((m) => ({ ...m, g }))).sort((a, b) => b.drop - a.drop);
+  el.innerHTML = `
+  <div class="panel"><h2>3. ملف نقاط الضعف</h2>
+    <div class="kpis">${kpi(P.games, "مباريات محلَّلة")}${kpi(P.accuracy + "%", "دقة متوسطة")}${kpi(P.acpl, "متوسط خسارة السنتي-بيدق")}${kpi(P.blunders, "أخطاء فادحة")}${kpi(P.mistakes, "أخطاء")}${kpi(P.conversion.chances ? P.conversion.converted + "/" + P.conversion.chances : "–", "مواقف رابحة تحوّلت إلى فوز")}</div>
+    <div class="chart">${barChart(P.ranked.map((r) => ({ label: CAUSES[r.k].ar, value: r.share, n: r.n })), "%")}</div>
+    <div class="cols">${["opening", "middlegame", "endgame"].map((ph) => `<div class="kpi"><b>${P.phases[ph].errors}</b><span>أخطاء في ${({ opening: "الافتتاح (أول 10 نقلات)", middlegame: "وسط اللعب", endgame: "النهايات" })[ph]}</span></div>`).join("")}</div>
+    <p class="note">طريقة التصنيف: خسارة 10 نقاط أو أكثر من احتمال الفوز = خطأ، و15 أو أكثر = خطأ فادح. "تهديد فائت" يعني أن الخصم كان يهدد شيئًا قبل نقلتك (نختبر ذلك بإعطاء الدور للخصم) ونقلتك لم تعالجه. "بلا فحص" يعني أن نقلتك نفسها سمحت برد قسري. "حساب" يعني أنك بدأت تبادلًا أو كشًا ثم خسرت. "تصوّر" يعني أن الخطأ جاء في منتصف سلسلة تبادلات.</p>
+    <div class="coach" id="d-coach">${S.profile.report ? `<span class="who">قراءة المدرّب</span><div class="prewrap">${esc(S.profile.report)}</div>` : ""}</div>
+    <div class="row"><button class="btn" id="d-ask" ${SAMPLE ? "" : "disabled"}>${S.profile.report ? "حدّث قراءة المدرّب" : "اطلب قراءة المدرّب (Claude)"}</button><span class="note" id="d-asknote">${SAMPLE ? "يقرأ Claude الأرقام أعلاه وأخطر أخطائك فقط، ولا يخترع خطوطًا." : "Claude غير متاح في هذا العرض."}</span></div>
+  </div>
+  <div class="panel"><h2>أخطر الأخطاء</h2><div class="tbl"><table><thead><tr><th>المباراة</th><th>النقلة</th><th>لعبتَ</th><th>الأفضل</th><th>الخسارة</th><th>السبب</th></tr></thead><tbody>
+    ${allM.slice(0, 15).map((m) => `<tr><td>${esc(m.g.opp || "")}<div class="note">${esc(m.g.date)}</div></td><td class="num">${Math.floor(m.ply / 2) + 1}${m.ply % 2 ? "..." : "."}</td><td>${mv(m.played)}</td><td>${mv(m.best || "")}</td><td><span class="sev ${m.sev}">${m.sev === "blunder" ? "فادح" : "خطأ"}</span> <span class="note mono">${m.drop}%</span></td><td>${m.causes.map((c) => `<span class="tag">${CAUSES[c].ar}</span>`).join("")}</td></tr>`).join("")}
+  </tbody></table></div><p class="note">كل خطأ هنا أصبح بطاقة مراجعة. ستراه في جلسة التدريب بدون أن أخبرك بالحل.</p></div>
+  <div class="panel"><h3>المباريات المحلَّلة</h3><div class="tbl"><table><thead><tr><th>التاريخ</th><th>الخصم</th><th>اللون</th><th>النتيجة</th><th>الدقة</th><th>أخطاء</th><th>الافتتاح</th></tr></thead><tbody>
+    ${games.map((g) => `<tr><td class="num">${esc(g.date)}</td><td>${esc(g.opp)}</td><td>${g.userColor === "w" ? "أبيض" : "أسود"}</td><td>${({ w: "فوز", l: "خسارة", d: "تعادل" })[g.outcome] || "?"}</td><td class="num">${g.accuracy}%</td><td class="num">${g.mistakes.length}</td><td class="note">${esc(g.opening)}</td></tr>`).join("")}
+  </tbody></table></div></div>`;
+  const ask = $("#d-ask"); if (ask) ask.onclick = () => coachReport(allM.slice(0, 12));
+}
+
+async function coachReport(top) {
+  const P = S.profile.stats; const out = $("#d-coach"); const btn = $("#d-ask");
+  btn.disabled = true; out.innerHTML = `<span class="who">قراءة المدرّب</span><div class="prewrap">يفكّر...</div>`;
+  const data = {
+    games: P.games, moves: P.moves, accuracy: P.accuracy, acpl: P.acpl, blunders: P.blunders, mistakes: P.mistakes, mistakes_per_100_moves: P.per100,
+    results: P.results, conversion: P.conversion, time_losses: P.timeLosses, phases: P.phases, ratings: P.ratings.slice(-10),
+    causes_ranked: P.ranked.map((r) => ({ cause: r.k, label_ar: CAUSES[r.k].ar, share_pct: r.share, count: r.n })),
+    worst_mistakes: top.map((m) => ({ opponent: m.g.opp, move_no: Math.floor(m.ply / 2) + 1, color: m.g.userColor, fen: m.fen, played: m.played, engine_best_line: numberedLine(m.fen, m.bestLine), engine_refutation_after_played: m.refutation.join(" "), win_prob_drop_pct: m.drop, causes: m.causes, phase: m.phase, clock_sec: m.clock })),
+  };
+  const prompt = `You are a strict, honest chess coach reviewing a beginner's real games. The student wants to stop moving pieces without a plan.
+${LANG_RULES}
+TASK: Write a short diagnostic report (max ~280 words) in Arabic:
+1) One honest sentence about the student's current level based on the numbers (no flattery).
+2) The 3 most important weaknesses, each with the evidence (numbers or a specific game/move from the data) and WHY it happens in terms of thinking process (e.g. Heisman's "hope chess", not checking opponent threats).
+3) What to train first this week and how (map to: think-aloud training, blunder check, calculation drills, endgame technique, conversion practice, time management).
+Plain text with numbered points, no markdown headings.
+
+ENGINE DATA (Stockfish; heuristic cause labels):
+${JSON.stringify(data)}`;
+  try {
+    const { text } = await SAMPLE(prompt, { onText: ({ text }) => { out.innerHTML = `<span class="who">قراءة المدرّب</span><div class="prewrap">${esc(text)}</div>`; } });
+    S.profile.report = text; S.profile.reportAt = now(); await Store.set("coach/profile", S.profile);
+  } catch (e) { out.innerHTML = `<span class="who">قراءة المدرّب</span><p class="err">${esc(claudeMsg(e))}</p>`; }
+  btn.disabled = false;
+}
+
+/* ----- training: think-aloud with Socratic follow-up ----- */
+function buildSession(n = 6) {
+  const due = dueCards().sort((a, b) => (a.source === "game" ? 0 : 1) - (b.source === "game" ? 0 : 1) || (b.sev === "blunder") - (a.sev === "blunder") || a.due - b.due);
+  const tried = new Set(S.attempts.map((a) => a.itemId));
+  const fresh = LIB.filter((p) => !tried.has(p.id) && !S.cards["lib-" + p.id]).map((p) => ({ ...p, source: "lib" }));
+  const dueItems = due.slice(0, n).map((c) => { if (c.source !== "lib") return { ...c, itemId: c.id }; const p = LIB.find((x) => "lib-" + x.id === c.id); return p ? { ...p, source: "lib", itemId: p.id } : null; }).filter(Boolean);
+  const pool = [...dueItems, ...fresh.map((x) => ({ ...x, itemId: x.id }))];
+  // interleave: never the same skill twice in a row when avoidable
+  const out = []; const left = pool.slice();
+  while (out.length < n && left.length) {
+    const lastSkill = out.length ? out[out.length - 1].skill : null;
+    let i = left.findIndex((x) => x.skill !== lastSkill); if (i < 0) i = 0;
+    out.push(left.splice(i, 1)[0]);
+  }
+  return out;
+}
+function renderTrain() {
+  const el = $("#v-train");
+  if (!T || T.i >= T.queue.length) {
+    const doneMsg = T ? `<p class="lead">انتهت الجلسة: ${T.results.filter((r) => r.correct).length} من ${T.results.length} صحيحة من المحاولة الأولى أو بعد سؤال. الأخطاء أُضيفت للمراجعة.</p>` : "";
+    const due = dueCards().length;
+    el.innerHTML = `<div class="panel"><h2>التفكير بصوت عالٍ</h2>${doneMsg}
+      <p class="lead">ستأتيك مواقف بلا عنوان: قد تكون تكتيكًا أو نهاية أو خطة أو دفاعًا، وعليك أن تحدد نوعها بنفسك. اكتب تفكيرك كاملًا، ثم اختر نقلتك ودرجة ثقتك. المدرّب ينقد <b>طريقة تفكيرك</b>، وإن أخطأت يسألك قبل أن يعطيك الحل.</p>
+      <div class="row"><button class="btn" id="t-start">ابدأ جلسة من 6 مواقف</button><span class="note">مراجعات مستحقة: ${due}، مواقف جديدة في المكتبة: ${LIB.filter((p) => !S.attempts.some((a) => a.itemId === p.id)).length}</span></div>
+      ${!S.profile?.stats ? `<p class="note">لم تُشخَّص مبارياتك بعد، لذلك الجلسة من المكتبة فقط. <a href="#" data-go="diag">ابدأ التشخيص</a> لتصبح أخطاؤك أنت مادة التدريب.</p>` : ""}</div>`;
+    $("#t-start").onclick = () => { const q = buildSession(6); if (!q.length) { $("#t-start").insertAdjacentHTML("afterend", `<span class="note">لا توجد مواقف متاحة الآن. حلّل مباريات جديدة.</span>`); return; } T = { queue: q, i: 0, results: [], requeued: new Set() }; startItem(); };
+    for (const a of $$("[data-go]", el)) a.onclick = (e) => { e.preventDefault(); show(a.dataset.go); };
+    return;
+  }
+  drawItem();
+}
+function startItem() { const it = T.queue[T.i]; T.cur = { it, tries: [], t0: now(), conf: null, eng: null, done: false, pick: null }; renderTrain(); }
+
+function drawItem() {
+  const el = $("#v-train"); const C = T.cur; const it = C.it; const stm = sideOf(it.fen);
+  const src = it.source === "game" ? `موقف من مباراتك ضد ${esc(it.opp || "")}${it.date ? " (" + esc(it.date) + ")" : ""}` : "موقف من المكتبة";
+  const tries = C.tries;
+  el.innerHTML = `
+  <div class="row" style="justify-content:space-between"><span class="note">الموقف ${T.i + 1} من ${T.queue.length} · ${src}</span><button class="btn quiet" id="t-quit">إنهاء الجلسة</button></div>
+  <div class="train">
+    <div class="boardwrap">
+      <div class="boardcap"><span class="turn"><i style="background:${stm === "w" ? "#fff" : "#111"}"></i>الدور ${stm === "w" ? "للأبيض" : "للأسود"}</span>${it.lastSan ? `<span>آخر نقلة للخصم: ${mv(it.lastSan)}</span>` : ""}</div>
+      <div class="board" id="t-board"></div>
+      <p class="note">اضغط على قطعة ثم على المربع لاختيار نقلتك النهائية. القطع لا تتحرك على الرقعة، الحساب في رأسك.</p>
+    </div>
+    <div class="panel" id="t-sheet">
+      ${tries.length === 0 ? sheetForm() : reasoningSummary(tries[0].reasoning, C.conf)}
+      <div id="t-dialog">${tries.map(renderTry).join("")}</div>
+      <div id="t-next"></div>
+    </div>
+  </div>`;
+  C.board = Board($("#t-board"), { fen: it.fen, orient: stm, last: it.lastMove, onPick: (p) => { C.pick = p; const f = $("#t-move") || $("#t-move2"); if (f) f.value = p.san; } });
+  $("#t-quit").onclick = () => { T.i = T.queue.length; renderTrain(); };
+  if (tries.length === 0) wireSheet();
+  else if (!C.done) appendRetry();
+  else drawResolution();
+}
+function reasoningSummary(r, conf) {
+  if (!r) return "";
+  const row = (k, v) => v && v.trim() ? `<div><b>${k}:</b> <span class="prewrap">${esc(v)}</span></div>` : `<div><b>${k}:</b> <span class="note">فارغ</span></div>`;
+  return `<details open><summary><b>تفكيرك المكتوب</b> <span class="note">(الثقة ${conf}/5)</span></summary><div style="display:grid;gap:4px;padding-block:8px;font-size:.92rem">
+    ${row("تهديدات الخصم", r.opp)}${row("فرصي", r.mine)}${row("المرشحات", r.cands)}${row("الحساب", r.lines)}${row("التقييم", r.evalt)}${row("فحص الخطأ", r.bc)}</div></details>`;
+}
+function sheetForm() {
+  const d = T.cur.draft || {};
+  return `<h3>ورقة التفكير</h3>
+  <label class="f">1. ماذا تغيّر؟ ماذا يهدد الخصم؟<span class="hint">كل كشاته وأسره وتهديداته الآن. إن لم يكن هناك تهديد، اكتب ذلك صراحة.</span><textarea id="t-opp" dir="auto">${esc(d.opp)}</textarea></label>
+  <label class="f">2. فرصي القسرية<span class="hint">كشاتك، أسرك، تهديداتك. ثم الفروقات: البنية، القطع السيئة، المربعات الضعيفة.</span><textarea id="t-mine" dir="auto">${esc(d.mine)}</textarea></label>
+  <label class="f">3. النقلات المرشحة<span class="hint">اكتب كل المرشحات قبل أن تحسب أي واحدة.</span><input type="text" id="t-cands" dir="auto" value="${esc(d.cands)}" placeholder="Nxe5, d4, O-O"></label>
+  <label class="f">4. الحساب<span class="hint">لكل مرشح مهم: الخط حتى موقف هادئ، وأقوى رد للخصم.</span><textarea id="t-lines" dir="auto" placeholder="1. Nxe5 Nxe5 2. d4 ...">${esc(d.lines)}</textarea></label>
+  <label class="f">5. التقييم والخطة<span class="hint">من الأفضل ولماذا؟ ما الخطة للنقلات القادمة؟</span><textarea id="t-eval" dir="auto">${esc(d.evalt)}</textarea></label>
+  <label class="f">6. نقلتي النهائية<input type="text" id="t-move" dir="ltr" class="mono" value="${esc(d.move)}" placeholder="e.g. Nf3 (or pick on the board)"></label>
+  <label class="f">7. فحص الخطأ<span class="hint">بعد نقلتي: ما أقوى كش أو أسر أو تهديد للخصم؟ هل خسرت شيئًا؟</span><textarea id="t-bc" dir="auto">${esc(d.bc)}</textarea></label>
+  <div class="f"><b>8. ثقتي في هذه النقلة</b><div class="conf" role="radiogroup">${[1, 2, 3, 4, 5].map((k) => `<label><input type="radio" name="t-conf" value="${k}"><span>${k}</span></label>`).join("")}</div><span class="note">1 = تخمين، 5 = متأكد تمامًا</span></div>
+  <div class="row"><button class="btn" id="t-submit">سلّم تفكيري</button><span class="err" id="t-err"></span></div>`;
+}
+function wireSheet() {
+  const C = T.cur;
+  for (const id of ["t-opp", "t-mine", "t-cands", "t-lines", "t-eval", "t-move", "t-bc"]) $("#" + id).oninput = saveDraft;
+  $("#t-move").oninput = () => { C.pick = null; C.board.setPick(null); saveDraft(); };
+  $("#t-submit").onclick = submitFirst;
+}
+function saveDraft() { const v = (id) => ($("#" + id) || {}).value || ""; T.cur.draft = { opp: v("t-opp"), mine: v("t-mine"), cands: v("t-cands"), lines: v("t-lines"), evalt: v("t-eval"), move: v("t-move"), bc: v("t-bc") }; }
+function resolveMove(fen, text, pick) {
+  if (pick) return pick;
+  const g = new Chess(fen); const m = g.move((text || "").trim(), { sloppy: true });
+  return m ? { from: m.from, to: m.to, san: m.san, uci: m.from + m.to + (m.promotion || "") } : null;
+}
+async function engineFor(it) {
+  if (!T.cur.eng) T.cur.eng = await Engine.analyse(it.fen, { depth: 18, movetime: 3000, multipv: 3 });
+  return T.cur.eng;
+}
+async function judge(it, move) {
+  const eng = await engineFor(it); const stm = sideOf(it.fen); const s = stm === "w" ? 1 : -1;
+  const g = new Chess(it.fen); uciMove(g, move.uci); const after = g.fen();
+  const ea = await Engine.analyse(after, { depth: 16, movetime: 2000 });
+  const bestWp = wp(s * eng.cp), playedWp = wp(s * ea.cp);
+  const loss = Math.max(0, bestWp - playedWp);
+  const correct = move.uci === eng.best || loss <= 5;
+  return { loss: Math.round(loss), correct, playedCp: ea.cp, refutation: ea.lines[0] ? pvToSan(after, ea.lines[0].pv, 6) : [], after };
+}
+async function submitFirst() {
+  saveDraft(); const C = T.cur; const it = C.it; const d = C.draft;
+  const conf = +(($('input[name="t-conf"]:checked') || {}).value || 0);
+  const err = $("#t-err");
+  if (!d.opp.trim() || !d.cands.trim()) { err.textContent = "اكتب على الأقل تهديدات الخصم والنقلات المرشحة. التفكير المكتوب هو التمرين نفسه."; return; }
+  const move = resolveMove(it.fen, d.move, C.pick); if (!move) { err.textContent = "النقلة غير قانونية أو غير مفهومة. اخترها على الرقعة."; return; }
+  if (!conf) { err.textContent = "اختر درجة ثقتك من 1 إلى 5."; return; }
+  C.conf = conf; $("#t-submit").disabled = true; err.textContent = "";
+  err.innerHTML = `<span class="note">Stockfish يحلّل...</span>`;
+  const j = await judge(it, move);
+  C.tries.push({ move: move.san, uci: move.uci, ...j, reasoning: d, answer: null, question: null });
+  afterTry();
+}
+async function afterTry() {
+  const C = T.cur; const last = C.tries[C.tries.length - 1];
+  if (last.correct || C.tries.length >= 3) { C.done = true; C.correct = last.correct; drawItem(); return; }
+  drawItem();
+  // Socratic question
+  const box = $("#q-" + (C.tries.length - 1));
+  if (!SAMPLE) { last.question = "نقلتك تخسر حسب Stockfish. قبل أن تختار مرة أخرى: بعد نقلتك، ما أقوى كش أو أسر أو تهديد للخصم؟"; box.innerHTML = coachBox(last.question); return; }
+  box.innerHTML = coachBox("يفكّر في سؤال...");
+  try {
+    const q = await SAMPLE.json(socraticPrompt(C), { cache: false });
+    last.question = String(q.question_ar || q.question || "").trim() || "ما أقوى رد للخصم على نقلتك؟";
+  } catch (e) { last.question = "ما أقوى رد للخصم على نقلتك؟ اكتب كل كشاته وأسره بعدها. (" + claudeMsg(e) + ")"; }
+  box.innerHTML = coachBox(last.question);
+}
+const coachBox = (t) => `<div class="coach"><span class="who">سؤال المدرّب</span><div class="prewrap">${esc(t)}</div></div>`;
+function renderTry(t, k) {
+  const C = T.cur; const final = C.done && k === C.tries.length - 1;
+  return `<div style="display:grid;gap:8px;padding-block:6px;border-bottom:1px solid var(--line)">
+    <div class="row"><b>المحاولة ${k + 1}:</b> ${mv(t.move)} ${t.correct ? `<span class="sev" style="background:var(--good)">صحيحة</span>` : `<span class="sev blunder">تخسر ${t.loss}% من احتمال الفوز</span>`}</div>
+    ${t.answer ? `<div class="note">جوابك: ${esc(t.answer)}</div>` : ""}
+    ${!t.correct && !final ? `<div id="q-${k}">${t.question ? coachBox(t.question) : ""}</div>` : ""}</div>`;
+}
+function appendRetry() {
+  const C = T.cur; const it = C.it; const n = C.tries.length;
+  $("#t-next").innerHTML = `<label class="f">جوابك على السؤال<textarea id="t-ans" dir="auto"></textarea></label>
+    <label class="f">نقلتك الجديدة<input type="text" id="t-move2" dir="ltr" class="mono" placeholder="e.g. Nf3 (or pick on the board)"></label>
+    <div class="row"><button class="btn" id="t-retry">جرّب مرة أخرى</button>${n >= 2 ? `<button class="btn ghost" id="t-reveal">أظهر الحل</button>` : ""}<span class="err" id="t-err2"></span></div>`;
+  C.pick = null;
+  $("#t-move2").oninput = () => { C.pick = null; C.board.setPick(null); };
+  $("#t-retry").onclick = async () => {
+    const ans = $("#t-ans").value.trim(); const move = resolveMove(it.fen, $("#t-move2").value, C.pick);
+    if (!ans) { $("#t-err2").textContent = "أجب عن السؤال أولًا، فهو الطريق إلى الحل."; return; }
+    if (!move) { $("#t-err2").textContent = "النقلة غير قانونية أو غير مفهومة."; return; }
+    $("#t-retry").disabled = true; $("#t-err2").innerHTML = `<span class="note">Stockfish يحلّل...</span>`;
+    C.tries[C.tries.length - 1].answer = ans;
+    const j = await judge(it, move);
+    C.tries.push({ move: move.san, uci: move.uci, ...j, reasoning: null, answer: null, question: null });
+    afterTry();
+  };
+  const rv = $("#t-reveal"); if (rv) rv.onclick = () => { C.done = true; C.correct = false; C.revealed = true; drawItem(); };
+}
+function engineSummary(it, eng) {
+  return eng.lines.map((l, k) => `${k + 1}. eval ${fmtEval(l.cpWhite)} (White's view): ${numberedLine(it.fen, pvToSan(it.fen, l.pv, 8))}`).join("\n");
+}
+function socraticPrompt(C) {
+  const it = C.it; const stm = sideOf(it.fen) === "w" ? "White" : "Black";
+  const hist = C.tries.map((t, k) => `Attempt ${k + 1}: played ${t.move} (loses ${t.loss} win-probability points). Engine refutation after it: ${t.refutation.join(" ") || "n/a"}.${t.question ? " Coach asked: " + t.question : ""}${t.answer ? " Student answered: " + t.answer : ""}`).join("\n");
+  const r = C.tries[0].reasoning || {};
+  return `You are a Socratic chess coach. The student (a beginner, ${stm} to move) chose a wrong move. Do NOT give the answer.
+${LANG_RULES}
+RULES: Ask exactly ONE short guiding question in Arabic (max 35 words) that leads the student to discover WHY their move fails (usually: what the opponent plays after it, per the refutation line) or which forcing move they overlooked. Do not name the best move, its piece+square, or its target square. You may point to a region, a piece type, or a concept ("what does the knight on f3 attack after...?" is fine only if it is NOT the best move itself). Build on the previous question/answer if any; get more specific each time.
+Reply with only JSON: {"question_ar": "..."}
+
+POSITION FEN: ${it.fen}
+PIECES: ${pieceList(it.fen)}
+ENGINE DATA (Stockfish, best lines from the position; do not reveal):
+${engineSummary(it, C.eng)}
+STUDENT'S FIRST REASONING: threats=${r.opp || ""} | forcing/imbalances=${r.mine || ""} | candidates=${r.cands || ""} | lines=${r.lines || ""} | evaluation=${r.evalt || ""} | blunder-check=${r.bc || ""}
+HISTORY:
+${hist}`;
+}
+function critiquePrompt(C) {
+  const it = C.it; const stm = sideOf(it.fen) === "w" ? "White" : "Black"; const r = C.tries[0].reasoning || {};
+  const hist = C.tries.map((t, k) => `Attempt ${k + 1}: ${t.move} — ${t.correct ? "correct" : "loses " + t.loss + " win-probability points; refutation: " + (t.refutation.join(" ") || "n/a")}${t.answer ? " | student's answer to the coach's question: " + t.answer : ""}`).join("\n");
+  return `You are a demanding chess coach in the tradition of Heisman, Aagaard and Dvoretsky. Critique the student's THINKING PROCESS, not just the move. ${stm} to move.
+${LANG_RULES}
+Score each process step 0-2 (0 = missing or wrong, 1 = partial, 2 = solid): threats (did they find the opponent's threats / what changed), candidates (did they list the forcing moves and the engine's best move among candidates), calculation (did their lines go to a quiet position and include the opponent's best replies), evaluation (did they assess imbalances and state a plan), blunder_check (did they check the opponent's forcing replies to their chosen move).
+Then: explain the position's key idea using ONLY the engine lines, say concretely what the student missed, and give one habit for next time. Be direct and honest; no praise unless earned.
+Reply with only JSON:
+{"scores":{"threats":0,"candidates":0,"calculation":0,"evaluation":0,"blunder_check":0},"verdict_ar":"one sentence","process_ar":"3-5 sentences on the process","missed_ar":["..."],"explanation_ar":"the key idea of the position, grounded in the engine lines","pattern_en":"short English motif name","next_time_ar":"one concrete habit"}
+
+POSITION FEN: ${it.fen}
+PIECES: ${pieceList(it.fen)}
+${it.lastSan ? "OPPONENT'S LAST MOVE: " + it.lastSan + "\n" : ""}${it.source === "game" ? `This position is from the student's own game; there they played ${it.played}, the engine preferred ${it.best}. Heuristic cause labels: ${it.causes.join(", ")}.\n` : ""}ENGINE DATA (Stockfish 10, multipv 3, depth ~18):
+${engineSummary(it, C.eng)}
+STUDENT'S WRITTEN REASONING (before seeing anything):
+- threats / what changed: ${r.opp || "(empty)"}
+- own forcing moves / imbalances: ${r.mine || "(empty)"}
+- candidates: ${r.cands || "(empty)"}
+- calculation: ${r.lines || "(empty)"}
+- evaluation / plan: ${r.evalt || "(empty)"}
+- final move: ${C.tries[0].move}
+- blunder check: ${r.bc || "(empty)"}
+- confidence: ${C.conf}/5
+ATTEMPTS:
+${hist}`;
+}
+function heuristicScores(C) {
+  const r = C.tries[0].reasoning || {}; const has = (s) => (s || "").trim().length > 3 ? 1 : 0;
+  return { threats: has(r.opp), candidates: has(r.cands), calculation: has(r.lines), evaluation: has(r.evalt), blunder_check: has(r.bc) };
+}
+async function drawResolution() {
+  const C = T.cur; const it = C.it; const box = $("#t-next");
+  if (!C.eng) await engineFor(it);
+  const lines = C.eng.lines.map((l) => `<div><span class="ev">${fmtEval(l.cpWhite)}</span>${mv(numberedLine(it.fen, pvToSan(it.fen, l.pv, 8)))}</div>`).join("");
+  const lib = it.source === "lib" ? LIB.find((p) => p.id === it.id) : null;
+  box.innerHTML = `<div style="display:grid;gap:12px">
+    <h3>${C.correct ? "وجدتها" : C.revealed ? "الحل" : "الحل بعد ثلاث محاولات"}</h3>
+    <div class="lines"><span class="note">أفضل خطوط Stockfish (التقييم من جهة الأبيض):</span>${lines}</div>
+    ${it.source === "game" ? `<p class="note">في مباراتك لعبت ${mv(it.played)}، والأفضل كان ${mv(it.best || "")}.</p>` : ""}
+    ${lib ? `<div class="coach"><span class="who">ملاحظة متحقق منها بـ Stockfish · ${esc(lib.chunk)}</span><div>${esc(lib.note)}</div></div>` : ""}
+    <div id="t-crit">${C.critique ? critiqueHtml(C.critique) : `<div class="coach"><span class="who">نقد العملية</span><div>${SAMPLE ? "Claude يقرأ تفكيرك..." : "Claude غير متاح، النقد هنا من فحص بسيط لما كتبته."}</div></div>`}</div>
+    <div class="row"><button class="btn" id="t-go" ${C.saved ? "" : "disabled"}>الموقف التالي</button><span class="note" id="t-savenote"></span></div></div>`;
+  C.board.setPick(null);
+  if (!C.critique) {
+    if (SAMPLE) {
+      try { C.critique = await SAMPLE.json(critiquePrompt(C), { cache: false }); }
+      catch (e) { C.critique = { scores: heuristicScores(C), verdict_ar: claudeMsg(e), heuristic: true }; }
+    } else C.critique = { scores: heuristicScores(C), verdict_ar: "تقييم آلي بسيط: هل ملأت كل خطوة من خطوات التفكير.", heuristic: true };
+    const cb = $("#t-crit"); if (cb) cb.innerHTML = critiqueHtml(C.critique);
+  }
+  if (!C.saved) await saveResult();
+  const go = $("#t-go"); if (go) { go.disabled = false; go.onclick = () => { T.i++; if (T.i < T.queue.length) startItem(); else renderTrain(); }; }
+  const sn = $("#t-savenote"); if (sn) sn.textContent = C.correct ? "" : "هذا الموقف أُضيف للمراجعة، وسيعود في آخر الجلسة وفي الأيام القادمة.";
+}
+function critiqueHtml(c) {
+  const sc = c.scores || {};
+  return `<div class="coach"><span class="who">نقد العملية${c.heuristic ? " (بدون Claude)" : " · Claude، مقيّد بخطوط Stockfish"}</span>
+    ${c.verdict_ar ? `<b>${esc(c.verdict_ar)}</b>` : ""}
+    <div class="scores">${Object.keys(CHECK_AR).map((k) => `<div><span>${CHECK_AR[k]}</span><b>${sc[k] ?? "–"}/2</b></div>`).join("")}</div>
+    ${c.process_ar ? `<p>${esc(c.process_ar)}</p>` : ""}
+    ${Array.isArray(c.missed_ar) && c.missed_ar.length ? `<div><b>ما فاتك:</b><ul>${c.missed_ar.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
+    ${c.explanation_ar ? `<p><b>الفكرة:</b> ${esc(c.explanation_ar)}</p>` : ""}
+    ${c.next_time_ar ? `<p><b>في المرة القادمة:</b> ${esc(c.next_time_ar)}</p>` : ""}
+    ${c.pattern_en ? `<span class="tag mono">${esc(c.pattern_en)}</span>` : ""}</div>`;
+}
+async function saveResult() {
+  const C = T.cur; const it = C.it; const first = C.tries[0];
+  const solvedAt = C.correct ? C.tries.length : 0;
+  const q = solvedAt === 1 ? (C.conf >= 4 ? 5 : 4) : solvedAt === 2 ? 3 : solvedAt === 3 ? 2 : 1;
+  const sc = C.critique?.scores || {}; const vals = Object.keys(CHECK_AR).map((k) => Math.max(0, Math.min(2, +sc[k] || 0)));
+  const attempt = {
+    id: "a" + now().toString(36) + Math.random().toString(36).slice(2, 6), t: now(), mode: "thinkaloud", itemId: it.itemId || it.id, source: it.source, skill: it.skill, fen: it.fen,
+    confidence: C.conf, firstCorrect: !!first.correct, solvedAt, revealed: !!C.revealed, tries: C.tries.map((t) => ({ move: t.move, loss: t.loss, correct: t.correct, question: t.question, answer: t.answer })),
+    reasoning: first.reasoning, bestSan: C.eng.lines[0] ? pvToSan(it.fen, C.eng.lines[0].pv, 1)[0] : null, engineCp: C.eng.cp,
+    scores: Object.fromEntries(Object.keys(CHECK_AR).map((k, i) => [k, vals[i]])), process: Math.round(100 * vals.reduce((a, b) => a + b, 0) / 10), heuristic: !!C.critique?.heuristic,
+    critique: C.critique && !C.critique.heuristic ? C.critique : null, seconds: Math.round((now() - C.t0) / 1000),
+  };
+  S.attempts.push(attempt);
+  try { await Store.set("attempts/" + attempt.id, attempt); } catch (e) { console.error(e); }
+  const cid = it.source === "lib" ? "lib-" + it.id : it.id;
+  let card = S.cards[cid];
+  if (!card && q < 4) card = { id: cid, source: it.source, fen: it.fen, skill: it.skill, lastMove: it.lastMove || null, lastSan: it.lastSan || null, created: now() };
+  if (card) { sm2(card, q); S.cards[cid] = card; try { await Store.set("cards/" + cid, card); } catch (e) { console.error(e); } }
+  T.results.push({ correct: !!C.correct });
+  if (q < 3 && !T.requeued.has(cid)) { T.requeued.add(cid); T.queue.push({ ...it }); }
+  C.saved = true;
+}
+
+/* ----- progress dashboard ----- */
+function barChart(rows, unit = "") {
+  if (!rows.length) return `<p class="empty">لا توجد بيانات بعد.</p>`;
+  const W = 640, rowH = 28, labelW = 230, gutter = 84, H = rows.length * rowH + 10; const max = Math.max(...rows.map((r) => r.value), 1);
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;min-width:420px;direction:ltr" role="img" aria-label="bar chart">
+    ${rows.map((r, i) => { const y = i * rowH + 4; const w = (W - labelW - gutter) * r.value / max;
+      return `<text x="${W - 4}" y="${y + 16}" text-anchor="end" style="font-family:var(--f-body);font-size:12px;fill:var(--ink)">${esc(r.label)}</text>
+      <rect class="bar" x="${W - labelW - w}" y="${y + 4}" width="${Math.max(1, w)}" height="16" rx="3"></rect>
+      <text x="${W - labelW - w - 6}" y="${y + 16}" text-anchor="end">${r.value}${unit}${r.n != null ? " · " + r.n : ""}</text>`; }).join("")}
+  </svg>`;
+}
+function lineChart(pts, { yMin, yMax, fmt = (v) => v, ref = null, w = 640, h = 200 } = {}) {
+  if (pts.length < 2) return `<p class="empty">تحتاج نقطتين على الأقل لرسم الاتجاه.</p>`;
+  const pad = { l: 46, r: 14, t: 12, b: 26 };
+  const lo = yMin ?? Math.min(...pts.map((p) => p.y)), hi = yMax ?? Math.max(...pts.map((p) => p.y)); const span = hi - lo || 1;
+  const X = (i) => pad.l + (w - pad.l - pad.r) * i / (pts.length - 1), Y = (v) => pad.t + (h - pad.t - pad.b) * (1 - (v - lo) / span);
+  const ticks = [lo, lo + span / 2, hi];
+  const d = pts.map((p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(p.y).toFixed(1)}`).join("");
+  const area = d + `L${X(pts.length - 1).toFixed(1)},${Y(lo)}L${X(0)},${Y(lo)}Z`;
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px;min-width:420px;direction:ltr" role="img">
+    ${ticks.map((t) => `<line class="ax" x1="${pad.l}" x2="${w - pad.r}" y1="${Y(t)}" y2="${Y(t)}"></line><text x="${pad.l - 6}" y="${Y(t) + 4}" text-anchor="end">${fmt(Math.round(t))}</text>`).join("")}
+    ${ref != null ? `<line class="ref" x1="${pad.l}" x2="${w - pad.r}" y1="${Y(ref)}" y2="${Y(ref)}"></line>` : ""}
+    <path class="area" d="${area}" opacity=".6"></path><path class="ln" d="${d}"></path>
+    <circle class="pt" cx="${X(pts.length - 1)}" cy="${Y(pts[pts.length - 1].y)}" r="4"></circle>
+    <text x="${pad.l}" y="${h - 6}">${esc(pts[0].label || "")}</text><text x="${w - pad.r}" y="${h - 6}" text-anchor="end">${esc(pts[pts.length - 1].label || "")}</text>
+  </svg>`;
+}
+function calibrationChart(att) {
+  const bins = [1, 2, 3, 4, 5].map((c) => { const xs = att.filter((a) => a.confidence === c); return { c, n: xs.length, acc: xs.length ? 100 * xs.filter((a) => a.firstCorrect).length / xs.length : null }; });
+  const w = 420, h = 260, pad = { l: 44, r: 14, t: 12, b: 34 };
+  const X = (c) => pad.l + (w - pad.l - pad.r) * (c - 1) / 4, Y = (v) => pad.t + (h - pad.t - pad.b) * (1 - v / 100);
+  const expected = (c) => (c - 0.5) * 20;
+  const pts = bins.filter((b) => b.acc != null);
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px;direction:ltr" role="img" aria-label="calibration curve">
+    ${[0, 50, 100].map((t) => `<line class="ax" x1="${pad.l}" x2="${w - pad.r}" y1="${Y(t)}" y2="${Y(t)}"></line><text x="${pad.l - 6}" y="${Y(t) + 4}" text-anchor="end">${t}%</text>`).join("")}
+    ${[1, 2, 3, 4, 5].map((c) => `<text x="${X(c)}" y="${h - 14}" text-anchor="middle">${c}</text>`).join("")}
+    <text x="${(w + pad.l) / 2}" y="${h - 1}" text-anchor="middle">confidence</text>
+    <path class="ref" d="M${X(1)},${Y(expected(1))}L${X(5)},${Y(expected(5))}"></path>
+    ${pts.length > 1 ? `<path class="ln" d="${pts.map((b, i) => `${i ? "L" : "M"}${X(b.c)},${Y(b.acc)}`).join("")}"></path>` : ""}
+    ${pts.map((b) => `<circle class="pt" cx="${X(b.c)}" cy="${Y(b.acc)}" r="${3 + Math.min(6, Math.sqrt(b.n) * 1.5)}"></circle><text x="${X(b.c) + 8}" y="${Y(b.acc) - 6}">n=${b.n}</text>`).join("")}
+  </svg>`;
+}
+function renderProgress() {
+  const el = $("#v-progress"); const A = S.attempts.slice().sort((a, b) => a.t - b.t); const P = S.profile?.stats;
+  const cards = Object.values(S.cards); const due = dueCards();
+  const firstAcc = A.length ? 100 * A.filter((a) => a.firstCorrect).length / A.length : null;
+  const meanConf = A.length ? A.reduce((s, a) => s + (a.confidence - 0.5) * 20, 0) / A.length : null;
+  const calGap = firstAcc != null ? Math.round(meanConf - firstAcc) : null;
+  const bySkill = Object.keys(SKILL_AR).map((k) => { const xs = A.filter((a) => a.skill === k); return { label: SKILL_AR[k], value: xs.length ? Math.round(100 * xs.filter((a) => a.firstCorrect).length / xs.length) : 0, n: xs.length }; }).filter((r) => r.n);
+  const scored = A.filter((a) => !a.heuristic);
+  const byStep = Object.keys(CHECK_AR).map((k) => ({ label: CHECK_AR[k], value: scored.length ? Math.round(50 * scored.reduce((s, a) => s + (a.scores?.[k] || 0), 0) / scored.length) : 0, n: scored.length })).filter(() => scored.length);
+  const roll = scored.map((a, i) => { const win = scored.slice(Math.max(0, i - 4), i + 1); return { y: win.reduce((s, x) => s + x.process, 0) / win.length, label: new Date(a.t).toISOString().slice(5, 10) }; });
+  const ratings = (P?.ratings || []).map((r) => ({ y: r.r, label: r.d }));
+  el.innerHTML = `
+  <div class="kpis">${kpi(A.length, "مواقف تدرّبت عليها")}${kpi(pct(firstAcc), "صحيحة من المحاولة الأولى")}${kpi(calGap == null ? "–" : (calGap > 0 ? "+" : "") + calGap, "فجوة الثقة (نقاط، موجب = ثقة زائدة)")}${kpi(due.length + " / " + cards.length, "مراجعات مستحقة / كل البطاقات")}</div>
+  <div class="panel"><h2>التصنيف عبر الزمن</h2><p class="note">من رؤوس ملفات PGN المستوردة (كل أنواع الوقت معًا).</p><div class="chart">${lineChart(ratings, {})}</div></div>
+  <div class="cols">
+    <div class="panel"><h2>منحنى المعايرة</h2><p class="note">الخط المتقطع = معايرة مثالية (ثقة 1 ≈ 10% صحيح، ثقة 5 ≈ 90%). النقطة تحت الخط تعني ثقة زائدة.</p><div class="chart">${A.length ? calibrationChart(A) : `<p class="empty">يظهر بعد أول محاولة.</p>`}</div>
+      ${calGap != null && A.length >= 8 ? `<p>${calGap > 10 ? "أنت <b>مفرط الثقة</b>: ثقتك المتوسطة أعلى من دقتك الفعلية بـ " + calGap + " نقطة." : calGap < -10 ? "أنت <b>أقل ثقة</b> مما تستحق بـ " + (-calGap) + " نقطة." : "معايرتك قريبة من الواقع."}</p>` : A.length ? `<p class="note">الحكم على المعايرة يحتاج 8 محاولات على الأقل.</p>` : ""}</div>
+    <div class="panel"><h2>الدقة حسب المهارة</h2><p class="note">صحيحة من المحاولة الأولى.</p><div class="chart">${barChart(bySkill, "%")}</div></div>
+  </div>
+  <div class="panel"><h2>جودة عملية التفكير</h2><p class="note">متوسط تقييم Claude لكل خطوة (0 إلى 100%)، ثم المتوسط المتحرك لآخر 5 مواقف.</p>
+    <div class="chart">${barChart(byStep, "%")}</div><div class="chart">${lineChart(roll, { yMin: 0, yMax: 100, fmt: (v) => v + "%" })}</div></div>
+  <div class="cols">
+    <div class="panel"><h2>عمق الحساب</h2><p class="empty">يُقاس في وضع الحساب (2) عندما يُبنى: إلى أي عمق كانت خطوطك صحيحة مقارنة بشجرة المحرك.</p></div>
+    <div class="panel"><h2>الفرق بين الدقة بوقت وبدون وقت</h2><p class="empty">يُقاس في وضع الضغط الزمني (12) عندما يُبنى.</p></div>
+  </div>
+  <div class="panel"><h2>جدول المراجعة</h2>${cards.length ? `<div class="tbl"><table><thead><tr><th>المصدر</th><th>المهارة</th><th>تكرارات ناجحة</th><th>الفاصل</th><th>الموعد</th></tr></thead><tbody>
+    ${cards.sort((a, b) => a.due - b.due).slice(0, 20).map((c) => `<tr><td>${c.source === "game" ? "مباراتك ضد " + esc(c.opp || "") : "المكتبة"}</td><td>${SKILL_AR[c.skill] || ""}</td><td class="num">${c.reps || 0}</td><td class="num">${c.interval || 0}d</td><td class="num">${c.due <= now() ? "الآن" : new Date(c.due).toISOString().slice(0, 10)}</td></tr>`).join("")}
+  </tbody></table></div>` : `<p class="empty">لا توجد بطاقات بعد. كل خطأ في مبارياتك أو في التدريب يصبح بطاقة.</p>`}</div>`;
+}
+
+/* ---------- boot ---------- */
+async function boot() {
+  $("#brandimg").src = PIECES.wn;
+  for (const b of $$("#nav button")) b.onclick = () => show(b.dataset.view);
+  let first = "today"; try { first = localStorage.getItem("cc:view") || "today"; } catch {}
+  show(first);
+  const stS = $("#st-store"), stE = $("#st-engine"), stC = $("#st-claude");
+  // engine
+  Engine.start().then(() => { stE.textContent = "Stockfish 10: جاهز"; stE.className = "chip ok"; })
+    .catch((e) => { console.error(e); stE.textContent = "Stockfish: تعذّر التشغيل"; stE.className = "chip bad"; });
+  // storage
+  await Store.init();
+  stS.textContent = { db: "التخزين: قاعدة بيانات الصفحة (يقرؤها Claude)", local: "التخزين: هذا المتصفح فقط", memory: "التخزين: مؤقت، يضيع عند الإغلاق" }[Store.kind];
+  stS.className = "chip " + (Store.kind === "db" ? "ok" : "warn");
+  try {
+    S.profile = await Store.get("coach/profile");
+    for (const g of await Store.list("games")) S.games[g.id] = g;
+    for (const c of await Store.list("cards")) S.cards[c.id] = c;
+    S.attempts = await Store.list("attempts");
+  } catch (e) { console.error(e); stS.textContent = "التخزين: تعذّرت القراءة"; stS.className = "chip bad"; }
+  show(S.view);
+  // Claude
+  try { SAMPLE = window.claude ? await window.claude.use("sample") : null; } catch { SAMPLE = null; }
+  stC.textContent = SAMPLE ? "Claude: متصل (يطلب إذنك عند أول استخدام)" : "Claude: غير متاح هنا، التغذية من Stockfish فقط";
+  stC.className = "chip " + (SAMPLE ? "ok" : "warn");
+  if (S.view === "diag") renderDiag();
+}
+if (typeof Chess === "undefined") {
+  const s = document.createElement("script"); s.src = "https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"; s.onload = boot; document.head.appendChild(s);
+} else boot();
+</script>
