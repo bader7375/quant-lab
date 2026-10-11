@@ -1,9 +1,9 @@
 <title>Gradient</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Amiri+Quran&family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap">
 <style>
-/* Layout: a survey map of one life. Terrain (contours) on top, today's brief as a folio beneath, instruments in tabs. */
+/* Layout: a survey map of one life on top; beneath it, seven morning stations read like a field notebook; the Lab holds the instruments. */
 :root{
   --ground:#0c1517; --surface:#111d20; --raise:#172629; --rule:#24373b;
   --ink:#e3ece8; --muted:#8ba29e; --faint:#5a706b;
@@ -15,6 +15,8 @@
   --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
   --f-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --f-quran:"Amiri Quran","Amiri","Noto Naskh Arabic","Geeza Pro","Traditional Arabic",serif;
+  --f-arabic:"Noto Naskh Arabic","Amiri","Geeza Pro","Segoe UI",sans-serif;
   color-scheme:dark;
 }
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
@@ -41,12 +43,12 @@
 html,body{background:var(--ground);color:var(--ink)}
 body{font:15px/1.55 var(--f-body);padding-inline:clamp(16px,3vw,32px);padding-block:18px 64px}
 .wrap{max-width:1180px;margin-inline:auto;display:grid;gap:28px}
-h1,h2,h3{text-wrap:balance;margin:0}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
 p{margin:0}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--ember);outline-offset:2px}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-.label{font:500 11px/1.2 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.label{font:500 11px/1.25 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .muted{color:var(--muted)}
 .faint{color:var(--faint)}
 a{color:var(--glass)}
@@ -63,6 +65,11 @@ header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:spac
 .alt .ticks i{display:block;width:5px;background:var(--rule);border-radius:1px}
 .alt .ticks i.on{background:var(--glass)}
 .alt .ticks i.today{outline:1px solid var(--ember);outline-offset:1px}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;gap:2px;background:var(--surface)}
+.seg button{border:0;background:none;border-radius:999px;padding:6px 12px;cursor:pointer;color:var(--muted);font-weight:500;display:grid;line-height:1.15;text-align:center}
+.seg button small{font:10.5px var(--f-mono);color:var(--faint)}
+.seg button[aria-pressed="true"]{background:var(--raise);color:var(--ink)}
+.seg button[aria-pressed="true"] small{color:var(--ember)}
 .btn{border:1px solid var(--rule);background:var(--surface);border-radius:6px;padding:7px 12px;cursor:pointer;transition:border-color .15s,background .15s}
 .btn:hover{border-color:var(--muted)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
@@ -80,37 +87,118 @@ header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:spac
 .banner{border:1px dashed var(--warn);color:var(--warn);border-radius:6px;padding:8px 12px;font-size:13px}
 
 /* hero */
-.hero{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:28px;align-items:stretch}
+.hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:28px;align-items:stretch}
 @media (max-width:860px){.hero{grid-template-columns:minmax(0,1fr)}}
-.map{position:relative;border:1px solid var(--rule);border-radius:4px;background:var(--surface);min-height:340px;aspect-ratio:1.55/1;max-width:100%;overflow:hidden}
+.map{position:relative;border:1px solid var(--rule);border-radius:4px;background:var(--surface);min-height:320px;aspect-ratio:1.55/1;max-width:100%;overflow:hidden}
 @media (max-width:560px){.map{aspect-ratio:1/1.05}.map .legend{display:none}}
 .map canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .map .legend{position:absolute;left:12px;bottom:10px;right:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:10.5px/1.3 var(--f-mono);color:var(--faint);pointer-events:none}
 .map .sheet{position:absolute;left:12px;top:10px;font:10.5px/1.3 var(--f-mono);color:var(--faint);letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
-.today{display:flex;flex-direction:column;gap:16px;min-width:0}
-.today .headline{font:italic 500 clamp(24px,2.6vw,31px)/1.2 var(--f-display)}
-.move{border-top:1px solid var(--rule);padding-top:14px;display:grid;gap:8px}
-.move h3{font:600 18px/1.3 var(--f-body)}
+.today{display:flex;flex-direction:column;gap:14px;min-width:0}
+.today .headline{font:italic 500 clamp(22px,2.4vw,29px)/1.22 var(--f-display)}
+.itinerary{display:grid;border-top:1px solid var(--rule)}
+.itinerary a{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 2px;border-bottom:1px solid var(--rule);color:var(--ink);text-decoration:none}
+.itinerary a:hover{background:var(--raise)}
+.itinerary .dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--c);background:transparent}
+.itinerary .dot.done{background:var(--c)}
+.itinerary .dot.part{background:linear-gradient(90deg,var(--c) 50%,transparent 50%)}
+.itinerary .nm{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;min-width:0}
+.itinerary .nm small{color:var(--faint);font-size:12.5px}
 .chip{display:inline-flex;align-items:center;gap:6px;font:500 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 8px 4px 6px;border-radius:999px;border:1px solid var(--rule);color:var(--muted);white-space:nowrap}
 .chip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c,var(--muted))}
+.tag{font:500 10.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:4px;background:var(--raise);color:var(--muted);white-space:nowrap}
+.tag.high,.tag.strong{color:var(--good)}.tag.moderate{color:var(--warn)}.tag.low,.tag.weak,.tag.anecdotal{color:var(--bad)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.spread{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .empty{border:1px dashed var(--rule);border-radius:6px;padding:16px;color:var(--muted);display:grid;gap:10px}
+.callout{border:1px solid var(--ember);border-radius:8px;padding:14px 16px;display:grid;gap:8px}
 
-/* folio */
-.folio{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--rule)}
-@media (max-width:760px){.folio{grid-template-columns:minmax(0,1fr)}}
-.leaf{padding:20px 22px 22px 0;border-bottom:1px solid var(--rule);display:grid;gap:10px;align-content:start;min-width:0}
-.folio .leaf:nth-child(2n){padding-left:22px;padding-right:0;border-left:1px solid var(--rule)}
-@media (max-width:760px){.folio .leaf:nth-child(2n){padding-left:0;border-left:0}.leaf{padding-right:0}}
-.leaf h3{font:600 21px/1.25 var(--f-display)}
-.leaf .body{white-space:pre-wrap;max-width:68ch}
-.leaf .kicker{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+/* stations */
+.stations{display:grid;gap:0}
+.station{border-top:1px solid var(--rule);padding-block:26px 30px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:28px;scroll-margin-top:16px}
+@media (max-width:820px){.station{grid-template-columns:minmax(0,1fr);gap:16px}}
+.station > header{display:grid;gap:8px;align-content:start}
+@media (min-width:821px){.station > header{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);align-self:start}}
+.station > header .num{font:500 11px/1 var(--f-mono);color:var(--faint);letter-spacing:.12em}
+.station > header h2{font:italic 600 32px/1.05 var(--f-display);color:var(--c)}
+.station > header .sub{color:var(--muted);font-size:13.5px}
+.station .body{display:grid;gap:22px;min-width:0}
+.block{display:grid;gap:10px;min-width:0}
+.block + .block{border-top:1px dashed var(--rule);padding-top:20px}
+.block h3{font:600 21px/1.25 var(--f-display)}
+.block h4{font:600 15px/1.3 var(--f-body);margin-top:6px}
+.prose{display:grid;gap:10px;max-width:70ch}
+.prose ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.lede{font-size:16.5px;line-height:1.5}
 blockquote{margin:0;padding-left:12px;border-left:2px solid var(--ember);font-style:italic}
+.specter{font:italic 500 22px/1.3 var(--f-display);color:var(--ink);max-width:40ch}
+.kv{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 14px;font-size:14px}
+@media (max-width:520px){.kv{grid-template-columns:minmax(0,1fr)}}
+.kv dt{color:var(--muted);font:500 11px/1.6 var(--f-mono);letter-spacing:.1em;text-transform:uppercase}
+.kv dd{margin:0}
+.more{background:none;border:0;color:var(--glass);cursor:pointer;padding:0;font-size:13.5px;text-align:left}
 textarea,input[type=text],input[type=number],input[type=date],select{background:var(--ground);border:1px solid var(--rule);border-radius:6px;padding:8px 10px;width:100%}
-textarea{min-height:84px;resize:vertical}
+textarea{min-height:96px;resize:vertical}
 .out{white-space:pre-wrap;background:var(--raise);border-radius:6px;padding:12px 14px;font-size:14px}
+.ideas{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.idea{border-left:2px solid var(--career);padding-left:12px;display:grid;gap:4px}
 
-/* instruments */
+/* mcq */
+.mcqs{display:grid;gap:18px}
+.mcq{display:grid;gap:8px}
+.mcq .q{font-weight:500;max-width:72ch}
+.opts{display:grid;gap:6px}
+.opt{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;text-align:left;border:1px solid var(--rule);background:var(--surface);border-radius:6px;padding:8px 10px;cursor:pointer;align-items:start}
+.opt:hover:not(:disabled){border-color:var(--muted)}
+.opt:disabled{cursor:default}
+.opt .l{font:500 12px/1.6 var(--f-mono);color:var(--muted)}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--surface))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--surface))}
+.expl{font-size:14px;color:var(--muted);border-left:2px solid var(--rule);padding-left:10px;max-width:72ch}
+.score{font:600 13px var(--f-mono)}
+
+/* spirit */
+.rtl{direction:rtl;text-align:right}
+.rtl .body,.rtl .block{text-align:right}
+.ayah{font:400 clamp(24px,3.2vw,32px)/2 var(--f-quran);color:var(--ink);text-wrap:pretty}
+.ayah .orn{color:var(--spirit);font-family:var(--f-quran)}
+.ar{font:400 17.5px/1.95 var(--f-arabic)}
+.ar-label{font:600 13px/1.4 var(--f-arabic);color:var(--spirit)}
+.adhkar{display:grid;gap:12px}
+.dhikr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;border:1px solid var(--rule);border-radius:10px;padding:12px 14px;background:var(--surface)}
+.dhikr.done{border-color:color-mix(in srgb,var(--spirit) 60%,var(--rule));background:color-mix(in srgb,var(--spirit) 8%,var(--surface))}
+.dhikr .txt{font:400 19px/1.95 var(--f-arabic)}
+.dhikr .txt.q{font-family:var(--f-quran);font-size:20px}
+.dhikr .meta{font:13px/1.6 var(--f-arabic);color:var(--muted)}
+.counter{width:76px;height:76px;border-radius:50%;border:0;background:none;cursor:pointer;position:relative;display:grid;place-items:center;touch-action:manipulation}
+.counter svg{position:absolute;inset:0;width:100%;height:100%}
+.counter b{font:600 17px/1 var(--f-mono);position:relative}
+.counter small{display:block;font:11px var(--f-mono);color:var(--faint);position:relative}
+.counter:active{transform:scale(.96)}
+.tasbih{display:grid;justify-items:center;gap:12px;padding:18px;border:1px solid var(--rule);border-radius:12px;background:var(--surface)}
+.tasbih .big{width:min(220px,60vw);height:min(220px,60vw)}
+.tasbih .big b{font-size:44px}
+.tasbih .phr{font:400 26px/1.6 var(--f-arabic)}
+
+/* games */
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.game{border:1px solid var(--rule);border-radius:8px;padding:12px;display:grid;gap:6px;background:var(--surface);text-align:left;cursor:pointer;align-content:start}
+.game:hover{border-color:var(--health)}
+.game .gname{font-weight:600}
+.game svg{width:100%;height:34px;display:block}
+.overlay{position:fixed;inset:0;background:color-mix(in srgb,var(--ground) 92%,transparent);z-index:20;overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)}
+.overlay .inner{max-width:760px;margin-inline:auto;display:grid;gap:14px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:18px}
+.timer{font:600 20px var(--f-mono);color:var(--ember)}
+
+/* exam */
+.exam{border:1px solid var(--career);border-radius:12px;padding:22px;display:grid;gap:16px;background:var(--surface)}
+.exam h2{font:italic 600 30px/1.1 var(--f-display)}
+.progress{height:6px;background:var(--raise);border-radius:3px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--ember)}
+
+/* lab */
+.lab-head{display:grid;gap:6px}
+.lab-head h2{font:italic 600 30px/1.1 var(--f-display)}
 nav.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
 nav.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 12px;cursor:pointer;color:var(--muted);font-weight:500;margin-bottom:-1px}
 nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ember)}
@@ -137,12 +225,18 @@ nav.tabs .count{font:11px var(--f-mono);color:var(--ember);margin-left:4px}
 .stats{display:flex;gap:28px;flex-wrap:wrap}
 .chart svg{width:100%;max-width:340px;height:auto;display:block}
 .card-face{border:1px solid var(--rule);border-radius:8px;padding:22px;min-height:150px;display:grid;gap:14px;align-content:center;background:var(--surface)}
-.card-face .q{font:500 20px/1.35 var(--f-display)}
+.card-face .q{font:500 19px/1.4 var(--f-display)}
 .chat{display:grid;gap:12px;max-height:520px;overflow:auto;padding-right:4px}
 .msg{white-space:pre-wrap;max-width:76ch}
 .msg.me{justify-self:end;background:var(--raise);border-radius:10px 10px 2px 10px;padding:9px 13px}
 .msg.ai{border-left:2px solid var(--glass);padding-left:12px}
 .modes{display:flex;gap:6px;flex-wrap:wrap}
+.syl{display:grid;gap:0}
+.syl details{border-bottom:1px solid var(--rule);padding:10px 0}
+.syl summary{cursor:pointer;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.syl ol{margin:8px 0 0;padding-left:22px;display:grid;gap:3px;color:var(--muted)}
+.syl li.done{color:var(--good)}
+.syl li.cur{color:var(--ember)}
 footer{font:11.5px/1.5 var(--f-mono);color:var(--faint);border-top:1px solid var(--rule);padding-top:14px}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -154,6 +248,7 @@ footer{font:11.5px/1.5 var(--f-mono);color:var(--faint);border-top:1px solid var
       <span class="sub" id="dateLine">—</span>
     </div>
     <div class="topright">
+      <div class="seg" role="group" aria-label="Your energy this morning" id="energy"></div>
       <div class="alt" title="Altitude: days you showed up, last 21 days">
         <span class="label">Altitude · <span id="streak">0</span>d streak</span>
         <div class="ticks" id="ticks"></div>
@@ -166,27 +261,37 @@ footer{font:11.5px/1.5 var(--f-mono);color:var(--faint);border-top:1px solid var
 
   <section class="hero">
     <div class="map" id="map">
-      <canvas id="terrain" aria-label="Contour map of your seven life domains. Peak height is your latest score; the dashed line points to today's highest-leverage domain."></canvas>
+      <canvas id="terrain" aria-label="Contour map of your seven life domains. Peak height is your latest pulse; the dashed line points to today's highest-leverage domain."></canvas>
       <div class="sheet">Sheet <span id="sheetNo">—</span> · survey of one life</div>
       <div class="legend"><span>Contour interval 0.5 · index contour every 2.5</span><span>Peak height = latest pulse · ridges = coupling</span></div>
     </div>
     <div class="today" id="today"></div>
   </section>
 
-  <section class="folio" id="folio" aria-label="Today's brief"></section>
+  <section id="examSlot"></section>
+  <section class="stations" id="stations" aria-label="This morning"></section>
 
-  <section>
+  <section id="lab" style="display:grid;gap:14px">
+    <div class="lab-head"><span class="label">Instruments</span><h2>The Lab</h2></div>
     <nav class="tabs" role="tablist" id="tabs"></nav>
     <div class="panel" id="panel"></div>
   </section>
 
   <footer>
-    Gradient keeps your history in this page's private store (only you can read it) and asks Claude through your own claude.ai account.
-    Claude in this page cannot browse the web; dispatches of new research are added by a Claude Code session with web access.
-    Pharmacology lessons are education, not medical advice.
+    Gradient keeps your history in this page's private store, which only you can read, and asks Claude through your own claude.ai account.
+    New papers, articles, chapters and Quran content are prepared each morning by a scheduled Claude research session with web access.
+    Clinical content is for professional learning. Check doses and decisions against your hospital's protocols and current guidelines.
   </footer>
 </div>
 
+<div class="overlay" id="gameOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="gameTitle">
+  <div class="inner">
+    <div class="spread"><h2 id="gameTitle" style="font:italic 600 26px/1.1 var(--f-display)">Game</h2><button class="btn" id="gameClose" type="button">Close</button></div>
+    <div id="gameMount"></div>
+  </div>
+</div>
+
+<script src="games.js"></script>
 <script>
 "use strict";
 /* ---------- constants ---------- */
@@ -201,20 +306,40 @@ const DOMAINS = [
 ];
 const DK = DOMAINS.map(d=>d.k);
 const dn = k => (DOMAINS.find(d=>d.k===k)||{n:k||"General"}).n;
-const TABS = [
-  {k:"pulse", n:"Pulse"}, {k:"forecasts", n:"Forecasts"}, {k:"experiments", n:"Experiments"},
-  {k:"recall", n:"Recall"}, {k:"model", n:"Model of you"}, {k:"dispatches", n:"Dispatches"}, {k:"spar", n:"Spar"},
+const STATIONS = [
+  {k:"career", d:"career", n:"Pharmacy", sub:"A new paper, today's chapter section with its exam, and ideas."},
+  {k:"presence", d:"growth", n:"Presence", sub:"Training to command the room: with the care team, on stage, at the table, and socially."},
+  {k:"mind", d:"health", n:"Mind", sub:"Sharp, present, intelligent: games, a clinical case, a puzzle, and the science."},
+  {k:"spirit", d:"spirit", n:"الروح", sub:"آية وتفسير، فائدة، وأذكار الصباح", rtl:true},
+  {k:"finance", d:"finance", n:"Finance", sub:"Trading and personal finance, alternating."},
+  {k:"relationships", d:"relationships", n:"People", sub:"One small practice for the people who matter."},
+  {k:"joy", d:"joy", n:"Joy", sub:"Something to enjoy today."},
 ];
+const ENERGY = {
+  low:{n:"Low", min:"~12 min", lvl:1},
+  steady:{n:"Steady", min:"~25 min", lvl:2},
+  sharp:{n:"Sharp", min:"45–60 min", lvl:3},
+};
+const TABS = [
+  {k:"exams", n:"Exams"}, {k:"recall", n:"Recall"}, {k:"curriculum", n:"Curriculum"}, {k:"pulse", n:"Pulse"},
+  {k:"forecasts", n:"Forecasts"}, {k:"experiments", n:"Experiments"}, {k:"model", n:"Model of you"},
+  {k:"dispatches", n:"Dispatches"}, {k:"spar", n:"Spar"},
+];
+const HEDGES = ["just","maybe","i think","i feel like","sorry","kind of","sort of","perhaps","possibly","i guess","actually","a bit","a little","hopefully","i was wondering","if that's ok","does that make sense"];
+/* Morning adhkar (Hisn al-Muslim). Replaced by the verified list in curriculum/adhkar when present. */
+const ADHKAR_DEFAULT = [];
 
 /* ---------- state ---------- */
 const S = {
-  db:null, sample:null, demo:false, ready:false, busy:false,
-  profile:null, model:null, log:null,
-  checkins:[], briefs:[], forecasts:[], experiments:[], cards:[], dispatches:[],
-  tab:"pulse", drafts:{}, revealed:false, chat:[], sparMode:"open", chatBusy:false,
-  outputs:{},
+  db:null, sample:null, demo:false, ready:false, busy:false, preparing:false,
+  profile:null, model:null, log:null, syllabus:null, presenceProg:null, adhkarDoc:null,
+  checkins:[], forecasts:[], experiments:[], cards:[], dispatches:[],
+  mornings:[], answers:{}, exams:[], brain:[], day:null, spiritDoc:null, spiritLocal:{},
+  tab:"exams", drafts:{}, revealed:false, recallPick:null, chat:[], sparMode:"open", chatBusy:false,
+  outputs:{}, showAll:{}, examIdx:{}, caseStart:null, puzzleShown:false, freePhrase:0, freeTarget:33,
 };
-try{ S.tab = localStorage.getItem("gradient.tab") || "pulse"; }catch(e){}
+try{ S.tab = localStorage.getItem("gradient.tab") || "exams"; }catch(e){}
+const MCQS = {};
 
 /* ---------- utils ---------- */
 const $ = id => document.getElementById(id);
@@ -223,20 +348,35 @@ const pad = n => String(n).padStart(2,"0");
 const dstr = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const today = () => dstr(new Date());
 const addDays = (s,n) => { const d=new Date(s+"T12:00:00"); d.setDate(d.getDate()+n); return dstr(d); };
-const daysBetween = (a,b) => Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5);
+const dow = s => new Date(s+"T12:00:00").getDay();
 const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
 const fmt = (v,d=1) => (v==null||isNaN(v)) ? "—" : Number(v).toFixed(d);
 const cvar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-const status = (t) => { $("status").textContent = t || ""; };
+const status = t => { $("status").textContent = t || ""; };
 const chip = k => `<span class="chip" style="--c:var(--${DK.includes(k)?k:"muted"})">${esc(dn(k))}</span>`;
-
+const skey = s => String(s).replace(/[^A-Za-z0-9_-]/g,"_").slice(0,180);
+const qkey = (date, slot, id) => skey(date+"_"+slot+"_"+(id||"q"));
+const median = a => { if(!a.length) return null; const s=[...a].sort((x,y)=>x-y), m=s.length>>1; return s.length%2?s[m]:(s[m-1]+s[m])/2; };
+function seeded(str){ let h=1779033703^str.length; for(let i=0;i<str.length;i++){ h=Math.imul(h^str.charCodeAt(i),3432918353); h=h<<13|h>>>19; } return ()=>{ h=Math.imul(h^h>>>16,2246822507); h=Math.imul(h^h>>>13,3266489909); return ((h^=h>>>16)>>>0)/4294967296; }; }
+function shuffle(arr, seed){ const r=seeded(seed), a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function pearson(xs, ys){
   const n = xs.length; if(n<3) return null;
   const mx = xs.reduce((a,b)=>a+b,0)/n, my = ys.reduce((a,b)=>a+b,0)/n;
   let sxy=0,sxx=0,syy=0;
   for(let i=0;i<n;i++){ const dx=xs[i]-mx, dy=ys[i]-my; sxy+=dx*dy; sxx+=dx*dx; syy+=dy*dy; }
   return (sxx&&syy) ? sxy/Math.sqrt(sxx*syy) : null;
+}
+/* Small, safe formatter for lesson text: paragraphs, "## " headings, "- " bullets, **bold**. Input is escaped first. */
+function prose(text){
+  const blocks = String(text||"").replace(/\r/g,"").split(/\n{2,}/);
+  return blocks.map(b=>{
+    const lines = b.split("\n").filter(l=>l.trim());
+    if(!lines.length) return "";
+    const inl = s => esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+    if(lines.every(l=>/^\s*[-•]\s+/.test(l))) return "<ul>"+lines.map(l=>"<li>"+inl(l.replace(/^\s*[-•]\s+/,""))+"</li>").join("")+"</ul>";
+    return lines.map(l=> /^#{1,3}\s+/.test(l) ? "<h4>"+inl(l.replace(/^#{1,3}\s+/,""))+"</h4>" : /^\s*[-•]\s+/.test(l) ? "<ul><li>"+inl(l.replace(/^\s*[-•]\s+/,""))+"</li></ul>" : "<p>"+inl(l)+"</p>").join("");
+  }).join("");
 }
 
 /* ---------- db access ---------- */
@@ -252,26 +392,31 @@ async function write(path, data, mode="set"){
     return false;
   }
 }
-async function remove(path){ if(S.demo||!S.db) return; try{ await S.db.doc(path).delete(); }catch(e){ status("Could not delete."); } }
 async function bump(kind){
-  const t = today();
   if(S.demo) return;
-  const cur = (S.log && S.log.days) || {};
+  const t = today(), cur = (S.log && S.log.days) || {};
   if(cur[t] && cur[t][kind]) return;
   await write("me/log", {days:{[t]:{[kind]:true}}}, "update");
 }
 
 /* ---------- derived ---------- */
+const energy = () => (S.day && ENERGY[S.day.energy]) ? S.day.energy : "steady";
+const lvl = () => ENERGY[energy()].lvl;
+const shows = (station, need) => S.showAll[station] || lvl() >= need;
+const morningToday = () => S.mornings.find(m=>m.date===today()) || null;
+const lastMorning = () => S.mornings[0] || null;
 function latestScores(){
   const c = S.checkins[0];
-  if(c && c.scores) return {scores:c.scores, source:"pulse "+c.date};
-  if(S.profile && S.profile.baseline) return {scores:S.profile.baseline, source:"baseline"};
-  return {scores:Object.fromEntries(DK.map(k=>[k,5])), source:null};
+  if(c && c.scores) return {scores:c.scores};
+  if(S.profile && S.profile.baseline) return {scores:S.profile.baseline};
+  return {scores:Object.fromEntries(DK.map(k=>[k,5]))};
 }
 function couplings(){ return (S.model && Array.isArray(S.model.coupling)) ? S.model.coupling : []; }
 function leverage(){
+  const up = S.day && S.day.update && S.day.update.focus;
+  if(up && DK.includes(up.domain)) return up;
   if(S.model && S.model.leverage && DK.includes(S.model.leverage.domain)) return S.model.leverage;
-  const {scores} = latestScores(); let best=null, bv=-1;
+  const {scores} = latestScores(); let best="health", bv=-1;
   for(const k of DK){
     const deg = couplings().filter(c=>c.a===k||c.b===k).reduce((a,c)=>a+(+c.w||0),0);
     const v = (10-(+scores[k]||5))*(1+deg);
@@ -279,8 +424,6 @@ function leverage(){
   }
   return {domain:best, why:"Lowest score weighted by how strongly it pulls on other domains."};
 }
-function todaysBrief(){ return S.briefs.find(b=>b.date===today()) || null; }
-function latestBrief(){ return S.briefs[0] || null; }
 function brier(){
   const r = S.forecasts.filter(f=>f.outcome===0||f.outcome===1);
   if(!r.length) return {n:0};
@@ -294,15 +437,12 @@ function brier(){
   return {n:r.length, b, bins};
 }
 function signals(){
-  const cs = S.checkins.filter(c=>c.scores);
-  const out = [];
-  for(const driver of ["sleep","energy"]){
-    for(const k of DK){
-      const pts = cs.filter(c=>typeof c[driver]==="number" && typeof c.scores[k]==="number");
-      if(pts.length<7) continue;
-      const r = pearson(pts.map(c=>c[driver]), pts.map(c=>c.scores[k]));
-      if(r!=null && Math.abs(r)>=.3) out.push({driver,k,r,n:pts.length});
-    }
+  const cs = S.checkins.filter(c=>c.scores), out = [];
+  for(const driver of ["sleep","energy"]) for(const k of DK){
+    const pts = cs.filter(c=>typeof c[driver]==="number" && typeof c.scores[k]==="number");
+    if(pts.length<7) continue;
+    const r = pearson(pts.map(c=>c[driver]), pts.map(c=>c.scores[k]));
+    if(r!=null && Math.abs(r)>=.3) out.push({driver,k,r,n:pts.length});
   }
   return out.sort((a,b)=>Math.abs(b.r)-Math.abs(a.r)).slice(0,6);
 }
@@ -314,29 +454,77 @@ function streak(){
   return s;
 }
 function dueCards(){ const t=today(); return S.cards.filter(c=>!c.due || c.due<=t).sort((a,b)=>(a.due||"").localeCompare(b.due||"")); }
+function games(){ return Array.isArray(window.GradientGames) ? window.GradientGames : []; }
+function gameHistory(id){
+  const out=[]; for(const d of S.brain){ const rs=(d.results||{})[id]; if(Array.isArray(rs)) for(const r of rs) out.push(Object.assign({date:d.date}, r)); }
+  return out.sort((a,b)=>(a.at||"").localeCompare(b.at||""));
+}
+function gameBest(g){ const h=gameHistory(g.id); if(!h.length) return null; const lower=g.metric&&g.metric.better==="lower"; return h.reduce((b,r)=> b==null ? r : ((lower? r.score<b.score : r.score>b.score) ? r : b), null); }
+function adhkar(){ const d=S.adhkarDoc; return (d && Array.isArray(d.items) && d.items.length) ? d.items : ADHKAR_DEFAULT; }
+function spiritCounts(){ const remote = (S.spiritDoc && S.spiritDoc.counts) || {}; const out = Object.assign({}, remote); for(const [k,v] of Object.entries(S.spiritLocal)) out[k]=Math.max(v, remote[k]||0); return out; }
 
-/* ---------- terrain ---------- */
+/* MCQs of a morning, each with a stable qid */
+function morningMcqs(m){
+  if(!m) return [];
+  const out=[], add=(slot, arr, src)=> (arr||[]).forEach(q=>{ if(q && Array.isArray(q.options)) out.push({qid:qkey(m.date, slot, q.id), m:q, src}); });
+  const c=m.career||{};
+  add("paper", c.paper && c.paper.mcqs, "Paper: "+((c.paper&&c.paper.title)||""));
+  add("chapter", c.chapter && c.chapter.mcqs, "Chapter "+((c.chapter&&c.chapter.chapterTitle)||"")+" · §"+((c.chapter&&c.chapter.section)||""));
+  if(m.finance && m.finance.mcq) add("finance", [m.finance.mcq], "Finance: "+(m.finance.title||""));
+  if(m.mind && m.mind.case && Array.isArray(m.mind.case.options)) out.push({qid:qkey(m.date,"case","case"), m:{id:"case", q:m.mind.case.stem, options:m.mind.case.options, answer:m.mind.case.answer, explanation:m.mind.case.explanation, topic:"Clinical reasoning"}, src:"Clinical case"});
+  if(m.weekly && Array.isArray(m.weekly.mcqs)) add("weekly", m.weekly.mcqs, "Weekly integrative");
+  return out;
+}
+function chapterDone(m){ const c=m&&m.career&&m.career.chapter; if(!c||!Array.isArray(c.mcqs)) return false; return c.mcqs.every(q=>S.answers[qkey(m.date,"chapter",q.id)]); }
+function stationProgress(k){
+  const m = morningToday(), done = (S.day&&S.day.done)||{};
+  if(done[k]) return 1;
+  if(!m && k!=="spirit" && k!=="mind") return 0;
+  if(k==="career"){ const qs=morningMcqs(m).filter(x=>/_(paper|chapter)_/.test(x.qid)); if(!qs.length) return 0; return qs.filter(x=>S.answers[x.qid]).length/qs.length; }
+  if(k==="presence") return (S.day&&S.day.presenceFeedback) ? 1 : (S.day&&S.day.presenceAnswer ? .5 : 0);
+  if(k==="mind"){ const d=S.brain.find(b=>b.date===today()); const n=d?Object.keys(d.results||{}).length:0; const caseQ=m?S.answers[qkey(m.date,"case","case")]:null; return clamp((n + (caseQ?1:0))/ (lvl()===1?1:lvl()===2?2:4), 0, 1); }
+  if(k==="spirit"){ const list=adhkar(); if(!list.length) return 0; const c=spiritCounts(); return list.filter(x=>(c[x.id]||0)>=x.count).length/list.length; }
+  if(k==="finance") return (m&&m.finance&&m.finance.mcq&&S.answers[qkey(m.date,"finance",m.finance.mcq.id)]) ? 1 : 0;
+  return 0;
+}
+function lastFriday(){ const d=dow(today()); return addDays(today(), -((d-5+7)%7)); }
+function nextFriday(){ const d=dow(today()); return addDays(today(), (5-d+7)%7); }
+function examPool(fri){
+  const from = addDays(fri,-6), seen = new Set(), pool=[];
+  for(const m of S.mornings){ if(m.date<from || m.date>fri) continue; for(const x of morningMcqs(m)){ const sig=x.m.q.slice(0,80); if(seen.has(sig)) continue; seen.add(sig); pool.push({qid:x.qid, m:x.m, src:x.src}); } }
+  const due = S.cards.filter(c=>c.type==="mcq" && c.mcq && (!c.due||c.due<=fri)).slice(0,6);
+  for(const c of due){ const sig=c.mcq.q.slice(0,80); if(!seen.has(sig)){ seen.add(sig); pool.push({qid:"card_"+c.id, m:c.mcq, src:"Missed earlier"}); } }
+  return pool;
+}
+function openExam(){
+  const fri = lastFriday();
+  const ex = S.exams.find(e=>e.key===fri);
+  if(dow(today())===5) return {fri, ex, label:"This week's exam", live:true};
+  if(ex && !ex.done) return {fri, ex, label:"Friday's exam is still open", live:true};
+  if(!ex && examPool(fri).length && today()<=addDays(fri,2)) return {fri, ex:null, label:"You missed Friday's exam. It's still open", live:true};
+  return {fri:nextFriday(), ex:null, label:"Next exam", live:false};
+}
+
+/* ---------- terrain (unchanged design) ---------- */
 const T = { cv:null, ctx:null, W:0, H:0, dpr:1, last:0, t:0, colors:{} };
+const SEG = {1:[[3,2]],2:[[2,1]],3:[[3,1]],4:[[0,1]],5:[[0,1],[3,2]],6:[[0,2]],7:[[3,0]],8:[[0,3]],9:[[0,2]],10:[[0,3],[2,1]],11:[[0,1]],12:[[3,1]],13:[[2,1]],14:[[3,2]]};
 function readColors(){
   T.colors = {contour:cvar("--contour"), hi:cvar("--contour-hi"), ink:cvar("--ink"), muted:cvar("--muted"), ember:cvar("--ember"), surface:cvar("--surface")};
   for(const d of DOMAINS) T.colors[d.k]=cvar("--"+d.k);
 }
 function sizeTerrain(){
   const r = T.cv.getBoundingClientRect();
-  T.dpr = Math.min(2, window.devicePixelRatio||1);
-  T.W = r.width; T.H = r.height;
+  T.dpr = Math.min(2, window.devicePixelRatio||1); T.W = r.width; T.H = r.height;
   T.cv.width = Math.round(r.width*T.dpr); T.cv.height = Math.round(r.height*T.dpr);
 }
 function heightField(){
-  const {scores} = latestScores();
-  const asp = T.W/T.H;
-  const sig = .12;
+  const {scores} = latestScores(), asp = T.W/T.H, sig = .12;
   const peaks = DOMAINS.map(d=>({x:d.x*asp, y:d.y, h:clamp(+scores[d.k]||0,0,10)/10}));
   const ridges = couplings().filter(c=>(+c.w||0)>=.3 && DK.includes(c.a) && DK.includes(c.b)).map(c=>{
     const A=peaks[DK.indexOf(c.a)], B=peaks[DK.indexOf(c.b)];
     return {ax:A.x, ay:A.y, bx:B.x, by:B.y, h:Math.min(A.h,B.h)*(+c.w)*.55};
   });
-  const amp = S.busy ? .05 : .015, t=T.t;
+  const amp = (S.busy||S.preparing) ? .05 : .015, t=T.t;
   return (x,y)=>{
     const X=x*asp; let v=0;
     for(const p of peaks){ const dx=X-p.x, dy=y-p.y; v += p.h*Math.exp(-(dx*dx+dy*dy)/(2*sig*sig)); }
@@ -352,14 +540,10 @@ function heightField(){
 }
 function drawTerrain(){
   const {ctx, W, H, dpr, colors:C} = T; if(!W||!H) return;
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.clearRect(0,0,W,H);
-  const f = heightField();
-  const step = W<500 ? 7 : 8;
-  const cols = Math.ceil(W/step)+1, rows = Math.ceil(H/step)+1;
-  const v = new Float32Array(cols*rows);
+  ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
+  const f = heightField(), step = W<500 ? 7 : 8;
+  const cols = Math.ceil(W/step)+1, rows = Math.ceil(H/step)+1, v = new Float32Array(cols*rows);
   for(let j=0;j<rows;j++) for(let i=0;i<cols;i++) v[j*cols+i] = f(i*step/W, j*step/H);
-  // domain glow
   const {scores} = latestScores();
   for(const d of DOMAINS){
     const x=d.x*W, y=d.y*H, r=Math.min(W,H)*.22*(.4+(+scores[d.k]||0)/12);
@@ -367,36 +551,24 @@ function drawTerrain(){
     g.addColorStop(0, C[d.k]+"30"); g.addColorStop(1, C[d.k]+"00");
     ctx.fillStyle=g; ctx.fillRect(x-r,y-r,2*r,2*r);
   }
-  // contours via marching squares
-  const interval = .05;
   for(let li=1; li<=22; li++){
-    const L = li*interval, idx = li%5===0;
+    const L = li*.05, idx = li%5===0;
     ctx.beginPath();
     for(let j=0;j<rows-1;j++) for(let i=0;i<cols-1;i++){
       const a=v[j*cols+i], b=v[j*cols+i+1], c=v[(j+1)*cols+i+1], d=v[(j+1)*cols+i];
       const code = (a>L?8:0)|(b>L?4:0)|(c>L?2:0)|(d>L?1:0);
       if(code===0||code===15) continue;
-      const top=[i+(L-a)/(b-a), j], right=[i+1, j+(L-b)/(c-b)], bottom=[i+(L-d)/(c-d), j+1], left=[i, j+(L-a)/(d-a)];
-      const segs = SEG[code];
-      for(const [p,q] of segs){
-        const P = [top,right,bottom,left][p], Q=[top,right,bottom,left][q];
-        ctx.moveTo(P[0]*step, P[1]*step); ctx.lineTo(Q[0]*step, Q[1]*step);
-      }
+      const pts=[[i+(L-a)/(b-a), j],[i+1, j+(L-b)/(c-b)],[i+(L-d)/(c-d), j+1],[i, j+(L-a)/(d-a)]];
+      for(const [p,q] of SEG[code]){ ctx.moveTo(pts[p][0]*step, pts[p][1]*step); ctx.lineTo(pts[q][0]*step, pts[q][1]*step); }
     }
-    ctx.strokeStyle = idx ? C.hi : C.contour;
-    ctx.globalAlpha = idx ? .85 : .55 + li/60;
-    ctx.lineWidth = idx ? 1.25 : .7;
-    ctx.stroke();
+    ctx.strokeStyle = idx ? C.hi : C.contour; ctx.globalAlpha = idx ? .85 : .55 + li/60; ctx.lineWidth = idx ? 1.25 : .7; ctx.stroke();
   }
   ctx.globalAlpha = 1;
-  // collar ticks
   ctx.strokeStyle = C.muted; ctx.lineWidth=1; ctx.globalAlpha=.5; ctx.beginPath();
   for(let x=0;x<=W;x+=W/12){ ctx.moveTo(x,0); ctx.lineTo(x,5); ctx.moveTo(x,H); ctx.lineTo(x,H-5); }
   for(let y=0;y<=H;y+=H/8){ ctx.moveTo(0,y); ctx.lineTo(5,y); ctx.moveTo(W,y); ctx.lineTo(W-5,y); }
   ctx.stroke(); ctx.globalAlpha=1;
-  // gradient arrow
-  const lev = leverage(); const ld = DOMAINS.find(d=>d.k===lev.domain);
-  const ox=.5*W, oy=.53*H;
+  const lev = leverage(), ld = DOMAINS.find(d=>d.k===lev.domain), ox=.5*W, oy=.53*H;
   if(ld){
     const tx=ld.x*W, ty=ld.y*H, ang=Math.atan2(ty-oy,tx-ox), dist=Math.hypot(tx-ox,ty-oy)-(ty>oy?20:44);
     const ex=ox+Math.cos(ang)*dist, ey=oy+Math.sin(ang)*dist;
@@ -405,32 +577,26 @@ function drawTerrain(){
     ctx.fillStyle=C.ember; ctx.beginPath();
     ctx.moveTo(ex+Math.cos(ang)*10, ey+Math.sin(ang)*10);
     ctx.lineTo(ex+Math.cos(ang+2.5)*9, ey+Math.sin(ang+2.5)*9);
-    ctx.lineTo(ex+Math.cos(ang-2.5)*9, ey+Math.sin(ang-2.5)*9); ctx.closePath(); ctx.fill();
-    ctx.restore();
+    ctx.lineTo(ex+Math.cos(ang-2.5)*9, ey+Math.sin(ang-2.5)*9); ctx.closePath(); ctx.fill(); ctx.restore();
   }
-  // you marker
   ctx.fillStyle=C.surface; ctx.strokeStyle=C.ink; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.arc(ox,oy,6,0,Math.PI*2); ctx.fill(); ctx.stroke();
   ctx.beginPath(); ctx.arc(ox,oy,2,0,Math.PI*2); ctx.fillStyle=C.ink; ctx.fill();
   ctx.font = "500 10.5px "+cvar("--f-mono"); ctx.fillStyle=C.muted; ctx.textAlign="left";
   ctx.fillText("YOU ARE HERE", ox+10, oy+16);
-  // spot heights
   const small = W<520;
   for(const d of DOMAINS){
     const x=d.x*W, y=d.y*H, s=+scores[d.k];
-    ctx.fillStyle=C[d.k];
-    ctx.beginPath(); ctx.moveTo(x,y-6); ctx.lineTo(x+5,y+3); ctx.lineTo(x-5,y+3); ctx.closePath(); ctx.fill();
-    ctx.font = (d.k===lev.domain?"600 ":"500 ")+(small?"11px ":"12.5px ")+cvar("--f-body");
-    ctx.fillStyle = C.ink; ctx.textAlign="center";
+    ctx.fillStyle=C[d.k]; ctx.beginPath(); ctx.moveTo(x,y-6); ctx.lineTo(x+5,y+3); ctx.lineTo(x-5,y+3); ctx.closePath(); ctx.fill();
+    ctx.font = (d.k===lev.domain?"600 ":"500 ")+(small?"11px ":"12.5px ")+cvar("--f-body"); ctx.fillStyle = C.ink; ctx.textAlign="center";
     ctx.fillText(d.n.toUpperCase(), x, y+19);
     ctx.font = "500 "+(small?"10px ":"11px ")+cvar("--f-mono"); ctx.fillStyle=C.muted;
     ctx.fillText(isNaN(s)?"—":s.toFixed(1), x, y+32);
   }
 }
-const SEG = {1:[[3,2]],2:[[2,1]],3:[[3,1]],4:[[0,1]],5:[[0,1],[3,2]],6:[[0,2]],7:[[3,0]],8:[[0,3]],9:[[0,2]],10:[[0,3],[2,1]],11:[[0,1]],12:[[3,1]],13:[[2,1]],14:[[3,2]]};
 const reduced = matchMedia("(prefers-reduced-motion: reduce)");
 function loop(ts){
-  if(!document.hidden && (ts - T.last > (S.busy?45:90))){ T.t = ts/1000; T.last=ts; drawTerrain(); }
+  if(!document.hidden && (ts - T.last > ((S.busy||S.preparing)?45:90))){ T.t = ts/1000; T.last=ts; drawTerrain(); }
   if(!reduced.matches) requestAnimationFrame(loop);
 }
 function initTerrain(){
@@ -442,114 +608,29 @@ function initTerrain(){
   if(!reduced.matches) requestAnimationFrame(loop);
 }
 
-/* ---------- render: header + hero ---------- */
-function renderHeader(){
-  const d = new Date();
-  $("dateLine").textContent = d.toLocaleDateString(undefined,{weekday:"long", month:"long", day:"numeric"}) + " · the direction of steepest improvement";
-  $("sheetNo").textContent = d.getFullYear()+"-"+String(Math.floor((d - new Date(d.getFullYear(),0,1))/864e5)+1).padStart(3,"0");
-  const days = (S.log&&S.log.days)||{};
-  let h=""; for(let i=20;i>=0;i--){ const k=addDays(today(),-i); const n=days[k]?Object.keys(days[k]).length:0;
-    h += `<i class="${n?"on":""} ${i===0?"today":""}" style="height:${4+Math.min(n,5)*3.6}px" title="${k}: ${n} kind(s) of practice"></i>`; }
-  $("ticks").innerHTML = h; $("streak").textContent = streak();
-  const btn = $("recompute");
-  btn.disabled = S.busy || !S.ready || (!S.sample && !S.demo);
-  btn.setAttribute("aria-busy", S.busy?"true":"false");
-  $("recomputeLabel").textContent = S.busy ? "Recomputing…" : (todaysBrief() ? "Update again" : "Update");
-  btn.title = S.sample ? "Claude rereads your history, revises its model of you, and writes today's brief." : "Claude is not available in this view.";
-  $("banner").innerHTML = S.demo ? `<div class="banner">Example data. This view can't reach your private store, so nothing here is yours and nothing you do is saved. Open the page on claude.ai while signed in to use it.</div>` : "";
+/* ---------- small renderers ---------- */
+function mcqHTML(x, n){
+  MCQS[x.qid] = x;
+  const rec = S.answers[x.qid], m = x.m, L="ABCD";
+  return `<div class="mcq">
+    <p class="q">${n!=null?`<span class="mono faint">${n}.</span> `:""}${esc(m.q)}</p>
+    <div class="opts">${m.options.map((o,i)=>{
+      const cls = rec ? (i===m.answer ? "right" : (i===rec.chosen ? "wrong" : "")) : "";
+      return `<button class="opt ${cls}" data-act="answer" data-qid="${esc(x.qid)}" data-i="${i}" ${rec?"disabled":""}><span class="l">${L[i]}</span><span>${esc(o)}</span></button>`; }).join("")}</div>
+    ${rec?`<p class="expl"><b style="color:var(--${rec.correct?"good":"bad"})">${rec.correct?"Correct.":"Not quite."}</b> ${esc(m.explanation)}${rec.correct?"":" <span class=\"faint\">Added to Recall.</span>"}</p>`:""}
+  </div>`;
 }
-function renderToday(){
-  const b = todaysBrief() || latestBrief();
-  const lev = leverage();
-  let h = "";
-  if(!S.ready){ h = `<div class="empty"><span class="label">Loading</span>Reading your survey…</div>`; }
-  else if(!b){
-    const noPulse = !S.checkins.length && !(S.profile&&S.profile.baseline);
-    h = `<span class="label">Today's steepest ascent</span>
-      <p class="headline">No brief yet. Press Update and Claude will read everything you've logged, revise what it believes about you, and write today's brief.</p>
-      <div class="empty">${noPulse ? `<b>Start here:</b> set your starting position in <a href="#" data-act="tab" data-tab="pulse">Pulse</a>. Rate each of the seven domains from your Wheel of Life; the map above takes its shape from them.` : `The arrow on the map points at ${esc(dn(lev.domain))}. ${esc(lev.why||"")}`}</div>`;
-  } else {
-    const m = b.move || {};
-    const stale = b.date!==today();
-    h = `<span class="label">${stale ? "Last brief · "+esc(b.date) : "Today's steepest ascent"}</span>
-      <p class="headline">${esc(b.headline)}</p>
-      <div class="move">
-        <div class="row">${chip(m.domain)}<span class="label">${esc(m.minutes||"?")} min</span></div>
-        <h3>${esc(m.title)}</h3>
-        <p class="muted">${esc(m.why)}</p>
-        <div class="row">
-          <button class="btn ${b.moveDone?"on":""}" data-act="moveDone" ${stale?"disabled":""}>${b.moveDone?"✓ Done":"Mark done"}</button>
-        </div>
-      </div>
-      <div class="move">
-        <span class="label">Why ${esc(dn(lev.domain))}</span>
-        <p class="muted">${esc(lev.why)}</p>
-      </div>`;
-  }
-  $("today").innerHTML = h;
+function mcqBlock(list, title){
+  if(!list.length) return "";
+  const answered = list.filter(x=>S.answers[x.qid]), right = answered.filter(x=>S.answers[x.qid].correct).length;
+  return `<div class="mcqs">
+    <div class="spread"><span class="label">${esc(title)}</span>${answered.length?`<span class="score">${right}/${answered.length}${answered.length<list.length?` · ${list.length-answered.length} left`:""}</span>`:""}</div>
+    ${list.map((x,i)=>mcqHTML(x,i+1)).join("")}
+  </div>`;
 }
-function renderFolio(){
-  const b = todaysBrief() || latestBrief();
-  if(!b){ $("folio").innerHTML = ""; $("folio").hidden = true; return; }
-  $("folio").hidden = false;
-  const L=b.lesson||{}, C=b.challenge||{}, D=b.drill||{}, P=b.pattern||{}, F=b.forecast||{};
-  const keptCard = S.cards.some(c=>c.briefDate===b.date);
-  const fb = S.outputs["drill-"+b.date] ?? b.drillFeedback ?? "";
-  $("folio").innerHTML = `
-  <article class="leaf">
-    <div class="kicker"><span class="label">Lesson · ${esc(L.field||"")}</span>${chip(L.domain)}</div>
-    <h3>${esc(L.title)}</h3>
-    <div class="body">${esc(L.body)}</div>
-    ${L.source_hint ? `<p class="faint mono" style="font-size:12px">Go further: ${esc(L.source_hint)}</p>`:""}
-    <div class="row">
-      <button class="btn small" data-act="keepCard" ${keptCard||!L.card?"disabled":""}>${keptCard?"✓ In your recall deck":"Keep as recall card"}</button>
-      <button class="btn small ghost" data-act="discuss" data-topic="lesson">Discuss</button>
-    </div>
-  </article>
-  <article class="leaf">
-    <div class="kicker"><span class="label">Challenge an assumption</span>${chip(C.domain)}</div>
-    <h3>${esc(C.assumption)}</h3>
-    <blockquote>${esc(C.counter)}</blockquote>
-    <p><b>Question:</b> ${esc(C.question)}</p>
-    <div class="row"><button class="btn small" data-act="discuss" data-topic="challenge">Spar with this</button></div>
-  </article>
-  <article class="leaf">
-    <div class="kicker"><span class="label">Drill · ${esc(D.kind||"practice")}</span>${chip(D.domain)}</div>
-    <p class="body">${esc(D.prompt)}</p>
-    ${D.criteria?`<p class="muted" style="font-size:13.5px">Judged on: ${esc(D.criteria)}</p>`:""}
-    <label class="label" for="drill-answer">Your attempt</label>
-    <textarea id="drill-answer" data-draft="drill-${esc(b.date)}" placeholder="Write it here.">${esc(S.drafts["drill-"+b.date] ?? b.drillAnswer ?? "")}</textarea>
-    <div class="row"><button class="btn small primary" data-act="gradeDrill" ${S.sample?"":"disabled"}>Get feedback</button></div>
-    ${fb?`<div class="out" id="drill-out">${esc(fb)}</div>`:`<div class="out" id="drill-out" hidden></div>`}
-  </article>
-  <article class="leaf">
-    <div class="kicker"><span class="label">A pattern in you · confidence ${fmt((+P.confidence||0)*100,0)}%</span></div>
-    <h3>${esc(P.observation)}</h3>
-    <p class="muted">${esc(P.evidence)}</p>
-    <div class="row">
-      <span class="label">Does this land?</span>
-      ${["yes","partly","no"].map(v=>`<button class="btn small ${b.patternFeedback===v?"on":""}" data-act="patternFb" data-v="${v}">${v==="yes"?"Yes":v==="partly"?"Partly":"No"}</button>`).join("")}
-    </div>
-    ${F.question?`<div class="move"><span class="label">Forecast yourself</span><p>${esc(F.question)}</p>
-      <div class="row"><input type="range" id="brief-p" min="1" max="99" value="${esc(S.drafts["brief-p"]||60)}" data-draft="brief-p" style="max-width:200px;accent-color:var(--ember)"><output class="mono" id="brief-p-out">${esc(S.drafts["brief-p"]||60)}%</output>
-      <button class="btn small" data-act="briefForecast" ${b.forecastMade?"disabled":""}>${b.forecastMade?"✓ Logged":"Log forecast"}</button></div></div>`:""}
-  </article>`;
-}
-
-/* ---------- tabs ---------- */
-function renderTabs(){
-  const due = dueCards().length;
-  $("tabs").innerHTML = TABS.map(t=>`<button role="tab" aria-selected="${S.tab===t.k}" data-act="tab" data-tab="${t.k}">${t.n}${t.k==="recall"&&due?`<span class="count">${due}</span>`:""}${t.k==="forecasts"&&S.forecasts.filter(f=>f.outcome==null&&f.due<=today()).length?`<span class="count">${S.forecasts.filter(f=>f.outcome==null&&f.due<=today()).length}</span>`:""}</button>`).join("");
-}
-function renderPanel(){
-  const fn = {pulse:viewPulse, forecasts:viewForecasts, experiments:viewExperiments, recall:viewRecall, model:viewModel, dispatches:viewDispatches, spar:viewSpar}[S.tab] || viewPulse;
-  $("panel").innerHTML = fn();
-  if(S.tab==="spar"){ const c=$("chat"); if(c) c.scrollTop=c.scrollHeight; }
-}
-
 function spark(vals, color){
   const pts = vals.filter(v=>v!=null);
-  if(pts.length<2) return `<svg viewBox="0 0 150 44"><line x1="0" y1="22" x2="150" y2="22" stroke="var(--rule)" stroke-dasharray="3 3"/></svg>`;
+  if(pts.length<2) return `<svg viewBox="0 0 150 44" aria-hidden="true"><line x1="0" y1="22" x2="150" y2="22" stroke="var(--rule)" stroke-dasharray="3 3"/></svg>`;
   const n=vals.length, X=i=>4+i*(142/(n-1)), Y=v=>40-v/10*36;
   let d="", started=false; vals.forEach((v,i)=>{ if(v==null) return; d += (started?"L":"M")+X(i).toFixed(1)+","+Y(v).toFixed(1); started=true; });
   const lastI = vals.map((v,i)=>v==null?-1:i).filter(i=>i>=0).pop();
@@ -558,18 +639,362 @@ function spark(vals, color){
     <path d="${d}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
     <circle cx="${X(lastI)}" cy="${Y(vals[lastI])}" r="2.6" fill="${color}"/></svg>`;
 }
+function trendSvg(vals, color, lowerBetter){
+  if(vals.length<2) return `<svg viewBox="0 0 150 34" aria-hidden="true"><line x1="0" y1="17" x2="150" y2="17" stroke="var(--rule)" stroke-dasharray="3 3"/></svg>`;
+  const lo=Math.min(...vals), hi=Math.max(...vals), rg=(hi-lo)||1, n=vals.length;
+  const X=i=>3+i*(144/(n-1)), Y=v=> lowerBetter ? 4+((v-lo)/rg)*26 : 30-((v-lo)/rg)*26;
+  const d=vals.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+","+Y(v).toFixed(1)).join("");
+  return `<svg viewBox="0 0 150 34" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/><circle cx="${X(n-1)}" cy="${Y(vals[n-1])}" r="2.6" fill="${color}"/></svg>`;
+}
+function ring(n, target){
+  const p = target ? clamp(n/target,0,1) : 0, r=34, c=2*Math.PI*r;
+  return `<svg viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="${r}" fill="none" stroke="var(--rule)" stroke-width="4"/><circle cx="38" cy="38" r="${r}" fill="none" stroke="var(--spirit)" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(c*p).toFixed(2)} ${c.toFixed(2)}" transform="rotate(-90 38 38)"/></svg>`;
+}
+function moreBtn(k){ return S.showAll[k] ? "" : `<button class="more" data-act="showAll" data-k="${k}">Show everything in this station (more than your energy setting)</button>`; }
+
+/* ---------- header + hero ---------- */
+function renderHeader(){
+  const d = new Date();
+  $("dateLine").textContent = d.toLocaleDateString("en-GB",{weekday:"long", day:"numeric", month:"long"}) + (dow(today())===5 ? " · exam day" : " · the direction of steepest improvement");
+  $("sheetNo").textContent = d.getFullYear()+"-"+String(Math.floor((d - new Date(d.getFullYear(),0,1))/864e5)+1).padStart(3,"0");
+  const days = (S.log&&S.log.days)||{};
+  let h=""; for(let i=20;i>=0;i--){ const k=addDays(today(),-i); const n=days[k]?Object.keys(days[k]).length:0;
+    h += `<i class="${n?"on":""} ${i===0?"today":""}" style="height:${4+Math.min(n,5)*3.6}px" title="${k}: ${n} kind(s) of practice"></i>`; }
+  $("ticks").innerHTML = h; $("streak").textContent = streak();
+  $("energy").innerHTML = Object.entries(ENERGY).map(([k,e])=>`<button type="button" aria-pressed="${energy()===k}" data-act="energy" data-v="${k}">${e.n}<small>${e.min}</small></button>`).join("");
+  const btn = $("recompute");
+  btn.disabled = S.busy || !S.ready || (!S.sample && !S.demo);
+  btn.setAttribute("aria-busy", S.busy?"true":"false");
+  $("recomputeLabel").textContent = S.busy ? "Reconsidering…" : "Update";
+  btn.title = S.sample ? "Claude rereads your progress, revises its model of you, sets today's focus and writes review questions for your weakest topic." : "Claude is not available in this view.";
+  $("banner").innerHTML = S.demo ? `<div class="banner">Example data. This view can't reach your private store, so nothing here is yours and nothing you do is saved. Open the page on claude.ai while signed in to use it.</div>` : "";
+}
+function renderToday(){
+  const m = morningToday(), up = S.day && S.day.update, lev = leverage(), ex = openExam();
+  let h = "";
+  if(!S.ready){ $("today").innerHTML = `<div class="empty"><span class="label">Loading</span>Reading your survey…</div>`; return; }
+  const headline = (up && up.headline) || (m && m.headline) || (m ? "Your morning is ready. Start at the top, or with the station the arrow points to." : "This morning isn't prepared yet.");
+  h += `<span class="label">${esc(new Date().toLocaleDateString("en-GB",{weekday:"long"}))} · ${esc(ENERGY[energy()].n)} energy · ${esc(ENERGY[energy()].min)}</span>
+    <p class="headline">${esc(headline)}</p>`;
+  if(!m){
+    h += `<div class="empty"><span>The research agent prepares your morning at about 06:55 Riyadh time. If it hasn't run, Claude can prepare one now from its own knowledge (no new papers or Quran content; your adhkar are always here).</span>
+      <div class="row"><button class="btn primary" data-act="prepare" ${S.sample&&!S.preparing?"":"disabled"}>${S.preparing?"Preparing…":"Prepare this morning now"}</button></div></div>`;
+  }
+  if(ex.live) h += `<a class="callout" href="#examSlot" style="text-decoration:none;color:inherit"><span class="label" style="color:var(--ember)">${esc(ex.label)}</span><span>${ex.ex&&ex.ex.done?`Done: ${ex.ex.score}/${ex.ex.total}`:`${examPool(ex.fri).length} questions from this week are waiting.`}</span></a>`;
+  h += `<nav class="itinerary" aria-label="Stations">${STATIONS.map((s,i)=>{ const p=stationProgress(s.k);
+    return `<a href="#st-${s.k}" style="--c:var(--${s.d})"><span class="dot ${p>=1?"done":p>0?"part":""}"></span><span class="nm"><b ${s.rtl?'lang="ar" style="font-family:var(--f-arabic)"':""}>${esc(s.n)}</b>${s.k===stationFor(lev.domain)?`<small style="color:var(--ember)">∇ today's leverage</small>`:""}</span><span class="mono faint" style="font-size:12px">${p>=1?"done":p>0?Math.round(p*100)+"%":""}</span></a>`; }).join("")}</nav>`;
+  if(up && up.focus) h += `<p class="muted" style="font-size:13.5px"><b>Why ${esc(dn(up.focus.domain))}:</b> ${esc(up.focus.why)}</p>`;
+  $("today").innerHTML = h;
+}
+function stationFor(domain){ const s=STATIONS.find(s=>s.d===domain); return s?s.k:"career"; }
+
+/* ---------- stations ---------- */
+function stationShell(s, i, inner){
+  const p = stationProgress(s.k), done = ((S.day&&S.day.done)||{})[s.k];
+  return `<section class="station ${s.rtl?"rtl":""}" id="st-${s.k}" style="--c:var(--${s.d})" ${s.rtl?'dir="rtl" lang="ar"':""}>
+    <header>
+      <span class="num" dir="ltr" style="justify-self:start">${String(i+1).padStart(2,"0")} / 07</span>
+      <h2 ${s.rtl?'style="font:600 34px/1.2 var(--f-arabic);color:var(--c)"':""}>${esc(s.n)}</h2>
+      <p class="sub ${s.rtl?"ar":""}" ${s.rtl?'style="font-size:15px"':""}>${esc(s.sub)}</p>
+      <div class="row"><button class="btn small ${done?"on":""}" data-act="stationDone" data-k="${s.k}">${done?(s.rtl?"✓ تم":"✓ Done"):(s.rtl?"تم":"Mark done")}</button>${p>0&&p<1&&!done?`<span class="mono faint" style="font-size:12px">${Math.round(p*100)}%</span>`:""}</div>
+    </header>
+    <div class="body">${inner}</div>
+  </section>`;
+}
+function vCareer(m){
+  const c = (m&&m.career)||{}, P=c.paper, C=c.chapter, up=S.day&&S.day.update;
+  let h="";
+  if(up && up.review && Array.isArray(up.review.mcqs) && up.review.mcqs.length){
+    const list = up.review.mcqs.filter(q=>q&&Array.isArray(q.options)).map(q=>({qid:qkey(today(),"review",q.id), m:q, src:"Review: "+(up.review.topic||"")}));
+    h += `<div class="block"><span class="label">Review · your weakest topic: ${esc(up.review.topic||"")}</span>${mcqBlock(list,"Three questions")}</div>`;
+  }
+  if(!m){ return h + `<div class="block"><div class="empty">Today's paper and chapter section arrive with the morning agent. Use "Prepare this morning now" above if you don't want to wait.</div></div>`; }
+  if(P){
+    const list = (P.mcqs||[]).map(q=>({qid:qkey(m.date,"paper",q.id), m:q, src:"Paper: "+P.title}));
+    h += `<div class="block">
+      <div class="spread"><span class="label">Paper of the day · ${esc(P.kind||"")}</span><span class="row"><span class="tag ${esc(P.strength||"")}">${esc(P.strength||"")} evidence</span></span></div>
+      <h3>${esc(P.title)}</h3>
+      <p class="muted mono" style="font-size:12.5px">${esc(P.journal)} · ${esc(P.published)}${P.url?` · <a href="${esc(P.url)}" target="_blank" rel="noopener">open ↗</a>`:""}</p>
+      <p class="lede"><b>Bottom line:</b> ${esc(P.bottom_line)}</p>
+      ${shows("career",2)?`<dl class="kv"><dt>Population</dt><dd>${esc(P.population)}</dd><dt>Finding</dt><dd>${esc(P.finding)}</dd><dt>On the ward</dt><dd>${esc(P.ward_change)}</dd></dl>`:""}
+      ${mcqBlock(shows("career",2)?list:list.slice(0,1), "Check yourself")}
+    </div>`;
+  } else {
+    h += `<div class="block"><span class="label">Paper of the day</span><p class="muted">No new paper today${m.source==="page"?": this morning was prepared without web access.":"."}</p></div>`;
+  }
+  if(C){
+    const list = (C.mcqs||[]).map(q=>({qid:qkey(m.date,"chapter",q.id), m:q, src:"Chapter "+C.chapterTitle+" §"+C.section}));
+    const full = shows("career",2) || S.showAll["chapter"];
+    h += `<div class="block">
+      <span class="label">Chapter ${esc(String(C.chapterId||"").replace(/^ch0?/,""))} · ${esc(C.chapterTitle)} · section ${esc(C.section)} · ~${esc(C.minutes||12)} min</span>
+      <h3>${esc(C.sectionTitle)}</h3>
+      ${full?`<div class="prose">${prose(C.body)}</div>`:`<button class="more" data-act="showAll" data-k="chapter">Read the full section</button>`}
+      ${(C.pearls||[]).length?`<div class="prose"><h4>Pearls</h4><ul>${C.pearls.map(p=>`<li>${esc(p)}</li>`).join("")}</ul></div>`:""}
+      ${full && (C.sources||[]).length?`<p class="faint" style="font-size:12.5px">Sources: ${C.sources.map(s=>s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)).join(" · ")}</p>`:""}
+      ${full?mcqBlock(list,"Section exam · 5 questions"):""}
+      <div class="row"><button class="btn small ghost" data-act="discuss" data-topic="chapter">Discuss this section with Claude</button></div>
+    </div>`;
+  }
+  if((c.ideas||[]).length && shows("career",2)){
+    h += `<div class="block"><span class="label">Ideas</span><div class="ideas">${c.ideas.map(i=>`<div class="idea"><b>${esc(i.title)}</b><span class="muted" style="font-size:14px">${esc(i.body)}</span></div>`).join("")}</div></div>`;
+  }
+  const catchup = S.mornings.filter(x=>x.date<today() && x.date>=addDays(today(),-7) && x.career && x.career.chapter && !chapterDone(x));
+  if(catchup.length) h += `<div class="block"><span class="label">Catch up</span><div class="row">${catchup.map(x=>`<button class="btn small" data-act="catchup" data-date="${esc(x.date)}">${esc(x.date)} · §${esc(x.career.chapter.section)} ${esc(x.career.chapter.sectionTitle)}</button>`).join("")}</div></div>`;
+  if(S.catchup){ const x=S.mornings.find(y=>y.date===S.catchup); if(x&&x.career&&x.career.chapter){ const C2=x.career.chapter;
+    h += `<div class="block"><div class="spread"><span class="label">Catching up · ${esc(x.date)}</span><button class="btn small ghost" data-act="catchup" data-date="">Close</button></div><h3>${esc(C2.sectionTitle)}</h3><div class="prose">${prose(C2.body)}</div>${mcqBlock((C2.mcqs||[]).map(q=>({qid:qkey(x.date,"chapter",q.id), m:q, src:"Chapter "+C2.chapterTitle+" §"+C2.section})),"Section exam")}</div>`; } }
+  if(!shows("career",3) && !S.showAll.career) h += moreBtn("career");
+  return h;
+}
+function vPresence(m){
+  const p = m && m.presence;
+  if(!p) return `<div class="block"><div class="empty">Today's presence technique arrives with your morning.</div></div>`;
+  const ans = S.drafts["presence"] ?? (S.day&&S.day.presenceAnswer) ?? "";
+  const hedges = HEDGES.filter(w=>new RegExp("\\b"+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b","i").test(ans));
+  const fb = S.outputs.presence ?? (S.day&&S.day.presenceFeedback) ?? "";
+  const ctxName = {"care-team":"With the care team", presentation:"Presentations", negotiation:"Negotiation", social:"Social"}[p.context] || p.context;
+  return `<div class="block">
+      <div class="spread"><span class="label">${esc(ctxName)}</span><span class="tag ${esc(p.evidence)}">${esc(p.evidence)} evidence</span></div>
+      <h3>${esc(p.technique)}</h3>
+      <p class="specter">“${esc(p.specter)}”</p>
+      ${shows("presence",2)?`<p style="max-width:70ch">${esc(p.why)}</p><blockquote>${esc(p.example)}</blockquote>`:""}
+    </div>
+    ${shows("presence",2)?`<div class="block">
+      <span class="label">Drill · under 5 minutes</span>
+      <p style="max-width:70ch"><b>Situation:</b> ${esc(p.drill&&p.drill.scenario)}</p>
+      <p style="max-width:70ch"><b>Your move:</b> ${esc(p.drill&&p.drill.task)}</p>
+      <p class="muted" style="font-size:13.5px">Judged on: ${esc(p.drill&&p.drill.criteria)}</p>
+      <label class="label" for="presence-in">Write exactly what you would say</label>
+      <textarea id="presence-in" data-draft="presence" placeholder="Say it the way you'd say it out loud.">${esc(ans)}</textarea>
+      <div class="row"><span class="mono" style="font-size:12px;color:var(--${hedges.length?"warn":"faint"})">${ans?`Hedges: ${hedges.length}${hedges.length?" ("+hedges.join(", ")+")":""}`:"Hedge counter: words like “just”, “maybe”, “I think” leak authority."}</span></div>
+      <div class="row"><button class="btn primary small" data-act="presenceFb" ${S.sample?"":"disabled"}>Get coached</button><span class="faint" style="font-size:12.5px">Then say it out loud twice, slower and lower than feels natural.</span></div>
+      ${fb?`<div class="out">${esc(fb)}</div>`:""}
+    </div>`:moreBtn("presence")}`;
+}
+function vMind(m){
+  const M = (m&&m.mind)||{}, gs = games(), L=lvl();
+  const pick = (S.showAll.mind || L>=3) ? gs
+    : L===2 ? gs.filter(g=>["reaction","calc","nback"].includes(g.id))
+    : gs.filter(g=>g.id===(dow(today())%2?"reaction":"calc"));
+  let h = `<div class="block">
+    <div class="spread"><span class="label">Sharpness check · tap a game</span><span class="faint" style="font-size:12.5px">Scores are saved; the line shows your trend.</span></div>
+    ${gs.length?`<div class="games">${pick.map(g=>{ const hist=gameHistory(g.id), last=hist[hist.length-1], played=hist.some(r=>r.date===today());
+      return `<button class="game" data-act="game" data-id="${esc(g.id)}" style="${played?"border-color:var(--health)":""}"><span class="label">${esc(g.skill)} · ${esc(g.minutes)} min</span><span class="gname">${esc(g.name)}</span>
+      <span class="mono" style="font-size:12px">${last?`${esc(fmt(last.score, Number.isInteger(last.score)?0:1))} ${esc(g.metric.unit||"")}${played?" · today ✓":""}`:"Not played yet"}</span>${trendSvg(hist.slice(-20).map(r=>r.score),"var(--health)",g.metric.better==="lower")}</button>`; }).join("")}</div>`
+      :`<div class="empty">The games didn't load in this view.</div>`}
+    ${sharpVsSleep()}
+  </div>`;
+  if(!m) return h + `<div class="block"><div class="empty">Today's article, case and puzzle arrive with your morning.</div></div>`;
+  if(M.case && shows("mind",2)){
+    const x = {qid:qkey(m.date,"case","case"), m:{id:"case", q:M.case.stem, options:M.case.options, answer:M.case.answer, explanation:M.case.explanation, topic:"Clinical reasoning"}, src:"Clinical case"};
+    const rec = S.answers[x.qid];
+    h += `<div class="block"><div class="spread"><span class="label">Clinical case · ${esc(M.case.seconds||90)} seconds</span>${S.caseStart&&!rec?`<span class="timer" id="caseTimer">${esc(M.case.seconds||90)}</span>`:rec&&rec.ms?`<span class="mono faint">${(rec.ms/1000).toFixed(0)} s</span>`:""}</div>
+      ${S.caseStart||rec?mcqHTML(x):`<p class="muted">One hidden problem in an inpatient chart. The clock starts when you open it.</p><div class="row"><button class="btn primary small" data-act="startCase">Open the case</button></div>`}</div>`;
+  }
+  if(M.article && shows("mind",2)) h += `<div class="block"><div class="spread"><span class="label">Read · brain science</span><span class="tag ${esc(M.article.strength||"")}">${esc(M.article.strength||"")}</span></div>
+    <h3>${esc(M.article.title)}</h3><p class="muted mono" style="font-size:12.5px">${esc(M.article.source)} · ${esc(M.article.published)}${M.article.url?` · <a href="${esc(M.article.url)}" target="_blank" rel="noopener">open ↗</a>`:""}</p>
+    <p style="max-width:70ch">${esc(M.article.summary)}</p><p><b>Today:</b> ${esc(M.article.takeaway)}</p></div>`;
+  if(M.exercise && shows("mind",2)) h += `<div class="block"><span class="label">Practice · ${esc(M.exercise.minutes)} min</span><h3>${esc(M.exercise.title)}</h3><ol style="margin:0;padding-left:20px;display:grid;gap:4px;max-width:70ch">${(M.exercise.steps||[]).map(s=>`<li>${esc(s)}</li>`).join("")}</ol><p class="muted" style="font-size:13.5px">${esc(M.exercise.why)}</p></div>`;
+  if(M.puzzle && shows("mind",3)) h += `<div class="block"><span class="label">Puzzle · ~3 minutes</span><p style="max-width:70ch">${esc(M.puzzle.prompt)}</p>
+    ${S.puzzleShown?`<div class="out"><b>${esc(M.puzzle.answer)}</b>\n${esc(M.puzzle.explanation)}</div>`:`<div class="row"><button class="btn small" data-act="puzzle">Show the answer</button></div>`}</div>`;
+  const note = (S.syllabus && S.syllabus.brainEvidenceNote) || (m && m.mind && m.mind.brainEvidenceNote);
+  if(note && shows("mind",2)) h += `<p class="faint" style="font-size:12.5px;max-width:75ch">${esc(note)}</p>`;
+  if(!shows("mind",3)) h += moreBtn("mind");
+  return h;
+}
+function sharpVsSleep(){
+  const hist = gameHistory("reaction"); if(hist.length<7) return "";
+  const byDate = {}; for(const r of hist) byDate[r.date] = Math.min(byDate[r.date]??Infinity, r.score);
+  const pts = S.checkins.filter(c=>typeof c.sleep==="number" && byDate[c.date]!=null);
+  if(pts.length<7) return "";
+  const r = pearson(pts.map(c=>c.sleep), pts.map(c=>byDate[c.date]));
+  return r==null?"":`<p class="muted" style="font-size:13.5px">Sleep vs reaction time over ${pts.length} days: r = ${fmt(r,2)}. ${r<-.3?"More sleep, faster you.":r>.3?"Oddly, more sleep is slower for you. Worth a look.":"No clear link yet."}</p>`;
+}
+function vSpirit(m){
+  const sp = m && m.spirit, list = adhkar(), counts = spiritCounts();
+  let h = "";
+  if(sp && sp.ayah){
+    const A = sp.ayah;
+    h += `<div class="block">
+      <span class="ar-label">آية اليوم</span>
+      <p class="ayah">${esc(A.text)} <span class="orn">﴿${esc(A.ayahTo&&A.ayahTo!==A.ayahNo?A.ayahNo+"–"+A.ayahTo:A.ayahNo)}﴾</span></p>
+      <p class="ar muted" style="font-size:14.5px">سورة ${esc(A.surah)} · ${A.url?`<a href="${esc(A.url)}" target="_blank" rel="noopener">quran.com ↗</a>`:""}</p>
+    </div>
+    <div class="block">
+      <span class="ar-label">التفسير · ${esc(sp.tafsir&&sp.tafsir.source)}${sp.tafsir&&sp.tafsir.quoted===false?" (بتصرف)":""}</span>
+      <p class="ar">${esc(sp.tafsir&&sp.tafsir.text)}</p>
+    </div>
+    ${sp.faida?`<div class="block"><span class="ar-label">فائدة</span><p class="ar">${esc(sp.faida)}</p></div>`:""}`;
+  } else {
+    h += `<div class="block"><p class="ar muted">آية اليوم وتفسيرها تصل مع تحضير الصباح.</p></div>`;
+  }
+  const doneN = list.filter(x=>(counts[x.id]||0)>=x.count).length;
+  h += `<div class="block">
+    <div class="spread"><span class="ar-label">أذكار الصباح</span><span class="mono faint" style="font-size:12px" dir="ltr">${doneN}/${list.length}</span></div>
+    <p class="ar muted" style="font-size:14px">اضغط على العدّاد مع كل مرة تقولها.</p>
+    ${list.length?`<div class="adhkar">${list.map(x=>{ const n=counts[x.id]||0, done=n>=x.count;
+      return `<div class="dhikr ${done?"done":""}"><div style="display:grid;gap:4px;min-width:0"><p class="txt ${x.quran?"q":""}">${esc(x.text)}</p><p class="meta">${esc(x.virtue||"")}${x.virtue?" · ":""}${esc(x.source||"")}</p></div>
+        <button class="counter" data-act="tap" data-id="${esc(x.id)}" aria-label="عدّاد: ${n} من ${x.count}">${ring(n,x.count)}<span><b id="cnt-${esc(x.id)}">${done?"✓":n}</b><small dir="ltr">× ${esc(x.count)}</small></span></button></div>`; }).join("")}</div>
+      <div class="row"><button class="btn small ghost" data-act="resetAdhkar">إعادة العدّ</button></div>`
+      :`<div class="empty ar">قائمة الأذكار تُحمَّل من المصدر الموثّق.</div>`}
+  </div>`;
+  const PHR = ["سُبْحَانَ اللَّهِ","الْحَمْدُ لِلَّهِ","اللَّهُ أَكْبَرُ","لَا إِلَهَ إِلَّا اللَّهُ","أَسْتَغْفِرُ اللَّهَ"];
+  const fk = "free_"+S.freePhrase, fn = counts[fk]||0;
+  h += `<div class="block">
+    <span class="ar-label">المسبحة</span>
+    <div class="tasbih">
+      <div class="row" style="justify-content:center">${PHR.map((p,i)=>`<button class="btn small ${S.freePhrase===i?"on":""}" data-act="phrase" data-i="${i}" style="font-family:var(--f-arabic)">${p}</button>`).join("")}</div>
+      <p class="phr">${PHR[S.freePhrase]}</p>
+      <button class="counter big" data-act="tap" data-id="${fk}" data-free="1" aria-label="المسبحة: ${fn}">${ring(fn % S.freeTarget || (fn&&fn%S.freeTarget===0?S.freeTarget:0), S.freeTarget)}<span><b id="cnt-${fk}">${fn}</b><small dir="ltr">/ ${S.freeTarget}</small></span></button>
+      <div class="row">${[33,100].map(t=>`<button class="btn small ${S.freeTarget===t?"on":""}" data-act="freeTarget" data-v="${t}">${t}</button>`).join("")}</div>
+    </div>
+  </div>`;
+  return h;
+}
+function vFinance(m){
+  const f = m && m.finance;
+  if(!f) return `<div class="block"><div class="empty">Today's finance note arrives with your morning.</div></div>`;
+  return `<div class="block"><span class="label">${f.track==="trading"?"Trading & quant":"Personal finance"}</span><h3>${esc(f.title)}</h3>
+    ${shows("finance",2)?`<p style="max-width:70ch">${esc(f.body)}</p>`:""}<p><b>One step today:</b> ${esc(f.action)}</p>
+    ${shows("finance",2)&&f.mcq?mcqBlock([{qid:qkey(m.date,"finance",f.mcq.id), m:f.mcq, src:"Finance: "+f.title}],"Check"):""}</div>${shows("finance",2)?"":moreBtn("finance")}`;
+}
+function vSimple(m, k){
+  const x = m && m[k];
+  if(!x) return `<div class="block"><div class="empty">Arrives with your morning.</div></div>`;
+  if(k==="joy" && !shows("joy",2)) return moreBtn("joy");
+  return `<div class="block"><h3>${esc(x.title)}</h3><p style="max-width:70ch">${esc(x.body)}</p>${x.action?`<p><b>Today:</b> ${esc(x.action)}</p>`:""}</div>`;
+}
+function renderStations(){
+  const m = morningToday();
+  const inner = {career:()=>vCareer(m), presence:()=>vPresence(m), mind:()=>vMind(m), spirit:()=>vSpirit(m), finance:()=>vFinance(m), relationships:()=>vSimple(m,"relationships"), joy:()=>vSimple(m,"joy")};
+  $("stations").innerHTML = STATIONS.map((s,i)=>stationShell(s,i,inner[s.k]())).join("");
+}
+
+/* ---------- exam ---------- */
+function examView(){
+  const o = openExam();
+  if(!o.live) return "";
+  const ex = o.ex;
+  if(!ex){
+    const n = examPool(o.fri).length;
+    return `<div class="exam"><span class="label" style="color:var(--ember)">${esc(o.label)} · week ending ${esc(o.fri)}</span><h2>Weekly exam</h2>
+      <p style="max-width:70ch">${n} questions drawn from this week's papers, chapter sections, cases and finance notes, plus questions you missed before. Missed ones go back into Recall.</p>
+      <div class="row"><button class="btn primary" data-act="startExam" data-key="${esc(o.fri)}" ${n?"":"disabled"}>Start the exam</button></div></div>`;
+  }
+  return `<div class="exam">${examBody(ex)}</div>`;
+}
+function examBody(ex){
+  const qs = ex.questions||[], ans = ex.answers||{}, N=qs.length;
+  if(ex.done){
+    const byTopic = {}; qs.forEach((x,i)=>{ const t=x.m.topic||"Other"; byTopic[t]=byTopic[t]||{n:0,r:0}; byTopic[t].n++; if(ans["a"+i]===x.m.answer) byTopic[t].r++; });
+    return `<span class="label">Exam · week ending ${esc(ex.key)} · finished</span><h2>${ex.score} / ${ex.total} · ${Math.round(100*ex.score/Math.max(1,ex.total))}%</h2>
+      <div class="list">${Object.entries(byTopic).sort((a,b)=>a[1].r/a[1].n-b[1].r/b[1].n).map(([t,v])=>`<div class="item"><div class="spread"><span>${esc(t)}</span><span class="mono">${v.r}/${v.n}</span></div><div class="bar"><i style="width:${100*v.r/v.n}%;--c:${v.r/v.n>=.7?"var(--good)":v.r/v.n>=.5?"var(--warn)":"var(--bad)"}"></i></div></div>`).join("")}</div>
+      <p class="muted">Every missed question is now in Recall and will come back in a few days.</p>`;
+  }
+  const i = clamp(S.examIdx[ex.key] ?? qs.findIndex((_,k)=>ans["a"+k]==null), 0, N-1), x = qs[i], chosen = ans["a"+i], L="ABCD";
+  const answeredN = Object.keys(ans).length;
+  return `<div class="spread"><span class="label" style="color:var(--ember)">Weekly exam · question ${i+1} of ${N}</span><span class="mono faint">${answeredN} answered</span></div>
+    <div class="progress"><i style="width:${100*answeredN/N}%"></i></div>
+    <p class="faint mono" style="font-size:12px">${esc(x.src||"")}</p>
+    <div class="mcq"><p class="q" style="font-size:16.5px">${esc(x.m.q)}</p>
+      <div class="opts">${x.m.options.map((o,k)=>{ const cls = chosen!=null ? (k===x.m.answer?"right":(k===chosen?"wrong":"")) : "";
+        return `<button class="opt ${cls}" data-act="examAnswer" data-key="${esc(ex.key)}" data-i="${i}" data-k="${k}" ${chosen!=null?"disabled":""}><span class="l">${L[k]}</span><span>${esc(o)}</span></button>`; }).join("")}</div>
+      ${chosen!=null?`<p class="expl"><b style="color:var(--${chosen===x.m.answer?"good":"bad"})">${chosen===x.m.answer?"Correct.":"Not quite."}</b> ${esc(x.m.explanation)}</p>`:""}
+    </div>
+    <div class="row">
+      <button class="btn small" data-act="examNav" data-key="${esc(ex.key)}" data-to="${i-1}" ${i===0?"disabled":""}>Previous</button>
+      <button class="btn small" data-act="examNav" data-key="${esc(ex.key)}" data-to="${i+1}" ${i===N-1?"disabled":""}>Next</button>
+      <span style="flex:1"></span>
+      <button class="btn small primary" data-act="finishExam" data-key="${esc(ex.key)}" ${answeredN<N?"disabled":""}>${answeredN<N?`${N-answeredN} to go`:"Finish and score"}</button>
+    </div>`;
+}
+
+/* ---------- lab views ---------- */
+function renderTabs(){
+  const due = dueCards().length, open = S.forecasts.filter(f=>f.outcome==null&&f.due<=today()).length;
+  $("tabs").innerHTML = TABS.map(t=>`<button role="tab" aria-selected="${S.tab===t.k}" data-act="tab" data-tab="${t.k}">${t.n}${t.k==="recall"&&due?`<span class="count">${due}</span>`:""}${t.k==="forecasts"&&open?`<span class="count">${open}</span>`:""}</button>`).join("");
+}
+function renderPanel(){
+  const fn = {exams:viewExams, recall:viewRecall, curriculum:viewCurriculum, pulse:viewPulse, forecasts:viewForecasts, experiments:viewExperiments, model:viewModel, dispatches:viewDispatches, spar:viewSpar}[S.tab] || viewExams;
+  $("panel").innerHTML = fn();
+  if(S.tab==="spar"){ const c=$("chat"); if(c) c.scrollTop=c.scrollHeight; }
+}
+function viewExams(){
+  const done = S.exams.filter(e=>e.done).sort((a,b)=>a.key.localeCompare(b.key));
+  const o = openExam(), pool = examPool(o.live?o.fri:nextFriday());
+  const answeredRecent = Object.values(S.answers).filter(a=>a.at && a.at.slice(0,10)>=addDays(today(),-30));
+  const topics = {}; for(const a of answeredRecent){ const t=a.topic||"Other"; topics[t]=topics[t]||{n:0,r:0}; topics[t].n++; if(a.correct) topics[t].r++; }
+  const weak = Object.entries(topics).filter(([,v])=>v.n>=2).sort((a,b)=>a[1].r/a[1].n-b[1].r/b[1].n).slice(0,8);
+  const X=i=>20+i*(300/Math.max(1,done.length-1)), Y=p=>110-p*100;
+  return `<div class="cols">
+    <div class="sec">
+      <h2>Weekly exams</h2>
+      <p class="muted">Every Friday: this week's questions plus anything you missed before. ${o.live?"":`Next one: Friday ${esc(nextFriday())}, ${pool.length} questions banked so far.`}</p>
+      ${done.length>1?`<div class="chart"><svg viewBox="0 0 340 130" role="img" aria-label="Exam scores over time"><line x1="20" x2="320" y1="${Y(.7)}" y2="${Y(.7)}" stroke="var(--rule)" stroke-dasharray="3 4"/><text x="322" y="${Y(.7)+3}" font-size="9" fill="var(--faint)" font-family="IBM Plex Mono,monospace">70%</text><path d="${done.map((e,i)=>(i?"L":"M")+X(i)+","+Y(e.score/Math.max(1,e.total))).join("")}" fill="none" stroke="var(--ember)" stroke-width="2"/>${done.map((e,i)=>`<circle cx="${X(i)}" cy="${Y(e.score/Math.max(1,e.total))}" r="3.5" fill="var(--ember)"><title>${esc(e.key)}: ${e.score}/${e.total}</title></circle>`).join("")}</svg></div>`:""}
+      ${done.length?`<div class="list">${done.slice().reverse().map(e=>`<div class="item"><div class="spread"><span>Week ending ${esc(e.key)}</span><span class="mono">${e.score}/${e.total} · ${Math.round(100*e.score/Math.max(1,e.total))}%</span></div></div>`).join("")}</div>`:`<div class="empty">Your first exam is on Friday ${esc(nextFriday())}.</div>`}
+      <div class="row"><button class="btn small" data-act="practiceExam" ${pool.length?"":"disabled"}>Take a practice exam now</button></div>
+      ${S.practice?`<div class="exam">${examBody(S.practice)}</div>`:""}
+    </div>
+    <div class="sec">
+      <h2>Where you lose points</h2>
+      <p class="muted">Accuracy by topic over the last 30 days (topics with at least 2 answers).</p>
+      ${weak.length?`<div class="list">${weak.map(([t,v])=>`<div class="item"><div class="spread"><span>${esc(t)}</span><span class="mono">${v.r}/${v.n}</span></div><div class="bar"><i style="width:${100*v.r/v.n}%;--c:${v.r/v.n>=.7?"var(--good)":v.r/v.n>=.5?"var(--warn)":"var(--bad)"}"></i></div></div>`).join("")}</div>
+        <p class="faint" style="font-size:12.5px">Press Update and Claude writes three review questions on your weakest topic.</p>`:`<div class="empty">Answer a few days of questions to see your weak spots.</div>`}
+    </div>
+  </div>`;
+}
+function viewRecall(){
+  const due = dueCards(); const c = due[0];
+  let face = "";
+  if(c && c.type==="mcq" && c.mcq){
+    const L="ABCD", pick=S.recallPick;
+    face = `<div class="card-face"><div class="spread">${chip(c.domain||"career")}<span class="label">missed before · seen ${c.reps||0}×</span></div>
+      <p class="q">${esc(c.mcq.q)}</p>
+      <div class="opts">${c.mcq.options.map((o,k)=>{ const cls = pick!=null ? (k===c.mcq.answer?"right":(k===pick?"wrong":"")) : ""; return `<button class="opt ${cls}" data-act="recallPick" data-k="${k}" ${pick!=null?"disabled":""}><span class="l">${L[k]}</span><span>${esc(o)}</span></button>`; }).join("")}</div>
+      ${pick!=null?`<p class="expl">${esc(c.mcq.explanation)}</p><div class="row"><button class="btn primary small" data-act="grade" data-id="${esc(c.id)}" data-q="${pick===c.mcq.answer?4:1}">Next</button></div>`:""}
+    </div>`;
+  } else if(c){
+    face = `<div class="card-face"><div class="spread">${chip(c.domain)}<span class="label">seen ${c.reps||0}× · ease ${fmt(c.ease||2.5,2)}</span></div>
+      <p class="q">${esc(c.front)}</p>
+      ${S.revealed?`<p style="white-space:pre-wrap;border-top:1px solid var(--rule);padding-top:12px">${esc(c.back)}</p>
+        <div class="row">${[["1","Forgot"],["3","Hard"],["4","Good"],["5","Easy"]].map(([q,l])=>`<button class="btn small ${q==="4"?"primary":""}" data-act="grade" data-id="${esc(c.id)}" data-q="${q}">${l}</button>`).join("")}</div>`
+        :`<div class="row"><button class="btn primary" data-act="reveal">Reveal answer</button></div>`}
+    </div>`;
+  } else face = `<div class="empty">${S.cards.length?"All caught up. Come back tomorrow.":"Questions you miss land here automatically. You can also write your own cards."}</div>`;
+  return `<div class="cols">
+    <div class="sec"><h2>${due.length?`${due.length} due today`:"Nothing due"}</h2><p class="muted">Missed questions and your own cards come back on a spaced schedule: tomorrow, then 3 days, then longer as they stick.</p>${face}</div>
+    <div class="sec">
+      <h2>Add a card</h2>
+      <label class="label" for="c-f">Question</label><input type="text" id="c-f" data-draft="c-f" value="${esc(S.drafts["c-f"]||"")}" placeholder="Which SGLT2 inhibitor dose is used for heart failure?">
+      <label class="label" for="c-b">Answer</label><textarea id="c-b" data-draft="c-b">${esc(S.drafts["c-b"]||"")}</textarea>
+      <div class="row"><select id="c-d" data-draft="c-d" style="max-width:200px">${DOMAINS.map(d=>`<option value="${d.k}" ${(S.drafts["c-d"]||"career")===d.k?"selected":""}>${d.n}</option>`).join("")}</select><button class="btn primary" data-act="addCard">Add card</button></div>
+      <p class="faint" style="font-size:12.5px">${S.cards.length} cards in total, ${S.cards.filter(c=>c.type==="mcq").length} of them missed questions.</p>
+    </div>
+  </div>`;
+}
+function viewCurriculum(){
+  const syl = S.syllabus && Array.isArray(S.syllabus.chapters) ? S.syllabus.chapters : [];
+  if(!syl.length) return `<div class="empty">The curriculum loads from your store.</div>`;
+  const doneSet = new Set(), curKey = (()=>{ const c=S.mornings.find(m=>m.career&&m.career.chapter); return c ? c.career.chapter.chapterId+"."+c.career.chapter.section : null; })();
+  for(const m of S.mornings){ const c=m.career&&m.career.chapter; if(c && chapterDone(m)) doneSet.add(c.chapterId+"."+c.section); }
+  const total = syl.reduce((a,c)=>a+(c.sections||[]).length,0);
+  return `<div class="sec">
+    <h2>Clinical pharmacotherapy, by disease</h2>
+    <p class="muted">${syl.length} chapters, ${total} sections, one section each morning. Guidelines named are the editions current when the syllabus was built; the morning agent checks for newer ones before each lesson.</p>
+    <div class="syl">${syl.map(c=>`<details ${curKey&&curKey.startsWith(c.id+".")?"open":""}><summary><span class="mono faint">${String(c.n).padStart(2,"0")}</span><b>${esc(c.title)}</b><span class="faint" style="font-size:12.5px">${esc(c.system)}</span></summary>
+      <ol>${(c.sections||[]).map(s=>{ const k=c.id+"."+s.n; return `<li class="${doneSet.has(k)?"done":k===curKey?"cur":""}">${esc(s.title)}${doneSet.has(k)?" ✓":k===curKey?" · today":""}</li>`; }).join("")}</ol>
+      ${(c.guidelines||[]).length?`<p class="faint" style="font-size:12.5px;margin-top:6px">${c.guidelines.map(g=>esc(g.org+" "+g.name+" ("+g.year+")")).join(" · ")}</p>`:""}</details>`).join("")}</div>
+  </div>`;
+}
 function viewPulse(){
-  const t = today();
-  const existing = S.checkins.find(c=>c.date===t);
+  const t = today(), existing = S.checkins.find(c=>c.date===t);
   const base = existing || S.checkins[0] || (S.profile&&S.profile.baseline ? {scores:S.profile.baseline} : null);
   const first = !S.checkins.length && !(S.profile&&S.profile.baseline);
   const val = (k,def)=> S.drafts["p-"+k] ?? (base&&base.scores&&base.scores[k]!=null ? base.scores[k] : def);
-  const series = [...S.checkins].reverse().slice(-30);
-  const sig = signals();
+  const series = [...S.checkins].reverse().slice(-30), sig = signals();
   return `<div class="cols">
     <div class="sec">
       <h2>${first?"Set your starting position":"Today's pulse"}</h2>
-      <p class="muted">${first?"Copy the scores from your Wheel of Life (0–10). This is the baseline Gradient measures change against.":"Ten seconds. Rate how each domain feels today, 0–10, plus sleep and energy. Daily ratings are noisy; the trend and the correlations are what matter."}</p>
+      <p class="muted">${first?"Copy the scores from your Wheel of Life (0–10). The map at the top takes its shape from them.":"Ten seconds. Rate each domain 0–10, plus sleep and energy. The trend and correlations matter more than any single day."}</p>
       <div class="sliders">
         ${DOMAINS.map(d=>`<div class="slider" style="--c:var(--${d.k})"><label for="p-${d.k}">${d.n}</label><input type="range" id="p-${d.k}" min="0" max="10" step="0.5" value="${esc(val(d.k,5))}" data-draft="p-${d.k}"><output class="mono">${fmt(val(d.k,5))}</output></div>`).join("")}
         ${first?"":`<div class="slider"><label for="p-sleep">Sleep (h)</label><input type="range" id="p-sleep" min="3" max="11" step="0.25" value="${esc(S.drafts["p-sleep"] ?? existing?.sleep ?? 7)}" data-draft="p-sleep"><output class="mono">${fmt(S.drafts["p-sleep"] ?? existing?.sleep ?? 7,2)}</output></div>
@@ -580,15 +1005,11 @@ function viewPulse(){
     </div>
     <div class="sec">
       <h2>Trajectories</h2>
-      <p class="muted">Last ${series.length||0} pulses. Dashed line is 5.</p>
-      <div class="small-multiples">
-        ${DOMAINS.map(d=>{ const vs=series.map(c=>c.scores?c.scores[d.k]:null); const last=vs.filter(v=>v!=null).pop();
-          return `<div class="sm"><div class="row" style="justify-content:space-between"><span class="label">${d.n}</span><span class="mono" style="font-size:12px">${fmt(last)}</span></div>${spark(vs,`var(--${d.k})`)}</div>`; }).join("")}
-      </div>
+      <div class="small-multiples">${DOMAINS.map(d=>{ const vs=series.map(c=>c.scores?c.scores[d.k]:null); const last=vs.filter(v=>v!=null).pop();
+        return `<div class="sm"><div class="spread"><span class="label">${d.n}</span><span class="mono" style="font-size:12px">${fmt(last)}</span></div>${spark(vs,`var(--${d.k})`)}</div>`; }).join("")}</div>
       <h2 style="margin-top:8px">Signals</h2>
-      ${sig.length ? `<div class="list">${sig.map(s=>`<div class="item"><div class="row" style="justify-content:space-between"><span>${s.driver==="sleep"?"Sleep":"Energy"} ↔ ${dn(s.k)}</span><span class="mono">r = ${fmt(s.r,2)} · n = ${s.n}</span></div><div class="bar"><i style="width:${Math.abs(s.r)*100}%;--c:${s.r>0?"var(--good)":"var(--bad)"}"></i></div></div>`).join("")}</div>
-        <p class="faint" style="font-size:12.5px">Correlation over your own days, not causation. Turn a strong one into an experiment to find out.</p>`
-        : `<div class="empty">After 7 pulses with sleep and energy, Gradient shows which of them move with each domain (|r| ≥ 0.3).</div>`}
+      ${sig.length ? `<div class="list">${sig.map(s=>`<div class="item"><div class="spread"><span>${s.driver==="sleep"?"Sleep":"Energy"} ↔ ${dn(s.k)}</span><span class="mono">r = ${fmt(s.r,2)} · n = ${s.n}</span></div><div class="bar"><i style="width:${Math.abs(s.r)*100}%;--c:${s.r>0?"var(--good)":"var(--bad)"}"></i></div></div>`).join("")}</div>`
+        : `<div class="empty">After 7 pulses with sleep and energy, this shows which of them move with each domain.</div>`}
     </div>
   </div>`;
 }
@@ -597,270 +1018,178 @@ function viewForecasts(){
   const done = S.forecasts.filter(f=>f.outcome!=null).sort((a,b)=>(b.resolvedAt||"").localeCompare(a.resolvedAt||"")).slice(0,12);
   const B = brier();
   const chart = B.n ? (()=>{ const X=p=>30+p*190, Y=o=>210-o*190;
-    return `<svg viewBox="0 0 230 240" role="img" aria-label="Calibration chart">
-      <rect x="30" y="20" width="190" height="190" fill="none" stroke="var(--rule)"/>
+    return `<svg viewBox="0 0 230 240" role="img" aria-label="Calibration chart"><rect x="30" y="20" width="190" height="190" fill="none" stroke="var(--rule)"/>
       <line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(1)}" stroke="var(--faint)" stroke-dasharray="4 4"/>
       ${[0,.5,1].map(v=>`<text x="${X(v)}" y="226" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${v*100}%</text><text x="24" y="${Y(v)+3}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono,monospace">${v*100}%</text>`).join("")}
-      <text x="125" y="238" text-anchor="middle" font-size="9.5" fill="var(--faint)" font-family="IBM Plex Mono,monospace">YOU SAID</text>
-      ${B.bins.map(b=>`<circle cx="${X(b.p)}" cy="${Y(b.o)}" r="${4+Math.min(b.n,10)}" fill="var(--ember)" fill-opacity=".75"><title>${b.n} forecasts near ${Math.round(b.p*100)}%: ${Math.round(b.o*100)}% came true</title></circle>`).join("")}
-    </svg>`; })() : "";
-  const worst = B.n ? B.bins.filter(b=>b.n>=3).sort((a,b)=>Math.abs(b.p-b.o)-Math.abs(a.p-a.o))[0] : null;
+      ${B.bins.map(b=>`<circle cx="${X(b.p)}" cy="${Y(b.o)}" r="${4+Math.min(b.n,10)}" fill="var(--ember)" fill-opacity=".75"><title>${b.n} forecasts near ${Math.round(b.p*100)}%: ${Math.round(b.o*100)}% came true</title></circle>`).join("")}</svg>`; })() : "";
   return `<div class="cols">
     <div class="sec">
       <h2>Forecast yourself</h2>
-      <p class="muted">You calibrate models for a living. Do the same for the person running them. State a probability that you'll do something, then score yourself when it resolves.</p>
+      <p class="muted">State a probability that you'll do something, then score yourself when it resolves.</p>
       <label class="label" for="f-q">Prediction</label>
-      <input type="text" id="f-q" data-draft="f-q" value="${esc(S.drafts["f-q"]||"")}" placeholder="I will train three times before Sunday">
+      <input type="text" id="f-q" data-draft="f-q" value="${esc(S.drafts["f-q"]||"")}" placeholder="I will finish this week's chapter sections by Thursday">
       <div class="row">
-        <div style="flex:1 1 180px"><label class="label" for="f-p">Probability</label>
-          <div class="row"><input type="range" id="f-p" min="1" max="99" value="${esc(S.drafts["f-p"]||70)}" data-draft="f-p" style="flex:1;accent-color:var(--ember)"><output class="mono">${esc(S.drafts["f-p"]||70)}%</output></div></div>
-        <div style="flex:1 1 140px"><label class="label" for="f-d">Domain</label><select id="f-d" data-draft="f-d">${DOMAINS.map(d=>`<option value="${d.k}" ${(S.drafts["f-d"]||"health")===d.k?"selected":""}>${d.n}</option>`).join("")}</select></div>
+        <div style="flex:1 1 180px"><label class="label" for="f-p">Probability</label><div class="row"><input type="range" id="f-p" min="1" max="99" value="${esc(S.drafts["f-p"]||70)}" data-draft="f-p" style="flex:1;accent-color:var(--ember)"><output class="mono">${esc(S.drafts["f-p"]||70)}%</output></div></div>
+        <div style="flex:1 1 140px"><label class="label" for="f-d">Domain</label><select id="f-d" data-draft="f-d">${DOMAINS.map(d=>`<option value="${d.k}" ${(S.drafts["f-d"]||"career")===d.k?"selected":""}>${d.n}</option>`).join("")}</select></div>
         <div style="flex:1 1 140px"><label class="label" for="f-due">Resolves on</label><input type="date" id="f-due" data-draft="f-due" value="${esc(S.drafts["f-due"]||addDays(today(),3))}"></div>
       </div>
       <div class="row"><button class="btn primary" data-act="addForecast">Log forecast</button></div>
-      <h2 style="margin-top:8px">Open</h2>
-      ${open.length?`<div class="list">${open.map(f=>`<div class="item"><div class="row" style="justify-content:space-between"><span>${esc(f.q)}</span><span class="mono">${Math.round(f.p*100)}%</span></div>
-        <div class="row">${chip(f.domain)}<span class="label ${f.due<=today()?"":"faint"}">${f.due<=today()?"Due — resolve it":"Due "+esc(f.due)}</span>
-        <span style="flex:1"></span><button class="btn small" data-act="resolve" data-id="${esc(f.id)}" data-v="1">Happened</button><button class="btn small" data-act="resolve" data-id="${esc(f.id)}" data-v="0">Didn't</button></div></div>`).join("")}</div>`
-        :`<div class="empty">No open forecasts. Each morning's brief suggests one.</div>`}
+      ${open.length?`<div class="list">${open.map(f=>`<div class="item"><div class="spread"><span>${esc(f.q)}</span><span class="mono">${Math.round(f.p*100)}%</span></div>
+        <div class="row">${chip(f.domain)}<span class="label">${f.due<=today()?"Due: resolve it":"Due "+esc(f.due)}</span><span style="flex:1"></span><button class="btn small" data-act="resolve" data-id="${esc(f.id)}" data-v="1">Happened</button><button class="btn small" data-act="resolve" data-id="${esc(f.id)}" data-v="0">Didn't</button></div></div>`).join("")}</div>`:""}
     </div>
     <div class="sec">
       <h2>Your calibration</h2>
-      <div class="stats">
-        <div class="stat"><span class="label">Brier score</span><b>${B.n?fmt(B.b,3):"—"}</b><span class="faint" style="font-size:12px">0 is perfect · 0.25 is a coin flip</span></div>
-        <div class="stat"><span class="label">Resolved</span><b>${B.n}</b></div>
-      </div>
+      <div class="stats"><div class="stat"><span class="label">Brier score</span><b>${B.n?fmt(B.b,3):"—"}</b><span class="faint" style="font-size:12px">0 is perfect · 0.25 is a coin flip</span></div><div class="stat"><span class="label">Resolved</span><b>${B.n}</b></div></div>
       ${B.n?`<div class="chart">${chart}</div>`:""}
-      ${worst?`<p>When you say about <b>${Math.round(worst.p*100)}%</b>, it happens <b>${Math.round(worst.o*100)}%</b> of the time (n = ${worst.n}). ${worst.p>worst.o?"You are overconfident about yourself here.":"You underrate yourself here."}</p>`
-        : `<p class="muted">After a few resolved forecasts in the same range, this says where you over- or underestimate yourself.</p>`}
-      ${done.length?`<div class="list">${done.map(f=>`<div class="item"><div class="row" style="justify-content:space-between"><span class="${f.outcome?"":"muted"}">${f.outcome?"✓":"✗"} ${esc(f.q)}</span><span class="mono">${Math.round(f.p*100)}%</span></div></div>`).join("")}</div>`:""}
+      ${done.length?`<div class="list">${done.map(f=>`<div class="item"><div class="spread"><span class="${f.outcome?"":"muted"}">${f.outcome?"✓":"✗"} ${esc(f.q)}</span><span class="mono">${Math.round(f.p*100)}%</span></div></div>`).join("")}</div>`:""}
     </div>
   </div>`;
 }
 function expChart(e){
   const logs = e.logs||[]; if(!logs.length) return `<div class="empty">No entries yet. Log a value each day.</div>`;
-  const vals = logs.map(l=>+l.v); const lo=Math.min(...vals), hi=Math.max(...vals), rng=(hi-lo)||1;
+  const vals = logs.map(l=>+l.v), lo=Math.min(...vals), hi=Math.max(...vals), rng=(hi-lo)||1;
   const X=i=>14+i*(472/Math.max(1,logs.length-1)), Y=v=>96-((v-lo)/rng)*80;
   const mean = ph => { const xs=logs.filter(l=>l.phase===ph).map(l=>+l.v); return xs.length? xs.reduce((a,b)=>a+b,0)/xs.length : null; };
   const mA=mean("A"), mB=mean("B");
-  return `<svg viewBox="0 0 500 110" style="width:100%;height:auto" role="img" aria-label="Experiment log">
-    <line x1="10" y1="104" x2="490" y2="104" stroke="var(--rule)"/>
-    ${mA!=null?`<line x1="10" x2="490" y1="${Y(mA)}" y2="${Y(mA)}" stroke="var(--muted)" stroke-dasharray="3 4"/>`:""}
-    ${mB!=null?`<line x1="10" x2="490" y1="${Y(mB)}" y2="${Y(mB)}" stroke="var(--ember)" stroke-dasharray="3 4"/>`:""}
-    ${logs.map((l,i)=>`<circle cx="${X(i)}" cy="${Y(+l.v)}" r="4" fill="${l.phase==="B"?"var(--ember)":"var(--muted)"}"><title>${esc(l.date)}: ${esc(l.v)}${l.note?" — "+esc(l.note):""}</title></circle>`).join("")}
-  </svg>
-  <div class="row mono" style="font-size:12px"><span class="muted">● baseline mean ${fmt(mA,2)} (n=${logs.filter(l=>l.phase==="A").length})</span><span style="color:var(--ember)">● trial mean ${fmt(mB,2)} (n=${logs.filter(l=>l.phase==="B").length})</span></div>`;
+  return `<svg viewBox="0 0 500 110" style="width:100%;height:auto" role="img" aria-label="Experiment log"><line x1="10" y1="104" x2="490" y2="104" stroke="var(--rule)"/>
+    ${mA!=null?`<line x1="10" x2="490" y1="${Y(mA)}" y2="${Y(mA)}" stroke="var(--muted)" stroke-dasharray="3 4"/>`:""}${mB!=null?`<line x1="10" x2="490" y1="${Y(mB)}" y2="${Y(mB)}" stroke="var(--ember)" stroke-dasharray="3 4"/>`:""}
+    ${logs.map((l,i)=>`<circle cx="${X(i)}" cy="${Y(+l.v)}" r="4" fill="${l.phase==="B"?"var(--ember)":"var(--muted)"}"><title>${esc(l.date)}: ${esc(l.v)}</title></circle>`).join("")}</svg>
+  <div class="row mono" style="font-size:12px"><span class="muted">● baseline mean ${fmt(mA,2)}</span><span style="color:var(--ember)">● trial mean ${fmt(mB,2)}</span></div>`;
 }
 function viewExperiments(){
   const act = S.experiments.filter(e=>e.status!=="closed"), closed=S.experiments.filter(e=>e.status==="closed");
   return `<div class="cols">
     <div class="sec">
       <h2>Run an n-of-1 experiment</h2>
-      <p class="muted">Treat a habit like a trading signal: a baseline period, then a trial period, the same metric logged daily, and a verdict that has to survive noise. Seven days of each is the minimum worth reading.</p>
-      <label class="label" for="e-t">What are you testing?</label>
-      <input type="text" id="e-t" data-draft="e-t" value="${esc(S.drafts["e-t"]||"")}" placeholder="No screens after 22:00">
-      <label class="label" for="e-h">Hypothesis</label>
-      <input type="text" id="e-h" data-draft="e-h" value="${esc(S.drafts["e-h"]||"")}" placeholder="It raises next-morning focus by at least 1 point">
-      <div class="row">
-        <div style="flex:2 1 200px"><label class="label" for="e-m">Daily metric</label><input type="text" id="e-m" data-draft="e-m" value="${esc(S.drafts["e-m"]||"")}" placeholder="Focus at 10:00, 1–10"></div>
-        <div style="flex:1 1 120px"><label class="label" for="e-dom">Domain</label><select id="e-dom" data-draft="e-dom">${DOMAINS.map(d=>`<option value="${d.k}" ${(S.drafts["e-dom"]||"health")===d.k?"selected":""}>${d.n}</option>`).join("")}</select></div>
-      </div>
+      <p class="muted">A baseline period, then a trial period, one metric logged daily. Seven days of each is the minimum worth reading. Your brain-game scores make good metrics.</p>
+      <label class="label" for="e-t">What are you testing?</label><input type="text" id="e-t" data-draft="e-t" value="${esc(S.drafts["e-t"]||"")}" placeholder="No caffeine after 14:00">
+      <label class="label" for="e-h">Hypothesis</label><input type="text" id="e-h" data-draft="e-h" value="${esc(S.drafts["e-h"]||"")}" placeholder="Next-morning reaction time drops by 20 ms">
+      <div class="row"><div style="flex:2 1 200px"><label class="label" for="e-m">Daily metric</label><input type="text" id="e-m" data-draft="e-m" value="${esc(S.drafts["e-m"]||"")}" placeholder="Choice reaction median, ms"></div>
+        <div style="flex:1 1 120px"><label class="label" for="e-dom">Domain</label><select id="e-dom" data-draft="e-dom">${DOMAINS.map(d=>`<option value="${d.k}" ${(S.drafts["e-dom"]||"health")===d.k?"selected":""}>${d.n}</option>`).join("")}</select></div></div>
       <div class="row"><button class="btn primary" data-act="addExp">Start with baseline</button></div>
-      ${closed.length?`<h2 style="margin-top:8px">Concluded</h2><div class="list">${closed.map(e=>`<div class="item"><b>${esc(e.title)}</b><span class="muted">${esc(e.verdict||"")}</span></div>`).join("")}</div>`:""}
+      ${closed.length?`<div class="list">${closed.map(e=>`<div class="item"><b>${esc(e.title)}</b><span class="muted">${esc(e.verdict||"")}</span></div>`).join("")}</div>`:""}
     </div>
-    <div class="sec">
-      <h2>Running</h2>
-      ${act.length?act.map(e=>`<div class="item" style="border-top:1px solid var(--rule)">
-        <div class="row" style="justify-content:space-between"><b>${esc(e.title)}</b>${chip(e.domain)}</div>
-        <p class="muted" style="font-size:13.5px">${esc(e.hypothesis)} · metric: ${esc(e.metric)}</p>
-        ${expChart(e)}
-        <div class="row">
-          <span class="label">Phase</span>
-          <button class="btn small ${e.phase!=="B"?"on":""}" data-act="phase" data-id="${esc(e.id)}" data-v="A">Baseline</button>
-          <button class="btn small ${e.phase==="B"?"on":""}" data-act="phase" data-id="${esc(e.id)}" data-v="B">Trial</button>
-        </div>
-        <div class="row">
-          <input type="number" step="any" id="ev-${esc(e.id)}" data-draft="ev-${esc(e.id)}" value="${esc(S.drafts["ev-"+e.id]||"")}" placeholder="Today's value" style="max-width:150px">
-          <button class="btn small primary" data-act="logExp" data-id="${esc(e.id)}">Log</button>
-          <button class="btn small" data-act="readExp" data-id="${esc(e.id)}" ${S.sample?"":"disabled"}>Ask Claude to read it</button>
-          <button class="btn small ghost" data-act="closeExp" data-id="${esc(e.id)}">Conclude</button>
-        </div>
-        ${(S.outputs["exp-"+e.id]??e.analysis)?`<div class="out">${esc(S.outputs["exp-"+e.id]??e.analysis)}</div>`:""}
-      </div>`).join(""):`<div class="empty">No experiments running. A strong signal in Pulse, or today's pattern, is a good first candidate.</div>`}
-    </div>
-  </div>`;
-}
-function viewRecall(){
-  const due = dueCards(); const c = due[0];
-  const byD = DOMAINS.map(d=>({d, n:S.cards.filter(x=>x.domain===d.k).length})).filter(x=>x.n);
-  return `<div class="cols">
-    <div class="sec">
-      <h2>${due.length?`${due.length} due today`:"Nothing due"}</h2>
-      <p class="muted">Retrieval beats rereading. Try to answer before you reveal; the schedule stretches each card's interval as it sticks.</p>
-      ${c?`<div class="card-face">
-        <div class="row" style="justify-content:space-between">${chip(c.domain)}<span class="label">seen ${c.reps||0}× · ease ${fmt(c.ease||2.5,2)}</span></div>
-        <p class="q">${esc(c.front)}</p>
-        ${S.revealed?`<p class="body" style="white-space:pre-wrap;border-top:1px solid var(--rule);padding-top:12px">${esc(c.back)}</p>
-          <div class="row">${[["1","Forgot"],["3","Hard"],["4","Good"],["5","Easy"]].map(([q,l])=>`<button class="btn small ${q==="4"?"primary":""}" data-act="grade" data-id="${esc(c.id)}" data-q="${q}">${l}</button>`).join("")}</div>`
-          :`<div class="row"><button class="btn primary" data-act="reveal">Reveal answer</button></div>`}
-      </div>`:`<div class="empty">${S.cards.length?"All caught up. Come back tomorrow.":"Your deck is empty. Keep today's lesson as a card, or write your own."}</div>`}
-    </div>
-    <div class="sec">
-      <h2>Add a card</h2>
-      <label class="label" for="c-f">Question</label><input type="text" id="c-f" data-draft="c-f" value="${esc(S.drafts["c-f"]||"")}" placeholder="Why does Platt scaling need a held-out fold?">
-      <label class="label" for="c-b">Answer</label><textarea id="c-b" data-draft="c-b">${esc(S.drafts["c-b"]||"")}</textarea>
-      <div class="row"><select id="c-d" data-draft="c-d" style="max-width:200px">${DOMAINS.map(d=>`<option value="${d.k}" ${(S.drafts["c-d"]||"growth")===d.k?"selected":""}>${d.n}</option>`).join("")}</select><button class="btn primary" data-act="addCard">Add card</button></div>
-      ${byD.length?`<div class="row">${byD.map(x=>`<span class="chip" style="--c:var(--${x.d.k})">${x.d.n} ${x.n}</span>`).join("")}</div>`:""}
+    <div class="sec"><h2>Running</h2>
+      ${act.length?act.map(e=>`<div class="item" style="border-top:1px solid var(--rule)"><div class="spread"><b>${esc(e.title)}</b>${chip(e.domain)}</div>
+        <p class="muted" style="font-size:13.5px">${esc(e.hypothesis)} · metric: ${esc(e.metric)}</p>${expChart(e)}
+        <div class="row"><span class="label">Phase</span><button class="btn small ${e.phase!=="B"?"on":""}" data-act="phase" data-id="${esc(e.id)}" data-v="A">Baseline</button><button class="btn small ${e.phase==="B"?"on":""}" data-act="phase" data-id="${esc(e.id)}" data-v="B">Trial</button></div>
+        <div class="row"><input type="number" step="any" id="ev-${esc(e.id)}" data-draft="ev-${esc(e.id)}" value="${esc(S.drafts["ev-"+e.id]||"")}" placeholder="Today's value" style="max-width:150px"><button class="btn small primary" data-act="logExp" data-id="${esc(e.id)}">Log</button><button class="btn small" data-act="readExp" data-id="${esc(e.id)}" ${S.sample?"":"disabled"}>Ask Claude to read it</button><button class="btn small ghost" data-act="closeExp" data-id="${esc(e.id)}">Conclude</button></div>
+        ${(S.outputs["exp-"+e.id]??e.analysis)?`<div class="out">${esc(S.outputs["exp-"+e.id]??e.analysis)}</div>`:""}</div>`).join(""):`<div class="empty">No experiments running.</div>`}
     </div>
   </div>`;
 }
 function viewModel(){
-  const m = S.model||{}; const p = S.profile||{};
-  const hyps = Array.isArray(m.hypotheses)?m.hypotheses:[];
+  const m = S.model||{}, p = S.profile||{}, hyps = Array.isArray(m.hypotheses)?m.hypotheses:[];
   return `<div class="cols">
     <div class="sec">
       <h2>What Claude believes about you</h2>
-      <p class="muted">Hypotheses, not facts. Each Update revises them using your data and your verdicts below. Correct it freely; a wrong model gives wrong advice.</p>
-      ${hyps.length?`<div class="list">${hyps.map(h=>`<div class="item">
-        <div class="row" style="justify-content:space-between">${chip(h.domain)}<span class="mono" style="font-size:12px">${Math.round((+h.confidence||0)*100)}%</span></div>
-        <p>${esc(h.text)}</p>
-        <div class="bar"><i style="width:${Math.round((+h.confidence||0)*100)}%;--c:var(--${DK.includes(h.domain)?h.domain:"glass"})"></i></div>
+      <p class="muted">Hypotheses, not facts. Each Update revises them using your data and your verdicts.</p>
+      ${hyps.length?`<div class="list">${hyps.map(h=>`<div class="item"><div class="spread">${chip(h.domain)}<span class="mono" style="font-size:12px">${Math.round((+h.confidence||0)*100)}%</span></div>
+        <p>${esc(h.text)}</p><div class="bar"><i style="width:${Math.round((+h.confidence||0)*100)}%;--c:var(--${DK.includes(h.domain)?h.domain:"glass"})"></i></div>
         ${h.evidence?`<p class="faint" style="font-size:12.5px">${esc(h.evidence)}</p>`:""}
-        <div class="row">${["true","partly","wrong"].map(v=>`<button class="btn small ${h.feedback===v?"on":""}" data-act="hypFb" data-id="${esc(h.id)}" data-v="${v}">${v==="true"?"True":v==="partly"?"Partly":"Wrong"}</button>`).join("")}</div>
-      </div>`).join("")}</div>`:`<div class="empty">No model yet. Press Update to have Claude form its first hypotheses.</div>`}
+        <div class="row">${["true","partly","wrong"].map(v=>`<button class="btn small ${h.feedback===v?"on":""}" data-act="hypFb" data-id="${esc(h.id)}" data-v="${v}">${v==="true"?"True":v==="partly"?"Partly":"Wrong"}</button>`).join("")}</div></div>`).join("")}</div>`:`<div class="empty">Press Update to have Claude form its first hypotheses.</div>`}
       ${Array.isArray(m.notes)&&m.notes.length?`<h2 style="margin-top:8px">Claude's notes to itself</h2><div class="list">${m.notes.slice(-6).reverse().map(n=>`<div class="item"><span class="faint mono" style="font-size:11.5px">${esc(n.date||"")}</span><span>${esc(n.text||n)}</span></div>`).join("")}</div>`:""}
     </div>
     <div class="sec">
-      <h2>Coupling</h2>
-      <p class="muted">How strongly Claude thinks each pair of domains moves together for you. Strong pairs become ridges on the map.</p>
-      ${couplings().length?`<div class="list">${couplings().slice().sort((a,b)=>b.w-a.w).map(c=>`<div class="item"><div class="row" style="justify-content:space-between"><span>${esc(dn(c.a))} ↔ ${esc(dn(c.b))}</span><span class="mono">${fmt(c.w,2)}</span></div><div class="bar"><i style="width:${(+c.w||0)*100}%"></i></div>${c.why?`<span class="faint" style="font-size:12.5px">${esc(c.why)}</span>`:""}</div>`).join("")}</div>`:`<div class="empty">Appears after the first Update.</div>`}
-      <h2 style="margin-top:8px">Tell it who you are</h2>
+      <h2>Tell it who you are</h2>
       <label class="label" for="pr-about">About you: work, interests, constraints, what you want</label>
-      <textarea id="pr-about" data-draft="pr-about" style="min-height:120px">${esc(S.drafts["pr-about"] ?? p.about ?? "")}</textarea>
+      <textarea id="pr-about" data-draft="pr-about" style="min-height:140px">${esc(S.drafts["pr-about"] ?? p.about ?? "")}</textarea>
       ${DOMAINS.map(d=>`<label class="label" for="pr-g-${d.k}">${d.n}: what would a 10 look like?</label><input type="text" id="pr-g-${d.k}" data-draft="pr-g-${d.k}" value="${esc(S.drafts["pr-g-"+d.k] ?? (p.goals&&p.goals[d.k]) ?? "")}">`).join("")}
       <div class="row"><button class="btn primary" data-act="saveProfile">Save</button></div>
+      <p class="faint" style="font-size:12.5px">The morning agent reads this every day to pick papers, examples and ideas.</p>
     </div>
   </div>`;
 }
 function viewDispatches(){
   const ds = S.dispatches.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
-  return `<div class="sec">
-    <h2>Dispatches</h2>
-    <p class="muted" style="max-width:72ch">New research picked for you, found on the open web by a Claude Code session and checked for what it does and doesn't show. Each Update reads these, so your lessons can build on them.</p>
-    ${ds.length?`<div class="list">${ds.map(d=>`<div class="item">
-      <div class="row" style="justify-content:space-between"><span class="row">${chip(d.domain)}<span class="label faint">${esc(d.date||"")}</span></span>${d.strength?`<span class="label">${esc(d.strength)}</span>`:""}</div>
-      <h3 style="font:600 18px/1.3 var(--f-display)">${esc(d.title)}</h3>
-      <p style="max-width:72ch">${esc(d.summary)}</p>
-      ${d.why?`<p class="muted" style="max-width:72ch"><b>For you:</b> ${esc(d.why)}</p>`:""}
-      <div class="row">${d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.source||"Source")} ↗</a>`:`<span class="faint">${esc(d.source||"")}</span>`}<button class="btn small ghost" data-act="discuss" data-topic="dispatch" data-id="${esc(d.id)}">Discuss</button></div>
-    </div>`).join("")}</div>`:`<div class="empty">No dispatches yet.</div>`}
-  </div>`;
+  return `<div class="sec"><h2>Dispatches</h2><p class="muted" style="max-width:72ch">Extra research picked for you, found on the open web and checked for what it does and doesn't show.</p>
+    ${ds.length?`<div class="list">${ds.map(d=>`<div class="item"><div class="spread"><span class="row">${chip(d.domain)}<span class="label faint">${esc(d.date||"")}</span></span>${d.strength?`<span class="label">${esc(d.strength)}</span>`:""}</div>
+      <h3 style="font:600 18px/1.3 var(--f-display)">${esc(d.title)}</h3><p style="max-width:72ch">${esc(d.summary)}</p>${d.why?`<p class="muted" style="max-width:72ch"><b>For you:</b> ${esc(d.why)}</p>`:""}
+      <div class="row">${d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.source||"Source")} ↗</a>`:`<span class="faint">${esc(d.source||"")}</span>`}<button class="btn small ghost" data-act="discuss" data-topic="dispatch" data-id="${esc(d.id)}">Discuss</button></div></div>`).join("")}</div>`:`<div class="empty">No dispatches yet.</div>`}</div>`;
 }
 const MODES = {
   open:{n:"Open", rule:"Be a sharp, warm thinking partner. Be concise. Ask one good question back when it helps."},
-  redteam:{n:"Red-team a trade", rule:"The person will describe a trading idea or model. Attack it like a skeptical risk manager: look-ahead bias, overfitting, regime dependence, costs and slippage, position sizing, what would falsify it. Be concrete and short. End with the single cheapest test that could kill the idea."},
-  belief:{n:"Belief audit", rule:"The person states a belief they hold. Steelman the opposite view, identify the cruxes, and ask what evidence would change their mind. Never simply agree. Keep turns short."},
-  feynman:{n:"Explain it back", rule:"Ask the person to explain a concept (theirs or from today's lesson) as if to a smart 15-year-old. Find gaps, jargon, and errors in their explanation, then ask a probing follow-up. Give a score out of 10 each time."},
-  convo:{n:"Rehearse a conversation", rule:"Role-play the other person in a conversation the user wants to rehearse (they will describe it). Stay in character and be realistic, including resistance. When the user types 'debrief', step out and give specific feedback on clarity, listening, and tone."},
+  rounds:{n:"Rounds rehearsal", rule:"Play a busy, skeptical attending physician on ward rounds. The user is the clinical pharmacist making a recommendation. Push back realistically (time pressure, 'we've always done it this way', asking for evidence). Stay in character. When the user types 'debrief', step out and coach them on clarity, confidence, evidence use and SBAR structure."},
+  case:{n:"Case discussion", rule:"Act as a senior clinical pharmacist preceptor. Discuss the case or topic Socratically: ask what they would check, what they'd recommend and why, then correct and teach. Be accurate and cite guidelines by name when relevant."},
+  redteam:{n:"Red-team a trade", rule:"The person will describe a trading idea or model. Attack it like a skeptical risk manager: look-ahead bias, overfitting, regime dependence, costs and slippage, sizing, what would falsify it. End with the single cheapest test that could kill the idea."},
+  negotiate:{n:"Negotiation", rule:"Role-play the other side of a negotiation the user describes (salary, promotion, a deal). Be realistic and tough. When the user types 'debrief', step out and give specific feedback on anchoring, labelling, calibrated questions, BATNA and composure."},
+  feynman:{n:"Explain it back", rule:"Ask the person to explain a concept as if to a smart 15-year-old or a new nurse. Find gaps, jargon and errors, then ask a probing follow-up. Score each explanation out of 10."},
 };
 function viewSpar(){
-  return `<div class="sec">
-    <h2>Spar</h2>
+  return `<div class="sec"><h2>Spar</h2>
     <div class="modes">${Object.entries(MODES).map(([k,m])=>`<button class="btn small ${S.sparMode===k?"on":""}" data-act="mode" data-v="${k}">${m.n}</button>`).join("")}</div>
     <p class="muted">${esc(MODES[S.sparMode].rule)}</p>
-    <div class="chat" id="chat">${S.chat.length?S.chat.map(m=>`<div class="msg ${m.role==="user"?"me":"ai"}">${esc(m.content)}</div>`).join(""):`<div class="empty">Start by typing below. This conversation is not saved after you leave the page.</div>`}</div>
-    <textarea id="spar-in" data-draft="spar-in" placeholder="${S.sparMode==="redteam"?"Long TSLA when the model's next-day probability is above 0.6…":"Say something."}">${esc(S.drafts["spar-in"]||"")}</textarea>
-    <div class="row"><button class="btn primary" data-act="send" ${S.sample&&!S.chatBusy?"":"disabled"}>${S.chatBusy?"Thinking…":"Send"}</button>${S.chat.length?`<button class="btn ghost small" data-act="clearChat">New conversation</button>`:""}</div>
-  </div>`;
+    <div class="chat" id="chat">${S.chat.length?S.chat.map(m=>`<div class="msg ${m.role==="user"?"me":"ai"}">${esc(m.content)}</div>`).join(""):`<div class="empty">Start by typing below. This conversation isn't saved after you leave the page.</div>`}</div>
+    <textarea id="spar-in" data-draft="spar-in" placeholder="${S.sparMode==="rounds"?"Dr. Khalid, I'd like to recommend switching the patient's sliding-scale insulin to a basal-bolus regimen because…":"Say something."}">${esc(S.drafts["spar-in"]||"")}</textarea>
+    <div class="row"><button class="btn primary" data-act="send" ${S.sample&&!S.chatBusy?"":"disabled"}>${S.chatBusy?"Thinking…":"Send"}</button>${S.chat.length?`<button class="btn ghost small" data-act="clearChat">New conversation</button>`:""}<span class="faint" style="font-size:12px">Ctrl/⌘ + Enter sends</span></div></div>`;
 }
 
 /* ---------- render all (keeps focus) ---------- */
 function render(){
   const a = document.activeElement, id = a && a.id, sel = (a && typeof a.selectionStart==="number") ? [a.selectionStart,a.selectionEnd] : null;
-  renderHeader(); renderToday(); renderFolio(); renderTabs(); renderPanel();
+  renderHeader(); renderToday();
+  $("examSlot").innerHTML = examView();
+  renderStations(); renderTabs(); renderPanel();
   if(id){ const n=$(id); if(n && n!==a){ n.focus({preventScroll:true}); if(sel && n.setSelectionRange) try{ n.setSelectionRange(sel[0],sel[1]); }catch(e){} } }
-  if(T.ctx){ drawTerrain(); }
+  if(T.ctx) drawTerrain();
 }
 
 /* ---------- Claude ---------- */
-function contextPack(){
-  const cs = S.checkins.slice(0,21).map(c=>({d:c.date, s:c.scores, sleep:c.sleep, energy:c.energy, note:c.note}));
-  const B = brier();
+function progressPack(){
+  const recent = Object.values(S.answers).filter(a=>a.at && a.at.slice(0,10)>=addDays(today(),-30));
+  const topics = {}; for(const a of recent){ const t=a.topic||"Other"; topics[t]=topics[t]||{n:0,correct:0}; topics[t].n++; if(a.correct) topics[t].correct++; }
+  const brain = {}; for(const g of games()){ const h=gameHistory(g.id).slice(-14); if(h.length) brain[g.id]={metric:g.metric.label, better:g.metric.better, recent:h.map(r=>[r.date, r.score])}; }
   return {
-    today: today(), weekday: new Date().toLocaleDateString("en-US",{weekday:"long"}),
-    domains: DK,
-    profile: S.profile ? {about:S.profile.about, goals:S.profile.goals, baseline:S.profile.baseline, facts:S.profile.facts} : null,
+    today: today(), weekday: new Date().toLocaleDateString("en-US",{weekday:"long"}), energy: energy(),
+    profile: S.profile ? {about:S.profile.about, goals:S.profile.goals} : null,
     current_model: S.model ? {hypotheses:S.model.hypotheses, coupling:S.model.coupling, leverage:S.model.leverage, notes:(S.model.notes||[]).slice(-8)} : null,
-    pulse_recent: cs,
-    signals: signals().map(s=>({driver:s.driver, domain:s.k, r:+s.r.toFixed(2), n:s.n})),
-    forecasts: {brier: B.n?+B.b.toFixed(3):null, resolved:B.n, bins:B.bins||[], open:S.forecasts.filter(f=>f.outcome==null).map(f=>({q:f.q,p:f.p,due:f.due})), recent:S.forecasts.filter(f=>f.outcome!=null).slice(0,10).map(f=>({q:f.q,p:f.p,o:f.outcome}))},
-    experiments: S.experiments.map(e=>({title:e.title, hypothesis:e.hypothesis, status:e.status, n:(e.logs||[]).length, verdict:e.verdict})),
-    recall: {cards:S.cards.length, due:dueCards().length, hardest:S.cards.slice().sort((a,b)=>(a.ease||2.5)-(b.ease||2.5)).slice(0,5).map(c=>c.front)},
-    recent_briefs: S.briefs.slice(0,10).map(b=>({date:b.date, headline:b.headline, move:b.move&&b.move.title, moveDone:!!b.moveDone, lesson:b.lesson&&(b.lesson.field+": "+b.lesson.title), drill:b.drill&&b.drill.kind, drillAttempted:!!b.drillAnswer, patternFeedback:b.patternFeedback})),
-    dispatches: S.dispatches.slice(0,8).map(d=>({title:d.title, summary:d.summary, domain:d.domain, date:d.date})),
-    activity_days_last_21: Object.keys((S.log&&S.log.days)||{}).filter(d=>d>=addDays(today(),-21)).length,
+    pulse_recent: S.checkins.slice(0,14).map(c=>({d:c.date, s:c.scores, sleep:c.sleep, energy:c.energy})),
+    quiz_by_topic_30d: topics,
+    exams: S.exams.filter(e=>e.done).slice(-6).map(e=>({week:e.key, score:e.score, total:e.total})),
+    brain_games: brain,
+    presence_drills_done_7d: S.mornings.filter(m=>m.date>=addDays(today(),-7)).length,
+    adhkar_completion_today: Math.round(stationProgress("spirit")*100)+"%",
+    mornings_last_7: S.mornings.slice(0,7).map(m=>({date:m.date, chapter:m.career&&m.career.chapter&&(m.career.chapter.chapterTitle+" §"+m.career.chapter.section), chapterQuizDone:chapterDone(m), presence:m.presence&&m.presence.technique})),
+    recall: {due: dueCards().length, missedQuestions: S.cards.filter(c=>c.type==="mcq").length},
+    forecasts: (()=>{ const B=brier(); return {brier:B.n?+B.b.toFixed(3):null, resolved:B.n}; })(),
   };
 }
-const UPDATE_PROMPT = `You are Gradient, a personal-development intelligence working for one person. Each morning you recompute "the gradient" of their life: the direction where a small effort today buys the largest improvement across seven domains (career, finance, health, growth, relationships, spirit, joy). You also maintain an explicit, revisable model of who this person is.
+const UPDATE_PROMPT = `You are Gradient, a personal-development intelligence for one person: a hospital clinical pharmacist in Saudi Arabia who uses this page every morning with coffee. The page serves seven stations: Pharmacy (paper + chapter + MCQs), Presence (charisma training), Mind (brain games, case, puzzle), Spirit (Quran, tafsir, adhkar; in Arabic), Finance, People, Joy. The map's domains are career, finance, health, growth, relationships, spirit, joy.
 
-You will receive a JSON pack with their profile, your previous model of them (with their verdicts on your hypotheses), recent daily pulses, correlations, self-forecasts and calibration, experiments, flashcard stats, recent briefs, and research dispatches.
+You receive their progress: quiz accuracy by topic, weekly exam scores, brain-game trends, pulse ratings, and your previous model of them (with their verdicts on your hypotheses).
 
 Do this:
-1. Revise your model. Keep hypotheses they marked "true" (raise confidence). Rewrite or drop ones marked "wrong". Add at most two new hypotheses, each grounded in specific evidence from the pack. 4 to 8 hypotheses total, each with a short stable id. Confidence is a probability; be calibrated, not flattering.
-2. Estimate coupling (0 to 1) for the 4 to 8 domain pairs that most plausibly move together for this person, with a one-line reason.
-3. Choose the leverage domain: where effort today propagates furthest, considering low scores, coupling, trends, and what they have neglected. Explain in one or two sentences that cite their data where it exists.
-4. Write today's brief:
-   - headline: one sentence, the thesis of today. Specific, never generic motivation.
-   - move: the single highest-leverage action today, 5 to 45 minutes, concrete enough to start immediately.
-   - lesson: teach one real concept at mechanism level (about 120 to 180 words). Rotate fields across days (pharmacology, statistics and forecasting, market microstructure, neuroscience and sleep, behavioral economics, communication and persuasion, physiology, philosophy, history of science). Do not repeat a field used in the last three briefs. Connect it to their life or projects in the last two sentences. Be accurate; say when evidence is mixed. Never invent citations: source_hint names a well-known textbook, review, or a search phrase. Pharmacology is education only, no dosing advice. Include one flashcard (front: a question that forces retrieval, back: a 1 to 3 sentence answer).
-   - challenge: one assumption this person likely holds (from their profile, data, or habits), the strongest counter-argument, and a question that makes them think.
-   - drill: a practice task under 10 minutes with explicit criteria. Mostly communication (explaining, persuading, listening, hard conversations), sometimes reasoning about risk or trading, sometimes self-explanation of a recent lesson.
-   - pattern: one observation about the person drawn from the data. If data is thin, say what one measurement would reveal it. Confidence 0 to 1.
-   - forecast: a yes/no self-prediction resolvable in 1 to 7 days, with due_days.
-5. memo: one to three sentences to your future self about what to watch or try next time.
+1. Revise your model. Keep hypotheses they marked "true" (raise confidence). Rewrite or drop ones marked "wrong". Add at most two new ones grounded in specific evidence. 4 to 8 total, short stable ids, calibrated confidence.
+2. Coupling (0 to 1) for the 4 to 8 domain pairs that most plausibly move together for them.
+3. focus: the domain where effort today propagates furthest, with 1-2 sentences citing their data.
+4. headline: one specific sentence for this morning (no generic motivation). If today is Friday mention the exam.
+5. review: their weakest pharmacy topic (from quiz_by_topic_30d; if no data, pick a high-yield hospital topic) and exactly 3 new vignette MCQs on it, accurate to current guidelines, format {"id","q","options":[4],"answer":0-3,"explanation","topic"}.
+6. memo: 1-3 sentences to your future self.
 
-Write plainly and specifically. Address the person as "you". Use their own numbers when you cite evidence.
+Reply with ONLY this JSON:
+{"headline":"...","focus":{"domain":"career","why":"..."},"model":{"hypotheses":[{"id":"...","text":"...","domain":"career","confidence":0.6,"evidence":"..."}],"coupling":[{"a":"health","b":"career","w":0.6,"why":"..."}]},"review":{"topic":"...","mcqs":[...]},"memo":"..."}
 
-Reply with ONLY this JSON (no markdown):
-{"model":{"hypotheses":[{"id":"h-sleep-risk","text":"...","domain":"health","confidence":0.6,"evidence":"..."}],"coupling":[{"a":"health","b":"career","w":0.6,"why":"..."}],"leverage":{"domain":"health","why":"..."}},
-"brief":{"headline":"...","move":{"domain":"health","title":"...","why":"...","minutes":20},
-"lesson":{"domain":"growth","field":"Pharmacology","title":"...","body":"...","source_hint":"...","card":{"front":"...","back":"..."}},
-"challenge":{"domain":"finance","assumption":"...","counter":"...","question":"..."},
-"drill":{"domain":"relationships","kind":"Communication","prompt":"...","criteria":"..."},
-"pattern":{"observation":"...","evidence":"...","confidence":0.4},
-"forecast":{"question":"...","domain":"health","due_days":3}},
-"memo":"..."}
-
-The pack:
+Progress pack:
 `;
-
 async function recompute(){
   if(S.busy) return;
   if(S.demo){ status("Example mode: Update needs the page opened on claude.ai while signed in."); return; }
   if(!S.sample){ status("Claude isn't available in this view."); return; }
-  S.busy = true; render(); status("Claude is rereading your history. This usually takes 30–90 seconds.");
+  S.busy = true; render(); status("Claude is reconsidering your progress. This usually takes 30–90 seconds.");
   try{
-    const pack = contextPack();
-    const res = await S.sample.json(UPDATE_PROMPT + JSON.stringify(pack), {
-      modelTier:"complex", cache:false,
-      onText:({text})=>{ status("Writing today's brief… "+text.length.toLocaleString()+" characters"); },
-    });
-    if(!res || !res.brief || !res.model) throw {code:"invalid_json"};
+    const res = await S.sample.json(UPDATE_PROMPT + JSON.stringify(progressPack()), { modelTier:"complex", cache:false, onText:({text})=>status("Writing… "+text.length.toLocaleString()+" characters") });
+    if(!res || !res.model) throw {code:"invalid_json"};
     const prevH = (S.model&&S.model.hypotheses)||[];
-    const hyps = (res.model.hypotheses||[]).filter(h=>h&&h.text).slice(0,10).map(h=>{
-      const old = prevH.find(o=>o.id===h.id);
-      return {id:String(h.id||uid()), text:String(h.text), domain:DK.includes(h.domain)?h.domain:"growth", confidence:clamp(+h.confidence||.5,0,1), evidence:String(h.evidence||""), feedback: old && old.feedback && old.text===h.text ? old.feedback : null};
-    });
+    const hyps = (res.model.hypotheses||[]).filter(h=>h&&h.text).slice(0,10).map(h=>{ const old = prevH.find(o=>o.id===h.id);
+      return {id:String(h.id||uid()), text:String(h.text), domain:DK.includes(h.domain)?h.domain:"growth", confidence:clamp(+h.confidence||.5,0,1), evidence:String(h.evidence||""), feedback: old && old.feedback && old.text===h.text ? old.feedback : null}; });
     const coupling = (res.model.coupling||[]).filter(c=>DK.includes(c.a)&&DK.includes(c.b)&&c.a!==c.b).slice(0,10).map(c=>({a:c.a,b:c.b,w:clamp(+c.w||0,0,1),why:String(c.why||"")}));
-    const lev = res.model.leverage && DK.includes(res.model.leverage.domain) ? {domain:res.model.leverage.domain, why:String(res.model.leverage.why||"")} : null;
+    const focus = res.focus && DK.includes(res.focus.domain) ? {domain:res.focus.domain, why:String(res.focus.why||"")} : null;
     const notes = ((S.model&&S.model.notes)||[]).concat(res.memo?[{date:today(), text:String(res.memo)}]:[]).slice(-12);
-    const brief = Object.assign({}, res.brief, {date:today(), createdAt:new Date().toISOString()});
-    const keep = todaysBrief();
-    if(keep){ brief.moveDone = keep.moveDone||false; }
-    await write("me/model", {hypotheses:hyps, coupling, leverage:lev, notes, updatedAt:new Date().toISOString()});
-    await write("briefs/"+today(), brief);
+    const review = res.review && Array.isArray(res.review.mcqs) ? {topic:String(res.review.topic||""), mcqs:res.review.mcqs.filter(q=>q&&Array.isArray(q.options)&&q.options.length===4&&Number.isInteger(q.answer)).slice(0,3).map((q,i)=>Object.assign({},q,{id:"r"+i+"-"+uid()}))} : null;
+    await write("me/model", {hypotheses:hyps, coupling, leverage:focus, notes, updatedAt:new Date().toISOString()});
+    await write("days/"+today(), {date:today(), update:{headline:String(res.headline||""), focus, review, at:new Date().toISOString()}}, "update");
     await bump("update");
-    status("Updated. The map, your model, and today's brief are new.");
+    status("Updated: today's focus, your model, and three review questions in Pharmacy.");
   }catch(e){
     const code = e && e.code;
     status(code==="not_granted"||code==="sampling_disabled" ? "Claude isn't allowed in this view. Allow it from the artifact's permissions to use Update."
@@ -869,11 +1198,44 @@ async function recompute(){
       : code==="cancelled" ? "" : "Update failed ("+(code||"error")+"). Press Update to try again.");
   }finally{ S.busy=false; render(); }
 }
-
-async function streamInto(key, prompt, opts={}){
+function nextSection(){
+  const syl = S.syllabus && S.syllabus.chapters; if(!syl||!syl.length) return null;
+  const last = S.mornings.find(m=>m.career&&m.career.chapter&&m.date<today());
+  if(!last) return {ch:syl[0], sec:syl[0].sections[0]};
+  const lc = last.career.chapter, ci = Math.max(0, syl.findIndex(c=>c.id===lc.chapterId)), ch = syl[ci];
+  const si = (ch.sections||[]).findIndex(s=>s.n===lc.section);
+  if(si>=0 && si < ch.sections.length-1) return {ch, sec:ch.sections[si+1]};
+  const nch = syl[(ci+1)%syl.length]; return {ch:nch, sec:nch.sections[0]};
+}
+async function prepareMorning(){
+  if(S.preparing || !S.sample) return;
+  const ns = nextSection(), techs = (S.presenceProg && S.presenceProg.techniques) || [];
+  const tech = techs.length ? techs[S.mornings.length % techs.length] : null;
+  const track = (Math.floor(new Date(today()+"T12:00:00")/864e5)%2) ? "trading" : "personal";
+  S.preparing = true; render(); status("Claude is preparing this morning from its own knowledge. Usually 1–2 minutes.");
+  const prompt = `You are preparing one morning of learning for a hospital clinical pharmacist in Saudi Arabia (English). No web access is available, so do NOT invent papers, URLs or statistics; teach established, guideline-consistent knowledge and say "check the current guideline" where recent changes may apply.
+About them: ${(S.profile&&S.profile.about||"").slice(0,1200)}
+Write JSON only:
+{"headline":"one specific sentence for this morning",
+"career":{"paper":null,"chapter":{"chapterId":"${ns?ns.ch.id:"ch01"}","chapterTitle":"${ns?esc(ns.ch.title):"Type 2 diabetes pharmacotherapy"}","section":${ns?ns.sec.n:1},"sectionTitle":"${ns?esc(ns.sec.title):"Overview"}","minutes":12,"body":"450-600 words, original, paragraphs separated by blank lines, '## ' sub-headings and '- ' bullets allowed","pearls":["3-5 one-liners"],"sources":[{"name":"guideline name and year to look up","url":""}],"mcqs":[5 MCQs]},"ideas":[{"title":"...","body":"..."},{"title":"...","body":"..."},{"title":"...","body":"..."}]},
+"presence":${tech?JSON.stringify(tech):'{"context":"care-team","technique":"...","why":"...","evidence":"moderate","example":"...","specter":"...","drill":{"scenario":"...","task":"...","criteria":"..."}}'},
+"mind":{"article":null,"exercise":{"title":"...","minutes":7,"steps":["..."],"why":"..."},"puzzle":{"prompt":"...","answer":"...","explanation":"..."},"case":{"stem":"90-second inpatient vignette with one hidden drug problem","options":["4 options"],"answer":0,"explanation":"...","seconds":90}},
+"finance":{"track":"${track}","title":"...","body":"120-180 words${track==="personal"?", halal-conscious":""}","action":"...","mcq":{MCQ}},
+"relationships":{"title":"...","body":"...","action":"..."},
+"joy":{"title":"...","body":"..."}}
+MCQ format: {"id":"short-slug","q":"vignette stem","options":["A","B","C","D"],"answer":0-3,"explanation":"why","topic":"topic tag"}. Keep the presence object exactly as given if one is provided.`;
+  try{
+    const res = await S.sample.json(prompt, {modelTier:"default", cache:false, onText:({text})=>status("Preparing… "+text.length.toLocaleString()+" characters")});
+    if(!res || !res.career) throw {code:"invalid_json"};
+    await write("mornings/"+today(), Object.assign(res, {date:today(), source:"page", createdAt:new Date().toISOString()}));
+    status("Your morning is ready. Today's ayah and new papers come with tomorrow's research agent run.");
+  }catch(e){ status(e&&e.code==="invalid_json" ? "The morning didn't come back in the right shape. Try again." : "Couldn't prepare the morning ("+(e&&e.code||"error")+")."); }
+  finally{ S.preparing=false; render(); }
+}
+async function streamInto(key, prompt){
   S.outputs[key] = "Thinking…"; render();
   try{
-    const r = await S.sample(prompt, Object.assign({cache:false, onText:({text})=>{ S.outputs[key]=text; const o = key.startsWith("drill-") ? $("drill-out") : null; if(o){ o.hidden=false; o.textContent=text; } else render(); }}, opts));
+    const r = await S.sample(prompt, {cache:false, onText:({text})=>{ S.outputs[key]=text; render(); }});
     S.outputs[key] = r.text; return r.text;
   }catch(e){
     S.outputs[key] = (e&&e.text) || (e&&e.code==="not_granted" ? "Claude isn't allowed in this view." : "That didn't work ("+(e&&e.code||"error")+"). Try again.");
@@ -881,26 +1243,112 @@ async function streamInto(key, prompt, opts={}){
   }finally{ render(); }
 }
 
+/* ---------- games overlay ---------- */
+let gameCleanup = null, lastFocus = null;
+function openGame(id){
+  const g = games().find(x=>x.id===id); if(!g) return;
+  lastFocus = document.activeElement;
+  $("gameTitle").textContent = g.name; $("gameOverlay").hidden = false; document.body.style.overflow="hidden";
+  const mount = $("gameMount"); mount.innerHTML = "";
+  const hist = gameHistory(g.id), best = gameBest(g);
+  try{
+    gameCleanup = g.mount(mount, {last: hist[hist.length-1]||null, best: best?best.score:null, reducedMotion: reduced.matches,
+      onDone: async (r)=>{ if(!r || typeof r.score!=="number" || !isFinite(r.score)) return;
+        const d = S.brain.find(b=>b.date===today()), results = Object.assign({}, (d&&d.results)||{});
+        results[g.id] = (results[g.id]||[]).concat([{score:r.score, detail:r.detail||{}, summary:String(r.summary||""), at:new Date().toISOString()}]).slice(-10);
+        if(S.demo){ if(d) d.results=results; else S.brain.unshift({date:today(), results}); }
+        else await write("brain/"+today(), {date:today(), results});
+        await bump("game"); } });
+  }catch(e){ mount.innerHTML = `<div class="empty">This game failed to start.</div>`; }
+  $("gameClose").focus();
+}
+function closeGame(){
+  try{ if(typeof gameCleanup==="function") gameCleanup(); }catch(e){}
+  gameCleanup = null; $("gameMount").innerHTML = ""; $("gameOverlay").hidden = true; document.body.style.overflow="";
+  render(); if(lastFocus && lastFocus.isConnected) lastFocus.focus();
+}
+$("gameClose").addEventListener("click", closeGame);
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !$("gameOverlay").hidden) closeGame(); });
+
+/* ---------- spirit counters (debounced saves) ---------- */
+let spiritTimer = null;
+function saveSpiritSoon(){
+  clearTimeout(spiritTimer);
+  spiritTimer = setTimeout(async ()=>{ const counts = spiritCounts(); if(S.demo) return; await write("spirit/"+today(), {date:today(), counts}); bump("dhikr"); }, 1200);
+}
+
 /* ---------- actions ---------- */
+let caseTick = null;
 const actions = {
-  tab:(el)=>{ S.tab=el.dataset.tab; try{localStorage.setItem("gradient.tab",S.tab);}catch(e){} render(); if(el.tagName==="A") $("tabs").scrollIntoView({behavior:"smooth"}); },
-  moveDone: async()=>{ const b=todaysBrief(); if(!b) return; await write("briefs/"+b.date,{moveDone:!b.moveDone},"update"); if(!b.moveDone) await bump("move"); },
-  patternFb: async(el)=>{ const b=todaysBrief()||latestBrief(); if(b) await write("briefs/"+b.date,{patternFeedback:el.dataset.v},"update"); },
-  keepCard: async()=>{ const b=todaysBrief()||latestBrief(); if(!b||!b.lesson||!b.lesson.card) return;
-    const id=uid(); await write("cards/"+id,{id, front:b.lesson.card.front, back:b.lesson.card.back, domain:DK.includes(b.lesson.domain)?b.lesson.domain:"growth", ease:2.5, interval:0, reps:0, due:today(), briefDate:b.date, createdAt:new Date().toISOString()}); },
-  gradeDrill: async()=>{ const b=todaysBrief()||latestBrief(); if(!b) return; const ans=(S.drafts["drill-"+b.date] ?? b.drillAnswer ?? "").trim();
-    if(!ans){ status("Write your attempt first."); return; }
-    await write("briefs/"+b.date,{drillAnswer:ans},"update");
-    const text = await streamInto("drill-"+b.date, `You are a demanding, encouraging coach. Evaluate this attempt at a practice drill.\n\nDrill: ${b.drill.prompt}\nCriteria: ${b.drill.criteria||"clarity, specificity, effect on the listener"}\n\nAttempt:\n"""${ans}"""\n\nReply in plain text, no markdown headers, under 200 words: a score out of 10; what worked (one or two points); the one change with the most leverage; then a rewritten version under 90 words labelled "Stronger:".`);
-    if(text){ await write("briefs/"+b.date,{drillFeedback:text},"update"); await bump("drill"); } },
-  briefForecast: async()=>{ const b=todaysBrief()||latestBrief(); if(!b||!b.forecast) return; const p=(+S.drafts["brief-p"]||60)/100; const id=uid();
-    await write("forecasts/"+id,{id,q:b.forecast.question,p,domain:DK.includes(b.forecast.domain)?b.forecast.domain:"growth",due:addDays(today(),clamp(+b.forecast.due_days||3,1,14)),outcome:null,createdAt:new Date().toISOString()});
-    await write("briefs/"+b.date,{forecastMade:true},"update"); await bump("forecast"); },
-  discuss:(el)=>{ const b=todaysBrief()||latestBrief(); let seed="";
-    if(el.dataset.topic==="lesson"&&b) { S.sparMode="feynman"; seed=`Today's lesson was "${b.lesson.title}" (${b.lesson.field}):\n${b.lesson.body}\n\nI want to go deeper on this.`; }
-    if(el.dataset.topic==="challenge"&&b) { S.sparMode="belief"; seed=`My assumption: ${b.challenge.assumption}\nThe counter-argument I was given: ${b.challenge.counter}\nMy first reaction: `; }
+  tab:(el)=>{ S.tab=el.dataset.tab; try{localStorage.setItem("gradient.tab",S.tab);}catch(e){} render(); },
+  energy: async(el)=>{ S.day = Object.assign({}, S.day||{}, {energy:el.dataset.v}); S.showAll={}; render(); await write("days/"+today(), {date:today(), energy:el.dataset.v}, "update"); },
+  showAll:(el)=>{ S.showAll[el.dataset.k]=true; render(); },
+  stationDone: async(el)=>{ const k=el.dataset.k, cur=((S.day&&S.day.done)||{})[k]; S.day=Object.assign({},S.day||{},{done:Object.assign({},(S.day&&S.day.done)||{},{[k]:!cur})}); render(); await write("days/"+today(), {date:today(), done:{[k]:!cur}}, "update"); if(!cur) bump("station-"+k); },
+  answer: async(el)=>{
+    const qid=el.dataset.qid, i=+el.dataset.i, x=MCQS[qid]; if(!x || S.answers[qid]) return;
+    const correct = i===x.m.answer, rec = {qid, chosen:i, correct, topic:String(x.m.topic||""), src:String(x.src||""), at:new Date().toISOString()};
+    if(qid.endsWith("_case_case") && S.caseStart){ rec.ms = Math.round(performance.now()-S.caseStart); clearInterval(caseTick); }
+    S.answers[qid] = rec; render();
+    await write("answers/"+today(), {date:today(), items:{[qid]:rec}}, "update");
+    if(!correct) await addMissCard(x);
+    await bump("quiz");
+  },
+  catchup:(el)=>{ S.catchup = el.dataset.date || null; render(); },
+  startCase:()=>{ const m=morningToday(); if(!m||!m.mind||!m.mind.case) return; S.caseStart = performance.now(); render(); const secs=+m.mind.case.seconds||90;
+    clearInterval(caseTick); caseTick = setInterval(()=>{ const left = Math.max(0, Math.ceil(secs - (performance.now()-S.caseStart)/1000)); const t=$("caseTimer"); if(t) t.textContent = left; if(left<=0){ clearInterval(caseTick); if(t) t.textContent="time"; } }, 250); },
+  puzzle:()=>{ S.puzzleShown=true; render(); bump("puzzle"); },
+  game:(el)=>openGame(el.dataset.id),
+  tap:(el)=>{
+    const id = el.dataset.id, list = adhkar(), item = list.find(x=>x.id===id), counts = spiritCounts();
+    const n = (counts[id]||0) + 1;
+    if(item && (counts[id]||0) >= item.count) return;
+    S.spiritLocal[id] = n;
+    const b = $("cnt-"+id);
+    if(el.dataset.free){ if(b) b.textContent = n; const svg=el.querySelector("svg"); if(svg) svg.outerHTML = ring(n % S.freeTarget || S.freeTarget, S.freeTarget); if(n % S.freeTarget === 0) render(); }
+    else if(item){ if(n>=item.count) render(); else { if(b) b.textContent = n; const svg=el.querySelector("svg"); if(svg) svg.outerHTML = ring(n, item.count); } }
+    saveSpiritSoon();
+  },
+  resetAdhkar:()=>{ const reset={}; for(const x of adhkar()) reset[x.id]=0; for(const k of Object.keys(spiritCounts())) if(k.startsWith("free_")) reset[k]=spiritCounts()[k];
+    S.spiritLocal = {}; S.spiritDoc = {counts:reset}; render(); if(!S.demo) write("spirit/"+today(), {date:today(), counts:reset}); },
+  phrase:(el)=>{ S.freePhrase=+el.dataset.i; render(); },
+  freeTarget:(el)=>{ S.freeTarget=+el.dataset.v; render(); },
+  presenceFb: async()=>{ const m=morningToday(); const p=m&&m.presence; const ans=(S.drafts.presence ?? (S.day&&S.day.presenceAnswer) ?? "").trim();
+    if(!p) return; if(!ans){ status("Write what you would say first."); return; }
+    await write("days/"+today(), {date:today(), presenceAnswer:ans}, "update");
+    const text = await streamInto("presence", `You are an executive-presence coach with Harvey Specter's standards and a clinician's understanding of hospital culture. Coach a hospital clinical pharmacist.\nTechnique of the day: ${p.technique}\nSituation: ${p.drill&&p.drill.scenario}\nTask: ${p.drill&&p.drill.task}\nCriteria: ${p.drill&&p.drill.criteria}\n\nTheir answer:\n"""${ans}"""\n\nReply in plain text, under 220 words, no markdown headers: a score out of 10; what landed; exactly where authority leaked (quote their hedges, apologies, filler, upward inflection words, burying the recommendation); then "Specter version:" a rewrite under 80 words they could say out loud, keeping them respectful and clinically correct.`);
+    if(text){ await write("days/"+today(), {presenceFeedback:text}, "update"); bump("presence"); } },
+  startExam: async(el)=>{ const key=el.dataset.key; const pool=shuffle(examPool(key), key).slice(0,25);
+    const ex = {key, kind:"weekly", createdAt:new Date().toISOString(), questions:pool, answers:{}, done:false};
+    S.exams = S.exams.filter(e=>e.key!==key).concat([ex]); render(); await write("exams/"+key, ex); },
+  practiceExam:()=>{ const key="practice-"+today(); const pool=shuffle(examPool(openExam().live?openExam().fri:nextFriday()), key+Math.random()).slice(0,15);
+    S.practice = {key, kind:"practice", questions:pool, answers:{}, done:false}; render(); },
+  examAnswer: async(el)=>{ const key=el.dataset.key, i=+el.dataset.i, k=+el.dataset.k;
+    const ex = key.startsWith("practice-") ? S.practice : S.exams.find(e=>e.key===key); if(!ex || (ex.answers||{})["a"+i]!=null) return;
+    ex.answers = Object.assign({}, ex.answers||{}, {["a"+i]:k}); S.examIdx[key]=i; render();
+    if(!key.startsWith("practice-")) await write("exams/"+key, {answers:{["a"+i]:k}}, "update"); },
+  examNav:(el)=>{ S.examIdx[el.dataset.key]=+el.dataset.to; render(); },
+  finishExam: async(el)=>{ const key=el.dataset.key, practice=key.startsWith("practice-");
+    const ex = practice ? S.practice : S.exams.find(e=>e.key===key); if(!ex) return;
+    const qs=ex.questions||[], ans=ex.answers||{}; let score=0; const missed=[];
+    qs.forEach((x,i)=>{ if(ans["a"+i]===x.m.answer) score++; else missed.push(x); });
+    Object.assign(ex, {done:true, score, total:qs.length, completedAt:new Date().toISOString()}); render();
+    for(const x of missed) await addMissCard(x);
+    if(!practice){ await write("exams/"+key, {done:true, score, total:qs.length, completedAt:ex.completedAt}, "update"); await bump("exam"); } },
+  reveal:()=>{ S.revealed=true; render(); },
+  recallPick:(el)=>{ S.recallPick=+el.dataset.k; render(); },
+  grade: async(el)=>{ const c=S.cards.find(x=>x.id===el.dataset.id); if(!c) return; const q=+el.dataset.q;
+    let {ease=2.5, interval=0, reps=0} = c;
+    if(q<3){ reps=0; interval=1; } else { reps++; interval = reps===1?1 : reps===2?3 : Math.round(interval*ease); }
+    ease = Math.max(1.3, ease + .1 - (5-q)*(.08+(5-q)*.02));
+    S.revealed=false; S.recallPick=null;
+    await write("cards/"+c.id,{ease:+ease.toFixed(3), interval, reps, due:addDays(today(),interval), lastReviewed:today()},"update"); await bump("recall"); },
+  addCard: async()=>{ const f=(S.drafts["c-f"]||"").trim(), b=(S.drafts["c-b"]||"").trim(); if(!f||!b){ status("Write both a question and an answer."); return; }
+    const id=uid(); const ok=await write("cards/"+id,{id,front:f,back:b,domain:S.drafts["c-d"]||"career",ease:2.5,interval:0,reps:0,due:today(),createdAt:new Date().toISOString()});
+    if(ok){ delete S.drafts["c-f"]; delete S.drafts["c-b"]; } },
+  discuss:(el)=>{ const m=morningToday(); let seed="";
+    if(el.dataset.topic==="chapter"&&m&&m.career&&m.career.chapter){ const C=m.career.chapter; S.sparMode="case"; seed=`Today's section: ${C.chapterTitle}, §${C.section} ${C.sectionTitle}.\nKey pearls: ${(C.pearls||[]).join(" | ")}\n\nMy question: `; }
     if(el.dataset.topic==="dispatch"){ const d=S.dispatches.find(x=>x.id===el.dataset.id); S.sparMode="open"; if(d) seed=`About this research: "${d.title}". ${d.summary}\n\nWhat I want to understand: `; }
-    S.drafts["spar-in"]=seed; S.tab="spar"; render(); $("tabs").scrollIntoView({behavior:"smooth"}); const t=$("spar-in"); if(t){ t.focus(); t.setSelectionRange(t.value.length,t.value.length);} },
+    S.drafts["spar-in"]=seed; S.tab="spar"; render(); $("lab").scrollIntoView({behavior:"smooth"}); const t=$("spar-in"); if(t){ t.focus({preventScroll:true}); t.setSelectionRange(t.value.length,t.value.length);} },
   saveBaseline: async()=>{ const sc=Object.fromEntries(DK.map(k=>[k,+(S.drafts["p-"+k] ?? 5)]));
     await write("me/profile", Object.assign({}, S.profile||{}, {baseline:sc, baselineDate:today()}));
     await write("checkins/"+today(), {date:today(), scores:sc, note:"Baseline from Wheel of Life"}); await bump("pulse"); DK.forEach(k=>delete S.drafts["p-"+k]); },
@@ -909,7 +1357,7 @@ const actions = {
     const ok = await write("checkins/"+today(), {date:today(), scores:sc, sleep:+(S.drafts["p-sleep"] ?? ex?.sleep ?? 7), energy:+(S.drafts["p-energy"] ?? ex?.energy ?? 3), note:String(S.drafts["p-note"] ?? ex?.note ?? "")});
     if(ok){ await bump("pulse"); ["sleep","energy","note",...DK].forEach(k=>delete S.drafts["p-"+k]); status("Pulse saved. The map now reflects today."); } },
   addForecast: async()=>{ const q=(S.drafts["f-q"]||"").trim(); if(!q){ status("Write the prediction first."); return; }
-    const id=uid(); const ok=await write("forecasts/"+id,{id,q,p:(+S.drafts["f-p"]||70)/100,domain:S.drafts["f-d"]||"health",due:S.drafts["f-due"]||addDays(today(),3),outcome:null,createdAt:new Date().toISOString()});
+    const id=uid(); const ok=await write("forecasts/"+id,{id,q,p:(+S.drafts["f-p"]||70)/100,domain:S.drafts["f-d"]||"career",due:S.drafts["f-due"]||addDays(today(),3),outcome:null,createdAt:new Date().toISOString()});
     if(ok){ delete S.drafts["f-q"]; await bump("forecast"); } },
   resolve: async(el)=>{ await write("forecasts/"+el.dataset.id,{outcome:+el.dataset.v, resolvedAt:new Date().toISOString()},"update"); await bump("forecast"); },
   addExp: async()=>{ const t=(S.drafts["e-t"]||"").trim(); if(!t){ status("Name the experiment first."); return; } const id=uid();
@@ -920,30 +1368,22 @@ const actions = {
     const logs=(e.logs||[]).filter(l=>l.date!==today()).concat([{date:today(),v:+v,phase:e.phase||"A"}]).slice(-120);
     const ok=await write("experiments/"+e.id,{logs},"update"); if(ok){ delete S.drafts["ev-"+e.id]; await bump("experiment"); } },
   readExp: async(el)=>{ const e=S.experiments.find(x=>x.id===el.dataset.id); if(!e) return;
-    const text=await streamInto("exp-"+e.id, `You are a careful statistician reading an n-of-1 self-experiment (ABAB-style: phase A = baseline, B = trial). Title: ${e.title}. Hypothesis: ${e.hypothesis}. Metric: ${e.metric}.\nDaily logs (date, value, phase): ${JSON.stringify((e.logs||[]).map(l=>[l.date,l.v,l.phase]))}\n\nIn plain text under 170 words: the means and difference per phase, whether the difference is plausibly larger than day-to-day noise (rough effect size against the baseline SD), confounders to worry about (expectation, trend over time, weekday effects), and the single next step (run longer, reverse to baseline, change the metric, or conclude). Be honest when n is too small.`);
+    const text=await streamInto("exp-"+e.id, `You are a careful statistician reading an n-of-1 self-experiment (phase A = baseline, B = trial). Title: ${e.title}. Hypothesis: ${e.hypothesis}. Metric: ${e.metric}.\nDaily logs (date, value, phase): ${JSON.stringify((e.logs||[]).map(l=>[l.date,l.v,l.phase]))}\n\nIn plain text under 170 words: the means and difference per phase, whether the difference is plausibly larger than day-to-day noise, confounders (expectation, trend, weekday), and the single next step. Be honest when n is too small.`);
     if(text) await write("experiments/"+e.id,{analysis:text},"update"); },
   closeExp: async(el)=>{ const e=S.experiments.find(x=>x.id===el.dataset.id); if(!e) return;
     await write("experiments/"+e.id,{status:"closed", verdict:(e.analysis||"").split("\n")[0].slice(0,220) || "Concluded "+today()},"update"); },
-  reveal:()=>{ S.revealed=true; render(); },
-  grade: async(el)=>{ const c=S.cards.find(x=>x.id===el.dataset.id); if(!c) return; const q=+el.dataset.q;
-    let {ease=2.5, interval=0, reps=0} = c;
-    if(q<3){ reps=0; interval=1; } else { reps++; interval = reps===1?1 : reps===2?3 : Math.round(interval*ease); }
-    ease = Math.max(1.3, ease + .1 - (5-q)*(.08+(5-q)*.02));
-    S.revealed=false; await write("cards/"+c.id,{ease:+ease.toFixed(3), interval, reps, due:addDays(today(),interval), lastReviewed:today()},"update"); await bump("recall"); },
-  addCard: async()=>{ const f=(S.drafts["c-f"]||"").trim(), b=(S.drafts["c-b"]||"").trim(); if(!f||!b){ status("Write both a question and an answer."); return; }
-    const id=uid(); const ok=await write("cards/"+id,{id,front:f,back:b,domain:S.drafts["c-d"]||"growth",ease:2.5,interval:0,reps:0,due:today(),createdAt:new Date().toISOString()});
-    if(ok){ delete S.drafts["c-f"]; delete S.drafts["c-b"]; } },
   hypFb: async(el)=>{ if(!S.model) return; const hyps=(S.model.hypotheses||[]).map(h=>h.id===el.dataset.id?Object.assign({},h,{feedback:h.feedback===el.dataset.v?null:el.dataset.v}):h);
     await write("me/model",{hypotheses:hyps},"update"); },
   saveProfile: async()=>{ const goals=Object.fromEntries(DK.map(k=>[k, S.drafts["pr-g-"+k] ?? (S.profile&&S.profile.goals&&S.profile.goals[k]) ?? ""]));
     const ok=await write("me/profile", Object.assign({}, S.profile||{}, {about:S.drafts["pr-about"] ?? (S.profile&&S.profile.about) ?? "", goals, updatedAt:new Date().toISOString()}));
-    if(ok){ Object.keys(S.drafts).filter(k=>k.startsWith("pr-")).forEach(k=>delete S.drafts[k]); status("Saved. The next Update will use it."); } },
+    if(ok){ Object.keys(S.drafts).filter(k=>k.startsWith("pr-")).forEach(k=>delete S.drafts[k]); status("Saved. Tomorrow's morning will use it."); } },
   mode:(el)=>{ S.sparMode=el.dataset.v; S.chat=[]; render(); },
   clearChat:()=>{ S.chat=[]; render(); },
-  send: async()=>{ const msg=(S.drafts["spar-in"]||"").trim(); if(!msg||S.chatBusy) return;
+  prepare:()=>prepareMorning(),
+  send: async()=>{ const msg=(S.drafts["spar-in"]||"").trim(); if(!msg||S.chatBusy||!S.sample) return;
     S.chat.push({role:"user",content:msg}); S.drafts["spar-in"]=""; S.chatBusy=true; S.chat.push({role:"assistant",content:"Thinking…"}); render();
     const about = S.profile&&S.profile.about ? "\nWhat you know about them: "+S.profile.about.slice(0,1500) : "";
-    const RULES = {role:"user", content:`Instructions for this conversation (from the app, not the person): you are Gradient's sparring partner. ${MODES[S.sparMode].rule}${about}\nReply in plain text, no markdown headers.`};
+    const RULES = {role:"user", content:`Instructions for this conversation (from the app, not the person): you are Gradient's sparring partner for a hospital clinical pharmacist. ${MODES[S.sparMode].rule}${about}\nReply in plain text, no markdown headers.`};
     const turns = S.chat.slice(0,-1).slice(-16);
     try{
       const r = await S.sample([RULES, ...turns], {cache:false, onText:({text})=>{ S.chat[S.chat.length-1].content=text; const c=$("chat"); if(c&&c.lastElementChild){ c.lastElementChild.textContent=text; c.scrollTop=c.scrollHeight; } }});
@@ -951,6 +1391,12 @@ const actions = {
     }catch(e){ S.chat[S.chat.length-1].content = (e&&e.text) || "That didn't go through ("+(e&&e.code||"error")+"). Send again."; }
     finally{ S.chatBusy=false; render(); } },
 };
+async function addMissCard(x){
+  const id = skey("m_"+x.qid);
+  if(S.cards.some(c=>c.id===id)) { await write("cards/"+id, {due:addDays(today(),1), reps:0, interval:1}, "update"); return; }
+  const m = x.m, right = m.options[m.answer];
+  await write("cards/"+id, {id, type:"mcq", mcq:{q:m.q, options:m.options, answer:m.answer, explanation:m.explanation||"", topic:m.topic||"", id:m.id||""}, front:m.q, back:right+"\n\n"+(m.explanation||""), domain:"career", src:String(x.src||""), ease:2.5, interval:1, reps:0, due:addDays(today(),1), createdAt:new Date().toISOString()});
+}
 document.addEventListener("click", e=>{
   const el = e.target.closest("[data-act]"); if(!el) return;
   if(el.tagName==="A") e.preventDefault();
@@ -959,7 +1405,8 @@ document.addEventListener("click", e=>{
 document.addEventListener("input", e=>{
   const el = e.target; if(!el.dataset || !el.dataset.draft) return;
   S.drafts[el.dataset.draft] = el.value;
-  if(el.type==="range"){ const o = el.parentElement.querySelector("output"); if(o) o.textContent = el.id==="brief-p"||el.id==="f-p" ? el.value+"%" : fmt(el.value, el.id==="p-sleep"?2:(el.id==="p-energy"?0:1)); }
+  if(el.type==="range"){ const o = el.parentElement.querySelector("output"); if(o) o.textContent = el.id==="f-p" ? el.value+"%" : fmt(el.value, el.id==="p-sleep"?2:(el.id==="p-energy"?0:1)); }
+  if(el.id==="presence-in"){ clearTimeout(window.__hedgeT); window.__hedgeT=setTimeout(render, 600); }
 });
 document.addEventListener("change", e=>{ const el=e.target; if(el.dataset && el.dataset.draft) S.drafts[el.dataset.draft]=el.value; });
 document.addEventListener("keydown", e=>{ if(e.target.id==="spar-in" && e.key==="Enter" && (e.metaKey||e.ctrlKey)){ e.preventDefault(); actions.send(); } });
@@ -968,34 +1415,34 @@ $("recompute").addEventListener("click", recompute);
 /* ---------- example data (only when the store is unreachable) ---------- */
 function loadDemo(){
   S.demo = true;
-  const base = {career:6.5, finance:6, health:5, growth:7, relationships:5.5, spirit:4.5, joy:4};
-  const rnd = (i,k)=> (Math.sin(i*1.7+k.length)*1.2);
-  S.checkins = Array.from({length:14},(_,i)=>{ const d=addDays(today(),-i); const sleep=6+((i*37)%5)*.5;
-    return {date:d, sleep, energy:clamp(Math.round(sleep-4),1,5), scores:Object.fromEntries(DK.map(k=>[k, clamp(+(base[k]+rnd(i,k)+(k==="career"?(sleep-7)*.8:0)).toFixed(1),0,10)]))}; });
-  S.profile = {about:"Example person.", goals:{}};
-  S.model = {hypotheses:[{id:"ex1",text:"Example: your career score tracks your sleep more closely than any other domain.",domain:"health",confidence:.55,evidence:"Example evidence."}],
-    coupling:[{a:"health",b:"career",w:.7,why:"Example"},{a:"relationships",b:"joy",w:.6,why:"Example"},{a:"finance",b:"career",w:.5,why:"Example"}], leverage:{domain:"health",why:"Example: sleep pulls on career and joy at once."}, notes:[]};
-  S.briefs = [{date:today(), headline:"Example brief: your best trading days follow your best sleep, so tonight's bedtime is today's trade.",
-    move:{domain:"health",title:"Set a hard 23:00 screens-off alarm and log tomorrow's focus",why:"Example reasoning.",minutes:5},
-    lesson:{domain:"growth",field:"Pharmacology",title:"Example: why adenosine makes you sleepy and caffeine doesn't refill the tank",body:"Example lesson body.",source_hint:"Example source",card:{front:"Example front",back:"Example back"}},
-    challenge:{domain:"finance",assumption:"Example: more data always makes the model better.",counter:"Example counter-argument.",question:"Example question?"},
-    drill:{domain:"relationships",kind:"Communication",prompt:"Example drill prompt.",criteria:"Example criteria"},
-    pattern:{observation:"Example pattern.",evidence:"Example evidence.",confidence:.4},
-    forecast:{question:"Example: I will be asleep by 23:30 on 3 of the next 4 nights.",domain:"health",due_days:4}}];
-  S.forecasts = [{id:"f1",q:"Example forecast",p:.8,domain:"health",due:addDays(today(),2),outcome:null}];
-  S.dispatches = [{id:"d1",title:"Example dispatch",summary:"Dispatches appear here when added.",domain:"growth",date:today()}];
-  S.log = {days:Object.fromEntries([0,1,2,4,5].map(i=>[addDays(today(),-i),{pulse:true}]))};
+  const base = {career:6.5, finance:6, health:5, growth:6, relationships:6, spirit:7, joy:4.5};
+  S.checkins = Array.from({length:10},(_,i)=>({date:addDays(today(),-i), sleep:6.5+(i%3)*.5, energy:3, scores:Object.fromEntries(DK.map(k=>[k, clamp(+(base[k]+Math.sin(i*1.7+k.length)).toFixed(1),0,10)]))}));
+  S.model = {coupling:[{a:"health",b:"career",w:.7},{a:"relationships",b:"joy",w:.6},{a:"spirit",b:"health",w:.4}], leverage:{domain:"health",why:"Example."}};
+  const ex = (id,q,o,a)=>({id,q,options:o,answer:a,explanation:"Example explanation.",topic:"Example"});
+  S.mornings = [{date:today(), source:"example", headline:"Example morning: this is what a prepared morning looks like.",
+    career:{paper:{title:"Example paper title",journal:"Example Journal",published:"2026",url:"",kind:"trial",population:"Example population",finding:"Example finding.",bottom_line:"Example bottom line.",ward_change:"Example ward change.",strength:"moderate",mcqs:[ex("p1","Example question about the paper?",["Option A","Option B","Option C","Option D"],1)]},
+      chapter:{chapterId:"ch01",chapterTitle:"Example chapter",section:1,sectionTitle:"Example section",minutes:12,body:"Example lesson text.\n\n## A sub-heading\n- a bullet\n- another bullet",pearls:["Example pearl."],sources:[],mcqs:[ex("c1","Example chapter question?",["A","B","C","D"],0)]},
+      ideas:[{title:"Example idea",body:"Ideas appear here."}]},
+    presence:{context:"care-team",technique:"Example technique",why:"Example.",evidence:"moderate",example:"Example words to say.",specter:"Example principle.",drill:{scenario:"Example scenario.",task:"Example task.",criteria:"Example criteria."}},
+    mind:{case:{stem:"Example case.",options:["A","B","C","D"],answer:2,explanation:"Example.",seconds:90},puzzle:{prompt:"Example puzzle.",answer:"Example answer",explanation:"Example."}},
+    spirit:null, finance:{track:"personal",title:"Example finance note",body:"Example.",action:"Example step."},
+    relationships:{title:"Example practice",body:"Example.",action:"Example."}, joy:{title:"Example",body:"Example."}}];
+  S.log = {days:Object.fromEntries([0,1,2,4].map(i=>[addDays(today(),-i),{quiz:true}]))};
 }
 
 /* ---------- boot ---------- */
 function subscribe(){
   const db = S.db; const onErr = e=>{ if(e&&e.code==="revoked") status("Access to your store changed. Reload the page."); };
-  db.doc("me/profile").onSnapshot(s=>{ S.profile = s.exists ? s.data() : null; render(); }, onErr);
-  db.doc("me/model").onSnapshot(s=>{ S.model = s.exists ? s.data() : null; render(); }, onErr);
-  db.doc("me/log").onSnapshot(s=>{ S.log = s.exists ? s.data() : null; render(); }, onErr);
-  const coll = (name, key, q)=> q(db.collection(name)).onSnapshot(s=>{ S[key] = s.docs.map(d=>Object.assign({id:d.id}, d.data())); S.ready=true; render(); }, onErr);
+  const one = (path, key)=> db.doc(path).onSnapshot(s=>{ S[key] = s.exists ? s.data() : null; render(); }, onErr);
+  one("me/profile","profile"); one("me/model","model"); one("me/log","log");
+  one("curriculum/syllabus","syllabus"); one("curriculum/presence","presenceProg"); one("curriculum/adhkar","adhkarDoc");
+  one("days/"+today(),"day"); one("spirit/"+today(),"spiritDoc");
+  const coll = (name, key, q, map)=> q(db.collection(name)).onSnapshot(s=>{ const docs = s.docs.map(d=>Object.assign({id:d.id}, d.data())); if(map) map(docs); else S[key]=docs; S.ready=true; render(); }, onErr);
+  coll("mornings","mornings", c=>c.orderBy("date","desc").limit(21));
+  coll("answers",null, c=>c.orderBy("date","desc").limit(60), docs=>{ const a={}; for(const d of docs) for(const [k,v] of Object.entries(d.items||{})) a[v.qid||k]=v; S.answers=a; });
+  coll("exams","exams", c=>c.limit(60));
+  coll("brain","brain", c=>c.orderBy("date","desc").limit(60));
   coll("checkins","checkins", c=>c.orderBy("date","desc").limit(90));
-  coll("briefs","briefs", c=>c.orderBy("date","desc").limit(21));
   coll("forecasts","forecasts", c=>c.limit(300));
   coll("experiments","experiments", c=>c.limit(50));
   coll("cards","cards", c=>c.limit(1000));
