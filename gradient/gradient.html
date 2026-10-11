@@ -1148,7 +1148,9 @@ function render(){
   safe(()=>{ $("examSlot").innerHTML = examView(); });
   safe(renderStations); safe(renderTabs); safe(renderPanel);
   if(id){ const n=$(id); if(n && n!==a){ n.focus({preventScroll:true}); if(sel && n.setSelectionRange) try{ n.setSelectionRange(sel[0],sel[1]); }catch(e){} } }
-  else if(akey && !a.isConnected){ const n=document.querySelector(akey); if(n && !n.disabled) n.focus({preventScroll:true}); }
+  else if(akey && !a.isConnected){ const n=document.querySelector(akey);
+    if(n && !n.disabled) n.focus({preventScroll:true});
+    else if(n){ const next=[...document.querySelectorAll("button:not([disabled]),textarea,input")].find(b=>n.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING); if(next) next.focus({preventScroll:true}); } }
   if(T.ctx) drawTerrain();
 }
 
