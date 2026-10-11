@@ -6,7 +6,7 @@
 /* Layout: a survey map of one life on top; beneath it, seven morning stations read like a field notebook; the Lab holds the instruments. */
 :root{
   --ground:#0c1517; --surface:#111d20; --raise:#172629; --rule:#24373b;
-  --ink:#e3ece8; --muted:#8ba29e; --faint:#5a706b;
+  --ink:#e3ece8; --muted:#8ba29e; --faint:#7b918c;
   --ember:#f0a058; --ember-ink:#1d1208; --glass:#86cfc0;
   --contour:#2f4a4b; --contour-hi:#8fbfb4;
   --career:#e2b65e; --finance:#7cc6a2; --health:#e8806b; --growth:#9eaaf2;
@@ -21,22 +21,22 @@
 }
 @media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
   --ground:#eef2ee; --surface:#f8faf7; --raise:#e3eae5; --rule:#c9d5cf;
-  --ink:#132120; --muted:#4c635e; --faint:#82948e;
-  --ember:#c25f1b; --ember-ink:#ffffff; --glass:#257f6f;
+  --ink:#132120; --muted:#4c635e; --faint:#5f716c;
+  --ember:#a9520f; --ember-ink:#ffffff; --glass:#257f6f;
   --contour:#b4c7c0; --contour-hi:#2c5a53;
   --career:#9c7110; --finance:#2a8460; --health:#bd4632; --growth:#4656c0;
   --relationships:#b2467a; --spirit:#7553bd; --joy:#1c80a3;
-  --good:#2a8460; --warn:#9c7110; --bad:#bd4632;
+  --good:#2a8460; --warn:#806008; --bad:#bd4632;
   color-scheme:light;
 }}
 :root[data-theme="light"]{
   --ground:#eef2ee; --surface:#f8faf7; --raise:#e3eae5; --rule:#c9d5cf;
-  --ink:#132120; --muted:#4c635e; --faint:#82948e;
-  --ember:#c25f1b; --ember-ink:#ffffff; --glass:#257f6f;
+  --ink:#132120; --muted:#4c635e; --faint:#5f716c;
+  --ember:#a9520f; --ember-ink:#ffffff; --glass:#257f6f;
   --contour:#b4c7c0; --contour-hi:#2c5a53;
   --career:#9c7110; --finance:#2a8460; --health:#bd4632; --growth:#4656c0;
   --relationships:#b2467a; --spirit:#7553bd; --joy:#1c80a3;
-  --good:#2a8460; --warn:#9c7110; --bad:#bd4632;
+  --good:#2a8460; --warn:#806008; --bad:#bd4632;
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -90,10 +90,10 @@ header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:spac
 .hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:28px;align-items:stretch}
 @media (max-width:860px){.hero{grid-template-columns:minmax(0,1fr)}}
 .map{position:relative;border:1px solid var(--rule);border-radius:4px;background:var(--surface);min-height:320px;aspect-ratio:1.55/1;max-width:100%;overflow:hidden}
-@media (max-width:560px){.map{aspect-ratio:1/1.05}.map .legend{display:none}}
 .map canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .map .legend{position:absolute;left:12px;bottom:10px;right:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:10.5px/1.3 var(--f-mono);color:var(--faint);pointer-events:none}
 .map .sheet{position:absolute;left:12px;top:10px;font:10.5px/1.3 var(--f-mono);color:var(--faint);letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
+@media (max-width:560px){.map{aspect-ratio:1/1.05}.map .legend{display:none}}
 .today{display:flex;flex-direction:column;gap:14px;min-width:0}
 .today .headline{font:italic 500 clamp(22px,2.4vw,29px)/1.22 var(--f-display)}
 .itinerary{display:grid;border-top:1px solid var(--rule)}
@@ -106,7 +106,7 @@ header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:spac
 .itinerary .nm small{color:var(--faint);font-size:12.5px}
 .chip{display:inline-flex;align-items:center;gap:6px;font:500 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 8px 4px 6px;border-radius:999px;border:1px solid var(--rule);color:var(--muted);white-space:nowrap}
 .chip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c,var(--muted))}
-.tag{font:500 10.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:4px;background:var(--raise);color:var(--muted);white-space:nowrap}
+.tag{font:500 10.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:4px;background:var(--raise);color:var(--muted);white-space:normal;overflow-wrap:anywhere}
 .tag.high,.tag.strong{color:var(--good)}.tag.moderate{color:var(--warn)}.tag.low,.tag.weak,.tag.anecdotal{color:var(--bad)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .spread{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
@@ -167,7 +167,7 @@ textarea{min-height:96px;resize:vertical}
 .adhkar{display:grid;gap:12px}
 .dhikr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;border:1px solid var(--rule);border-radius:10px;padding:12px 14px;background:var(--surface)}
 .dhikr.done{border-color:color-mix(in srgb,var(--spirit) 60%,var(--rule));background:color-mix(in srgb,var(--spirit) 8%,var(--surface))}
-.dhikr .txt{font:400 19px/1.95 var(--f-arabic)}
+.dhikr .txt{font:400 19px/1.95 var(--f-arabic);white-space:pre-line}
 .dhikr .txt.q{font-family:var(--f-quran);font-size:20px}
 .dhikr .meta{font:13px/1.6 var(--f-arabic);color:var(--muted)}
 .counter{width:76px;height:76px;border-radius:50%;border:0;background:none;cursor:pointer;position:relative;display:grid;place-items:center;touch-action:manipulation}
@@ -316,7 +316,7 @@ const STATIONS = [
   {k:"joy", d:"joy", n:"Joy", sub:"Something to enjoy today."},
 ];
 const ENERGY = {
-  low:{n:"Low", min:"~12 min", lvl:1},
+  low:{n:"Low", min:"~12 min + adhkar", lvl:1},
   steady:{n:"Steady", min:"~25 min", lvl:2},
   sharp:{n:"Sharp", min:"45–60 min", lvl:3},
 };
@@ -357,6 +357,11 @@ const status = t => { $("status").textContent = t || ""; };
 const chip = k => `<span class="chip" style="--c:var(--${DK.includes(k)?k:"muted"})">${esc(dn(k))}</span>`;
 const skey = s => String(s).replace(/[^A-Za-z0-9_-]/g,"_").slice(0,180);
 const qkey = (date, slot, id) => skey(date+"_"+slot+"_"+(id||"q"));
+const arr = v => Array.isArray(v) ? v.filter(x=>x!=null) : (v ? [v] : []);
+const validQ = q => !!q && typeof q.q==="string" && Array.isArray(q.options) && q.options.length>=2 && Number.isInteger(q.answer) && q.answer>=0 && q.answer<q.options.length;
+const safe = (f, fb="") => { try{ return f(); }catch(e){ console.error(e); return fb; } };
+const hedgesIn = s => HEDGES.filter(w=>new RegExp("\\b"+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b","i").test(s));
+function normQ(q){ if(q && typeof q.answer==="string"){ const t=q.answer.trim().toUpperCase(); q.answer=/^[A-D]$/.test(t)?"ABCD".indexOf(t):parseInt(t,10); } return q; }
 const arDigits = v => String(v).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
 const median = a => { if(!a.length) return null; const s=[...a].sort((x,y)=>x-y), m=s.length>>1; return s.length%2?s[m]:(s[m-1]+s[m])/2; };
 function seeded(str){ let h=1779033703^str.length; for(let i=0;i<str.length;i++){ h=Math.imul(h^str.charCodeAt(i),3432918353); h=h<<13|h>>>19; } return ()=>{ h=Math.imul(h^h>>>16,2246822507); h=Math.imul(h^h>>>13,3266489909); return ((h^=h>>>16)>>>0)/4294967296; }; }
@@ -467,16 +472,17 @@ function spiritCounts(){ const remote = (S.spiritDoc && S.spiritDoc.counts) || {
 /* MCQs of a morning, each with a stable qid */
 function morningMcqs(m){
   if(!m) return [];
-  const out=[], add=(slot, arr, src)=> (arr||[]).forEach(q=>{ if(q && Array.isArray(q.options)) out.push({qid:qkey(m.date, slot, q.id), m:q, src}); });
+  const out=[], add=(slot, list, src)=> arr(list).forEach(q=>{ if(validQ(q)) out.push({qid:qkey(m.date, slot, q.id), m:q, src}); });
   const c=m.career||{};
   add("paper", c.paper && c.paper.mcqs, "Paper: "+((c.paper&&c.paper.title)||""));
   add("chapter", c.chapter && c.chapter.mcqs, "Chapter "+((c.chapter&&c.chapter.chapterTitle)||"")+" · §"+((c.chapter&&c.chapter.section)||""));
   if(m.finance && m.finance.mcq) add("finance", [m.finance.mcq], "Finance: "+(m.finance.title||""));
-  if(m.mind && m.mind.case && Array.isArray(m.mind.case.options)) out.push({qid:qkey(m.date,"case","case"), m:{id:"case", q:m.mind.case.stem, options:m.mind.case.options, answer:m.mind.case.answer, explanation:m.mind.case.explanation, topic:"Clinical reasoning"}, src:"Clinical case"});
+  const cq = caseQ(m); if(cq) out.push({qid:qkey(m.date,"case","case"), m:cq, src:"Clinical case"});
   if(m.weekly && Array.isArray(m.weekly.mcqs)) add("weekly", m.weekly.mcqs, "Weekly integrative");
   return out;
 }
-function chapterDone(m){ const c=m&&m.career&&m.career.chapter; if(!c||!Array.isArray(c.mcqs)) return false; return c.mcqs.every(q=>S.answers[qkey(m.date,"chapter",q.id)]); }
+function caseQ(m){ const c = m && m.mind && m.mind.case; if(!c) return null; const q = {id:"case", q:String(c.stem ?? c.q ?? ""), options:c.options, answer:c.answer, explanation:c.explanation||"", topic:"Clinical reasoning"}; return validQ(q) ? q : null; }
+function chapterDone(m){ const c=m&&m.career&&m.career.chapter; if(!c||!Array.isArray(c.mcqs)) return false; return c.mcqs.filter(validQ).every(q=>S.answers[qkey(m.date,"chapter",q.id)]); }
 function stationProgress(k){
   const m = morningToday(), done = (S.day&&S.day.done)||{};
   if(done[k]) return 1;
@@ -492,9 +498,9 @@ function lastFriday(){ const d=dow(today()); return addDays(today(), -((d-5+7)%7
 function nextFriday(){ const d=dow(today()); return addDays(today(), (5-d+7)%7); }
 function examPool(fri){
   const from = addDays(fri,-6), seen = new Set(), pool=[];
-  for(const m of S.mornings){ if(m.date<from || m.date>fri) continue; for(const x of morningMcqs(m)){ const sig=x.m.q.slice(0,80); if(seen.has(sig)) continue; seen.add(sig); pool.push({qid:x.qid, m:x.m, src:x.src}); } }
-  const due = S.cards.filter(c=>c.type==="mcq" && c.mcq && (!c.due||c.due<=fri)).slice(0,6);
-  for(const c of due){ const sig=c.mcq.q.slice(0,80); if(!seen.has(sig)){ seen.add(sig); pool.push({qid:"card_"+c.id, m:c.mcq, src:"Missed earlier"}); } }
+  for(const m of S.mornings){ if(m.date<from || m.date>fri) continue; for(const x of morningMcqs(m)){ const sig=String(x.m.q||"").slice(0,80); if(seen.has(sig)) continue; seen.add(sig); pool.push({qid:x.qid, m:x.m, src:x.src}); } }
+  const due = S.cards.filter(c=>c.type==="mcq" && validQ(c.mcq) && (!c.due||c.due<=fri)).slice(0,6);
+  for(const c of due){ const sig=String(c.mcq.q||"").slice(0,80); if(!seen.has(sig)){ seen.add(sig); pool.push({qid:"card_"+c.id, m:c.mcq, src:"Missed earlier"}); } }
   return pool;
 }
 function openExam(){
@@ -611,17 +617,19 @@ function initTerrain(){
 
 /* ---------- small renderers ---------- */
 function mcqHTML(x, n){
+  if(!x || !validQ(x.m)) return "";
   MCQS[x.qid] = x;
   const rec = S.answers[x.qid], m = x.m, L="ABCD";
   return `<div class="mcq">
     <p class="q">${n!=null?`<span class="mono faint">${n}.</span> `:""}${esc(m.q)}</p>
     <div class="opts">${m.options.map((o,i)=>{
       const cls = rec ? (i===m.answer ? "right" : (i===rec.chosen ? "wrong" : "")) : "";
-      return `<button class="opt ${cls}" data-act="answer" data-qid="${esc(x.qid)}" data-i="${i}" ${rec?"disabled":""}><span class="l">${L[i]}</span><span>${esc(o)}</span></button>`; }).join("")}</div>
+      return `<button class="opt ${cls}" data-act="answer" data-qid="${esc(x.qid)}" data-i="${i}" ${rec?"disabled":""}><span class="l">${L[i]}${cls==="right"?" ✓":cls==="wrong"?" ✗":""}</span><span>${esc(o)}</span></button>`; }).join("")}</div>
     ${rec?`<p class="expl"><b style="color:var(--${rec.correct?"good":"bad"})">${rec.correct?"Correct.":"Not quite."}</b> ${esc(m.explanation)}${rec.correct?"":" <span class=\"faint\">Added to Recall.</span>"}</p>`:""}
   </div>`;
 }
 function mcqBlock(list, title){
+  list = list.filter(x=>x && validQ(x.m));
   if(!list.length) return "";
   const answered = list.filter(x=>S.answers[x.qid]), right = answered.filter(x=>S.answers[x.qid].correct).length;
   return `<div class="mcqs">
@@ -677,7 +685,7 @@ function renderToday(){
   const headline = (up && up.headline) || (m && m.headline) || (m ? "Your morning is ready. Start at the top, or with the station the arrow points to." : "This morning isn't prepared yet.");
   h += `<span class="label">${esc(new Date().toLocaleDateString("en-GB",{weekday:"long"}))} · ${esc(ENERGY[energy()].n)} energy · ${esc(ENERGY[energy()].min)}</span>
     <p class="headline">${esc(headline)}</p>`;
-  if(!m){
+  if(!m && S.morningsLoaded){
     h += `<div class="empty"><span>The research agent prepares your morning at about 06:55 Riyadh time. If it hasn't run, Claude can prepare one now from its own knowledge (no new papers or Quran content; your adhkar are always here).</span>
       <div class="row"><button class="btn primary" data-act="prepare" ${S.sample&&!S.preparing?"":"disabled"}>${S.preparing?"Preparing…":"Prepare this morning now"}</button></div></div>`;
   }
@@ -706,12 +714,12 @@ function vCareer(m){
   const c = (m&&m.career)||{}, P=c.paper, C=c.chapter, up=S.day&&S.day.update;
   let h="";
   if(up && up.review && Array.isArray(up.review.mcqs) && up.review.mcqs.length){
-    const list = up.review.mcqs.filter(q=>q&&Array.isArray(q.options)).map(q=>({qid:qkey(today(),"review",q.id), m:q, src:"Review: "+(up.review.topic||"")}));
+    const list = up.review.mcqs.filter(validQ).map(q=>({qid:qkey((S.day&&S.day.date)||today(),"review",q.id), m:q, src:"Review: "+(up.review.topic||"")}));
     h += `<div class="block"><span class="label">Review · your weakest topic: ${esc(up.review.topic||"")}</span>${mcqBlock(list,"Three questions")}</div>`;
   }
   if(!m){ return h + `<div class="block"><div class="empty">Today's paper and chapter section arrive with the morning agent. Use "Prepare this morning now" above if you don't want to wait.</div></div>`; }
   if(P){
-    const list = (P.mcqs||[]).map(q=>({qid:qkey(m.date,"paper",q.id), m:q, src:"Paper: "+P.title}));
+    const list = arr(P.mcqs).map(q=>({qid:qkey(m.date,"paper",q.id), m:q, src:"Paper: "+P.title}));
     h += `<div class="block">
       <div class="spread"><span class="label">Paper of the day · ${esc(P.kind||"")}</span><span class="row"><span class="tag ${esc(P.strength||"")}">${esc(P.strength||"")} evidence</span></span></div>
       <h3>${esc(P.title)}</h3>
@@ -724,34 +732,36 @@ function vCareer(m){
     h += `<div class="block"><span class="label">Paper of the day</span><p class="muted">No new paper today${m.source==="page"?": this morning was prepared without web access.":"."}</p></div>`;
   }
   if(C){
-    const list = (C.mcqs||[]).map(q=>({qid:qkey(m.date,"chapter",q.id), m:q, src:"Chapter "+C.chapterTitle+" §"+C.section}));
+    const list = arr(C.mcqs).map(q=>({qid:qkey(m.date,"chapter",q.id), m:q, src:"Chapter "+C.chapterTitle+" §"+C.section}));
     const full = shows("career",2) || S.showAll["chapter"];
     h += `<div class="block">
       <span class="label">Chapter ${esc(String(C.chapterId||"").replace(/^ch0?/,""))} · ${esc(C.chapterTitle)} · section ${esc(C.section)} · ~${esc(C.minutes||12)} min</span>
       <h3>${esc(C.sectionTitle)}</h3>
       ${full?`<div class="prose">${prose(C.body)}</div>`:`<button class="more" data-act="showAll" data-k="chapter">Read the full section</button>`}
-      ${(C.pearls||[]).length?`<div class="prose"><h4>Pearls</h4><ul>${C.pearls.map(p=>`<li>${esc(p)}</li>`).join("")}</ul></div>`:""}
-      ${full && (C.sources||[]).length?`<p class="faint" style="font-size:12.5px">Sources: ${C.sources.map(s=>s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)).join(" · ")}</p>`:""}
+      ${arr(C.pearls).length?`<div class="prose"><h4>Pearls</h4><ul>${arr(C.pearls).map(p=>`<li>${esc(p)}</li>`).join("")}</ul></div>`:""}
+      ${full && arr(C.sources).length?`<p class="faint" style="font-size:12.5px">Sources: ${arr(C.sources).map(s=>typeof s==="string"?esc(s):s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)).join(" · ")}</p>`:""}
       ${full?mcqBlock(list,"Section exam · 5 questions"):""}
       <div class="row"><button class="btn small ghost" data-act="discuss" data-topic="chapter">Discuss this section with Claude</button></div>
     </div>`;
   }
-  if((c.ideas||[]).length && shows("career",2)){
-    h += `<div class="block"><span class="label">Ideas</span><div class="ideas">${c.ideas.map(i=>`<div class="idea"><b>${esc(i.title)}</b><span class="muted" style="font-size:14px">${esc(i.body)}</span></div>`).join("")}</div></div>`;
+  if(arr(c.ideas).length && shows("career",2)){
+    h += `<div class="block"><span class="label">Ideas</span><div class="ideas">${arr(c.ideas).map(i=>`<div class="idea"><b>${esc(i.title)}</b><span class="muted" style="font-size:14px">${esc(i.body)}</span></div>`).join("")}</div></div>`;
   }
+  if(m.weekly && arr(m.weekly.mcqs).filter(validQ).length) h += `<div class="block"><span class="label">Friday integrative questions</span><p class="muted" style="font-size:13.5px">These also lead this week's exam.</p></div>`;
   const catchup = S.mornings.filter(x=>x.date<today() && x.date>=addDays(today(),-7) && x.career && x.career.chapter && !chapterDone(x));
   if(catchup.length) h += `<div class="block"><span class="label">Catch up</span><div class="row">${catchup.map(x=>`<button class="btn small" data-act="catchup" data-date="${esc(x.date)}">${esc(x.date)} · §${esc(x.career.chapter.section)} ${esc(x.career.chapter.sectionTitle)}</button>`).join("")}</div></div>`;
   if(S.catchup){ const x=S.mornings.find(y=>y.date===S.catchup); if(x&&x.career&&x.career.chapter){ const C2=x.career.chapter;
-    h += `<div class="block"><div class="spread"><span class="label">Catching up · ${esc(x.date)}</span><button class="btn small ghost" data-act="catchup" data-date="">Close</button></div><h3>${esc(C2.sectionTitle)}</h3><div class="prose">${prose(C2.body)}</div>${mcqBlock((C2.mcqs||[]).map(q=>({qid:qkey(x.date,"chapter",q.id), m:q, src:"Chapter "+C2.chapterTitle+" §"+C2.section})),"Section exam")}</div>`; } }
-  if(!shows("career",3) && !S.showAll.career) h += moreBtn("career");
+    h += `<div class="block"><div class="spread"><span class="label">Catching up · ${esc(x.date)}</span><button class="btn small ghost" data-act="catchup" data-date="">Close</button></div><h3>${esc(C2.sectionTitle)}</h3><div class="prose">${prose(C2.body)}</div>${mcqBlock(arr(C2.mcqs).map(q=>({qid:qkey(x.date,"chapter",q.id), m:q, src:"Chapter "+C2.chapterTitle+" §"+C2.section})),"Section exam")}</div>`; } }
+  if(!shows("career",2)) h += moreBtn("career");
   return h;
 }
 function vPresence(m){
   const p = m && m.presence;
   if(!p) return `<div class="block"><div class="empty">Today's presence technique arrives with your morning.</div></div>`;
   const ans = S.drafts["presence"] ?? (S.day&&S.day.presenceAnswer) ?? "";
-  const hedges = HEDGES.filter(w=>new RegExp("\\b"+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b","i").test(ans));
+  const hedges = hedgesIn(ans);
   const fb = S.outputs.presence ?? (S.day&&S.day.presenceFeedback) ?? "";
+  const drill = p.drill || {};
   const ctxName = {"care-team":"With the care team", presentation:"Presentations", negotiation:"Negotiation", social:"Social"}[p.context] || p.context;
   return `<div class="block">
       <div class="spread"><span class="label">${esc(ctxName)}</span><span class="tag ${esc(p.evidence)}">${esc(p.evidence)} evidence</span></div>
@@ -761,12 +771,12 @@ function vPresence(m){
     </div>
     ${shows("presence",2)?`<div class="block">
       <span class="label">Drill · under 5 minutes</span>
-      <p style="max-width:70ch"><b>Situation:</b> ${esc(p.drill&&p.drill.scenario)}</p>
-      <p style="max-width:70ch"><b>Your move:</b> ${esc(p.drill&&p.drill.task)}</p>
-      <p class="muted" style="font-size:13.5px">Judged on: ${esc(p.drill&&p.drill.criteria)}</p>
+      <p style="max-width:70ch"><b>Situation:</b> ${esc(drill.scenario)}</p>
+      <p style="max-width:70ch"><b>Your move:</b> ${esc(drill.task)}</p>
+      <p class="muted" style="font-size:13.5px">Judged on: ${esc(drill.criteria)}</p>
       <label class="label" for="presence-in">Write exactly what you would say</label>
       <textarea id="presence-in" data-draft="presence" placeholder="Say it the way you'd say it out loud.">${esc(ans)}</textarea>
-      <div class="row"><span class="mono" style="font-size:12px;color:var(--${hedges.length?"warn":"faint"})">${ans?`Hedges: ${hedges.length}${hedges.length?" ("+hedges.join(", ")+")":""}`:"Hedge counter: words like “just”, “maybe”, “I think” leak authority."}</span></div>
+      <div class="row"><span class="mono" id="hedgeLine" style="font-size:12px;color:var(--${hedges.length?"warn":"faint"})">${ans?`Hedges: ${hedges.length}${hedges.length?" ("+hedges.join(", ")+")":""}`:"Hedge counter: words like “just”, “maybe”, “I think” leak authority."}</span></div>
       <div class="row"><button class="btn primary small" data-act="presenceFb" ${S.sample?"":"disabled"}>Get coached</button><span class="faint" style="font-size:12.5px">Then say it out loud twice, slower and lower than feels natural.</span></div>
       ${fb?`<div class="out">${esc(fb)}</div>`:""}
     </div>`:moreBtn("presence")}`;
@@ -785,16 +795,18 @@ function vMind(m){
     ${sharpVsSleep()}
   </div>`;
   if(!m) return h + `<div class="block"><div class="empty">Today's article, case and puzzle arrive with your morning.</div></div>`;
-  if(M.case && shows("mind",2)){
-    const x = {qid:qkey(m.date,"case","case"), m:{id:"case", q:M.case.stem, options:M.case.options, answer:M.case.answer, explanation:M.case.explanation, topic:"Clinical reasoning"}, src:"Clinical case"};
+  const cq = caseQ(m);
+  if(cq && shows("mind",2)){
+    const x = {qid:qkey(m.date,"case","case"), m:cq, src:"Clinical case"};
     const rec = S.answers[x.qid];
     h += `<div class="block"><div class="spread"><span class="label">Clinical case · ${esc(M.case.seconds||90)} seconds</span>${S.caseStart&&!rec?`<span class="timer" id="caseTimer">${esc(M.case.seconds||90)}</span>`:rec&&rec.ms?`<span class="mono faint">${(rec.ms/1000).toFixed(0)} s</span>`:""}</div>
       ${S.caseStart||rec?mcqHTML(x):`<p class="muted">One hidden problem in an inpatient chart. The clock starts when you open it.</p><div class="row"><button class="btn primary small" data-act="startCase">Open the case</button></div>`}</div>`;
   }
-  if(M.article && shows("mind",2)) h += `<div class="block"><div class="spread"><span class="label">Read · brain science</span><span class="tag ${esc(M.article.strength||"")}">${esc(M.article.strength||"")}</span></div>
+  const sw = (String((M.article&&M.article.strength)||"").toLowerCase().match(/^\s*(high|moderate|low|strong|weak)/)||[])[1]||"";
+  if(M.article && shows("mind",2)) h += `<div class="block"><div class="spread"><span class="label">Read · brain science</span>${sw?`<span class="tag ${sw}">${sw} evidence</span>`:""}</div>
     <h3>${esc(M.article.title)}</h3><p class="muted mono" style="font-size:12.5px">${esc(M.article.source)} · ${esc(M.article.published)}${M.article.url?` · <a href="${esc(M.article.url)}" target="_blank" rel="noopener">open ↗</a>`:""}</p>
     <p style="max-width:70ch">${esc(M.article.summary)}</p><p><b>Today:</b> ${esc(M.article.takeaway)}</p></div>`;
-  if(M.exercise && shows("mind",2)) h += `<div class="block"><span class="label">Practice · ${esc(M.exercise.minutes)} min</span><h3>${esc(M.exercise.title)}</h3><ol style="margin:0;padding-left:20px;display:grid;gap:4px;max-width:70ch">${(M.exercise.steps||[]).map(s=>`<li>${esc(s)}</li>`).join("")}</ol><p class="muted" style="font-size:13.5px">${esc(M.exercise.why)}</p></div>`;
+  if(M.exercise && shows("mind",2)) h += `<div class="block"><span class="label">Practice · ${esc(M.exercise.minutes)} min</span><h3>${esc(M.exercise.title)}</h3><ol style="margin:0;padding-left:20px;display:grid;gap:4px;max-width:70ch">${arr(M.exercise.steps).map(s=>`<li>${esc(s)}</li>`).join("")}</ol><p class="muted" style="font-size:13.5px">${esc(M.exercise.why)}</p></div>`;
   if(M.puzzle && shows("mind",3)) h += `<div class="block"><span class="label">Puzzle · ~3 minutes</span><p style="max-width:70ch">${esc(M.puzzle.prompt)}</p>
     ${S.puzzleShown?`<div class="out"><b>${esc(M.puzzle.answer)}</b>\n${esc(M.puzzle.explanation)}</div>`:`<div class="row"><button class="btn small" data-act="puzzle">Show the answer</button></div>`}</div>`;
   const note = (S.syllabus && S.syllabus.brainEvidenceNote) || (m && m.mind && m.mind.brainEvidenceNote);
@@ -818,13 +830,13 @@ function vSpirit(m){
     h += `<div class="block">
       <span class="ar-label">آية اليوم</span>
       <p class="ayah">${esc(A.text)} <span class="orn">﴿${esc(arDigits(A.ayahTo&&A.ayahTo!==A.ayahNo?A.ayahNo+"–"+A.ayahTo:A.ayahNo))}﴾</span></p>
-      <p class="ar muted" style="font-size:14.5px">سورة ${esc(A.surah)} · ${A.url?`<a href="${esc(A.url)}" target="_blank" rel="noopener">quran.com ↗</a>`:""}</p>
+      <p class="ar muted" style="font-size:14.5px">سورة ${esc(String(A.surah||"").replace(/^\s*سورة\s+/,""))} · ${A.url?`<a href="${esc(A.url)}" target="_blank" rel="noopener">quran.com ↗</a>`:""}</p>
     </div>
     <div class="block">
       <span class="ar-label">التفسير · ${esc(sp.tafsir&&sp.tafsir.source)}${sp.tafsir&&sp.tafsir.quoted===false?" (بتصرف)":""}</span>
       <p class="ar">${esc(sp.tafsir&&sp.tafsir.text)}</p>
     </div>
-    ${sp.faida?`<div class="block"><span class="ar-label">فائدة</span><p class="ar">${esc(sp.faida)}</p></div>`:""}`;
+    ${sp.faida?`<div class="block"><span class="ar-label">فائدة</span><p class="ar">${esc(Array.isArray(sp.faida)?sp.faida.join(" "):sp.faida)}</p></div>`:""}`;
   } else {
     h += `<div class="block"><p class="ar muted">آية اليوم وتفسيرها تصل مع تحضير الصباح.</p></div>`;
   }
@@ -843,10 +855,10 @@ function vSpirit(m){
   h += `<div class="block">
     <span class="ar-label">المسبحة</span>
     <div class="tasbih">
-      <div class="row" style="justify-content:center">${PHR.map((p,i)=>`<button class="btn small ${S.freePhrase===i?"on":""}" data-act="phrase" data-i="${i}" style="font-family:var(--f-arabic)">${p}</button>`).join("")}</div>
+      <div class="row" style="justify-content:center">${PHR.map((p,i)=>`<button class="btn small ${S.freePhrase===i?"on":""}" data-act="phrase" data-i="${i}" aria-pressed="${S.freePhrase===i}" style="font-family:var(--f-arabic)">${p}</button>`).join("")}</div>
       <p class="phr">${PHR[S.freePhrase]}</p>
       <button class="counter big" data-act="tap" data-id="${fk}" data-free="1" aria-label="المسبحة: ${fn}">${ring(fn % S.freeTarget || (fn&&fn%S.freeTarget===0?S.freeTarget:0), S.freeTarget)}<span><b id="cnt-${fk}">${fn}</b><small dir="ltr">/ ${S.freeTarget}</small></span></button>
-      <div class="row">${[33,100].map(t=>`<button class="btn small ${S.freeTarget===t?"on":""}" data-act="freeTarget" data-v="${t}">${t}</button>`).join("")}</div>
+      <div class="row">${[33,100].map(t=>`<button class="btn small ${S.freeTarget===t?"on":""}" data-act="freeTarget" data-v="${t}" aria-pressed="${S.freeTarget===t}">${t}</button>`).join("")}</div>
     </div>
   </div>`;
   return h;
@@ -856,7 +868,7 @@ function vFinance(m){
   if(!f) return `<div class="block"><div class="empty">Today's finance note arrives with your morning.</div></div>`;
   return `<div class="block"><span class="label">${f.track==="trading"?"Trading & quant":"Personal finance"}</span><h3>${esc(f.title)}</h3>
     ${shows("finance",2)?`<p style="max-width:70ch">${esc(f.body)}</p>`:""}<p><b>One step today:</b> ${esc(f.action)}</p>
-    ${shows("finance",2)&&f.mcq?mcqBlock([{qid:qkey(m.date,"finance",f.mcq.id), m:f.mcq, src:"Finance: "+f.title}],"Check"):""}</div>${shows("finance",2)?"":moreBtn("finance")}`;
+    ${shows("finance",2)&&validQ(f.mcq)?mcqBlock([{qid:qkey(m.date,"finance",f.mcq.id), m:f.mcq, src:"Finance: "+f.title}],"Check"):""}</div>${shows("finance",2)?"":moreBtn("finance")}`;
 }
 function vSimple(m, k){
   const x = m && m[k];
@@ -867,7 +879,7 @@ function vSimple(m, k){
 function renderStations(){
   const m = morningToday();
   const inner = {career:()=>vCareer(m), presence:()=>vPresence(m), mind:()=>vMind(m), spirit:()=>vSpirit(m), finance:()=>vFinance(m), relationships:()=>vSimple(m,"relationships"), joy:()=>vSimple(m,"joy")};
-  $("stations").innerHTML = STATIONS.map((s,i)=>stationShell(s,i,inner[s.k]())).join("");
+  $("stations").innerHTML = STATIONS.map((s,i)=>stationShell(s,i,safe(inner[s.k], `<div class="block"><div class="empty">This part of the morning could not be shown. The rest of the page is fine.</div></div>`))).join("");
 }
 
 /* ---------- exam ---------- */
@@ -876,10 +888,11 @@ function examView(){
   if(!o.live) return "";
   const ex = o.ex;
   if(!ex){
-    const n = examPool(o.fri).length;
+    const n = examPool(o.fri).length, early = o.fri===today() && !morningToday() && new Date().getHours()<10;
     return `<div class="exam"><span class="label" style="color:var(--ember)">${esc(o.label)} · week ending ${esc(o.fri)}</span><h2>Weekly exam</h2>
-      <p style="max-width:70ch">${n} questions drawn from this week's papers, chapter sections, cases and finance notes, plus questions you missed before. Missed ones go back into Recall.</p>
-      <div class="row"><button class="btn primary" data-act="startExam" data-key="${esc(o.fri)}" ${n?"":"disabled"}>Start the exam</button></div></div>`;
+      ${early?`<p class="muted">This week's last questions arrive with this morning's research (about 06:55). Start after that.</p>`:""}
+      <p style="max-width:70ch">${Math.min(n,25)} questions drawn from this week's papers, chapter sections, cases and finance notes, plus questions you missed before. Missed ones go back into Recall.</p>
+      <div class="row"><button class="btn primary" data-act="startExam" data-key="${esc(o.fri)}" ${n&&!early?"":"disabled"}>Start the exam</button></div></div>`;
   }
   return `<div class="exam">${examBody(ex)}</div>`;
 }
@@ -891,7 +904,9 @@ function examBody(ex){
       <div class="list">${Object.entries(byTopic).sort((a,b)=>a[1].r/a[1].n-b[1].r/b[1].n).map(([t,v])=>`<div class="item"><div class="spread"><span>${esc(t)}</span><span class="mono">${v.r}/${v.n}</span></div><div class="bar"><i style="width:${100*v.r/v.n}%;--c:${v.r/v.n>=.7?"var(--good)":v.r/v.n>=.5?"var(--warn)":"var(--bad)"}"></i></div></div>`).join("")}</div>
       <p class="muted">Every missed question is now in Recall and will come back in a few days.</p>`;
   }
+  if(!N) return `<p class="muted">This exam has no questions.</p>`;
   const i = clamp(S.examIdx[ex.key] ?? qs.findIndex((_,k)=>ans["a"+k]==null), 0, N-1), x = qs[i], chosen = ans["a"+i], L="ABCD";
+  if(!x || !validQ(x.m)) return `<p class="muted">Question ${i+1} could not be shown.</p>`;
   const answeredN = Object.keys(ans).length;
   return `<div class="spread"><span class="label" style="color:var(--ember)">Weekly exam · question ${i+1} of ${N}</span><span class="mono faint">${answeredN} answered</span></div>
     <div class="progress"><i style="width:${100*answeredN/N}%"></i></div>
@@ -1128,10 +1143,12 @@ function viewSpar(){
 /* ---------- render all (keeps focus) ---------- */
 function render(){
   const a = document.activeElement, id = a && a.id, sel = (a && typeof a.selectionStart==="number") ? [a.selectionStart,a.selectionEnd] : null;
-  renderHeader(); renderToday();
-  $("examSlot").innerHTML = examView();
-  renderStations(); renderTabs(); renderPanel();
+  const akey = a && !id && a.dataset && a.dataset.act ? ["act","id","qid","i","k","v","tab","key","to","topic","date"].filter(k=>a.dataset[k]!=null).map(k=>`[data-${k}="${CSS.escape(a.dataset[k])}"]`).join("") : null;
+  safe(renderHeader); safe(renderToday);
+  safe(()=>{ $("examSlot").innerHTML = examView(); });
+  safe(renderStations); safe(renderTabs); safe(renderPanel);
   if(id){ const n=$(id); if(n && n!==a){ n.focus({preventScroll:true}); if(sel && n.setSelectionRange) try{ n.setSelectionRange(sel[0],sel[1]); }catch(e){} } }
+  else if(akey && !a.isConnected){ const n=document.querySelector(akey); if(n && !n.disabled) n.focus({preventScroll:true}); }
   if(T.ctx) drawTerrain();
 }
 
@@ -1146,9 +1163,9 @@ function progressPack(){
     current_model: S.model ? {hypotheses:S.model.hypotheses, coupling:S.model.coupling, leverage:S.model.leverage, notes:(S.model.notes||[]).slice(-8)} : null,
     pulse_recent: S.checkins.slice(0,14).map(c=>({d:c.date, s:c.scores, sleep:c.sleep, energy:c.energy})),
     quiz_by_topic_30d: topics,
-    exams: S.exams.filter(e=>e.done).slice(-6).map(e=>({week:e.key, score:e.score, total:e.total})),
+    exams: S.exams.filter(e=>e.done).slice(0,6).map(e=>({week:e.key, score:e.score, total:e.total})),
     brain_games: brain,
-    presence_drills_done_7d: S.mornings.filter(m=>m.date>=addDays(today(),-7)).length,
+    presence_drills_done_7d: Object.entries((S.log&&S.log.days)||{}).filter(([d,v])=>d>addDays(today(),-7)&&v&&v.presence).length,
     adhkar_completion_today: Math.round(stationProgress("spirit")*100)+"%",
     mornings_last_7: S.mornings.slice(0,7).map(m=>({date:m.date, chapter:m.career&&m.career.chapter&&(m.career.chapter.chapterTitle+" §"+m.career.chapter.section), chapterQuizDone:chapterDone(m), presence:m.presence&&m.presence.technique})),
     recall: {due: dueCards().length, missedQuestions: S.cards.filter(c=>c.type==="mcq").length},
@@ -1186,9 +1203,9 @@ async function recompute(){
     const coupling = (res.model.coupling||[]).filter(c=>DK.includes(c.a)&&DK.includes(c.b)&&c.a!==c.b).slice(0,10).map(c=>({a:c.a,b:c.b,w:clamp(+c.w||0,0,1),why:String(c.why||"")}));
     const focus = res.focus && DK.includes(res.focus.domain) ? {domain:res.focus.domain, why:String(res.focus.why||"")} : null;
     const notes = ((S.model&&S.model.notes)||[]).concat(res.memo?[{date:today(), text:String(res.memo)}]:[]).slice(-12);
-    const review = res.review && Array.isArray(res.review.mcqs) ? {topic:String(res.review.topic||""), mcqs:res.review.mcqs.filter(q=>q&&Array.isArray(q.options)&&q.options.length===4&&Number.isInteger(q.answer)).slice(0,3).map((q,i)=>Object.assign({},q,{id:"r"+i+"-"+uid()}))} : null;
-    await write("me/model", {hypotheses:hyps, coupling, leverage:focus, notes, updatedAt:new Date().toISOString()});
-    await write("days/"+today(), {date:today(), update:{headline:String(res.headline||""), focus, review, at:new Date().toISOString()}}, "update");
+    const review = res.review && Array.isArray(res.review.mcqs) ? {topic:String(res.review.topic||""), mcqs:res.review.mcqs.map(normQ).filter(q=>validQ(q)&&q.options.length===4).slice(0,3).map((q,i)=>Object.assign({},q,{id:"r"+i+"-"+uid()}))} : null;
+    if(!await write("me/model", {hypotheses:hyps, coupling, leverage:focus, notes, updatedAt:new Date().toISOString()})) return;
+    if(!await write("days/"+today(), {date:today(), update:{headline:String(res.headline||""), focus, review, at:new Date().toISOString()}}, "update")) return;
     await bump("update");
     status("Updated: today's focus, your model, and three review questions in Pharmacy.");
   }catch(e){
@@ -1204,21 +1221,23 @@ function nextSection(){
   const last = S.mornings.find(m=>m.career&&m.career.chapter&&m.date<today());
   if(!last) return {ch:syl[0], sec:syl[0].sections[0]};
   const lc = last.career.chapter, ci = Math.max(0, syl.findIndex(c=>c.id===lc.chapterId)), ch = syl[ci];
-  const si = (ch.sections||[]).findIndex(s=>s.n===lc.section);
+  const si = (ch.sections||[]).findIndex(s=>String(s.n)===String(lc.section));
   if(si>=0 && si < ch.sections.length-1) return {ch, sec:ch.sections[si+1]};
   const nch = syl[(ci+1)%syl.length]; return {ch:nch, sec:nch.sections[0]};
 }
 async function prepareMorning(){
   if(S.preparing || !S.sample) return;
   const ns = nextSection(), techs = (S.presenceProg && S.presenceProg.techniques) || [];
-  const tech = techs.length ? techs[S.mornings.length % techs.length] : null;
-  const track = (Math.floor(new Date(today()+"T12:00:00")/864e5)%2) ? "trading" : "personal";
+  const prevP = S.mornings.find(m=>m.date<today()&&m.presence&&m.presence.id), ti = prevP ? techs.findIndex(t=>t.id===prevP.presence.id) : -1;
+  const tech = techs.length ? techs[(ti+1)%techs.length] : null;
+  const prevF = S.mornings.find(m=>m.date<today()&&m.finance&&m.finance.track);
+  const track = prevF && prevF.finance.track==="trading" ? "personal" : "trading";
   S.preparing = true; render(); status("Claude is preparing this morning from its own knowledge. Usually 1–2 minutes.");
   const prompt = `You are preparing one morning of learning for a hospital clinical pharmacist in Saudi Arabia (English). No web access is available, so do NOT invent papers, URLs or statistics; teach established, guideline-consistent knowledge and say "check the current guideline" where recent changes may apply.
 About them: ${(S.profile&&S.profile.about||"").slice(0,1200)}
 Write JSON only:
 {"headline":"one specific sentence for this morning",
-"career":{"paper":null,"chapter":{"chapterId":"${ns?ns.ch.id:"ch01"}","chapterTitle":"${ns?esc(ns.ch.title):"Type 2 diabetes pharmacotherapy"}","section":${ns?ns.sec.n:1},"sectionTitle":"${ns?esc(ns.sec.title):"Overview"}","minutes":12,"body":"450-600 words, original, paragraphs separated by blank lines, '## ' sub-headings and '- ' bullets allowed","pearls":["3-5 one-liners"],"sources":[{"name":"guideline name and year to look up","url":""}],"mcqs":[5 MCQs]},"ideas":[{"title":"...","body":"..."},{"title":"...","body":"..."},{"title":"...","body":"..."}]},
+"career":{"paper":null,"chapter":{"chapterId":"${ns?ns.ch.id:"ch01"}","chapterTitle":${JSON.stringify(ns?ns.ch.title:"Type 2 diabetes pharmacotherapy")},"section":${ns?Number(ns.sec.n)||1:1},"sectionTitle":${JSON.stringify(ns?ns.sec.title:"Overview")},"minutes":12,"body":"450-600 words, original, paragraphs separated by blank lines, '## ' sub-headings and '- ' bullets allowed","pearls":["3-5 one-liners"],"sources":[{"name":"guideline name and year to look up","url":""}],"mcqs":[5 MCQs]},"ideas":[{"title":"...","body":"..."},{"title":"...","body":"..."},{"title":"...","body":"..."}]},
 "presence":${tech?JSON.stringify(tech):'{"context":"care-team","technique":"...","why":"...","evidence":"moderate","example":"...","specter":"...","drill":{"scenario":"...","task":"...","criteria":"..."}}'},
 "mind":{"article":null,"exercise":{"title":"...","minutes":7,"steps":["..."],"why":"..."},"puzzle":{"prompt":"...","answer":"...","explanation":"..."},"case":{"stem":"90-second inpatient vignette with one hidden drug problem","options":["4 options"],"answer":0,"explanation":"...","seconds":90}},
 "finance":{"track":"${track}","title":"...","body":"120-180 words${track==="personal"?", halal-conscious":""}","action":"...","mcq":{MCQ}},
@@ -1228,7 +1247,12 @@ MCQ format: {"id":"short-slug","q":"vignette stem","options":["A","B","C","D"],"
   try{
     const res = await S.sample.json(prompt, {modelTier:"default", cache:false, onText:({text})=>status("Preparing… "+text.length.toLocaleString()+" characters")});
     if(!res || !res.career) throw {code:"invalid_json"};
-    await write("mornings/"+today(), Object.assign(res, {date:today(), source:"page", createdAt:new Date().toISOString()}));
+    const ch = res.career.chapter;
+    if(ch && Array.isArray(ch.mcqs)){ const seen = new Set(); ch.mcqs = ch.mcqs.map(normQ).filter(validQ); ch.mcqs.forEach((q,i)=>{ let id=String(q.id||""); if(!id||seen.has(skey(id))) id="c"+(i+1); seen.add(skey(id)); q.id=id; }); }
+    if(res.finance && res.finance.mcq){ normQ(res.finance.mcq); if(!res.finance.mcq.id) res.finance.mcq.id="f1"; if(!validQ(res.finance.mcq)) delete res.finance.mcq; }
+    if(res.mind && res.mind.case) normQ(res.mind.case);
+    if((await S.db.doc("mornings/"+today()).get()).exists){ status("Your researched morning arrived while Claude was writing, so it was kept."); return; }
+    if(!await write("mornings/"+today(), Object.assign(res, {date:today(), source:"page", createdAt:new Date().toISOString()}))) return;
     status("Your morning is ready. Today's ayah and new papers come with tomorrow's research agent run.");
   }catch(e){ status(e&&e.code==="invalid_json" ? "The morning didn't come back in the right shape. Try again." : "Couldn't prepare the morning ("+(e&&e.code||"error")+")."); }
   finally{ S.preparing=false; render(); }
@@ -1248,7 +1272,7 @@ async function streamInto(key, prompt){
 let gameCleanup = null, lastFocus = null;
 function openGame(id){
   const g = games().find(x=>x.id===id); if(!g) return;
-  lastFocus = document.activeElement;
+  lastFocus = '.game[data-id="'+CSS.escape(id)+'"]'; document.querySelector(".wrap").inert = true;
   $("gameTitle").textContent = g.skill; $("gameOverlay").hidden = false; document.body.style.overflow="hidden";
   const mount = $("gameMount"); mount.innerHTML = "";
   const hist = gameHistory(g.id), best = gameBest(g);
@@ -1266,17 +1290,26 @@ function openGame(id){
 function closeGame(){
   try{ if(typeof gameCleanup==="function") gameCleanup(); }catch(e){}
   gameCleanup = null; $("gameMount").innerHTML = ""; $("gameOverlay").hidden = true; document.body.style.overflow="";
-  render(); if(lastFocus && lastFocus.isConnected) lastFocus.focus();
+  document.querySelector(".wrap").inert = false;
+  render(); const back = lastFocus && document.querySelector(lastFocus); if(back) back.focus();
 }
 $("gameClose").addEventListener("click", closeGame);
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !$("gameOverlay").hidden) closeGame(); });
 
 /* ---------- spirit counters (debounced saves) ---------- */
-let spiritTimer = null;
-function saveSpiritSoon(){
-  clearTimeout(spiritTimer);
-  spiritTimer = setTimeout(async ()=>{ const counts = spiritCounts(); if(S.demo) return; await write("spirit/"+today(), {date:today(), counts}); bump("dhikr"); }, 1200);
+let spiritTimer = null, spiritSince = 0, boundDay = null;
+function flushSpirit(){
+  if(!spiritTimer) return;
+  clearTimeout(spiritTimer); spiritTimer = null; spiritSince = 0;
+  if(S.demo || !boundDay) return;
+  write("spirit/"+boundDay, {date:boundDay, counts:spiritCounts()}); bump("dhikr");
 }
+function saveSpiritSoon(){
+  clearTimeout(spiritTimer); spiritSince = spiritSince || Date.now();
+  spiritTimer = setTimeout(flushSpirit, Date.now()-spiritSince > 5000 ? 0 : 1200);
+}
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="hidden") flushSpirit(); });
+addEventListener("pagehide", flushSpirit);
 
 /* ---------- actions ---------- */
 let caseTick = null;
@@ -1295,7 +1328,7 @@ const actions = {
     await bump("quiz");
   },
   catchup:(el)=>{ S.catchup = el.dataset.date || null; render(); },
-  startCase:()=>{ const m=morningToday(); if(!m||!m.mind||!m.mind.case) return; S.caseStart = performance.now(); render(); const secs=+m.mind.case.seconds||90;
+  startCase:()=>{ const m=morningToday(); if(!m||!m.mind||!m.mind.case) return; S.caseStart = performance.now(); render(); const o=document.querySelector('[data-qid$="_case_case"]'); if(o) o.focus(); const secs=+m.mind.case.seconds||90;
     clearInterval(caseTick); caseTick = setInterval(()=>{ const left = Math.max(0, Math.ceil(secs - (performance.now()-S.caseStart)/1000)); const t=$("caseTimer"); if(t) t.textContent = left; if(left<=0){ clearInterval(caseTick); if(t) t.textContent="time"; } }, 250); },
   puzzle:()=>{ S.puzzleShown=true; render(); bump("puzzle"); },
   game:(el)=>openGame(el.dataset.id),
@@ -1305,12 +1338,14 @@ const actions = {
     if(item && (counts[id]||0) >= item.count) return;
     S.spiritLocal[id] = n;
     const b = $("cnt-"+id);
+    el.setAttribute("aria-label", item ? "عدّاد: "+n+" من "+item.count : "المسبحة: "+n);
     if(el.dataset.free){ if(b) b.textContent = n; const svg=el.querySelector("svg"); if(svg) svg.outerHTML = ring(n % S.freeTarget || S.freeTarget, S.freeTarget); if(n % S.freeTarget === 0) render(); }
     else if(item){ if(n>=item.count) render(); else { if(b) b.textContent = n; const svg=el.querySelector("svg"); if(svg) svg.outerHTML = ring(n, item.count); } }
     saveSpiritSoon();
   },
   resetAdhkar:()=>{ const reset={}; for(const x of adhkar()) reset[x.id]=0; for(const k of Object.keys(spiritCounts())) if(k.startsWith("free_")) reset[k]=spiritCounts()[k];
-    S.spiritLocal = {}; S.spiritDoc = {counts:reset}; render(); if(!S.demo) write("spirit/"+today(), {date:today(), counts:reset}); },
+    clearTimeout(spiritTimer); spiritTimer = null; spiritSince = 0;
+    S.spiritLocal = {}; S.spiritDoc = {counts:reset}; render(); if(!S.demo) write("spirit/"+(boundDay||today()), {date:boundDay||today(), counts:reset}); },
   phrase:(el)=>{ S.freePhrase=+el.dataset.i; render(); },
   freeTarget:(el)=>{ S.freeTarget=+el.dataset.v; render(); },
   presenceFb: async()=>{ const m=morningToday(); const p=m&&m.presence; const ans=(S.drafts.presence ?? (S.day&&S.day.presenceAnswer) ?? "").trim();
@@ -1318,7 +1353,11 @@ const actions = {
     await write("days/"+today(), {date:today(), presenceAnswer:ans}, "update");
     const text = await streamInto("presence", `You are an executive-presence coach with Harvey Specter's standards and a clinician's understanding of hospital culture. Coach a hospital clinical pharmacist.\nTechnique of the day: ${p.technique}\nSituation: ${p.drill&&p.drill.scenario}\nTask: ${p.drill&&p.drill.task}\nCriteria: ${p.drill&&p.drill.criteria}\n\nTheir answer:\n"""${ans}"""\n\nReply in plain text, under 220 words, no markdown headers: a score out of 10; what landed; exactly where authority leaked (quote their hedges, apologies, filler, upward inflection words, burying the recommendation); then "Specter version:" a rewrite under 80 words they could say out loud, keeping them respectful and clinically correct.`);
     if(text){ await write("days/"+today(), {presenceFeedback:text}, "update"); bump("presence"); } },
-  startExam: async(el)=>{ const key=el.dataset.key; const pool=shuffle(examPool(key), key).slice(0,25);
+  startExam: async(el)=>{ const key=el.dataset.key;
+    if(S.exams.some(e=>e.key===key)) return;
+    if(S.db && (await S.db.doc("exams/"+key).get()).exists){ status("This exam already exists. Reload if it doesn't appear."); return; }
+    const all = examPool(key), wk = all.filter(x=>x.qid.includes("_weekly_"));
+    const pool = shuffle(wk.concat(shuffle(all.filter(x=>!x.qid.includes("_weekly_")), key)).slice(0,25), key);
     const ex = {key, kind:"weekly", createdAt:new Date().toISOString(), questions:pool, answers:{}, done:false};
     S.exams = S.exams.filter(e=>e.key!==key).concat([ex]); render(); await write("exams/"+key, ex); },
   practiceExam:()=>{ const key="practice-"+today(); const pool=shuffle(examPool(openExam().live?openExam().fri:nextFriday()), key+Math.random()).slice(0,15);
@@ -1393,10 +1432,10 @@ const actions = {
     finally{ S.chatBusy=false; render(); } },
 };
 async function addMissCard(x){
-  const id = skey("m_"+x.qid);
+  const id = x.qid.startsWith("card_") ? x.qid.slice(5) : skey("m_"+x.qid);
   if(S.cards.some(c=>c.id===id)) { await write("cards/"+id, {due:addDays(today(),1), reps:0, interval:1}, "update"); return; }
   const m = x.m, right = m.options[m.answer];
-  await write("cards/"+id, {id, type:"mcq", mcq:{q:m.q, options:m.options, answer:m.answer, explanation:m.explanation||"", topic:m.topic||"", id:m.id||""}, front:m.q, back:right+"\n\n"+(m.explanation||""), domain:"career", src:String(x.src||""), ease:2.5, interval:1, reps:0, due:addDays(today(),1), createdAt:new Date().toISOString()});
+  await write("cards/"+id, {id, type:"mcq", mcq:{q:m.q, options:m.options, answer:m.answer, explanation:m.explanation||"", topic:m.topic||"", id:m.id||""}, front:m.q, back:right+"\n\n"+(m.explanation||""), domain:/_finance_/.test(x.qid)?"finance":"career", src:String(x.src||""), ease:2.5, interval:1, reps:0, due:addDays(today(),1), createdAt:new Date().toISOString()});
 }
 document.addEventListener("click", e=>{
   const el = e.target.closest("[data-act]"); if(!el) return;
@@ -1407,7 +1446,8 @@ document.addEventListener("input", e=>{
   const el = e.target; if(!el.dataset || !el.dataset.draft) return;
   S.drafts[el.dataset.draft] = el.value;
   if(el.type==="range"){ const o = el.parentElement.querySelector("output"); if(o) o.textContent = el.id==="f-p" ? el.value+"%" : fmt(el.value, el.id==="p-sleep"?2:(el.id==="p-energy"?0:1)); }
-  if(el.id==="presence-in"){ clearTimeout(window.__hedgeT); window.__hedgeT=setTimeout(render, 600); }
+  if(el.id==="presence-in"){ clearTimeout(window.__hedgeT); window.__hedgeT=setTimeout(()=>{ const line=$("hedgeLine"); if(!line) return; const v=el.value, hs=hedgesIn(v);
+    line.textContent = v ? "Hedges: "+hs.length+(hs.length?" ("+hs.join(", ")+")":"") : "Hedge counter: words like “just”, “maybe”, “I think” leak authority."; line.style.color = "var(--"+(hs.length?"warn":"faint")+")"; }, 300); }
 });
 document.addEventListener("change", e=>{ const el=e.target; if(el.dataset && el.dataset.draft) S.drafts[el.dataset.draft]=el.value; });
 document.addEventListener("keydown", e=>{ if(e.target.id==="spar-in" && e.key==="Enter" && (e.metaKey||e.ctrlKey)){ e.preventDefault(); actions.send(); } });
@@ -1415,7 +1455,7 @@ $("recompute").addEventListener("click", recompute);
 
 /* ---------- example data (only when the store is unreachable) ---------- */
 function loadDemo(){
-  S.demo = true;
+  S.demo = true; S.morningsLoaded = true;
   const base = {career:6.5, finance:6, health:5, growth:6, relationships:6, spirit:7, joy:4.5};
   S.checkins = Array.from({length:10},(_,i)=>({date:addDays(today(),-i), sleep:6.5+(i%3)*.5, energy:3, scores:Object.fromEntries(DK.map(k=>[k, clamp(+(base[k]+Math.sin(i*1.7+k.length)).toFixed(1),0,10)]))}));
   S.model = {coupling:[{a:"health",b:"career",w:.7},{a:"relationships",b:"joy",w:.6},{a:"spirit",b:"health",w:.4}], leverage:{domain:"health",why:"Example."}};
@@ -1437,16 +1477,27 @@ function subscribe(){
   const one = (path, key)=> db.doc(path).onSnapshot(s=>{ S[key] = s.exists ? s.data() : null; render(); }, onErr);
   one("me/profile","profile"); one("me/model","model"); one("me/log","log");
   one("curriculum/syllabus","syllabus"); one("curriculum/presence","presenceProg"); one("curriculum/adhkar","adhkarDoc");
-  one("days/"+today(),"day"); one("spirit/"+today(),"spiritDoc");
+  let dayUnsubs = [];
+  const bindDay = ()=>{
+    flushSpirit(); dayUnsubs.forEach(u=>u&&u());
+    boundDay = today();
+    Object.assign(S, {day:null, spiritDoc:null, spiritLocal:{}, puzzleShown:false, caseStart:null, showAll:{}, catchup:null, practice:null});
+    delete S.outputs.presence; delete S.drafts.presence; clearInterval(caseTick);
+    dayUnsubs = [one("days/"+boundDay,"day"), one("spirit/"+boundDay,"spiritDoc")];
+  };
+  bindDay();
+  const rollover = ()=>{ if(today()!==boundDay){ bindDay(); render(); } };
+  setInterval(rollover, 30000);
+  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) rollover(); });
   const coll = (name, key, q, map)=> q(db.collection(name)).onSnapshot(s=>{ const docs = s.docs.map(d=>Object.assign({id:d.id}, d.data())); if(map) map(docs); else S[key]=docs; S.ready=true; render(); }, onErr);
-  coll("mornings","mornings", c=>c.orderBy("date","desc").limit(21));
+  coll("mornings",null, c=>c.orderBy("date","desc").limit(21), docs=>{ S.mornings=docs; S.morningsLoaded=true; });
   coll("answers",null, c=>c.orderBy("date","desc").limit(60), docs=>{ const a={}; for(const d of docs) for(const [k,v] of Object.entries(d.items||{})) a[v.qid||k]=v; S.answers=a; });
-  coll("exams","exams", c=>c.limit(60));
+  coll("exams","exams", c=>c.orderBy("key","desc").limit(60));
   coll("brain","brain", c=>c.orderBy("date","desc").limit(60));
   coll("checkins","checkins", c=>c.orderBy("date","desc").limit(90));
-  coll("forecasts","forecasts", c=>c.limit(300));
-  coll("experiments","experiments", c=>c.limit(50));
-  coll("cards","cards", c=>c.limit(1000));
+  coll("forecasts","forecasts", c=>c.orderBy("createdAt","desc").limit(300));
+  coll("experiments","experiments", c=>c.orderBy("start","desc").limit(50));
+  coll("cards","cards", c=>c.orderBy("due").limit(1000));
   coll("dispatches","dispatches", c=>c.orderBy("date","desc").limit(40));
 }
 async function boot(){
@@ -1457,7 +1508,7 @@ async function boot(){
   S.sample = sample;
   if(!db){ loadDemo(); S.ready=true; render(); return; }
   S.db = db; subscribe();
-  setTimeout(()=>{ if(!S.ready){ S.ready=true; render(); } }, 4000);
+  setTimeout(()=>{ if(!S.ready){ S.ready=true; S.morningsLoaded=true; render(); } }, 4000);
 }
 boot();
 </script>
