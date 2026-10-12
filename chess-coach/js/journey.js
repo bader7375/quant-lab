@@ -49,11 +49,14 @@ function stageDone(n, k) {
   return false;
 }
 const chapterGames = (n) => J.games.filter((g) => g.chapter === n && g.finished);
+/* A game counts toward a chapter's completion rule if it reached a result, or was stopped after 20 or more of your moves. */
+const countsForChapter = (g) => g.finished && (g.result !== "abandoned" || ((g.metrics && g.metrics.moves) || 0) >= 20);
+const countedGames = (n) => chapterGames(n).filter(countsForChapter);
 function nextStage(n) { const c = chapter(n); for (const st of STAGES) if (!stageDone(n, st.k)) return st; return STAGES[2]; }
 
 /* Completion rules: evaluated only from coached-game data. Each returns {met, have, need, text}. */
 function ruleProgress(c) {
-  const r = c.rule || {}; const games = chapterGames(c.n);
+  const r = c.rule || {}; const games = countedGames(c.n);
   if (r.kind === "opening_checklist") {
     const last = games.slice(-r.window); const ok = last.filter((g) => g.metrics && g.metrics.openingScore >= 4 && !g.metrics.openingBlunder).length;
     return { met: last.length >= r.window && ok >= r.need, have: ok, need: r.need, unit: "مباريات مؤهلة من آخر " + r.window };

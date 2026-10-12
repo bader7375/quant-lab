@@ -252,7 +252,7 @@ function Board(el, init) {
     sel = p && p.color === lg.turn() && sel !== sq ? sq : null; draw();
   };
   draw();
-  return { update(o) { Object.assign(st, o); sel = null; draw(); }, get state() { return st; } };
+  return { update(o) { Object.assign(st, o); if (!Object.keys(o).every((k) => k === "arrows" || k === "marks")) sel = null; draw(); }, get state() { return st; } }; // drawing arrows keeps a half-made move
 }
 
 /* ---------- ratings & spaced repetition ---------- */

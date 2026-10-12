@@ -57,7 +57,12 @@
       "sub": "مباراة كلاسيكية مشروحة نقلة نقلة: كيف يهزم التطوير السريع خصمًا لم يطوّر قطعه",
       "kind": "classic"
      }
-    ]
+    ],
+    "play": {
+     "opponent": "stockfish-limited",
+     "focus": "opening",
+     "liveChecklist": true
+    }
    }
   },
   {

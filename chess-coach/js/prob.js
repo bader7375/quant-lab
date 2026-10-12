@@ -38,17 +38,23 @@ const Prob = {
 function nearestBand(M, band) { const ks = Object.keys(M.bands || {}).map(Number); return ks.sort((a, b) => Math.abs(a - band) - Math.abs(b - band))[0]; }
 const CLASS_AR = { excellent: "ممتازة", good: "جيدة", inaccuracy: "غير دقيقة", mistake: "خطأ", blunder: "خطأ فادح" };
 
-/* The odds bar: White's win / draw / Black's win, with the engine's view as a secondary line. */
+/* The odds bar: White's win / draw / Black's win. The main bar follows the setting (default: the human-level estimate);
+   the other view is shown as a secondary line. */
+const oddsMode = () => (typeof J !== "undefined" && J.state && J.state.settings && J.state.settings.odds) || "human";
 function oddsBarHtml(cpWhite, wdlEngine, { label = "", prevCp = null, mover = null } = {}) {
-  const [w, d, l] = Prob.human(cpWhite); const pct = (x) => Math.round(100 * x);
-  const eng = Prob.engine(wdlEngine);
+  const hum = Prob.human(cpWhite); const eng = Prob.engine(wdlEngine); const pct = (x) => Math.round(100 * x);
+  const useEng = oddsMode() === "engine" && !!eng; const [w, d, l] = useEng ? eng : hum;
   let delta = "";
   if (prevCp != null && mover) {
     const b = Math.round(Prob.esFor(prevCp, mover)), a = Math.round(Prob.esFor(cpWhite, mover));
-    delta = `<span class="odds-delta">فرص ${mover === "w" ? "الأبيض" : "الأسود"}: <bdi class="mono">${b}%</bdi> ← <bdi class="mono">${a}%</bdi></span>`;
+    delta = `<span class="odds-delta">فرص ${mover === "w" ? "الأبيض" : "الأسود"}${useEng ? " بمستواك" : ""}: <bdi class="mono">${b}%</bdi> ← <bdi class="mono">${a}%</bdi></span>`;
   }
+  const humLabel = `${label || "تقدير لفرص لاعبين بمستواك"}${Prob.model.kind === "provisional" ? " (نموذج مؤقت)" : ""}`;
+  const note = useEng
+    ? `مع لعب مثالي من الطرفين (Stockfish) · ${humLabel}: <bdi class="mono">${pct(hum[0])}/${pct(hum[1])}/${pct(hum[2])}</bdi>`
+    : `${humLabel}${eng ? ` · مع لعب مثالي (المحرك): <bdi class="mono">${pct(eng[0])}/${pct(eng[1])}/${pct(eng[2])}</bdi>` : ""}`;
   return `<div class="odds" role="img" aria-label="فرص الأبيض ${pct(w)}٪، تعادل ${pct(d)}٪، فرص الأسود ${pct(l)}٪">
     <div class="odds-bar"><i class="ow" style="width:${(100 * w).toFixed(1)}%"></i><i class="od" style="width:${(100 * d).toFixed(1)}%"></i><i class="ol" style="width:${(100 * l).toFixed(1)}%"></i></div>
     <div class="odds-legend"><span><b class="sw"></b>الأبيض <bdi class="mono">${pct(w)}%</bdi></span><span><b class="sd"></b>تعادل <bdi class="mono">${pct(d)}%</bdi></span><span><b class="sl"></b>الأسود <bdi class="mono">${pct(l)}%</bdi></span>${delta}</div>
-    <div class="note odds-note">${label || "تقدير لفرص لاعبين بمستواك"}${Prob.model.kind === "provisional" ? " (نموذج مؤقت)" : ""}${eng ? ` · مع لعب مثالي (المحرك): <bdi class="mono">${pct(eng[0])}/${pct(eng[1])}/${pct(eng[2])}</bdi>` : ""}</div></div>`;
+    <div class="note odds-note">${note}</div></div>`;
 }

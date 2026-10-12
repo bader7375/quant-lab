@@ -122,8 +122,9 @@
     return f;
   }
 
-  /* Chapter 1 opening checklist for one side, from the game's SAN moves. null if the game is too short to judge. */
-  function openingChecklist(sans, color, startFen) {
+  /* Chapter 1 opening checklist for one side, from the game's SAN moves. null if the game is too short to judge.
+     partial: judge a game in progress; `state` marks each item ok / fail / pending (its deadline has not passed yet). */
+  function openingChecklist(sans, color, startFen, { partial = false } = {}) {
     const g = new ChessLib(startFen || undefined); const own = [];
     for (const san of sans) {
       const before = grid(g); const mover = g.turn();
@@ -131,7 +132,7 @@
       if (mover === color) own.push({ m, before, n: own.length + 1 });
       if (own.length >= 12) break;
     }
-    if (own.length < 10) return null;
+    if (own.length < 10 && !partial) return null;
     const first = (k) => own.slice(0, k);
     const centre = first(10).some(({ m }) => m.piece === "p" && ["d4", "e4", "d5", "e5"].includes(m.to));
     const left = new Set(); for (const { m } of first(10)) if (HOME[color][m.from] === m.piece) left.add(m.from);
@@ -149,7 +150,12 @@
       movedFrom[m.to] = true;
     }
     const items = { centre, develop, castle, queen, repeat };
-    return { items, score: Object.values(items).filter(Boolean).length };
+    const out = { items, score: Object.values(items).filter(Boolean).length };
+    if (partial) {
+      const k = own.length; out.own = k; out.developed = left.size;
+      out.state = { centre: centre ? "ok" : k >= 10 ? "fail" : "pending", develop: develop ? "ok" : k >= 10 ? "fail" : "pending", castle: castle ? "ok" : k >= 12 ? "fail" : "pending", queen: queen ? "ok" : "fail", repeat: repeat ? "ok" : "fail" };
+    }
+    return out;
   }
 
   /* Short Arabic statements for hints and as grounding for Claude. `side` = the player we talk to. */
