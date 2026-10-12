@@ -203,6 +203,60 @@ select { background: var(--paper); border: 1px solid var(--line); border-radius:
 .sq.threat { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--blunder) 30%, transparent); }
 .sq.goodsq { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--good) 30%, transparent); }
 .sq.focus { box-shadow: inset 0 0 0 3px var(--arrow-plan); }
+/* ---------- watch ---------- */
+.demos { display: grid; gap: 10px; }
+.demo { display: grid; gap: 4px; justify-items: start; text-align: start; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 12px 14px; cursor: pointer; }
+.demo:hover { border-color: var(--accent); } .demo b { font-family: var(--f-display); font-size: 1.05rem; }
+.whead { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.wtitle { display: grid; gap: 2px; min-width: 0; } .wtitle b { font-family: var(--f-display); font-size: 1.2rem; }
+.watch { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 860px) { .watch { grid-template-columns: minmax(0, 1fr); } }
+.wboard { display: grid; gap: 10px; min-width: 0; } .wside { display: grid; gap: 14px; min-width: 0; }
+.wctrl { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ctl { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 12px; cursor: pointer; min-height: 40px; }
+.ctl.main { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); min-width: 84px; font-weight: 600; }
+.ctl:hover:not(.main) { border-color: var(--accent); }
+.speed { display: inline-flex; gap: 6px; align-items: center; font-size: .86rem; color: var(--muted); } .speed select { padding: 6px 8px; }
+.wmoves { display: flex; flex-wrap: wrap; gap: 2px 4px; direction: ltr; font-family: var(--f-mono); font-size: .88rem; max-height: 9.5em; overflow-y: auto; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.mnum { color: var(--muted); padding-inline: 2px 1px; }
+.mvbtn { border: 0; background: transparent; border-radius: 5px; padding: 1px 5px; cursor: pointer; font: inherit; color: inherit; }
+.mvbtn.on { background: var(--accent); color: var(--accent-ink); }
+.ncard { gap: 10px; }
+.ncard section { display: grid; gap: 3px; } .ncard h4 { margin: 0; font-size: .82rem; color: var(--accent); font-weight: 600; }
+.ncard p { line-height: 1.75; }
+.nhead { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; } .mv.big { font-size: 1.15rem; font-weight: 600; } .nhead .who { margin-inline-start: auto; }
+.cls { font-size: .78rem; padding: 1px 10px; border-radius: 999px; color: #fff; }
+.cls.excellent { background: var(--good); } .cls.good { background: color-mix(in srgb, var(--good) 70%, var(--muted)); } .cls.inaccuracy { background: var(--inacc); } .cls.mistake { background: var(--mistake); } .cls.blunder { background: var(--blunder); }
+.cands { border-top: 1px dashed var(--line); padding-top: 6px; } .cand { display: grid; gap: 2px; padding-block: 4px; } .cand-h { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.habit { background: var(--accent-soft); border-radius: 8px; padding: 8px 12px; }
+.opp { border-top: 1px dashed var(--line); padding-top: 6px; } .outro { background: var(--sunk); border-radius: 8px; padding: 10px 12px; }
+.tag.plan { background: var(--arrow-plan); color: #fff; }
+.mvref { font: 600 .9em var(--f-mono); direction: ltr; unicode-bidi: isolate; border: 1px solid var(--accent); color: var(--accent); background: var(--surface); border-radius: 6px; padding: 0 6px; cursor: pointer; margin-inline: 1px; }
+.mvref:hover { background: var(--accent); color: var(--accent-ink); }
+.branchbar { border: 2px solid var(--arrow-plan); border-radius: var(--r); padding: 10px 12px; display: grid; gap: 8px; background: var(--surface); }
+#b-line { display: flex; flex-wrap: wrap; gap: 2px 4px; direction: ltr; font-family: var(--f-mono); font-size: .9rem; }
+.odds { display: grid; gap: 4px; }
+.odds-bar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; border: 1px solid var(--line); direction: ltr; }
+.odds-bar i { display: block; height: 100%; transition: width .35s ease; }
+.odds-bar .ow { background: #f2f1ec; } .odds-bar .od { background: #9aa39e; } .odds-bar .ol { background: #2a2f2c; }
+.odds-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .82rem; align-items: center; }
+.odds-legend b { display: inline-block; width: 10px; height: 10px; border-radius: 3px; border: 1px solid var(--line); margin-inline-end: 4px; vertical-align: -1px; }
+.odds-legend .sw { background: #f2f1ec; } .odds-legend .sd { background: #9aa39e; } .odds-legend .sl { background: #2a2f2c; }
+.odds-delta { margin-inline-start: auto; font-weight: 600; } .odds-note { font-size: .76rem; }
+/* ---------- chat ---------- */
+.chat { display: grid; gap: 8px; }
+.chat-h { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; } .chat-h b { font-family: var(--f-display); font-size: 1.05rem; }
+.chat-log { display: grid; gap: 8px; max-height: 340px; overflow-y: auto; }
+.msg { padding: 8px 12px; border-radius: 12px; max-width: 92%; line-height: 1.7; white-space: pre-wrap; }
+.msg.me { background: var(--accent); color: var(--accent-ink); justify-self: start; }
+.msg.coach { background: var(--sunk); justify-self: end; }
+.chat-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-q { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 10px; cursor: pointer; font-size: .84rem; }
+.chip-q:hover { border-color: var(--accent); }
+.chat-form { display: flex; gap: 6px; } .chat-in { flex: 1; min-width: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.mv.unv { text-decoration: underline wavy var(--blunder); }
+.warnline { color: var(--blunder); }
+
 </style>
 
 <div id="app" dir="rtl" lang="ar">
@@ -227,5 +281,9 @@ select { background: var(--paper); border: 1px solid var(--line); border-radius:
 <script src="js/core.js"></script>
 <script src="js/practice/modes.js"></script>
 <script src="js/practice/practice.js"></script>
+<script src="js/facts.js"></script>
+<script src="js/prob.js"></script>
+<script src="js/chat.js"></script>
 <script src="js/journey.js"></script>
+<script src="js/watch.js"></script>
 <script src="js/app.js"></script>

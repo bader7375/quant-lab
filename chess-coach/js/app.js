@@ -28,7 +28,7 @@ async function boot() {
   const stS = $("#st-store"), stE = $("#st-engine"), stC = $("#st-claude");
   Engine.start().then(() => { stE.textContent = `Stockfish 17.1 (${Engine.kind === "wasm" ? "WASM" : "asm.js"}): جاهز`; stE.className = "chip ok"; })
     .catch(() => { stE.textContent = "Stockfish: تعذّر التشغيل"; stE.className = "chip bad"; });
-  await Promise.all([Store.init(), loadData(), loadCurriculum()]);
+  await Promise.all([Store.init(), loadData(), loadCurriculum(), Prob.load()]);
   stS.textContent = { db: "التقدم محفوظ (يقرؤه Claude)", local: "التقدم في هذا المتصفح فقط", memory: "التقدم مؤقت" }[Store.kind]; stS.className = "chip " + (Store.kind === "db" ? "ok" : "warn");
   await Promise.all([journeyInit(), practiceInit()]);
   let route = location.hash.slice(1); if (!route) { try { route = localStorage.getItem("cc:route") || ""; } catch {} }

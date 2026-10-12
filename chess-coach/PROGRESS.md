@@ -9,8 +9,8 @@ The approved plan is `REFACTOR_PLAN.md`. User decisions: 17-chapter curriculum a
 | Step | State |
 |---|---|
 | 1. Journey map + chapter structure + Stockfish 17.1 | **done** |
-| 2. Watch mode | next |
-| 3. Play mode + Review | |
+| 2. Watch mode | **done** |
+| 3. Play mode + Review | next |
 | 4. Probability engine + Maia + masters | |
 | 5. Chapter 1 end to end | |
 
@@ -21,6 +21,15 @@ The approved plan is `REFACTOR_PLAN.md`. User decisions: 17-chapter curriculum a
 - Practice: the old modes moved to `js/practice/modes.js` and `js/practice/practice.js` (sub-nav, ids `#pv-*`). Practice cards are the `cards` docs without `kind` (journey warm-ups will use `kind: "warm"`).
 - Engine: Stockfish 17.1. `engines/sf17-lite.{js,wasm}` (single-threaded WASM) is tried first; if the worker fails or stays silent for 20 s, `engines/sf17-asm.js` (pure asm.js) takes over. `UCI_ShowWDL` is on; `Engine.analyse` returns `wdl` and per-line `wdlWhite` (per mille, White's view). Foreground requests interrupt background (`low: true`) jobs. Headless Chromium: WASM depth 21 in 2 s; asm.js depth 13 in 2 s.
 - Old Stockfish 10 moved to `tools/legacy/stockfish10.js` for the old data tools only.
+
+### Step 2 (done): Watch mode
+- Content pipeline (offline, Node): `tools/sfpool.mjs` (4 Stockfish 17.1 WASM processes, ~845k nodes/s each) → `tools/analyse_game.mjs` (per ply: multipv-3 lines with WDL, the opponent's threat by null-move search, the played move's own score, facts before/after) → narration written by Claude in a build session (`tools/demos/*.narr.json`) → `tools/build_demo.mjs` merges and **rejects** the game unless every bracketed move group `[SAN ...]` is a prefix of an engine line, a threat line, the actual game continuation (this ply to +6), or an extra line it evaluates itself (`verify`); it also rejects engine numbers in the text and over-long fields.
+- First narrated game: the Opera Game (Morphy 1858) for Chapter 1, `data/curriculum/ch01/demo-opera.json`, depth 20. Narration: what the move does, Morphy's thinking, rejected candidates with their odds, the plan (with plan-change markers), a thinking habit, and the opponent's intent and a verdict for each Black move.
+- `js/facts.js`: engine-free facts (SEE hanging pieces, development, king shelter, centre, pawn structure, checks, Chapter-1 opening checklist). Shared by browser and Node.
+- `js/prob.js`: odds bar + expected score + move classes (excellent ≤2, good ≤5, inaccuracy ≤10, mistake ≤20, blunder >20 points of expected score; softened when the result is already decided). The human-level model is **provisional** (Lichess curve + small draw rate) until Step 4 fits it.
+- `js/chat.js`: Claude chat with a per-position fact sheet; page tools `engine_lines`, `play_line`, `position_facts` when the viewer supports tools; post-check underlines any move in the answer that is not legal here and not in the verified data.
+- `js/watch.js`: player (play/pause, step, speed, keyboard), move list, narrated cards, tappable move chips that show the line on the board, "what if" (tap an alternative; Stockfish continues; odds comparison; Claude explanation grounded in both lines), chat with pause-on-focus. Reaching the last move marks the Watch stage done.
+- Tested headless: card rendering, chips, branch and return, what-if (8.Qxb7 instead of 8.Nc3 → Stockfish shows Qb4+ trading queens), chat fallback without Claude, stage completion, phone width, dark mode. Claude answers could not be exercised headless.
 
 ## Earlier state (exam-style version, kept as Practice)
 
