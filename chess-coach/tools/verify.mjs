@@ -6,7 +6,7 @@ import path from 'path';
 const require = createRequire(import.meta.url);
 const dir = path.dirname(new URL(import.meta.url).pathname);
 const { Chess } = require(path.join(dir, '..', 'chess.js'));
-const STOCKFISH = require(path.join(dir, '..', 'stockfish.js'));
+const STOCKFISH = require(path.join(dir, 'legacy', 'stockfish10.js'));
 const file = process.argv[2], depth = +(process.argv[3] || 20);
 const items = JSON.parse(fs.readFileSync(file, 'utf8'));
 const sf = STOCKFISH();

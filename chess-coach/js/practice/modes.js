@@ -231,7 +231,7 @@ async function critique(el, item, T, R, base, j) {
 ${LANG_RULES}
 FEN: ${item.fen} (${sideOf(item.fen) === "w" ? "White" : "Black"} to move)${item.lastSan ? ", opponent's last move " + item.lastSan : ""}
 PIECES: ${pieceList(item.fen)}
-ENGINE DATA (Stockfish 10, multipv 3):
+ENGINE DATA (Stockfish 17.1, multipv 3):
 ${base.lines.map((l, k) => `${k + 1}. ${fmtEval(l.cpWhite)} (White's view): ${numberedLine(item.fen, pvToSan(item.fen, l.pv, 7))}`).join("\n")}
 ${item.sol ? "PUZZLE SOLUTION: " + numberedLine(item.fen, pvToSan(item.fen, item.sol, 10)) + "\n" : ""}STUDENT'S TAPS:
 - threat question: picked "${T.threat.skipped ? "skipped (in check)" : T.threat.picked}", real threat: ${T.threat.real || "none"}

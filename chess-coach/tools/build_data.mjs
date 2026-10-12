@@ -14,7 +14,7 @@ const require = createRequire(import.meta.url);
 const dir = path.dirname(new URL(import.meta.url).pathname);
 const root = path.join(dir, '..');
 const { Chess } = require(path.join(root, 'chess.js'));
-const STOCKFISH = require(path.join(root, 'stockfish.js'));
+const STOCKFISH = require(path.join(root, 'tools/legacy/stockfish10.js'));
 fs.mkdirSync(path.join(root, 'data'), { recursive: true });
 
 // ---------- engine ----------

@@ -71,51 +71,66 @@ const Store = {
   },
 };
 
-/* ---------- Stockfish ---------- */
+/* ---------- Stockfish 17.1 (single-threaded "lite" WASM, or pure asm.js when WebAssembly is unavailable) ---------- */
 function parseInfo(l) {
   if (/ (lower|upper)bound/.test(l)) return null;
-  const d = l.match(/\bdepth (\d+)/), mp = l.match(/\bmultipv (\d+)/), sc = l.match(/\bscore (cp|mate) (-?\d+)/), pv = l.match(/ pv (.+?)(?: bmc .*)?$/);
+  const d = l.match(/\bdepth (\d+)/), mp = l.match(/\bmultipv (\d+)/), sc = l.match(/\bscore (cp|mate) (-?\d+)/), wd = l.match(/\bwdl (\d+) (\d+) (\d+)/), pv = l.match(/ pv (.+?)(?: bmc .*)?$/);
   if (!d || !sc || !pv) return null;
-  return { depth: +d[1], multipv: mp ? +mp[1] : 1, cp: sc[1] === "cp" ? +sc[2] : null, mate: sc[1] === "mate" ? +sc[2] : null, pv: pv[1].trim().split(/\s+/) };
+  return { depth: +d[1], multipv: mp ? +mp[1] : 1, cp: sc[1] === "cp" ? +sc[2] : null, mate: sc[1] === "mate" ? +sc[2] : null, wdl: wd ? [+wd[1], +wd[2], +wd[3]] : null, pv: pv[1].trim().split(/\s+/) };
 }
 const scoreCp = (s) => s.mate != null ? (s.mate > 0 ? 10000 - s.mate * 10 : -10000 - s.mate * 10) : s.cp;
 const Engine = {
-  w: null, onLine: null, chain: Promise.resolve(), ok: false, ready: null,
+  w: null, onLine: null, chain: Promise.resolve(), ok: false, ready: null, kind: null, current: null,
   start() {
     this.ready = (async () => {
-      const boot = (w) => new Promise((res, rej) => {
-        const t = setTimeout(() => rej(new Error("timeout")), 25000);
-        w.onerror = (e) => { clearTimeout(t); rej(e); };
+      const boot = (w, ms) => new Promise((res, rej) => {
+        const t = setTimeout(() => { try { w.terminate(); } catch {} rej(new Error("timeout")); }, ms);
+        w.onerror = (e) => { clearTimeout(t); try { w.terminate(); } catch {} rej(e); };
         w.onmessage = (e) => { if (String(e.data) === "uciok") { clearTimeout(t); res(w); } };
         w.postMessage("uci");
       });
-      try { this.w = await boot(new Worker("stockfish.js")); }
-      catch { const src = await (await fetch("stockfish.js")).text(); this.w = await boot(new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" })))); }
+      // The WASM build is faster; if the viewer blocks WebAssembly the worker errors or stays silent, and the asm.js build takes over.
+      try { this.w = await boot(new Worker("engines/sf17-lite.js"), 20000); this.kind = "wasm"; }
+      catch { this.w = await boot(new Worker("engines/sf17-asm.js"), 60000); this.kind = "asm"; }
       this.w.onmessage = (e) => { if (this.onLine) this.onLine(String(e.data)); };
+      this.w.postMessage("setoption name UCI_ShowWDL value true");
+      this.w.postMessage("setoption name Hash value 32");
       this.ok = true;
     })();
     return this.ready;
   },
-  /* Result: {best, cp (White's view), lines:[{pv, cpWhite, depth}], terminal}. skill < 20 weakens the move choice (sparring). */
-  analyse(fen, { movetime = 0, depth = 0, multipv = 1, skill = 20 } = {}) {
+  /* Result: {best, cp (White's view), wdl ([w,d,l] per mille, White's view), lines:[{pv, cpWhite, wdlWhite, depth}], terminal}.
+     skill < 20 weakens the move choice. low: a background job that a foreground request may interrupt. signal: abort -> "stop". */
+  analyse(fen, { movetime = 0, depth = 0, nodes = 0, multipv = 1, skill = 20, low = false, signal = null } = {}) {
     const job = () => new Promise((res) => {
       const g = new Chess(fen);
-      if (g.game_over()) { const cpStm = g.in_checkmate() ? -10000 : 0; return res({ best: null, cp: sideOf(fen) === "w" ? cpStm : -cpStm, lines: [], terminal: true }); }
-      const lines = {};
+      if (g.game_over()) {
+        const cpStm = g.in_checkmate() ? -10000 : 0; const white = sideOf(fen) === "w";
+        const wdl = g.in_checkmate() ? (white ? [0, 0, 1000] : [1000, 0, 0]) : [0, 1000, 0];
+        return res({ best: null, cp: white ? cpStm : -cpStm, wdl, lines: [], terminal: true });
+      }
+      if (signal && signal.aborted) return res({ best: null, cp: 0, wdl: null, lines: [], aborted: true });
+      const lines = {}; const white = sideOf(fen) === "w";
+      this.current = { low };
+      const onAbort = () => this.w.postMessage("stop");
+      if (signal) signal.addEventListener("abort", onAbort, { once: true });
       this.onLine = (l) => {
         if (l.startsWith("info")) { const p = parseInfo(l); if (p) lines[p.multipv] = p; }
         else if (l.startsWith("bestmove")) {
-          this.onLine = null; const flip = sideOf(fen) === "w" ? 1 : -1;
-          const ls = Object.values(lines).sort((a, b) => a.multipv - b.multipv).map((x) => ({ ...x, cpWhite: flip * scoreCp(x) }));
-          res({ best: l.split(" ")[1], cp: ls[0] ? ls[0].cpWhite : 0, lines: ls });
+          this.onLine = null; this.current = null; if (signal) signal.removeEventListener("abort", onAbort);
+          const flip = white ? 1 : -1;
+          const ls = Object.values(lines).sort((a, b) => a.multipv - b.multipv).map((x) => ({ ...x, cpWhite: flip * scoreCp(x), wdlWhite: x.wdl ? (white ? x.wdl : [x.wdl[2], x.wdl[1], x.wdl[0]]) : null }));
+          const best = l.split(" ")[1];
+          res({ best: best && best !== "(none)" ? best : null, cp: ls[0] ? ls[0].cpWhite : 0, wdl: ls[0] ? ls[0].wdlWhite : null, lines: ls, aborted: !!(signal && signal.aborted) });
         }
       };
       this.w.postMessage("setoption name Skill Level value " + skill);
       this.w.postMessage("setoption name MultiPV value " + multipv);
       this.w.postMessage("position fen " + fen);
-      let go = "go"; if (depth) go += " depth " + depth; if (movetime) go += " movetime " + movetime;
+      let go = "go"; if (depth) go += " depth " + depth; if (movetime) go += " movetime " + movetime; if (nodes) go += " nodes " + nodes;
       this.w.postMessage(go);
     });
+    if (!low && this.current && this.current.low && this.w) this.w.postMessage("stop"); // a foreground request cuts a background search short
     const prev = this.chain; const p = this.ready.then(() => prev).then(job, job); this.chain = p.catch(() => {}); return p;
   },
 };
@@ -189,10 +204,20 @@ function oppositionItem(o) { return { kind: "puzzle", id: o.i, fen: o.f, sol: [o
 function libItem(p) { return { kind: "pos", id: p.id, fen: p.fen, skill: p.skill, themes: [p.chunkKey || "lib"], note: p.note, chunkName: p.chunk, rating: 1200 }; }
 
 /* ---------- board ---------- */
+const ARROW_COLORS = { good: "var(--arrow-good)", bad: "var(--arrow-bad)", plan: "var(--arrow-plan)", alt: "var(--arrow-alt)" };
 function Board(el, init) {
-  const st = Object.assign({ fen: START_FEN, orient: "w", last: null, interactive: true, hidden: false, dots: true, coords: true, logicFen: null, marks: {}, onMove: null, onSquare: null }, init);
+  const st = Object.assign({ fen: START_FEN, orient: "w", last: null, interactive: true, hidden: false, dots: true, coords: true, logicFen: null, marks: {}, arrows: [], onMove: null, onSquare: null }, init);
   let sel = null; const files = "abcdefgh";
   const logic = () => new Chess(st.logicFen || st.fen);
+  const center = (sq) => { const f = files.indexOf(sq[0]), r = +sq[1] - 1; const col = st.orient === "w" ? f : 7 - f, row = st.orient === "w" ? 7 - r : r; return [col + 0.5, row + 0.5]; };
+  function arrowSvg() {
+    if (!st.arrows || !st.arrows.length) return "";
+    return `<svg class="arrows" viewBox="0 0 8 8" aria-hidden="true">${st.arrows.map((a) => {
+      const [x1, y1] = center(a.from), [x2, y2] = center(a.to); const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+      const hx = x2 - ux * 0.32, hy = y2 - uy * 0.32, sx = x1 + ux * 0.22, sy = y1 + uy * 0.22; const w = 0.2, px = -uy, py = ux; const c = ARROW_COLORS[a.color || "good"] || a.color;
+      return `<g style="color:${c}"><line x1="${sx}" y1="${sy}" x2="${hx}" y2="${hy}" stroke="currentColor" stroke-width="0.16" stroke-linecap="round" opacity=".85"></line><polygon points="${x2},${y2} ${hx + px * w},${hy + py * w} ${hx - px * w},${hy - py * w}" fill="currentColor" opacity=".9"></polygon></g>`;
+    }).join("")}</svg>`;
+  }
   function draw() {
     const show = new Chess(st.fen); const lg = logic();
     const legal = sel && st.dots ? lg.moves({ square: sel, verbose: true }) : [];
@@ -208,7 +233,7 @@ function Board(el, init) {
       const co = st.coords ? (col === 0 ? `<span class="co r">${r + 1}</span>` : "") + (row === 7 ? `<span class="co f">${files[f]}</span>` : "") : "";
       html += `<button type="button" class="${cls.join(" ")}" data-sq="${sq}" aria-label="${sq}">${p ? `<img alt="" src="${PIECES[p.color + p.type]}">` : ""}${co}</button>`;
     }
-    el.innerHTML = html;
+    el.innerHTML = html + arrowSvg();
   }
   el.onclick = (e) => {
     const b = e.target.closest(".sq"); if (!b) return; const sq = b.dataset.sq;

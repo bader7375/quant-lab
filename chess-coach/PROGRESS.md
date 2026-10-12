@@ -2,7 +2,27 @@
 
 Handoff notes so any later session can continue without re-deriving context.
 
-## Status (2026-10-11)
+## Refactor to a guided journey (started 2026-10-12)
+
+The approved plan is `REFACTOR_PLAN.md`. User decisions: 17-chapter curriculum as proposed; default repertoire (Italian, 1...e5, QGD); the user knows the rules and can win games but has no plan, so the opponent starts near 1100; commentary on every move; the main odds bar shows the human-level estimate, with engine WDL as a secondary line.
+
+| Step | State |
+|---|---|
+| 1. Journey map + chapter structure + Stockfish 17.1 | **done** |
+| 2. Watch mode | next |
+| 3. Play mode + Review | |
+| 4. Probability engine + Maia + masters | |
+| 5. Chapter 1 end to end | |
+
+### Step 1 (done)
+- `data/curriculum/chapters.json`: 4 parts, 17 chapters (goal, topics, Watch/Play descriptions, completion rule). A chapter's `content` field lists ready material; stages without content show "قيد الإعداد".
+- `js/journey.js`: map (winding path, nodes done/current/locked, A-B-C-D pips), chapter page (topics, prerequisite, completion rule with data-driven progress, stage cards), journey progress view with settings. State in db doc `journey/state`; coached games in collection `games`.
+- `js/app.js`: new shell. Top nav: الرحلة / التقدم / التمرين. Hash routes `#journey`, `#ch-N`, `#progress`, `#practice`.
+- Practice: the old modes moved to `js/practice/modes.js` and `js/practice/practice.js` (sub-nav, ids `#pv-*`). Practice cards are the `cards` docs without `kind` (journey warm-ups will use `kind: "warm"`).
+- Engine: Stockfish 17.1. `engines/sf17-lite.{js,wasm}` (single-threaded WASM) is tried first; if the worker fails or stays silent for 20 s, `engines/sf17-asm.js` (pure asm.js) takes over. `UCI_ShowWDL` is on; `Engine.analyse` returns `wdl` and per-line `wdlWhite` (per mille, White's view). Foreground requests interrupt background (`low: true`) jobs. Headless Chromium: WASM depth 21 in 2 s; asm.js depth 13 in 2 s.
+- Old Stockfish 10 moved to `tools/legacy/stockfish10.js` for the old data tools only.
+
+## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:
 1. **No typing anywhere.** Every answer is a tap on the board or on a choice.
