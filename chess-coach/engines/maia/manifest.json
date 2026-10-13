@@ -14,47 +14,47 @@
  ],
  "files": {
   "1100": {
-   "file": "maia-1100.bin",
+   "file": "maia-1100.wasm",
    "bytes": 1731152,
    "sha256": "c533626383575d2b2e02761a91bb8388c0c980333b6431819cfb2a3e6a362c66"
   },
   "1200": {
-   "file": "maia-1200.bin",
+   "file": "maia-1200.wasm",
    "bytes": 1731152,
    "sha256": "5d8c406badf46c8852231cf5473deaff64ea23f6d11a4f59da632a2879508111"
   },
   "1300": {
-   "file": "maia-1300.bin",
+   "file": "maia-1300.wasm",
    "bytes": 1731152,
    "sha256": "b51f9869963e47247eee79d55aeefe612added255e822503cb9f6233f9ea00c6"
   },
   "1400": {
-   "file": "maia-1400.bin",
+   "file": "maia-1400.wasm",
    "bytes": 1731152,
    "sha256": "3af7d4ca8c5152e518d4e46c5facc1e9fa405d0c4678c8da4a8310ab5eb9d5a8"
   },
   "1500": {
-   "file": "maia-1500.bin",
+   "file": "maia-1500.wasm",
    "bytes": 1731152,
    "sha256": "bb7941900fdab328cd112cfbf61def6213aaa93d2be8a5ec51ef5802f8c6b665"
   },
   "1600": {
-   "file": "maia-1600.bin",
+   "file": "maia-1600.wasm",
    "bytes": 1731152,
    "sha256": "486728eb6ae871ad65d8a00d7aaa6c4312bd60f7e2a3afc22c14d4e3b506ff28"
   },
   "1700": {
-   "file": "maia-1700.bin",
+   "file": "maia-1700.wasm",
    "bytes": 1731152,
    "sha256": "d2e379b081550e72a6bb9177fa14b21781633a5e1243e31c4c428c61dd52933f"
   },
   "1800": {
-   "file": "maia-1800.bin",
+   "file": "maia-1800.wasm",
    "bytes": 1731152,
    "sha256": "5d72b020248bba3ea13af618fd924cc3ece53e7949522db1564c521e4e61bcc8"
   },
   "1900": {
-   "file": "maia-1900.bin",
+   "file": "maia-1900.wasm",
    "bytes": 1731152,
    "sha256": "b3794df915b628c291aa8c291f0a2dc3f407fb018f37f6481675410fe720a2be"
   }
@@ -765,5 +765,6 @@
   "source": "combined_puzzle_db_first_50k.ndjson.bz2 dev split (sha1(id)%5==0), bullet excluded",
   "criterion": "argmax identical >= 99.5% and max |dp| < 0.01, every rating",
   "float16_pass": true
- }
+ },
+ "fileNote": "Raw float16 weights (not WebAssembly): the .wasm extension is only there because the Artifact host serves a fixed list of file types and .bin is not one of them."
 }

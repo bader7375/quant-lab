@@ -14,7 +14,7 @@ Steps
      only if, for EVERY rating, the argmax legal move is identical on >= 99.5% of positions and the max
      |p16 - p32| over all legal moves is < 0.01; the folded float32 net is also checked against the
      unfolded protobuf net (folding validity);
-  4. write maia-<rating>.bin (tensors concatenated, 16-byte aligned) + manifest.json.
+  4. write maia-<rating>.wasm (raw float16, .wasm only because the host serves that type) (tensors concatenated, 16-byte aligned) + manifest.json.
 """
 import argparse
 import bz2
@@ -195,7 +195,7 @@ def main():
         for t, (n, x) in zip(tensors, folded[r]):
             assert t['name'] == n and t['shape'] == list(x.shape)
             buf[t['offset']:t['offset'] + t['nbytes']] = x.astype(npdt).tobytes()
-        fn = 'maia-%d.bin' % r
+        fn = 'maia-%d.wasm' % r
         with open(os.path.join(a.out, fn), 'wb') as f:
             f.write(buf)
         files[str(r)] = {'file': fn, 'bytes': len(buf), 'sha256': hashlib.sha256(buf).hexdigest()}
