@@ -4,18 +4,41 @@
    better move. After the opponent's move: what it threatens. After a mistake: take it back or play on. The chat is
    open throughout. Every game is saved (db games/<id>) with the metrics the chapter's completion rule reads. */
 
-/* The opponent. Step 4 replaces this with Maia (human-like moves); until then Stockfish is weakened with
-   Skill Level and a shallow search. The rating mapping is a rough guess and is labelled as such. */
+/* The opponent: Maia-1 (js/human.js), a network trained to play the moves real players at a rating actually play. A move
+   is sampled from its probabilities, so games vary and contain human mistakes. Below 1100 (no Maia network) the 1100 network
+   is sampled at temperature 1.3, which fitted sub-1000 players best on held-out games (tools/maia/MAIA_REPORT.md). Moves
+   under 1% are never played. If Maia is unavailable, Stockfish weakened by Skill Level stands in (rating mapping guessed). */
 const OPP = {
-  kind: "stockfish-limited",
-  label(r) { return `خصم بمستوى ${r} تقريبًا (Stockfish بقوة محدودة)`; },
+  kind: "maia",
+  label(r, kind = "maia") {
+    if (kind === "stockfish-limited") return `خصم بمستوى ${r} تقريبًا (Stockfish بقوة محدودة)`;
+    return `خصم يلعب كلاعبين بمستوى ${r} تقريبًا (Maia${r < 1100 ? "-1100 مع عشوائية أكبر" : r > 1900 ? "-1900" : ""})`;
+  },
+  temp(r) { return r < 1100 ? 1.3 : 1; },
+  async move(G, fen, rating) {
+    const h = await Human.predict(G.start, G.ucis, rating);
+    if (h && h.policy && h.policy.length) {
+      const T = this.temp(rating); let w = h.policy.map((m) => Math.pow(m.p, 1 / T)); const tot = w.reduce((x, y) => x + y, 0);
+      w = w.map((x) => (x / tot >= 0.01 ? x : 0)); const sum = w.reduce((x, y) => x + y, 0);
+      let r = Math.random() * sum, k = 0; while (k < w.length - 1 && r >= w[k]) { r -= w[k]; k++; }
+      return { uci: h.policy[k].uci, source: "maia", p: h.policy[k].p };
+    }
+    return { uci: await this.fallback(fen, rating), source: "stockfish" };
+  },
   LEVELS: [[800, 0, 1], [900, 0, 2], [1000, 1, 2], [1100, 2, 3], [1200, 3, 4], [1300, 5, 5], [1400, 7, 6], [1600, 10, 8], [1800, 13, 10], [2000, 16, 12]],
-  async move(fen, rating) {
+  async fallback(fen, rating) {
     const row = this.LEVELS.reduce((a, r) => (Math.abs(r[0] - rating) < Math.abs(a[0] - rating) ? r : a));
     const a = await Engine.analyse(fen, { depth: row[2], skill: row[1], movetime: 700 });
     return a.best;
   },
 };
+/* "Players at your level": Maia's probability of the move played and the most common moves, for the position before it. */
+function humanSummary(h, playedUci) {
+  if (!h || !h.policy || !h.policy.length) return null;
+  const mine = h.policy.find((m) => m.uci === playedUci);
+  return { rating: h.rating, p: mine ? mine.p : 0, top: h.policy.slice(0, 3).map((m) => ({ san: m.san, uci: m.uci, p: m.p })) };
+}
+const pctR = (x) => (x < 0.005 ? "<1%" : Math.round(100 * x) + "%");
 const RESULT_AR = { win: "فوز", loss: "خسارة", draw: "تعادل", abandoned: "لم تكتمل" };
 const fmtNote = (t) => esc(t).replace(/\[([^\]]+)\]/g, '<bdi class="mv">$1</bdi>'); // notes keep moves in [brackets]
 const plainNote = (t) => String(t).replace(/\[([^\]]+)\]/g, "$1");
@@ -50,7 +73,7 @@ STAGE_RUNNERS.play = (n) => {
 let PLAY_TOKEN = 0;
 function PlayGame(root, { n, color, rating, resume = null }) {
   const c = chapter(n); const set = J.state.settings; const opening = (c.rule || {}).kind === "opening_checklist";
-  const G = resume || { id: "g" + uid(), chapter: n, t: now(), color, opp: { kind: OPP.kind, rating }, start: START_FEN, sans: [], ucis: [], recs: [], takebacks: 0, hints: 0, threats: 0, finished: false };
+  const G = resume || { id: "g" + uid(), chapter: n, t: now(), color, opp: { kind: OPP.kind, rating, fallbacks: 0 }, start: START_FEN, sans: [], ucis: [], recs: [], takebacks: 0, hints: 0, threats: 0, finished: false };
   if (!J.games.includes(G)) J.games.push(G);
   const me = G.color, opp = me === "w" ? "b" : "w", oppRating = G.opp.rating;
   const game = new Chess(G.start); let ownMoves = 0;
@@ -61,10 +84,11 @@ function PlayGame(root, { n, color, rating, resume = null }) {
   const streak = { w: 0, l: 0 }, offered = {}; const token = ++PLAY_TOKEN;
   root.innerHTML = `
     <div class="whead"><button class="btn quiet" id="p-back">→ الفصل ${n}</button>
-      <div class="wtitle"><b>العب مع المدرّب · الفصل ${n}</b><span class="note">أنت ${me === "w" ? "بالأبيض" : "بالأسود"} · ${esc(OPP.label(oppRating))}</span></div></div>
+      <div class="wtitle"><b>العب مع المدرّب · الفصل ${n}</b><span class="note">أنت ${me === "w" ? "بالأبيض" : "بالأسود"} · ${esc(OPP.label(oppRating, G.opp.kind))}</span></div></div>
     <div class="watch play">
       <div class="wboard">
         <div class="boardcap"><span class="turn" id="p-turn"></span><span class="note" id="p-status"></span></div>
+        <div class="openname note" id="p-open"></div>
         <div class="board" id="p-board"></div>
         <div class="wctrl"><button class="ctl" id="p-hint">بماذا أفكر الآن؟</button><button class="ctl" id="p-end">أنهِ وراجع</button><button class="ctl" id="p-resign">استسلم</button></div>
         <div id="p-line"></div><div id="p-decide"></div><div id="p-offer"></div>
@@ -85,12 +109,19 @@ function PlayGame(root, { n, color, rating, resume = null }) {
   $("#p-end", root).onclick = () => { if (!G.finished) endGame("abandoned", "أنهيت المباراة قبل نهايتها."); };
   $("#p-hint", root).onclick = showHint;
   const setStatus = (t) => { $("#p-status", root).textContent = t; };
+  let openShown = null;
+  function showOpening() {
+    const at = G.sans.slice(); Masters.openingAlong(G.start, at).then((o) => {
+      if (!alive() || !o) return; const t = `${o.eco} · ${o.name}`; if (t === openShown) return; openShown = t;
+      $("#p-open", root).innerHTML = `الافتتاح: <bdi dir="ltr">${esc(t)}</bdi>`; G.opening = { eco: o.eco, name: o.name, ply: o.ply }; save();
+    }).catch(() => {});
+  }
   function engineDown() { busy = false; board.update({ interactive: false }); setStatus("تعذّر تشغيل Stockfish في هذا المتصفح، فلا يمكن اللعب الآن. المباراة محفوظة وتستطيع إكمالها لاحقًا."); }
   function card(html, cls = "") { const d = document.createElement("div"); d.className = "fcard " + cls; d.innerHTML = html; feed.prepend(d); while (feed.children.length > 40) feed.lastChild.remove(); return d; }
   let saveT = null; function save() { clearTimeout(saveT); saveT = setTimeout(() => Store.set("games/" + G.id, G), 400); }
   const claudeOk = () => !!SAMPLE && now() > claudeQuiet;
   const claudeFail = (el, e) => { if (e && e.code === "rate_limited") claudeQuiet = now() + 60000; el.innerHTML = coachHtml("المدرّب", esc(claudeMsg(e))); };
-  function odds(cp, wdl, prevCp, mover) { $("#p-odds", root).innerHTML = oddsBarHtml(cp, wdl, { prevCp, mover, label: "فرص لاعبين بمستواك من هذا الموقف (تقدير)" }); }
+  function odds(cp, wdl, prevCp, mover) { $("#p-odds", root).innerHTML = oddsBarHtml(cp, wdl, { prevCp, mover, fen: game.fen(), label: "فرص لاعبين بمستواك من هذا الموقف (تقدير)" }); }
   function refreshUi() {
     const stm = game.turn();
     $("#p-turn", root).innerHTML = G.finished ? "انتهت المباراة" : `<i class="${stm}"></i>${stm === me ? "دورك" : "دور الخصم"}`;
@@ -120,6 +151,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     if (busy || G.finished || game.turn() !== me) return;
     busy = true; decide.innerHTML = ""; offerEl.innerHTML = ""; lineEl.innerHTML = "";
     const fenBefore = game.fen(), ply = G.sans.length, basePromise = pre, threatBefore = threat; threat = null;
+    const humanP = Human.predict(G.start, G.ucis.slice(), oppRating).catch(() => null);
     board.update({ interactive: false, fen: m.fenAfter, last: m.uci, arrows: [] });
     game.move(m.san); G.sans.push(m.san); G.ucis.push(m.uci); lastUci = m.uci; ownMoves++;
     refreshUi(); save(); setStatus("المدرّب يقيّم نقلتك...");
@@ -132,6 +164,10 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     } catch { return engineDown(); }
     if (!alive()) return;
     const rec = rateOwn(m, fenBefore, ply, base, after, threatBefore);
+    rec.human = humanSummary(await humanP, m.uci);
+    rec.masters = await mastersSummary(fenBefore, m.san);
+    if (rec.masters && !(await Masters.lookup(game.fen()).catch(() => null))) rec.mastersLeft = true;
+    showOpening();
     if (G.finished) return renderOwnCard(cd, rec); // the game was ended while this move was being rated
     G.recs.push(rec); lastCp = after.cp; save();
     odds(after.cp, after.wdl, base.cp, me);
@@ -144,13 +180,14 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     const fenNow = game.fen();
     const inLines = base.lines.find((l) => l.pv[0] === m.uci); // same search as the best move: the fairest comparison
     const isBest = !!base.best && m.uci === base.best;
-    const esB = Prob.esFor(base.cp, me), esA = Prob.esFor(inLines ? inLines.cpWhite : after.cp, me);
+    const pc = Prob.ctx(fenBefore, ply); // one phase for both sides of the comparison, so a phase change is not counted as a drop
+    const esB = Prob.esFor(base.cp, me, pc), esA = Prob.esFor(inLines ? inLines.cpWhite : after.cp, me, pc);
     const cl = isBest ? { cls: "excellent", drop: 0 } : Prob.classify(esB, esA);
     const refPv = after.lines[0] ? after.lines[0].pv : [];
     const rec = { ply, own: ownMoves, color: me, san: m.san, uci: m.uci, fenBefore, fen: fenNow, cpBefore: base.cp, cpAfter: after.cp,
       esBefore: Math.round(esB), esAfter: Math.round(esA), cls: cl.cls, drop: cl.drop, isBest,
       best: base.best ? sanOf(fenBefore, base.best) : null, bestUci: base.best, bestLine: base.lines[0] ? pvToSan(fenBefore, base.lines[0].pv, 6) : [],
-      refut: pvToSan(fenNow, refPv, 6), alts: base.lines.map((l) => ({ san: pvToSan(fenBefore, l.pv, 1)[0], es: Math.round(Prob.esFor(l.cpWhite, me)) })) };
+      refut: pvToSan(fenNow, refPv, 6), alts: base.lines.map((l) => ({ san: pvToSan(fenBefore, l.pv, 1)[0], es: Math.round(Prob.esFor(l.cpWhite, me, pc)) })) };
     // did the opponent's last move hand you a chance?
     const prevOwn = G.recs.filter((r) => r.color === me && !r.takenBack && r.ply < ply).slice(-1)[0];
     if (prevOwn) { const gift = esB - prevOwn.esAfter; if (gift >= 10) { rec.gift = Math.round(gift); if (cl.drop >= 8) rec.missedChance = true; } }
@@ -178,7 +215,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
   function renderOwnCard(cd, rec) {
     const better = !rec.isBest && rec.drop > 2 && rec.best ? `<p>الأفضل كان <button class="mvref" data-line="best">${esc(rec.best)}</button>، وفرصك بعدها <bdi class="mono">${rec.esBefore}%</bdi>.</p>` : "";
     cd.innerHTML = `<div class="fh"><bdi class="mv">${esc(moveLabel(rec.fenBefore, rec.san))}</bdi><span class="cls ${rec.cls}">${CLASS_AR[rec.cls]}</span>${rec.isBest ? `<span class="tag best">نقلة المحرك الأولى</span>` : ""}<span class="note">فرصك <bdi class="mono">${rec.esBefore}%</bdi> ← <bdi class="mono">${rec.esAfter}%</bdi></span></div>
-      ${rec.notes.length ? `<ul class="facts">${rec.notes.map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul>` : ""}${better}
+      ${rec.notes.length ? `<ul class="facts">${rec.notes.map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul>` : ""}${better}${humanLineHtml(rec)}${mastersLineHtml(rec)}
       ${rec.habit ? `<p class="habit">${esc(rec.habit)}</p>` : ""}
       ${rec.drop > 5 && rec.refut.length ? `<div class="row"><button class="chip-q" data-line="refut">ماذا يحدث بعد نقلتي؟</button></div>` : ""}<div class="fx"></div>`;
     const bb = $('[data-line="best"]', cd); if (bb) bb.onclick = () => showLine(rec.fenBefore, rec.bestLine, `الأفضل: ${numberedLine(rec.fenBefore, rec.bestLine.slice(0, 4))}`);
@@ -201,16 +238,17 @@ function PlayGame(root, { n, color, rating, resume = null }) {
   }
   function afterMine(rec) {
     if (checkEnd()) return;
-    streak.w = rec.esAfter >= 99 ? streak.w + 1 : 0; streak.l = rec.esAfter <= 1 ? streak.l + 1 : 0;
+    const adv = me === "w" ? rec.cpAfter : -rec.cpAfter; // Stockfish: +10 pawns or a forced mate counts as decided
+    streak.w = adv >= 1000 ? streak.w + 1 : 0; streak.l = adv <= -1000 ? streak.l + 1 : 0;
     if (streak.w >= 3 && !offered.w) { offered.w = true; offer("w"); }
     if (streak.l >= 3 && !offered.l) { offered.l = true; offer("l"); }
     opponentTurn();
   }
   function offer(kind) {
     offerEl.innerHTML = kind === "w"
-      ? `<div class="callout good"><b>الموقف محسوم لصالحك</b> (فرصك 99% أو أكثر منذ 3 نقلات). تستطيع تسجيلها فوزًا الآن، أو الإكمال للتدرّب على إنهاء المباراة بالكش مات.<div class="row"><button class="btn" data-o="claim">سجّلها فوزًا</button><button class="btn quiet" data-o="no">أكمل</button></div></div>`
-      : `<div class="callout bad"><b>الموقف خاسر بوضوح</b> (فرصك 1% أو أقل منذ 3 نقلات). تستطيع الاستسلام والانتقال إلى المراجعة، أو المحاولة حتى النهاية.<div class="row"><button class="btn" data-o="claim">استسلم وراجع</button><button class="btn quiet" data-o="no">أكمل</button></div></div>`;
-    $('[data-o="claim"]', offerEl).onclick = () => { offerEl.innerHTML = ""; endGame(kind === "w" ? "win" : "loss", kind === "w" ? "سجّلت الفوز: الموقف كان محسومًا (99% أو أكثر لثلاث نقلات)." : "استسلمت في موقف خاسر."); };
+      ? `<div class="callout good"><b>الموقف محسوم لصالحك</b> (Stockfish: تفوّق بعشرة بيادق أو أكثر، أو كش مات قسري، منذ 3 نقلات). تستطيع تسجيلها فوزًا الآن، أو الإكمال للتدرّب على إنهاء المباراة بالكش مات.<div class="row"><button class="btn" data-o="claim">سجّلها فوزًا</button><button class="btn quiet" data-o="no">أكمل</button></div></div>`
+      : `<div class="callout bad"><b>الموقف خاسر بوضوح</b> (Stockfish: الخصم متفوق بعشرة بيادق أو أكثر، أو عنده كش مات قسري، منذ 3 نقلات). تستطيع الاستسلام والانتقال إلى المراجعة، أو المحاولة حتى النهاية.<div class="row"><button class="btn" data-o="claim">استسلم وراجع</button><button class="btn quiet" data-o="no">أكمل</button></div></div>`;
+    $('[data-o="claim"]', offerEl).onclick = () => { offerEl.innerHTML = ""; endGame(kind === "w" ? "win" : "loss", kind === "w" ? "سجّلت الفوز: الموقف كان محسومًا (تفوّق بعشرة بيادق أو كش مات قسري لثلاث نقلات)." : "استسلمت في موقف خاسر."); };
     $('[data-o="no"]', offerEl).onclick = () => { offerEl.innerHTML = ""; };
   }
   function closeLine() { if (!lineEl.innerHTML) return; lineEl.innerHTML = ""; board.update({ fen: game.fen(), last: lastUci, interactive: game.turn() === me && !G.finished && !busy, onMove: onUserMove, arrows: threat && game.turn() === me ? [threatArrow(threat)] : [] }); }
@@ -230,11 +268,11 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     if (G.finished || !alive()) return;
     setStatus("الخصم يفكّر..."); refreshUi();
     const fen0 = game.fen(); let uci;
-    try { uci = await OPP.move(fen0, oppRating); } catch { return engineDown(); }
+    try { const mv0 = await OPP.move(G, fen0, oppRating); uci = mv0.uci; if (mv0.source !== "maia") G.opp.fallbacks = (G.opp.fallbacks || 0) + 1; } catch { return engineDown(); }
     await sleep(300);
     if (!uci || G.finished || !alive() || game.fen() !== fen0) return;
     lineEl.innerHTML = "";
-    const mv = uciMove(game, uci); G.sans.push(mv.san); G.ucis.push(uci); lastUci = uci;
+    const mv = uciMove(game, uci); G.sans.push(mv.san); G.ucis.push(uci); lastUci = uci; showOpening();
     const rec = { ply: G.sans.length - 1, color: opp, san: mv.san, uci, fenBefore: fen0, fen: game.fen(), cpBefore: lastCp };
     G.recs.push(rec); save();
     board.update({ fen: game.fen(), last: uci, interactive: false, arrows: [] });
@@ -246,10 +284,11 @@ function PlayGame(root, { n, color, rating, resume = null }) {
   async function commentOpp(cd, rec) {
     const fenNow = rec.fen; const ul = $(".facts", cd); const add = (t) => ul.insertAdjacentHTML("beforeend", `<li>${fmtNote(t)}</li>`);
     for (const t of moveFacts(rec.fenBefore, rec.san, "opp")) add(t);
+    mastersSummary(rec.fenBefore, rec.san).then((ms) => { if (ms) ul.insertAdjacentHTML("beforeend", `<li class="mastersli">${mastersText(ms, rec.san, "opp")}</li>`); });
     if (game.in_check()) add("عالج الكش أولًا: حرّك الملك، أو ضع قطعة في طريق الكش، أو أسر القطعة التي تعطيه.");
     if (opening && ownMoves < 12) for (const t of openingNotes(rec.fenBefore, rec.san, "opp")) add(t);
     let base; try { base = await pre; } catch { return; }
-    rec.cpAfter = base.cp; const oppDrop = Prob.esFor(rec.cpBefore, opp) - Prob.esFor(base.cp, opp); rec.drop = Math.max(0, Math.round(oppDrop)); save();
+    rec.cpAfter = base.cp; const oc = Prob.ctx(rec.fenBefore, rec.ply); const oppDrop = Prob.esFor(rec.cpBefore, opp, oc) - Prob.esFor(base.cp, opp, oc); rec.drop = Math.max(0, Math.round(oppDrop)); save();
     if (!alive() || game.fen() !== fenNow) return; // you already moved
     odds(base.cp, base.wdl, rec.cpBefore, opp); lastCp = base.cp;
     if (oppDrop >= 10) add("هذه النقلة خطأ من الخصم: فرصك زادت. ابحث عن الفرصة قبل أي شيء آخر: كش، أسر، تهديد.");
@@ -257,7 +296,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     if (!game.in_check()) { // what would the opponent play if it were their move again?
       const nf = nullFenOf(fenNow);
       const tn = await Engine.analyse(nf, { depth: 12, movetime: 600, low: true }).catch(() => ({ lines: [] }));
-      if (tn.lines[0]) { const gain = Prob.esFor(tn.cp, opp) - Prob.esFor(base.cp, opp); if (gain >= 8) th = { pv: tn.lines[0].pv.slice(0, 3), san: pvToSan(nf, tn.lines[0].pv, 3), gain: Math.round(gain) }; }
+      if (tn.lines[0]) { const tc = Prob.ctx(fenNow); const gain = Prob.esFor(tn.cp, opp, tc) - Prob.esFor(base.cp, opp, tc); if (gain >= 8) th = { pv: tn.lines[0].pv.slice(0, 3), san: pvToSan(nf, tn.lines[0].pv, 3), gain: Math.round(gain) }; }
     }
     if (!alive() || game.fen() !== fenNow) return;
     if (th) {
@@ -319,6 +358,7 @@ GAME SO FAR: ${numberedLine(G.start, G.sans.slice(0, rec.ply)) || "(start)"}
 STOCKFISH BEST LINE BEFORE THE MOVE: ${numberedLine(rec.fenBefore, rec.bestLine) || "none"}
 STOCKFISH BEST REPLY LINE AFTER ${rec.san}: ${numberedLine(rec.fen, rec.refut) || "none"}
 OBSERVATIONS (verified): ${rec.notes.map(plainNote).join(" ") || "none"}
+PLAYERS AT THE STUDENT'S LEVEL (Maia-1 model of ~${rec.human ? rec.human.rating : "?"}-rated players): ${rec.human ? `${Math.round(100 * rec.human.p)}% of them play ${rec.san}; most common here: ${rec.human.top.map((t) => `${t.san} ${Math.round(100 * t.p)}%`).join(", ")}` : "unavailable"}
 FACTS AFTER THE MOVE (student's side): ${Facts.describe(Facts.positionFacts(rec.fen, rec.ply + 1), me).join(" ") || "none"}
 CHAPTER FOCUS: ${c.title}: ${c.goal}`;
     const allowed = allowedFrom(rec.fenBefore, [rec.bestLine, [rec.san, ...rec.refut], G.sans]);
@@ -429,6 +469,38 @@ function openingNotes(fenBefore, san, who, { warningsOnly = false, justified = f
   if (you && mv.piece === "p" && ["d4", "e4", "d5", "e5"].includes(mv.to)) return good("بيدق في المركز: يسيطر على مربعات مهمة ويفتح الطريق لقطعك.");
   return [];
 }
+/* Masters (KingBase 2017): how often the move was played in this position and how it scored for the side that played it. */
+async function mastersSummary(fenBefore, san) {
+  if (typeof Masters === "undefined") return null;
+  const t = await Masters.lookup(fenBefore).catch(() => null); if (!t) return null;
+  const mine = t.moves.find((m) => m.san === san);
+  return { total: t.total, share: mine ? mine.share : 0, scoreStm: mine ? mine.scoreStm : null, n: mine ? mine.n : 0, top: t.moves.slice(0, 3).map((m) => ({ san: m.san, share: m.share, scoreStm: m.scoreStm })) };
+}
+function mastersText(ms, san, who) {
+  const top = ms.top[0];
+  let t = `في مباريات الأساتذة (<bdi class="mono">${ms.total.toLocaleString("en")}</bdi> مباراة من هذا الموقف): `;
+  if (ms.n) t += `${who === "opp" ? "هذه النقلة" : "نقلتك"} لُعبت في <bdi class="mono">${pctR(ms.share)}</bdi> منها، وسجّلت <bdi class="mono">${pctR(ms.scoreStm)}</bdi> لمن لعبها`;
+  else t += `${who === "opp" ? "هذه النقلة" : "نقلتك"} نادرة جدًا عندهم`;
+  if (top && top.san !== san) t += `؛ الأكثر: <bdi class="mv">${esc(top.san)}</bdi> (<bdi class="mono">${pctR(top.share)}</bdi>)`;
+  return t + ".";
+}
+function mastersLineHtml(rec) {
+  if (!rec.masters) return "";
+  return `<p class="masterline">${mastersText(rec.masters, rec.san, "me")}${rec.mastersLeft ? " من هنا خرجت المباراة من المواقف المعروفة في قاعدة الأساتذة (أقل من 50 مباراة)." : ""}</p>`;
+}
+/* "Players at your level" line under a move card (Maia). A common move that Stockfish rates poorly is flagged as a common trap. */
+function humanLineHtml(rec) {
+  const H = rec.human; if (!H) return "";
+  const top = H.top[0]; const alt = (rec.alts || []).find((a) => a.san === top.san);
+  let t = `عند لاعبين بمستوى ~${H.rating}: <bdi class="mono">${pctR(H.p)}</bdi> يلعبون نقلتك`;
+  if (top.uci === rec.uci) t += "، وهي الأكثر شيوعًا.";
+  else {
+    t += `، والأكثر شيوعًا <bdi class="mv">${esc(top.san)}</bdi> (<bdi class="mono">${pctR(top.p)}</bdi>)`;
+    t += alt && rec.esBefore - alt.es > 5 ? "، وهي نقلة ضعيفة هنا: موقف يخطئ فيه كثيرون بمستواك." : ".";
+  }
+  if (rec.drop > 10 && H.p >= 0.15) t += " خطأ شائع عند هذا المستوى، فاحفظ الموقف جيدًا.";
+  return `<p class="humanline">${t}</p>`;
+}
 function habitFor(r) {
   if (r.hung) return "عادة: بعد أن تختار نقلتك وقبل أن تلعبها، افحص كل قطعة: هل ما زالت محمية؟";
   if (r.missed) return "عادة: أول سؤال بعد كل نقلة للخصم: ماذا يهدد الآن؟";
@@ -456,6 +528,7 @@ function finalizeGame(G) {
   G.metrics = computeMetrics(G); G.tEnd = now();
   const st = J.state.settings;
   if (G.result === "win") st.oppRating = Math.min(2000, st.oppRating + 100); else if (G.result === "loss") st.oppRating = Math.max(800, st.oppRating - 100);
+  Prob.band = st.oppRating;
   makeWarmCards(G);
   Store.set("games/" + G.id, G); checkChapterComplete(G.chapter); saveJourney();
 }

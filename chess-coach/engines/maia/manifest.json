@@ -1,0 +1,769 @@
+{
+ "name": "Maia-1 (CSSLab) human move-prediction networks, lc0 format, converted for maia.js",
+ "license": "GPL-3.0 (weights by CSSLab, https://github.com/CSSLab/maia-chess)",
+ "ratings": [
+  1100,
+  1200,
+  1300,
+  1400,
+  1500,
+  1600,
+  1700,
+  1800,
+  1900
+ ],
+ "files": {
+  "1100": {
+   "file": "maia-1100.bin",
+   "bytes": 1731152,
+   "sha256": "c533626383575d2b2e02761a91bb8388c0c980333b6431819cfb2a3e6a362c66"
+  },
+  "1200": {
+   "file": "maia-1200.bin",
+   "bytes": 1731152,
+   "sha256": "5d8c406badf46c8852231cf5473deaff64ea23f6d11a4f59da632a2879508111"
+  },
+  "1300": {
+   "file": "maia-1300.bin",
+   "bytes": 1731152,
+   "sha256": "b51f9869963e47247eee79d55aeefe612added255e822503cb9f6233f9ea00c6"
+  },
+  "1400": {
+   "file": "maia-1400.bin",
+   "bytes": 1731152,
+   "sha256": "3af7d4ca8c5152e518d4e46c5facc1e9fa405d0c4678c8da4a8310ab5eb9d5a8"
+  },
+  "1500": {
+   "file": "maia-1500.bin",
+   "bytes": 1731152,
+   "sha256": "bb7941900fdab328cd112cfbf61def6213aaa93d2be8a5ec51ef5802f8c6b665"
+  },
+  "1600": {
+   "file": "maia-1600.bin",
+   "bytes": 1731152,
+   "sha256": "486728eb6ae871ad65d8a00d7aaa6c4312bd60f7e2a3afc22c14d4e3b506ff28"
+  },
+  "1700": {
+   "file": "maia-1700.bin",
+   "bytes": 1731152,
+   "sha256": "d2e379b081550e72a6bb9177fa14b21781633a5e1243e31c4c428c61dd52933f"
+  },
+  "1800": {
+   "file": "maia-1800.bin",
+   "bytes": 1731152,
+   "sha256": "5d72b020248bba3ea13af618fd924cc3ece53e7949522db1564c521e4e61bcc8"
+  },
+  "1900": {
+   "file": "maia-1900.bin",
+   "bytes": 1731152,
+   "sha256": "b3794df915b628c291aa8c291f0a2dc3f407fb018f37f6481675410fe720a2be"
+  }
+ },
+ "dtype": "float16",
+ "endianness": "little",
+ "alignment": 16,
+ "lc0_format": {
+  "weights_encoding": "LINEAR16",
+  "input": "INPUT_CLASSICAL_112_PLANE",
+  "output": "OUTPUT_WDL",
+  "network": "NETWORK_SE_WITH_HEADFORMAT",
+  "policy": "POLICY_CONVOLUTION",
+  "value": "VALUE_WDL",
+  "moves_left": "MOVES_LEFT_NONE"
+ },
+ "architecture": {
+  "type": "SE-ResNet (lc0 NETWORK_SE_WITH_HEADFORMAT)",
+  "blocks": 6,
+  "filters": 64,
+  "se_hidden": 8,
+  "input": "conv3x3 112->64 (+bias, BN folded) -> relu",
+  "residual_block": "x -> conv3x3 -> relu -> conv3x3 -> SE(avgpool -> fc C->se_hidden -> relu -> fc se_hidden->2C; out = sigmoid(g[0:C]) * y + g[C:2C]) -> +x -> relu",
+  "policy_head": "conv3x3 C->C (BN folded) -> relu -> conv3x3 C->80 (+bias) = logits[plane*64 + fromSquare]; planes 0..72 used (lc0 POLICY_CONVOLUTION), 73..79 unused",
+  "value_head": "conv1x1 C->32 (BN folded) -> relu -> flatten (channel*64+square) -> fc 2048->128 -> relu -> fc 128->3 -> softmax = [win, draw, loss] for the side to move",
+  "layout": "NCHW, square = rank*8 + file in the side-to-move frame; conv weights [out][in][ky][kx] (ky along ranks, kx along files), TF same-padding cross-correlation; fc weights [out][in]",
+  "bn_folding": "W' = W * gamma/sqrt(var+1e-5), b' = beta - mean*gamma/sqrt(var+1e-5)"
+ },
+ "input_encoding": {
+  "planes": 112,
+  "history": "slot i = 0..7 is the position i plies ago; 13 planes each: ours P,N,B,R,Q,K, theirs P,N,B,R,Q,K, repetition (all ones if that position occurred earlier in the game). Every slot is seen from the CURRENT side to move (ours = mover, board mirrored vertically (rank r -> 7-r) when Black is to move).",
+  "history_fill": "lc0 fen_only: game from the standard start position -> missing slots are all zero; game from another FEN -> missing slots are copies of the first position (an en-passant double push is undone in the copies)",
+  "aux": {
+   "104": "mover can castle queenside (O-O-O)",
+   "105": "mover can castle kingside (O-O)",
+   "106": "opponent O-O-O",
+   "107": "opponent O-O",
+   "108": "all ones if Black to move",
+   "109": "rule-50 half-move clock, raw value (weights were pre-divided by 99)",
+   "110": "zeros (former move-count plane)",
+   "111": "all ones"
+  },
+  "repetition_key": "piece placement + side to move + castling rights + raw en-passant square"
+ },
+ "policy": {
+  "castling": "king_to_rook",
+  "castling_note": "castling is encoded as king-to-rook (e1h1 / e1a1 in the mover frame); maia.js reports it as e1g1/e1c1/e8g8/e8c8",
+  "promotion_note": "queen/rook/bishop promotions use planes 64 + dir*3 + {r:0,b:1,q:2}, dir NW=0 N=1 NE=2; knight promotion is the bare queen-move plane (e.g. a7a8)",
+  "planes": "0..55: queen-like moves, plane = dir*7 + (distance-1), dir N,NE,E,SE,S,SW,W,NW (dx,dy)=(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1); 56..63: knight moves (1,2),(2,1),(2,-1),(1,-2),(-1,-2),(-2,-1),(-2,1),(-1,2); 64..72 promotions",
+  "output": "softmax over the legal moves only (illegal logits ignored)"
+ },
+ "tensors": [
+  {
+   "name": "input.w",
+   "shape": [
+    64,
+    112,
+    3,
+    3
+   ],
+   "offset": 0,
+   "nbytes": 129024
+  },
+  {
+   "name": "input.b",
+   "shape": [
+    64
+   ],
+   "offset": 129024,
+   "nbytes": 128
+  },
+  {
+   "name": "res0.conv1.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 129152,
+   "nbytes": 73728
+  },
+  {
+   "name": "res0.conv1.b",
+   "shape": [
+    64
+   ],
+   "offset": 202880,
+   "nbytes": 128
+  },
+  {
+   "name": "res0.conv2.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 203008,
+   "nbytes": 73728
+  },
+  {
+   "name": "res0.conv2.b",
+   "shape": [
+    64
+   ],
+   "offset": 276736,
+   "nbytes": 128
+  },
+  {
+   "name": "res0.se.w1",
+   "shape": [
+    8,
+    64
+   ],
+   "offset": 276864,
+   "nbytes": 1024
+  },
+  {
+   "name": "res0.se.b1",
+   "shape": [
+    8
+   ],
+   "offset": 277888,
+   "nbytes": 16
+  },
+  {
+   "name": "res0.se.w2",
+   "shape": [
+    128,
+    8
+   ],
+   "offset": 277904,
+   "nbytes": 2048
+  },
+  {
+   "name": "res0.se.b2",
+   "shape": [
+    128
+   ],
+   "offset": 279952,
+   "nbytes": 256
+  },
+  {
+   "name": "res1.conv1.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 280208,
+   "nbytes": 73728
+  },
+  {
+   "name": "res1.conv1.b",
+   "shape": [
+    64
+   ],
+   "offset": 353936,
+   "nbytes": 128
+  },
+  {
+   "name": "res1.conv2.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 354064,
+   "nbytes": 73728
+  },
+  {
+   "name": "res1.conv2.b",
+   "shape": [
+    64
+   ],
+   "offset": 427792,
+   "nbytes": 128
+  },
+  {
+   "name": "res1.se.w1",
+   "shape": [
+    8,
+    64
+   ],
+   "offset": 427920,
+   "nbytes": 1024
+  },
+  {
+   "name": "res1.se.b1",
+   "shape": [
+    8
+   ],
+   "offset": 428944,
+   "nbytes": 16
+  },
+  {
+   "name": "res1.se.w2",
+   "shape": [
+    128,
+    8
+   ],
+   "offset": 428960,
+   "nbytes": 2048
+  },
+  {
+   "name": "res1.se.b2",
+   "shape": [
+    128
+   ],
+   "offset": 431008,
+   "nbytes": 256
+  },
+  {
+   "name": "res2.conv1.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 431264,
+   "nbytes": 73728
+  },
+  {
+   "name": "res2.conv1.b",
+   "shape": [
+    64
+   ],
+   "offset": 504992,
+   "nbytes": 128
+  },
+  {
+   "name": "res2.conv2.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 505120,
+   "nbytes": 73728
+  },
+  {
+   "name": "res2.conv2.b",
+   "shape": [
+    64
+   ],
+   "offset": 578848,
+   "nbytes": 128
+  },
+  {
+   "name": "res2.se.w1",
+   "shape": [
+    8,
+    64
+   ],
+   "offset": 578976,
+   "nbytes": 1024
+  },
+  {
+   "name": "res2.se.b1",
+   "shape": [
+    8
+   ],
+   "offset": 580000,
+   "nbytes": 16
+  },
+  {
+   "name": "res2.se.w2",
+   "shape": [
+    128,
+    8
+   ],
+   "offset": 580016,
+   "nbytes": 2048
+  },
+  {
+   "name": "res2.se.b2",
+   "shape": [
+    128
+   ],
+   "offset": 582064,
+   "nbytes": 256
+  },
+  {
+   "name": "res3.conv1.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 582320,
+   "nbytes": 73728
+  },
+  {
+   "name": "res3.conv1.b",
+   "shape": [
+    64
+   ],
+   "offset": 656048,
+   "nbytes": 128
+  },
+  {
+   "name": "res3.conv2.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 656176,
+   "nbytes": 73728
+  },
+  {
+   "name": "res3.conv2.b",
+   "shape": [
+    64
+   ],
+   "offset": 729904,
+   "nbytes": 128
+  },
+  {
+   "name": "res3.se.w1",
+   "shape": [
+    8,
+    64
+   ],
+   "offset": 730032,
+   "nbytes": 1024
+  },
+  {
+   "name": "res3.se.b1",
+   "shape": [
+    8
+   ],
+   "offset": 731056,
+   "nbytes": 16
+  },
+  {
+   "name": "res3.se.w2",
+   "shape": [
+    128,
+    8
+   ],
+   "offset": 731072,
+   "nbytes": 2048
+  },
+  {
+   "name": "res3.se.b2",
+   "shape": [
+    128
+   ],
+   "offset": 733120,
+   "nbytes": 256
+  },
+  {
+   "name": "res4.conv1.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 733376,
+   "nbytes": 73728
+  },
+  {
+   "name": "res4.conv1.b",
+   "shape": [
+    64
+   ],
+   "offset": 807104,
+   "nbytes": 128
+  },
+  {
+   "name": "res4.conv2.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 807232,
+   "nbytes": 73728
+  },
+  {
+   "name": "res4.conv2.b",
+   "shape": [
+    64
+   ],
+   "offset": 880960,
+   "nbytes": 128
+  },
+  {
+   "name": "res4.se.w1",
+   "shape": [
+    8,
+    64
+   ],
+   "offset": 881088,
+   "nbytes": 1024
+  },
+  {
+   "name": "res4.se.b1",
+   "shape": [
+    8
+   ],
+   "offset": 882112,
+   "nbytes": 16
+  },
+  {
+   "name": "res4.se.w2",
+   "shape": [
+    128,
+    8
+   ],
+   "offset": 882128,
+   "nbytes": 2048
+  },
+  {
+   "name": "res4.se.b2",
+   "shape": [
+    128
+   ],
+   "offset": 884176,
+   "nbytes": 256
+  },
+  {
+   "name": "res5.conv1.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 884432,
+   "nbytes": 73728
+  },
+  {
+   "name": "res5.conv1.b",
+   "shape": [
+    64
+   ],
+   "offset": 958160,
+   "nbytes": 128
+  },
+  {
+   "name": "res5.conv2.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 958288,
+   "nbytes": 73728
+  },
+  {
+   "name": "res5.conv2.b",
+   "shape": [
+    64
+   ],
+   "offset": 1032016,
+   "nbytes": 128
+  },
+  {
+   "name": "res5.se.w1",
+   "shape": [
+    8,
+    64
+   ],
+   "offset": 1032144,
+   "nbytes": 1024
+  },
+  {
+   "name": "res5.se.b1",
+   "shape": [
+    8
+   ],
+   "offset": 1033168,
+   "nbytes": 16
+  },
+  {
+   "name": "res5.se.w2",
+   "shape": [
+    128,
+    8
+   ],
+   "offset": 1033184,
+   "nbytes": 2048
+  },
+  {
+   "name": "res5.se.b2",
+   "shape": [
+    128
+   ],
+   "offset": 1035232,
+   "nbytes": 256
+  },
+  {
+   "name": "policy1.w",
+   "shape": [
+    64,
+    64,
+    3,
+    3
+   ],
+   "offset": 1035488,
+   "nbytes": 73728
+  },
+  {
+   "name": "policy1.b",
+   "shape": [
+    64
+   ],
+   "offset": 1109216,
+   "nbytes": 128
+  },
+  {
+   "name": "policy.w",
+   "shape": [
+    80,
+    64,
+    3,
+    3
+   ],
+   "offset": 1109344,
+   "nbytes": 92160
+  },
+  {
+   "name": "policy.b",
+   "shape": [
+    80
+   ],
+   "offset": 1201504,
+   "nbytes": 160
+  },
+  {
+   "name": "value.w",
+   "shape": [
+    32,
+    64,
+    1,
+    1
+   ],
+   "offset": 1201664,
+   "nbytes": 4096
+  },
+  {
+   "name": "value.b",
+   "shape": [
+    32
+   ],
+   "offset": 1205760,
+   "nbytes": 64
+  },
+  {
+   "name": "ip1_val_w",
+   "shape": [
+    128,
+    2048
+   ],
+   "offset": 1205824,
+   "nbytes": 524288
+  },
+  {
+   "name": "ip1_val_b",
+   "shape": [
+    128
+   ],
+   "offset": 1730112,
+   "nbytes": 256
+  },
+  {
+   "name": "ip2_val_w",
+   "shape": [
+    3,
+    128
+   ],
+   "offset": 1730368,
+   "nbytes": 768
+  },
+  {
+   "name": "ip2_val_b",
+   "shape": [
+    3
+   ],
+   "offset": 1731136,
+   "nbytes": 6
+  }
+ ],
+ "conversion_checks": {
+  "1100": {
+   "fold_vs_pb": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 1.985447470986834e-06,
+    "max_abs_dwdl": 8.940696716308594e-07
+   },
+   "fp16_vs_fp32": {
+    "argmax_same": 0.999,
+    "max_abs_dp": 0.001370752993815172,
+    "max_abs_dwdl": 0.0008677840232849121
+   }
+  },
+  "1200": {
+   "fold_vs_pb": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 2.0174564751562762e-06,
+    "max_abs_dwdl": 7.152557373046875e-07
+   },
+   "fp16_vs_fp32": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 0.0015439958328097303,
+    "max_abs_dwdl": 0.0005975961685180664
+   }
+  },
+  "1300": {
+   "fold_vs_pb": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 2.163438402758011e-06,
+    "max_abs_dwdl": 6.556510925292969e-07
+   },
+   "fp16_vs_fp32": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 0.0015572504548876376,
+    "max_abs_dwdl": 0.001220405101776123
+   }
+  },
+  "1400": {
+   "fold_vs_pb": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 2.58882447495834e-06,
+    "max_abs_dwdl": 8.940696716308594e-07
+   },
+   "fp16_vs_fp32": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 0.0015493296919004695,
+    "max_abs_dwdl": 0.001140296459197998
+   }
+  },
+  "1500": {
+   "fold_vs_pb": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 1.9312199216470205e-06,
+    "max_abs_dwdl": 1.0132789611816406e-06
+   },
+   "fp16_vs_fp32": {
+    "argmax_same": 0.999,
+    "max_abs_dp": 0.0017266927824594602,
+    "max_abs_dwdl": 0.0013310909271240234
+   }
+  },
+  "1600": {
+   "fold_vs_pb": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 2.773078405460261e-06,
+    "max_abs_dwdl": 7.450580596923828e-07
+   },
+   "fp16_vs_fp32": {
+    "argmax_same": 0.999,
+    "max_abs_dp": 0.0019138812838320196,
+    "max_abs_dwdl": 0.0012292563915252686
+   }
+  },
+  "1700": {
+   "fold_vs_pb": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 2.07505110150219e-06,
+    "max_abs_dwdl": 1.0132789611816406e-06
+   },
+   "fp16_vs_fp32": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 0.0023499027126904215,
+    "max_abs_dwdl": 0.0012620985507965088
+   }
+  },
+  "1800": {
+   "fold_vs_pb": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 2.767415767823689e-06,
+    "max_abs_dwdl": 8.344650268554688e-07
+   },
+   "fp16_vs_fp32": {
+    "argmax_same": 0.998,
+    "max_abs_dp": 0.002066623413819857,
+    "max_abs_dwdl": 0.0015496015548706055
+   }
+  },
+  "1900": {
+   "fold_vs_pb": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 2.4963502015529215e-06,
+    "max_abs_dwdl": 1.0728836059570312e-06
+   },
+   "fp16_vs_fp32": {
+    "argmax_same": 1.0,
+    "max_abs_dp": 0.0020113914574375613,
+    "max_abs_dwdl": 0.0037573575973510742
+   }
+  }
+ },
+ "dtype_test": {
+  "positions": 1000,
+  "source": "combined_puzzle_db_first_50k.ndjson.bz2 dev split (sha1(id)%5==0), bullet excluded",
+  "criterion": "argmax identical >= 99.5% and max |dp| < 0.01, every rating",
+  "float16_pass": true
+ }
+}

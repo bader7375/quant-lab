@@ -105,7 +105,7 @@ function WatchPlayer(root, D, { n }) {
 
   /* ---- display ---- */
   function esAt(k) { // mover's chances before (best play) and after the move
-    const p = P[k]; return { before: Prob.esFor(p.lines[0].cp, p.color), after: Prob.esFor(p.after.cp, p.color) };
+    const p = P[k]; const c = Prob.ctx(p.fenBefore); return { before: Prob.esFor(p.lines[0].cp, p.color, c), after: Prob.esFor(p.after.cp, p.color, c) };
   }
   function show(k) {
     i = Math.max(-1, Math.min(last, k)); branch = null; whatIfK = null; branchEl.hidden = true;
@@ -115,8 +115,8 @@ function WatchPlayer(root, D, { n }) {
     $("#w-turn", root).innerHTML = `<i class="${stm}"></i>الدور ${stm === "w" ? "للأبيض" : "للأسود"}`;
     $("#w-prog", root).textContent = i < 0 ? `${P.length} نقلة` : `النقلة ${i + 1} من ${P.length}`;
     const cp = i < 0 ? P[0].lines[0].cp : P[i].after.cp, wdl = i < 0 ? P[0].lines[0].wdl : P[i].after.wdl;
-    $("#w-odds", root).innerHTML = oddsBarHtml(cp, wdl, i < 0 ? {} : { prevCp: P[i].lines[0].cp, mover: P[i].color });
-    narrEl.innerHTML = cardHtml(i); wireRefs(narrEl);
+    $("#w-odds", root).innerHTML = oddsBarHtml(cp, wdl, i < 0 ? { fen: D.start } : { prevCp: P[i].lines[0].cp, mover: P[i].color, fen: P[i].fen });
+    narrEl.innerHTML = cardHtml(i); wireRefs(narrEl); levelLines(i);
     const mv = $("#w-moves", root); mv.innerHTML = movesHtml();
     for (const b of $$("[data-k]", mv)) b.onclick = () => { pause(); show(+b.dataset.k); };
     const on = $(".mvbtn.on", mv); if (on && on.scrollIntoView) on.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -137,7 +137,7 @@ function WatchPlayer(root, D, { n }) {
       h += sec(`بماذا فكّر ${esc(who)}`, rich(k, nn.think));
       if (nn.cands && nn.cands.length) {
         h += `<section class="cands"><h4>نقلات أخرى فكّر فيها، ولماذا رفضها</h4>${nn.cands.map((cd) => {
-          const ces = cd.cp != null ? Math.round(Prob.esFor(cd.cp, p.color)) : null;
+          const ces = cd.cp != null ? Math.round(Prob.esFor(cd.cp, p.color, Prob.ctx(p.fenBefore))) : null;
           return `<div class="cand"><div class="cand-h">${rich(k, "[" + cd.san + "]")}${ces != null ? `<span class="note">فرصه بعدها <bdi class="mono">${ces}%</bdi>، مقابل <bdi class="mono">${Math.round(es.after)}%</bdi> للنقلة المختارة</span>` : ""}</div><p>${rich(k, cd.why, cd.san)}</p></div>`; }).join("")}</section>`;
       }
       h += sec(`الخطة${nn.planChange ? ` <span class="tag plan">تغيّرت الخطة</span>` : ""}`, rich(k, nn.plan));
@@ -150,6 +150,22 @@ function WatchPlayer(root, D, { n }) {
     }
     if (k === last && D.outro) h += `<section class="outro"><h4>خلاصة المباراة</h4><p>${esc(D.outro)}</p></section>`;
     return h;
+  }
+  /* Under each move: what players at the student's level would have played here (Maia), and the masters' statistics. */
+  async function levelLines(k) {
+    if (k < 0) return; const p = P[k];
+    const box = document.createElement("section"); box.className = "lvl"; narrEl.appendChild(box);
+    const [h, ms] = await Promise.all([
+      typeof Human !== "undefined" ? Human.predict(D.start, P.slice(0, k).map((x) => x.uci), Prob.band || 1100).catch(() => null) : null,
+      mastersSummary(p.fenBefore, p.san)]);
+    if (i !== k || !box.isConnected) return;
+    const hs = humanSummary(h, p.uci); let html = "";
+    if (hs) {
+      const top = hs.top[0];
+      html += `<p class="humanline">لو كان لاعب بمستوى ~${hs.rating} مكان ${p.color === side ? esc(who) : "الخصم"}: <bdi class="mono">${pctR(hs.p)}</bdi> منهم يلعبون <bdi class="mv">${esc(p.san)}</bdi>${top.uci === p.uci ? "، وهي اختيارهم الأول." : `، واختيارهم الأول <bdi class="mv">${esc(top.san)}</bdi> (<bdi class="mono">${pctR(top.p)}</bdi>).`}</p>`;
+    }
+    if (ms) html += `<p class="masterline">${mastersText(ms, p.san, "opp").replace("هذه النقلة", "النقلة")}</p>`;
+    box.innerHTML = html ? `<h4>عند لاعبين بمستواك وعند الأساتذة</h4>${html}` : "";
   }
   const sec = (title, body) => (body ? `<section><h4>${title}</h4><p>${body}</p></section>` : "");
   function wireRefs(el) { for (const b of $$("[data-ref]", el)) b.onclick = () => { pause(); const r = refs[+b.dataset.ref]; openBranch({ start: r.start, sans: r.seq, title: `الخط: ${r.seq.join(" ")}` }); }; }
@@ -199,7 +215,7 @@ function WatchPlayer(root, D, { n }) {
     branchEl.innerHTML = `<div class="branchbar"><b>${esc(label)}</b><p class="note">Stockfish يحلّل...</p></div>`;
     const a = await Engine.analyse(m.fenAfter, { depth: 18, movetime: 1800 });
     const reply = a.lines[0] ? pvToSan(m.fenAfter, a.lines[0].pv, 7) : [];
-    const esX = Math.round(Prob.esFor(a.cp, p.color)), esPlayed = Math.round(Prob.esFor(p.after.cp, p.color));
+    const wc = Prob.ctx(p.fenBefore); const esX = Math.round(Prob.esFor(a.cp, p.color, wc)), esPlayed = Math.round(Prob.esFor(p.after.cp, p.color, wc));
     openBranch({ start: p.fenBefore, sans: [m.san, ...reply], title: label, whatIf: true });
     const same = m.uci === p.uci; const sideAr2 = p.color === "w" ? "الأبيض" : "الأسود";
     const ex = $("#b-explain", branchEl);

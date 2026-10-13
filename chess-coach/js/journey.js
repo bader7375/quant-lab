@@ -22,6 +22,7 @@ async function loadCurriculum() {
 async function journeyInit() {
   try { J.state = Object.assign(J0(), (await Store.get("journey/state")) || {}); } catch { J.state = J0(); }
   J.state.settings = Object.assign(J0().settings, J.state.settings || {});
+  Prob.band = J.state.settings.oppRating; // the opponent's level follows results, so it is also the student's estimated level
   try { J.games = (await Store.list("games")).sort((a, b) => a.t - b.t); } catch { J.games = []; }
 }
 const chapter = (n) => CUR.chapters.find((c) => c.n === n);

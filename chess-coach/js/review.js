@@ -91,7 +91,7 @@ function openReview(n, G) {
   const moments = keyMoments(G); const sum = reviewSummary(G, c, m); const opening = (c.rule || {}).kind === "opening_checklist"; const prog = ruleProgress(c);
   root.innerHTML = `
     <div class="whead"><button class="btn quiet" id="r-back">→ الفصل ${n}</button>
-      <div class="wtitle"><b>مراجعة المباراة · ${esc(gameTitle(G))}</b><span class="note">${esc(G.reason || "")} · ${esc(OPP.label(G.opp.rating))}</span></div></div>
+      <div class="wtitle"><b>مراجعة المباراة · ${esc(gameTitle(G))}</b><span class="note">${esc(G.reason || "")} · ${esc(OPP.label(G.opp.rating, G.opp.kind))}</span>${theoryNote(G)}</div></div>
     <div class="kpis small rk">${kpi(m.moves, "نقلاتك")}${kpi(m.okShare == null ? "–" : m.okShare + "%", "ممتازة أو جيدة")}${kpi(m.inaccuracies, "غير دقيقة")}${kpi(m.mistakes, "أخطاء")}${kpi(m.blunders, "أخطاء فادحة")}${kpi(m.takebacks, "تراجعات")}${kpi(m.hints, "تلميحات")}</div>
     <div class="panel"><h3>فرصك خلال المباراة</h3>${esChart(G, moments)}<p class="note">تقدير فرصك (من 100) بعد كل نقلة عند لاعبين بمستواك. الدوائر المرقّمة هي اللحظات الحاسمة أدناه، والدائرة المفرغة نقلة تراجعت عنها (خارج المنحنى).</p></div>
     ${opening ? `<div class="panel"><h3>قائمة الافتتاح في هذه المباراة</h3>${m.openingItems ? `<ul class="checklist live">${Object.keys(OPENING_ITEMS).map((k) => `<li class="${m.openingItems[k] ? "ok" : "fail"}">${esc(OPENING_ITEMS[k])}</li>`).join("")}</ul><p><bdi class="mono">${m.openingScore}/5</bdi>${m.openingBlunder ? " · وفيها خطأ فادح في أول 10 نقلات" : ""}. ${m.openingScore >= 4 && !m.openingBlunder ? "مباراة مؤهلة لشرط الفصل." : "ليست مؤهلة لشرط الفصل: يلزم 4 من 5 بدون خطأ فادح في أول 10 نقلات."}</p>` : `<p class="note">المباراة أقصر من 10 نقلات لك، فلم تُحكم القائمة.</p>`}
@@ -121,6 +121,14 @@ function openReview(n, G) {
   root.scrollIntoView?.({ block: "start" });
 }
 
+/* The opening's name and how long the game stayed in positions the masters database knows (50+ games). */
+function theoryNote(G) {
+  const inTree = G.recs.filter((r) => r.masters && !r.takenBack); const last = inTree[inTree.length - 1];
+  const parts = [];
+  if (G.opening) parts.push(`الافتتاح: <bdi dir="ltr">${esc(G.opening.eco + " · " + G.opening.name)}</bdi>`);
+  if (last) parts.push(`بقيت ضمن مواقف الأساتذة المعروفة حتى نقلتك <bdi class="mono">${esc(moveLabel(last.fenBefore, last.san))}</bdi>`);
+  return parts.length ? `<span class="note">${parts.join(" · ")}</span>` : "";
+}
 function momentHtml(mo, i, G) {
   const r = mo.r; const T = { error: "خطأ", chance: "فرصة ضائعة", good: "لحظة جيدة", slip: "أقل من الأفضل" }[mo.kind]; const why = [];
   if (mo.kind === "good") {
@@ -134,6 +142,7 @@ function momentHtml(mo, i, G) {
     <div class="mgrid"><div class="mline"></div><div class="mtext">
       ${why.length ? `<ul class="facts">${why.map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul>` : ""}
       ${mo.kind !== "good" && r.best && r.best !== r.san ? `<p>الأفضل كان <bdi class="mv">${esc(r.best)}</bdi>. خط Stockfish: <bdi class="mv">${esc(numberedLine(r.fenBefore, (r.bestLine || []).slice(0, 6)))}</bdi>.</p>` : ""}
+      ${mo.kind !== "good" ? humanLineHtml(r) : ""}${mastersLineHtml(r)}
       ${r.coach ? coachHtml("ما قاله المدرّب أثناء المباراة", markSan(esc(r.coach), allowed).html) : ""}
       ${SAMPLE ? `<div class="row"><button class="btn quiet" data-explain="${i}">اشرح لي هذه اللحظة</button></div>` : ""}<div class="fx"></div>
     </div></div></div>`;

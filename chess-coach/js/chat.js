@@ -36,7 +36,7 @@ function markSan(textEsc, allowed) {
 /* The fact sheet: everything Claude may rely on, for one position. */
 function factSheet(ctx) {
   const f = Facts.positionFacts(ctx.fen, ctx.ply); const stm = sideOf(ctx.fen);
-  const fmtLine = (l) => `${l.san.join(" ")} (chances for ${stm === "w" ? "White" : "Black"} afterwards ≈ ${Math.round(Prob.esFor(l.cp, stm))}%)`;
+  const fmtLine = (l) => `${l.san.join(" ")} (chances for ${stm === "w" ? "White" : "Black"} afterwards ≈ ${Math.round(Prob.esFor(l.cp, stm, Prob.ctx(ctx.fen)))}%)`;
   const lines = [];
   lines.push(`POSITION (FEN): ${ctx.fen}`);
   lines.push(`SIDE TO MOVE: ${stm === "w" ? "White" : "Black"}`);
@@ -60,7 +60,7 @@ function chatTools(ctx, allowed) {
         const seq = Array.isArray(input.moves) ? input.moves.map(String) : [];
         const g = new Chess(ctx.fen); for (const s of seq) if (!g.move(s, { sloppy: true })) throw new Error("illegal move " + s);
         const fen = g.fen(); const a = await Engine.analyse(fen, { depth: 16, movetime: 1500, multipv: 3 }); const stm = sideOf(fen);
-        const out = a.lines.map((l) => { const sans = pvToSan(fen, l.pv, 8); addLine(fen, sans); return { moves: sans, chances_for_side_to_move: Math.round(Prob.esFor(l.cpWhite, stm)) + "%" }; });
+        const out = a.lines.map((l) => { const sans = pvToSan(fen, l.pv, 8); addLine(fen, sans); return { moves: sans, chances_for_side_to_move: Math.round(Prob.esFor(l.cpWhite, stm, Prob.ctx(fen))) + "%" }; });
         return { side_to_move: stm === "w" ? "White" : "Black", lines: out };
       } },
     { name: "play_line", description: "Play a sequence of SAN moves from the current position. Returns whether it is legal, the resulting position's facts, the best reply line and the chances for both sides afterwards.",
@@ -71,7 +71,7 @@ function chatTools(ctx, allowed) {
         addLine(ctx.fen, seq);
         const fen = g.fen(); const a = await Engine.analyse(fen, { depth: 16, movetime: 1500 }); const reply = a.lines[0] ? pvToSan(fen, a.lines[0].pv, 6) : [];
         addLine(fen, reply);
-        return { legal: true, white_chances: Math.round(Prob.esFor(a.cp, "w")) + "%", black_chances: Math.round(Prob.esFor(a.cp, "b")) + "%", best_reply_line: reply, facts: Facts.describe(Facts.positionFacts(fen), sideOf(fen)) };
+        return { legal: true, white_chances: Math.round(Prob.esFor(a.cp, "w", Prob.ctx(fen))) + "%", black_chances: Math.round(Prob.esFor(a.cp, "b", Prob.ctx(fen))) + "%", best_reply_line: reply, facts: Facts.describe(Facts.positionFacts(fen), sideOf(fen)) };
       } },
     { name: "position_facts", description: "Computed facts (no engine) for the current position: hanging pieces, development, king safety, centre, pawn structure, available checks.",
       async execute() { const f = Facts.positionFacts(ctx.fen); return { white: Facts.describe(f, "w"), black: Facts.describe(f, "b"), phase: f.phase }; } },
