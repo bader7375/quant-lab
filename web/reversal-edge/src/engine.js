@@ -363,6 +363,16 @@ function buildRev(ds, fear, cfg) {
     // deep-value watch: Z turns back up through -2.5 after being at or below it within the last 20 bars
     R.zwatch = new Array(n).fill(0); for (let i = 21; i < n; i++) { if (!isF(R.z250[i]) || !isF(R.z250[i - 1])) continue;
       if (R.z250[i - 1] <= -2.5 && R.z250[i] > -2.5) R.zwatch[i] = 1; } }
+  // v15 stretch Z (composite): mean of the 10/20/60-day log returns, each in units of the stock's own daily volatility (60-day sd measured before the move) x sqrt(days).
+  // Round-27 research: its lower tail rebounded in 2004-12, 2013-19 and 2020-26 alike; the 250-day price Z did not in 2004-12. zcx = first close at or below the extreme line.
+  { const rr = nanArr(n); for (let i = 1; i < n; i++) if (isF(lc[i]) && isF(lc[i - 1])) rr[i] = Math.max(-0.25, Math.min(0.25, lc[i] - lc[i - 1]));
+    const sd = nanArr(n); for (let i = 59; i < n; i++) { let s1 = 0, s2 = 0, m = 0; for (let k = i - 59; k <= i; k++) if (isF(rr[k])) { s1 += rr[k]; s2 += rr[k] * rr[k]; m++; }
+      if (m >= 40) sd[i] = Math.sqrt(Math.max(1e-12, (s2 - s1 * s1 / m) / (m - 1))); }
+    const zk = (K) => { const z = nanArr(n); for (let i = K; i < n; i++) { let s1 = 0, m = 0; for (let k = i - K + 1; k <= i; k++) if (isF(rr[k])) { s1 += rr[k]; m++; }
+      if (m >= 0.8 * K && isF(sd[i - K]) && sd[i - K] > 0) z[i] = s1 / (sd[i - K] * Math.sqrt(K)); } return z; };
+    const z10 = zk(10), z20 = zk(20), z60 = zk(60); R.zc = nanArr(n);
+    for (let i = 0; i < n; i++) if (isF(z10[i]) && isF(z20[i]) && isF(z60[i])) R.zc[i] = (z10[i] + z20[i] + z60[i]) / 3;
+    R.zcx = new Array(n).fill(0); for (let i = 1; i < n; i++) if (isF(R.zc[i]) && isF(R.zc[i - 1]) && R.zc[i] <= ZC_EXT && R.zc[i - 1] > ZC_EXT) R.zcx[i] = 1; }
   R.sma200 = rollMean(c, 200);
   if (R.trendMode) {   // v14 Saudi trend breakout: close at the 55-day high and above the 200-day average
     R.msetup = c.map((x, i) => { if (i < 200 || !isF(x) || !isF(R.sma200[i]) || x <= R.sma200[i]) return 0; for (let k = i - 54; k < i; k++) if (c[k] > x) return 0; return 1; });
@@ -574,6 +584,7 @@ function contextMeans(ds, mkt) { // fair-value means and stationarity statistics
 }
 // v12: Saudi stocks trend day to day; dip-buys showed no edge there while momentum signals did (Al Rajhi, TASI), so they can run in momentum mode
 const SAUDI_NAMES = /^(TASI|TASI_\w+|ARAMCO|ALRAJHI|RAJHI|AL_RAJHI|SABIC|STC|SNB|ALINMA|MAADEN|ACWA|ELM|DRSK|MOUWASAT|SULAIMAN|NOMU|MT30)$/i;
+const ZC_EXT = -2.62;   // v15: 2% quantile of the stretch Z on liquid Saudi stocks 2013-2019 (fixed before the 2020-2026 check)
 function isSaudi(sym) { return /^\d{4}(_SR|_SE|_SA)?$/i.test(sym) || /(_SR|\.SR|_SE|_SA)$/i.test(sym) || SAUDI_NAMES.test(sym); }
 // v14: individual Saudi stocks use trend breakouts; the TASI index keeps RSI momentum (Sharpe 1.53 vs 0.96 with trend breakouts, 2001-2026)
 function symCfg(sym, cfg) { return (cfg.saudi === "trend" || cfg.saudi === "mom") && isSaudi(sym) && cfg.mode !== "rev" ? Object.assign({}, cfg, { mode: cfg.saudi === "trend" && !/^(TASI|\^?TASI)/i.test(sym) ? "trend" : "mom" }) : cfg; }
@@ -616,7 +627,7 @@ function run(datasets, cfg, fear) {
     out.metrics.symbols[s] = { classification: classMetrics(yy, pp, pp, PRIOR.calib.a ? sigm(PRIOR.calib.a + PRIOR.calib.b * cfg.scoreThr) : 0.6), trading: tm(str), tradingAll: tm(strAll), signals: bt.sig[s].filter((v) => v > 0).length, setups: R.setup.reduce((a, b) => a + b, 0), msetups: R.msetup.reduce((a, b) => a + b, 0) };
     const S = { first, side: cfg.side, exitName: R.exitName, steps: m.steps, garchSteps: R.garchSteps, harSteps: R.harSteps, sig: bt.sig[s] };
     for (const k of ["d", "o", "h", "l", "c", "v", "atr", "rsi2", "rsi14", "streak", "ibs", "lwick", "uwick", "ret1", "gap", "rangex", "volz", "m20", "s20", "z20", "sma5", "vterm", "vrank", "vix", "frank", "setup",
-      "y", "tret", "thold", "texit", "tentry", "unfilled", "ac", "mode", "msetup", "mret", "mhold", "z250", "zwatch", "sma200", "sma10", "zone", "ztouch", "zn", "zfwd", "touch", "fwd5", "r", "rv", "cc20", "park20", "gk20", "rs20", "yz5", "yz20", "yz60", "garch", "har5"]) S[k] = Array.from(R[k]);
+      "y", "tret", "thold", "texit", "tentry", "unfilled", "ac", "mode", "msetup", "mret", "mhold", "z250", "zwatch", "zc", "zcx", "sma200", "sma10", "zone", "ztouch", "zn", "zfwd", "touch", "fwd5", "r", "rv", "cc20", "park20", "gk20", "rs20", "yz5", "yz20", "yz60", "garch", "har5"]) S[k] = Array.from(R[k]);
     S.trendMode = !!R.trendMode;
     S.zq = R.zq.map((a) => Array.from(a)); S.pulse = R.pulse; S.X = {}; S.Z = {}; for (const q of SKEYS) { S.X[q] = Array.from(R.X[q]); S.Z[q] = Array.from(R.Z[q]); }
     if (revS) { const RS = revS[s], ms = MS[s]; S.ssetup = Array.from(RS.setup); S.sscore = ms.score; S.sP = ms.P; S.stret = Array.from(RS.tret); S.sthold = Array.from(RS.thold);

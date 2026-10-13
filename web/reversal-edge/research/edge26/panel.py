@@ -16,6 +16,10 @@ def _stack(P):
     bad = (V <= 0) | V.isna() | C.isna() | (C <= 0)            # no trade that day
     for X in (O, Hh, L, C): X[bad] = np.nan
     O = O.where(O > 0)
+    # drop calendar rows where almost nothing traded (Yahoo keeps zero-volume rows on weekends/holidays before mid-2013 and on a few later days;
+    # left in, they blank every stock's return on the next session). Round 27 fix.
+    cnt = (~bad).sum(1); med = cnt.rolling(21, center=True, min_periods=1).median(); keep = ~((cnt < 0.3 * med) & (med >= 5))
+    O, Hh, L, C, V, bad = (X.loc[keep] for X in (O, Hh, L, C, V, bad))
     return dict(O=O, H=Hh, L=L, C=C, V=V.where(~bad), VAL=(V * C).where(~bad))
 def yahoo_panel(start="2010-01-01", end=None, oos=False, extra=True):
     """Yahoo adjusted OHLC (dividends+splits). Refuses to return post-2020-03-05 rows unless oos=True."""

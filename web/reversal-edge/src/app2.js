@@ -1,3 +1,18 @@
+// ------------------------------------------------ v15 stretch Z: the 10/20/60-day move in units of the stock's own volatility, with an intuitive scale
+// scale = all liquid Saudi stocks 2004-2026 (Tadawul library 2004-12 + Yahoo 2013-26), round-27 research
+const ZC_LINE=-2.62,ZC_EDGES=[null, -3.5, -3.0, -2.7, -2.4, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.4, 2.7, 3.0, null],ZC_OUT=[[0.0235, 0.5632, 0.0514, 0.6598], [0.0173, 0.5082, 0.0244, 0.5728], [0.0132, 0.4993, 0.0142, 0.546], [0.0053, 0.4806, 0.002, 0.5039], [0.0039, 0.4629, 0.0029, 0.4928], [0.0017, 0.4562, 0.0025, 0.4935], [-0.0014, 0.438, -0.0027, 0.4679], [-0.0035, 0.4269, -0.0061, 0.4494], [-0.0019, 0.4276, 0.0003, 0.4595], [0.0035, 0.4558, 0.0125, 0.5033], [0.0046, 0.4584, 0.016, 0.5062], [0.0054, 0.4664, 0.0212, 0.5276], [0.0061, 0.4708, 0.0206, 0.5094], [0.0027, 0.4492, 0.016, 0.5034], [-0.0016, 0.4289, 0.0138, 0.4973], [-0.0048, 0.4189, 0.0088, 0.4841]],ZC_Q=[[-3.596, 0.005], [-3.018, 0.01], [-2.421, 0.02], [-1.682, 0.05], [-1.172, 0.1], [-0.538, 0.25], [0.023, 0.5], [0.595, 0.75], [1.236, 0.9], [1.721, 0.95], [2.421, 0.98], [2.971, 0.99], [3.563, 0.995]];
+function stretchZ(c){const n=c.length,rr=new Array(n).fill(NaN),sd=new Array(n).fill(NaN),out=new Array(n).fill(NaN);
+ for(let i=1;i<n;i++){const a=Math.log(c[i]),b=Math.log(c[i-1]);if(isF(a)&&isF(b))rr[i]=Math.max(-.25,Math.min(.25,a-b))}
+ for(let i=59;i<n;i++){let s1=0,s2=0,m=0;for(let k=i-59;k<=i;k++)if(isF(rr[k])){s1+=rr[k];s2+=rr[k]*rr[k];m++}if(m>=40)sd[i]=Math.sqrt(Math.max(1e-12,(s2-s1*s1/m)/(m-1)))}
+ const zk=K=>{const z=new Array(n).fill(NaN);for(let i=K;i<n;i++){let s1=0,m=0;for(let k=i-K+1;k<=i;k++)if(isF(rr[k])){s1+=rr[k];m++}if(m>=.8*K&&isF(sd[i-K])&&sd[i-K]>0)z[i]=s1/(sd[i-K]*Math.sqrt(K))}return z};
+ const a=zk(10),b=zk(20),e=zk(60);for(let i=0;i<n;i++)if(isF(a[i])&&isF(b[i])&&isF(e[i]))out[i]=(a[i]+b[i]+e[i])/3;return out}
+function zcCdf(z){if(!isF(z))return NaN;const Q=ZC_Q;if(z<=Q[0][0])return Q[0][1]/2;if(z>=Q[Q.length-1][0])return 1-(1-Q[Q.length-1][1])/2;
+ for(let k=1;k<Q.length;k++)if(z<=Q[k][0]){const [x0,p0]=Q[k-1],[x1,p1]=Q[k];return p0+(p1-p0)*(z-x0)/(x1-x0)}return NaN}
+function zcRareTxt(z){const p=zcCdf(z);if(!isF(p))return "—";if(p<=.5){const n=Math.round(1/p);return `lower than ${(100*(1-p)).toFixed(p<.02?1:0)}% of days${p<.1?` (about 1 day in ${n})`:""}`}
+ const n=Math.round(1/(1-p));return `higher than ${(100*p).toFixed(p>.98?1:0)}% of days${p>.9?` (about 1 day in ${n})`:""}`}
+function zcOutcome(z){if(!isF(z))return null;let k=0;while(k<ZC_OUT.length-1&&z>ZC_EDGES[k+1])k++;const [xs,beat,net,up]=ZC_OUT[k];return {xs,beat,net,up,lo:ZC_EDGES[k],hi:ZC_EDGES[k+1]}}
+function zcOwnPct(arr,i){const v=arr[i];if(!isF(v))return NaN;let a=0,b=0;for(let k=0;k<=i;k++)if(isF(arr[k])){b++;if(arr[k]<=v)a++}return b>=250?a/b:NaN}
+function zcColor(z){return !isF(z)?"inherit":z<=ZC_LINE?"#4f96f0":z<=-1.5?"#7fb2f0":z>=3?"#e66767":z>=2?"#f0a0a0":"inherit"}
 // ------------------------------------------------ chart (TradingView Lightweight Charts)
 // Adaptive z-zones: shaded bands between this stock's own z-score percentiles, drawn by a custom series.
 class ZoneView{
@@ -111,7 +126,7 @@ function renderPulseHud(i){const hud=$("pulse-hud"),s=S();if(!s||!s.pulse||!UI.p
 let chart=null,SER={},MK=null,PLINES=[],ARR=null,hoverIdx=null;
 const OVL=[["sect","Sector index (scaled to the stock)","#8fd19e"],["vwy","VWAP yearly ±1σ/±2σ","#ffb74d"],["vwm","VWAP monthly ±1σ/±2σ","#4dd0e1"],["zb","Long-term Z bands (250d: mean, −1, ±2.5σ)","#b39dff"],["bb","Bollinger Bands (20, 2)","#7aa7e0"],["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
  ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["pdiv","Divergence lines","#a77bea"],["mine","My trades",TV.you]];
-const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones (20d)"],["zl","Long-term Z (250d)"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
+const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones (20d)"],["zs","Stretch Z (10/20/60d)"],["zl","Long-term Z (250d)"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
 $("ov").innerHTML=`<span class="lab">on price</span>`+OVL.map(([k,n,c])=>`<label><input type="checkbox" data-ov="${k}" ${UI.ov[k]?"checked":""}><span style="color:${c}">■</span>${n}</label>`).join("");
 $("pn").innerHTML=`<span class="lab">panels</span>`+PNS.map(([k,n])=>`<label><input type="checkbox" data-pn="${k}" ${UI.pn[k]?"checked":""}>${n}</label>`).join("");
 $("ov").addEventListener("change",e=>{const k=e.target.dataset.ov;if(!k)return;UI.ov[k]=e.target.checked;saveUI();applyVisibility();annotate()});
@@ -133,7 +148,7 @@ function buildArrays(){
  {const c=d.c,n=c.length,W=250,m=new Array(n).fill(NaN),sd=new Array(n).fill(NaN);let sx=0,sxx=0,k=0;
   for(let i=0;i<n;i++){const v=Math.log(c[i]);if(isF(v)){sx+=v;sxx+=v*v;k++}if(i>=W){const u=Math.log(c[i-W]);if(isF(u)){sx-=u;sxx-=u*u;k--}}if(k>=200){m[i]=sx/k;sd[i]=Math.sqrt(Math.max(1e-12,sxx/k-m[i]*m[i]))}}
   const B=f=>m.map((x,i)=>isF(x)?Math.exp(x+f*sd[i]):NaN);A.zbArr={m,sd};A.zbu=L(B(2.5));A.zbm=L(B(0));A.zbx=L(B(-1));A.zbl=L(B(-2.5));
-  A.zlArr=m.map((x,i)=>isF(x)?(Math.log(c[i])-x)/sd[i]:NaN)}
+  A.zlArr=m.map((x,i)=>isF(x)?(Math.log(c[i])-x)/sd[i]:NaN);A.zsArr=s&&s.zc?s.zc:stretchZ(d.c)}
  {const n=d.c.length,vw=(keyLen)=>{const m=new Array(n).fill(NaN),sd=new Array(n).fill(NaN);let k0=null,s1=0,s0=0,s2=0,cnt=0;
    for(let i=0;i<n;i++){const key=d.d[i].slice(0,keyLen);if(key!==k0){k0=key;s1=s0=s2=0;cnt=0}const tp=(d.h[i]+d.l[i]+d.c[i])/3,v=d.v[i];
     if(isF(tp)&&isF(v)&&v>0){s1+=tp*v;s0+=v;s2+=tp*tp*v;cnt++}if(s0>0&&cnt>=(keyLen===7?5:20)){m[i]=s1/s0;sd[i]=Math.sqrt(Math.max(0,s2/s0-m[i]*m[i]))}}return {m,sd}};
@@ -146,7 +161,7 @@ function buildArrays(){
  A.edgeH=d.d.map((t,i)=>s&&s.setup[i]&&isF(s.score[i])?{time:t,value:s.score[i],color:THIRD_COL[thirdOf(s.score[i])]}:{time:t});
  A.edgeL=L(s&&s.score);
  A.rsi=L(s?s.rsi2:null);
- A.z=L(A.zArr);A.zl=L(s&&s.z250?s.z250:A.zlArr);for(let k=0;k<6;k++)A["zq"+k]=L(s&&s.zq[k]);
+ A.z=L(A.zArr);A.zl=L(s&&s.z250?s.z250:A.zlArr);A.zs=L(A.zsArr);for(let k=0;k<6;k++)A["zq"+k]=L(s&&s.zq[k]);
  if(s&&s.pulse){const P=s.pulse;A.pulse=d.d.map((t,i)=>{if(!isF(P.M[i]))return {time:t};const mh=P.mh.map(a=>a[i]),ok=mh.every(isF);
    const o={time:t,M:P.M[i],lo:ok?Math.min(...mh,P.M[i]):P.M[i],hi:ok?Math.max(...mh,P.M[i]):P.M[i],al:P.align[i]*(P.M[i]>=0?1:-1),er:P.er[i],acc:P.acc[i],st:P.state[i],th:P.thrust[i],q95:P.q95[i],q05:P.q05[i]};
    if(P.div[i])o.dv={type:P.div[i],b0:i-P.dp0[i],b1:i-P.dp1[i],M0:P.M[P.dp0[i]],M1:P.M[P.dp1[i]]};return o});
@@ -189,6 +204,8 @@ function buildChart(keep){
  if(UI.pn.z&&!TRM){P.z=pane++;const zc=["rgba(79,150,240,.9)","rgba(79,150,240,.55)","rgba(79,150,240,.3)","rgba(240,110,110,.3)","rgba(240,110,110,.55)","rgba(240,110,110,.9)"];
   for(let k=0;k<6;k++)SER["zq"+k]=line(zc[k],{lineStyle:k===0||k===5?LW.LineStyle.Solid:LW.LineStyle.Dashed},P.z);
   SER.z=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"z20",topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.18)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.18)",priceFormat:{type:"price",precision:2,minMove:.01}},P.z)}
+ if(UI.pn.zs){P.zs=pane++;SER.zs=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"Stretch Z",topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.12)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.18)",priceFormat:{type:"price",precision:2,minMove:.01}},P.zs);
+  for(const [p,c,t] of [[3,"rgba(230,103,103,.7)","+3 top 1%"],[ZC_LINE,"rgba(79,150,240,.9)","−2.6 extreme"],[-3.5,"rgba(79,150,240,.5)","−3.5"]])SER.zs.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:t})}
  if(UI.pn.zl){P.zl=pane++;SER.zl=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"Z 250d",topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.15)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.15)",priceFormat:{type:"price",precision:2,minMove:.01}},P.zl);
   for(const [p,c,t] of [[2.5,"rgba(230,103,103,.8)","+2.5"],[2,"rgba(230,103,103,.4)",""],[-1,"rgba(195,194,183,.45)","exit −1"],[-2,"rgba(79,150,240,.4)",""],[-2.5,"rgba(79,150,240,.8)","−2.5"]])SER.zl.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:!!t,title:t})}
  if(UI.pn.vol){P.vol=pane++;SER.cc=line("rgba(137,135,129,.6)",{},P.vol);SER.yz=line("#3987e5",{lineWidth:1.5,title:"YZ20",lastValueVisible:true},P.vol);SER.garch=line("#fab219",{lineWidth:1.5,title:"GARCH",lastValueVisible:true},P.vol);SER.har=line("#c08cff",{title:"HAR 5d",lastValueVisible:true},P.vol)}
@@ -199,7 +216,7 @@ function buildChart(keep){
  MK=LW.createSeriesMarkers(SER.candle,[]);PLINES=[];
  chart.subscribeCrosshairMove(onCross);chart.subscribeClick(onChartClick);
  refreshOverlays(range);if(!range)showRange()}
-const DKEYS=["sect","vwyM","vwyU1","vwyL1","vwyU2","vwyL2","vwmM","vwmU1","vwmL1","vwmU2","vwmL2","zl","zbu","zbm","zbx","zbl","bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
+const DKEYS=["zs","sect","vwyM","vwyU1","vwyL1","vwyU2","vwyL2","vwmM","vwmU1","vwmL1","vwmU2","vwmL2","zl","zbu","zbm","zbx","zbl","bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
 function setAllData(upto){if(!ARR)return;for(const k of DKEYS)if(SER[k]&&ARR[k])SER[k].setData(upto>=ARR.n-1?ARR[k]:ARR[k].slice(0,upto+1))}
 function stepData(i){for(const k of DKEYS)if(SER[k]&&ARR[k]&&ARR[k][i])SER[k].update(ARR[k][i])}
 function applyVisibility(){const v=UI.ov,set=(k,on)=>SER[k]&&SER[k].applyOptions({visible:!!on});
@@ -222,7 +239,7 @@ function annotate(){
   for(let i=lo;i<=c;i++){
    if(s.sig[i]===1&&UI.ov.sys){mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:s.side>0?"arrowUp":"arrowDown",color:"#4fd1a5",text:`${s.aplus&&s.aplus[i]?"A+ ":""}${Math.round(100*s.P[i])}%`,size:s.aplus&&s.aplus[i]?1.9:1.4})}
    else if(s.sig[i]===2&&UI.ov.sys&&!(s.trendMode&&s.msetup.slice(Math.max(0,i-10),i).some(Boolean))){mk.push({time:d.d[i],position:"belowBar",shape:"arrowUp",color:"#c08cff",text:s.trendMode?"TREND":"MOM",size:1.3})}
-   else if(s.zwatch&&s.zwatch[i]&&UI.ov.sys&&saudiSym(st.sym))mk.push({time:d.d[i],position:"belowBar",shape:"circle",color:"#4f96f0",text:"Z",size:1});
+   else if(s.zcx&&s.zcx[i]&&UI.ov.sys&&saudiSym(st.sym))mk.push({time:d.d[i],position:"belowBar",shape:"circle",color:"#4f96f0",text:"Z",size:1});
    else if(s.setup[i]&&UI.ov.setups)mk.push({time:d.d[i],position:s.side>0?"belowBar":"aboveBar",shape:"circle",color:THIRD_COL[thirdOf(s.score[i])],size:.5});
    else if(s.sig[i]===3&&UI.ov.sys)mk.push({time:d.d[i],position:"aboveBar",shape:"arrowDown",color:"#ef5350",text:"SHORT",size:1.3});
    else if(s.sgood&&s.sgood[i]&&ECFG.shorts!=="off"&&UI.ov.setups)mk.push({time:d.d[i],position:"aboveBar",shape:"circle",color:"#ef5350",size:.5});
@@ -244,9 +261,9 @@ function renderLegend(){try{const c0=cur(),i0=hoverIdx!=null?Math.max(0,Math.min
 
  const d=D(),el=$("legend");if(!d){el.innerHTML="";return}
  const c=cur(),i=hoverIdx!=null?Math.max(0,Math.min(c,hoverIdx)):(st.pinned&&st.cursor!=null?Math.min(st.cursor,c):c),s=S(),ch=i>0?d.c[i]/d.c[i-1]-1:NaN;
- const z=ARR?ARR.zArr[i]:NaN,mu=ARR?ARR.meanArr[i]:NaN,zl=ARR&&ARR.zlArr?ARR.zlArr[i]:NaN;
+ const z=ARR?ARR.zArr[i]:NaN,mu=ARR?ARR.meanArr[i]:NaN,zl=ARR&&ARR.zlArr?ARR.zlArr[i]:NaN,zs=ARR&&ARR.zsArr?ARR.zsArr[i]:NaN;
  el.innerHTML=`<div class="l1"><b>${esc(st.sym)}</b><span class="lk">1D</span><span class="lk">${d.d[i]}</span><span><span class="lk">O</span> ${fp(d.o[i])}</span><span><span class="lk">H</span> ${fp(d.h[i])}</span><span><span class="lk">L</span> ${fp(d.l[i])}</span><span><span class="lk">C</span> ${fp(d.c[i])}</span><span class="${cl(ch)}">${spct(ch,2)}</span></div>
-  <div class="l2"><span>mean ${fp(mu)}</span><span>z20 <span style="color:${isF(z)?(z<0?"#4f96f0":"#f08c8c"):"inherit"}">${fmt(z,2)}</span></span><span><b>Z250</b> <span style="color:${isF(zl)?(zl<=-2.5?"#4f96f0":zl>=2.5?"#f08c8c":"inherit"):"inherit"};font-weight:600">${fmt(zl,2)}</span></span>${s?`<span>RSI2 <span class="${s.setup[i]?"up":""}">${fmt(s.rsi2[i],0)}</span></span><span>edge <span style="color:${THIRD_COL[thirdOf(s.score[i])]||"inherit"}">${fmt(s.score[i],1)}</span></span><span>P ${isF(s.P[i])?pct(s.P[i],0):"—"}</span>`:""}${isF(d.v[i])?`<span class="lk">vol ${d.v[i]>=1e6?(d.v[i]/1e6).toFixed(1)+"M":Math.round(d.v[i]).toLocaleString()}${s&&isF(s.volz[i])?` (${s.volz[i]>=0?"+":""}${s.volz[i].toFixed(1)}σ)`:""}</span>`:""}</div>`}
+  <div class="l2"><span>mean ${fp(mu)}</span><span>z20 <span style="color:${isF(z)?(z<0?"#4f96f0":"#f08c8c"):"inherit"}">${fmt(z,2)}</span></span><span title="10/20/60-day move in units of its own volatility; ${esc(zcRareTxt(zs))}"><b>Stretch Z</b> <span style="color:${zcColor(zs)};font-weight:600">${fmt(zs,2)}</span></span><span class="lk">Z250 ${fmt(zl,2)}</span>${s?`<span>RSI2 <span class="${s.setup[i]?"up":""}">${fmt(s.rsi2[i],0)}</span></span><span>edge <span style="color:${THIRD_COL[thirdOf(s.score[i])]||"inherit"}">${fmt(s.score[i],1)}</span></span><span>P ${isF(s.P[i])?pct(s.P[i],0):"—"}</span>`:""}${isF(d.v[i])?`<span class="lk">vol ${d.v[i]>=1e6?(d.v[i]/1e6).toFixed(1)+"M":Math.round(d.v[i]).toLocaleString()}${s&&isF(s.volz[i])?` (${s.volz[i]>=0?"+":""}${s.volz[i].toFixed(1)}σ)`:""}</span>`:""}</div>`}
 let raf=0;
 function onCross(p){hoverIdx=p&&p.point&&p.logical!=null?Math.round(p.logical):null;
  if(raf)return;raf=requestAnimationFrame(()=>{raf=0;renderLegend();if(!st.pinned&&hoverIdx!=null&&hoverIdx>=0&&hoverIdx<=cur()&&hoverIdx!==st.cursor){st.cursor=hoverIdx;syncScrub();inspector(hoverIdx)}})}
