@@ -121,7 +121,7 @@ function openReview(n, G) {
   root.scrollIntoView?.({ block: "start" });
 }
 
-/* The opening's name and how long the game stayed in positions the masters database knows (50+ games). */
+/* The opening's name and how long the game stayed in positions the masters database knows (75+ games). */
 function theoryNote(G) {
   const inTree = G.recs.filter((r) => r.masters && !r.takenBack); const last = inTree[inTree.length - 1];
   const parts = [];

@@ -486,7 +486,7 @@ function mastersText(ms, san, who) {
 }
 function mastersLineHtml(rec) {
   if (!rec.masters) return "";
-  return `<p class="masterline">${mastersText(rec.masters, rec.san, "me")}${rec.mastersLeft ? " من هنا خرجت المباراة من المواقف المعروفة في قاعدة الأساتذة (أقل من 50 مباراة)." : ""}</p>`;
+  return `<p class="masterline">${mastersText(rec.masters, rec.san, "me")}${rec.mastersLeft ? " من هنا خرجت المباراة من المواقف المعروفة في قاعدة الأساتذة (أقل من 75 مباراة)." : ""}</p>`;
 }
 /* "Players at your level" line under a move card (Maia). A common move that Stockfish rates poorly is flagged as a common trap. */
 function humanLineHtml(rec) {

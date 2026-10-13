@@ -11,8 +11,8 @@ The approved plan is `REFACTOR_PLAN.md`. User decisions: 17-chapter curriculum a
 | 1. Journey map + chapter structure + Stockfish 17.1 | **done** |
 | 2. Watch mode | **done** |
 | 3. Play mode + Review | **done** |
-| 4. Probability engine + Maia + masters | next |
-| 5. Chapter 1 end to end | |
+| 4. Probability engine + Maia + masters | **done** |
+| 5. Chapter 1 end to end | next |
 
 ### Step 1 (done)
 - `data/curriculum/chapters.json`: 4 parts, 17 chapters (goal, topics, Watch/Play descriptions, completion rule). A chapter's `content` field lists ready material; stages without content show "قيد الإعداد".
@@ -84,6 +84,30 @@ The approved plan is `REFACTOR_PLAN.md`. User decisions: 17-chapter curriculum a
   - every Claude path, with a stand-in sampler (prompts grounded, unverified moves flagged, the hint stripped of moves);
   - every view at 390 px with no element outside the screen.
   Real Claude answers could not be exercised headless.
+
+### Step 4 (done): odds fitted on human games, Maia, masters
+- **Odds** (`data/models/odds.json`, `tools/odds/`, report `tools/odds/ODDS_REPORT.md`):
+  - An ordered logit per rating band and game phase, in Stockfish 17.1 centipawns. Lichess evals were mapped with sf17 = 3.7 + 0.61·lichess, R² 0.92, from 1,584 positions re-evaluated at depth 14.
+  - Fitted on 30,568 rated rapid and classical Lichess games, using only positions after each game's puzzle blunder (the dataset's selection bias makes earlier positions unusable).
+  - Held-out log loss is 0.500 (CI 0.484–0.516), against 0.584 for the provisional curve.
+  - **Bands under 1500, including the student's 1100, are extrapolated**: the puzzle generator skips games with a player rated 1500 or below. The odds bar says "مستقرأ".
+  - `js/prob.js` takes the phase from the FEN and the student's band from `Prob.band` (= the opponent rating, which follows results). A forced mate counts as ±8 pawns (humans miss mates); only checkmate is certain.
+  - Move classes are slightly milder (+0.3 → −0.8 is an inaccuracy, was a mistake). `tools/odds/check_prob.mjs`: PASS (442 checks).
+- **Maia-1** (`engines/maia/`, `js/human.js`, report `tools/maia/MAIA_REPORT.md`):
+  - The nine networks (1100–1900) run in a Web Worker: 1.7 MB each, about 9 ms per move.
+  - The JS port matches the numpy reference to 3e-6, with the same top move on all 377 test positions.
+  - Move-matching on held-out games: 53.0% [51.8–54.2], in line with the Maia-1 paper. Castling and queen-promotion encodings are confirmed by controls.
+  - Not validated at 1000–1499 (no such players in the data).
+- **Opponent = Maia**: a move is sampled from Maia's probabilities (T = 1; T = 1.3 below 1100, as fitted for sub-1000 players; never a move under 1%). Weakened Stockfish takes over only if Maia fails, and each such fallback is counted in the game.
+- **Players at your level**:
+  - Every move card in Play shows how many players at the student's level play the move and their most common choice. It flags a common choice that Stockfish rates as weak ("a position many at your level get wrong") and a common mistake.
+  - Watch shows, for each move, what a ~1100 player would have played in that seat. Review key moments show the same line.
+  - The data also goes to Claude's explanation.
+- **Masters** (`data/masters/`, `js/masters.js`, `tools/masters_tree/`):
+  - KingBase 2017: 1,796,809 master games, 1990–2017. The first 24 plies, positions reached in 75+ games: 39,021 positions in 5 shards of about 1.15 MB each, loaded on first use.
+  - Opening names come from lichess chess-openings (CC0): 3,865 positions.
+  - Play shows the masters' share and score for each move while the game is in the tree, the opening's name above the board, and when the game leaves known positions. Watch shows the same per move; Review shows the opening and how long the student stayed in theory.
+- Tested headless: Play as White with Maia (no fallbacks, no errors), Watch cards with both lines, and the odds check.
 
 ## Earlier state (exam-style version, kept as Practice)
 

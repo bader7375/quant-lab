@@ -5,7 +5,7 @@
    Browser: global Masters (needs chess.js). Node (tests): require("./js/masters.js") reads the files from disk. */
 (function (root) {
   const isNode = typeof module !== "undefined" && module.exports && typeof window === "undefined";
-  const ChessLib = typeof Chess !== "undefined" ? Chess : isNode ? require("../chess.js").Chess : null;
+  const ChessLib = root.Chess || (isNode ? require("../chess.js").Chess : null);
   const BASE = "data/masters/";
   let fsRead = null;
   if (isNode) { const fs = require("fs"), path = require("path"); const dir = path.join(__dirname, "..", BASE); fsRead = (f) => JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")); }

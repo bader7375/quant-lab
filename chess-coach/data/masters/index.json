@@ -1,0 +1,31 @@
+{
+ "version": 1,
+ "source": "KingBase 2017 (kingbase-chess.net, mirrored in github.com/rozim/ChessData), master games, players about 2000+",
+ "licence": "KingBase is distributed free for personal and non-commercial use; this tree keeps only aggregate move counts",
+ "games": 1796809,
+ "skipped": {
+  "no_result": 145,
+  "setup": 0,
+  "illegal": 0
+ },
+ "dateRange": [
+  "1990",
+  "2017"
+ ],
+ "plies": 24,
+ "minGames": 75,
+ "maxMoves": 12,
+ "positions": 39021,
+ "moves": 159402,
+ "shards": 5,
+ "hash": "fnv1a32",
+ "shardBytes": [
+  1150558,
+  1151745,
+  1144807,
+  1173528,
+  1151116
+ ],
+ "keyRule": "FEN fields 1-4 (board, side, castling, en passant); en-passant square only if an en-passant capture is legal",
+ "entry": "key -> [total, [[san, n, whiteWins, draws, blackWins], ...], other]"
+}
