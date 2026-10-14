@@ -88,8 +88,10 @@ function renderJourney() {
       <div class="where-next"><span class="note">الخطوة التالية</span><b>${ns.letter}. ${ns.ar}</b><button class="btn" data-open="${cur}">افتح الفصل</button></div>
       <div class="where-stat"><span class="mono">${done}/${CUR.chapters.length}</span><span class="note">فصول مكتملة</span></div>
     </div>
+    ${typeof warmPanelHtml === "function" ? warmPanelHtml() : ""}
     <div class="map" id="map"></div>`;
   for (const b of $$("[data-open]", el)) b.onclick = () => go("chapter", +b.dataset.open);
+  const wg = $("#warm-go", el); if (wg) wg.onclick = startWarmup;
   layoutMap($("#map", el), cur);
 }
 function layoutMap(box, cur) {

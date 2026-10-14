@@ -30,7 +30,7 @@ async function boot() {
     .catch(() => { stE.textContent = "Stockfish: تعذّر التشغيل"; stE.className = "chip bad"; });
   await Promise.all([Store.init(), loadData(), loadCurriculum(), Prob.load()]);
   stS.textContent = { db: "التقدم محفوظ (يقرؤه Claude)", local: "التقدم في هذا المتصفح فقط", memory: "التقدم مؤقت" }[Store.kind]; stS.className = "chip " + (Store.kind === "db" ? "ok" : "warn");
-  await Promise.all([journeyInit(), practiceInit()]);
+  await Promise.all([journeyInit(), practiceInit(), warmInit()]);
   let route = location.hash.slice(1); if (!route) { try { route = localStorage.getItem("cc:route") || ""; } catch {} }
   const [v, a] = routeFrom(route); go(v, a);
   window.addEventListener("hashchange", () => { const [v2, a2] = routeFrom(location.hash.slice(1)); if (v2 !== VIEW || a2 !== VIEW_ARG) go(v2, a2); });

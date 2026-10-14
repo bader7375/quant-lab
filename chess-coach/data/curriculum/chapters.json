@@ -62,7 +62,8 @@
      "opponent": "stockfish-limited",
      "focus": "opening",
      "liveChecklist": true
-    }
+    },
+    "learn": "ch01/learn.json"
    }
   },
   {

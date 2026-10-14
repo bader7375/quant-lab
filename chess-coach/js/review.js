@@ -235,7 +235,8 @@ function makeWarmCards(G) {
     if (r.color !== G.color || !r.cls || r.drop < 10 || !r.bestUci || seen.has(r.fenBefore)) continue;
     seen.add(r.fenBefore);
     const id = `warm-${G.id}-${r.ply}-${k++}`;
-    Store.set("cards/" + id, { id, kind: "warm", chapter: G.chapter, gameId: G.id, ply: r.ply, fen: r.fenBefore, played: r.san, playedUci: r.uci, best: r.best, bestUci: r.bestUci, bestLine: r.bestLine, refut: r.refut, drop: r.drop, cls: r.cls, hung: r.hung || null, missed: r.missed || null, created: now(), due: now() + 20 * 3600000, reps: 0, ef: 2.5, interval: 0, lapses: 0 });
+    const card = { id, kind: "warm", chapter: G.chapter, gameId: G.id, ply: r.ply, fen: r.fenBefore, played: r.san, playedUci: r.uci, best: r.best, bestUci: r.bestUci, bestLine: r.bestLine, refut: r.refut, drop: r.drop, cls: r.cls, hung: r.hung || null, missed: r.missed || null, created: now(), due: now() + 20 * 3600000, reps: 0, ef: 2.5, interval: 0, lapses: 0 };
+    Store.set("cards/" + id, card); if (typeof WARM !== "undefined") WARM.cards.push(card);
   }
   G.warmCards = k;
 }
