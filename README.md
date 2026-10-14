@@ -1,4 +1,37 @@
-# quant-lab — next-day probability model for US equities
+# quant-lab
+
+Two research systems for US equities, sharing one data layer and one standard of
+honesty: a harness strict enough that you can believe the number it prints.
+
+| system | question | docs |
+|---|---|---|
+| **Mean-reversion research system** (`quantlab.meanrev`) | For every daily bar: what is the calibrated probability that price reverts toward its mean within K days — and how should that be traded? | [docs/MEANREV.md](docs/MEANREV.md) |
+| **Next-day probability model** (`quantlab`) | For each stock in a large universe: will tomorrow's return exceed its own recent volatility? | below |
+
+## Mean-reversion research system — quickstart
+
+```bash
+pip install -r requirements.txt
+make meanrev-synthetic   # offline end-to-end run on a simulated regime-switching market (~3 min)
+make meanrev-demo        # SPY, QQQ, AAPL, MSFT from Yahoo Finance (needs network)
+make meanrev-app         # research terminal: http://127.0.0.1:8050
+```
+
+Seven mean definitions (moving averages, rolling Ornstein-Uhlenbeck, adaptive
+Kalman, regression-to-trend, Avellaneda-Lee factor-residual s-score, residual OU),
+188 point-in-time features in seven families (stationarity tests, Hurst, variance
+ratios, cointegration, GARCH, tail risk, microstructure, confluence), triple-barrier
+reversion labels, a purged walk-forward of per-family elastic-nets + LightGBM
+stacked by a non-negative meta-model, Platt calibration with Venn-Abers
+confidence intervals, EWMA-smoothed out-of-sample permutation importance, exact
+per-bar SHAP, a regime gate, inverse-vol × Kelly-lite sizing, a hedged next-open
+backtest — and a Dash research terminal that shows all of it bar by bar.
+**Read [docs/MEANREV.md](docs/MEANREV.md)**, including the results section's
+caveats, before trusting any number it produces.
+
+---
+
+# Next-day probability model for US equities
 
 A research pipeline that estimates, for each stock in a large US universe,
 the probability that **tomorrow's return exceeds its own recent volatility**.

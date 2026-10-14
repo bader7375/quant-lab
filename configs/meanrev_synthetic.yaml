@@ -1,0 +1,181 @@
+# Mean-reversion research system -- offline demo on the simulated regime-switching market.
+# Validates the whole system against a known ground truth; the numbers are NOT a forecast.
+#   make meanrev-synthetic
+data:
+  provider: synthetic
+  symbols:
+  - SPY
+  - QQQ
+  - AAPL
+  - MSFT
+  market_symbol: SPY
+  sector_map:
+    AAPL: XLK
+    MSFT: XLK
+  size_etf: IWM
+  momentum_etf: MTUM
+  factors:
+  - market
+  - sector
+  - size
+  - momentum
+  start: '2004-01-01'
+  end: null
+  files_path: uploads
+  files_pattern: '*'
+  cache_dir: data/cache/meanrev
+  min_history_days: 750
+  synthetic_seed: 11
+means:
+  ma_lookbacks:
+  - 5
+  - 10
+  - 20
+  - 50
+  - 100
+  ou_window: 250
+  ou_bias_correct: true
+  halflife_cap: 250.0
+  max_reversion_frac: 0.5
+  kalman_model: local_linear_trend
+  kalman_level_snr: 0.01
+  kalman_slope_snr: 1.0e-05
+  kalman_r_halflife: 30.0
+  kalman_nis_halflife: 10.0
+  kalman_q_inflate_max: 25.0
+  dev_sigma_halflife: 63.0
+  trend_window: 100
+  factor_window: 60
+  factor_beta_window: 250
+  primary_mean: factor
+features:
+  stat_window: 250
+  acf_window: 120
+  lb_lags: 10
+  adf_lags: 1
+  lrv_lags: null
+  vr_lags:
+  - 2
+  - 4
+  - 8
+  - 16
+  hurst_window: 250
+  hurst_smooth_span: 10
+  rv_window: 20
+  rv_short: 10
+  rv_long: 60
+  ewma_lambda: 0.94
+  garch_refit_every: 21
+  garch_window: 1000
+  garch_min_obs: 500
+  vol_regime_window: 252
+  vol_regime_lo: 0.3
+  vol_regime_hi: 0.7
+  tail_window: 250
+  tail_short: 60
+  es_alpha: 0.05
+  pct_rank_window: 500
+  norm_window: 252
+  coint_window: 250
+  johansen: true
+  micro_window: 60
+  reversion_horizons:
+  - 5
+  - 10
+  - 20
+  breach_sigma: 2.0
+  ttm_z_target: 0.5
+  ttm_cap: 120.0
+  residual_stats: true
+  buffer_bars: 1600
+label:
+  horizon: 10
+  mode: price_target
+  reversion_frac: 0.5
+  stop_z: 1.0
+  stop_atr_mult: 3.0
+  min_abs_z: 0.75
+walkforward:
+  train_days: 1260
+  expanding: false
+  test_days: 63
+  embargo_days: 5
+  inner_folds: 4
+  min_train_samples: 200
+  pool_weight: 0.25
+  n_jobs: 4
+  resume: true
+model:
+  kind: stack
+  en_C: 0.05
+  en_l1_ratio: 0.5
+  lgbm_learning_rate: 0.03
+  lgbm_num_leaves: 7
+  lgbm_max_depth: 3
+  lgbm_min_child_samples: 40
+  lgbm_subsample: 0.7
+  lgbm_colsample: 0.5
+  lgbm_reg_lambda: 10.0
+  lgbm_reg_alpha: 1.0
+  lgbm_n_estimators: 400
+  lgbm_early_stopping: 40
+  meta_prior_strength: 300.0
+  meta_nonneg: true
+  class_weight: balanced
+  uniqueness_weights: true
+  calibration: platt
+  confidence: venn_abers
+  bootstrap_n: 64
+  bootstrap_level: 0.8
+  regression: true
+  perm_repeats: 3
+  importance_halflife: 4.0
+  importance_feedback: true
+  importance_drop: -0.002
+  min_features: 25
+  shap_top_k: 8
+  seed: 7
+regime:
+  enabled: true
+  hurst_trend: 0.5
+  adf_trend_p: 0.1
+  hurst_mr: 0.45
+  adf_mr_p: 0.05
+  vr_confirm: true
+  trend_action: suppress
+  trend_threshold_penalty: 0.1
+  trend_size_mult: 0.5
+  neutral_size_mult: 0.75
+  mr_size_mult: 1.25
+  mr_threshold_relief: 0.03
+signal:
+  prob_threshold: 0.6
+  require_lower_bound: true
+  entry_z: 1.0
+  min_confluence: 1
+  max_positions: 4
+  cooldown_days: 3
+  allow_short: true
+risk:
+  initial_capital: 1000000.0
+  target_daily_risk: 0.008
+  kelly_fraction: 0.5
+  kelly_unit: 0.1
+  kelly_cap: 1.5
+  ci_width_ref: 0.3
+  ci_floor: 0.25
+  max_position_weight: 1.0
+  max_gross_leverage: 2.0
+  hedge: true
+  commission_bps: 1.0
+  slippage_bps: 2.0
+  borrow_bps_annual: 50.0
+exits:
+  tp_z: 0.0
+  time_stop_days: null
+  stop_z: 1.0
+  stop_atr_mult: 3.0
+  trail_activation: 0.5
+  trail_z: 0.5
+output_dir: artifacts/meanrev
+run_name: demo-synthetic

@@ -1,0 +1,42 @@
+import asyncio, json, pandas as pd, numpy as np
+from playwright.async_api import async_playwright
+SP = "/tmp/claude-0/-home-user-quant-lab/9205d36d-68a1-5401-8852-b575f8097dc2/scratchpad"
+ML = open(f"{SP}/r27/today27.json").read(); SC = open(f"{SP}/ml26/sectors.json").read()
+def doc(code):
+    d = pd.read_csv(f"{SP}/edge26/data/d/{code}.SR.csv", index_col=0, parse_dates=True); d = d[(d.close > 0) & (d.volume > 0)].loc["2015":]; k = d.adjclose / d.close
+    rows = [[int(t.strftime("%Y%m%d")), round(float(o), 4), round(float(h), 4), round(float(l), 4), round(float(c), 4), int(v)] for t, o, h, l, c, v in zip(d.index, d.open * k, d.high * k, d.low * k, d.adjclose, d.volume)]
+    return {"sym": code, "source": "Yahoo test", "fetched_at": "2026-10-13T09:00:00Z", "adjusted": True, "rows": rows}
+CODES = ["1150", "2010", "1120", "3020"]
+BARS = {c: doc(c) for c in CODES}
+MOCK = """window.__ML=%s;window.__SC=%s;window.__B=%s;window.claude={use:async k=>k==='db'?{collection:n=>{const q={onSnapshot:(cb)=>{setTimeout(()=>cb({docs:n==='ml'?[{id:'latest',data:()=>window.__ML},{id:'sectors',data:()=>window.__SC}]:n==='bars'?Object.entries(window.__B).map(([id,b])=>({id,data:()=>b})):[]}),1500);return()=>{}},orderBy:()=>q,limit:()=>q};return q}}:null};""" % (ML, SC, json.dumps(BARS))
+F = pd.read_pickle(f"{SP}/r27/F27y.pkl")
+async def done(pg): await pg.wait_for_function("document.getElementById('runmsg').textContent.startsWith('Done') && !document.getElementById('run').disabled", timeout=400000)
+async def main():
+    async with async_playwright() as p:
+        b = await p.chromium.launch(executable_path="/opt/pw-browsers/chromium"); pg = await b.new_page(viewport={"width": 1400, "height": 1300}); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e))); await pg.add_init_script(MOCK)
+        await pg.goto(f"file://{SP}/QuantLab-ReversalEdge-v15.html"); await done(pg); await pg.wait_for_timeout(2500)
+        await pg.click("#tabs button[data-t=data]"); await pg.wait_for_timeout(300)
+        for c in CODES: await pg.check(f'#lib-t input[data-lib="{c}"]'); await pg.wait_for_timeout(1500); await done(pg); await pg.click("#tabs button[data-t=data]"); await pg.wait_for_timeout(200)
+        await pg.wait_for_timeout(3000); await done(pg)
+        print("updates:", (await pg.inner_text("#upd-t"))[:400].replace("\n", " | "))
+        await pg.click("#tabs button[data-t=chart]"); await pg.wait_for_timeout(800)
+        for c in CODES:
+            await pg.select_option("#sym", c); await pg.wait_for_timeout(2500)
+            leg = await pg.inner_text("#legend") if await pg.query_selector("#legend") else ""
+            ins = await pg.inner_text("#inspbody")
+            import re
+            m = re.search(r"Stretch Z\s*([−\-]?\d+\.\d+)", leg); zpage = float(m.group(1).replace("−", "-")) if m else None
+            print(c, "page legend Stretch Z:", zpage, "| python zc 2026-10-12:", round(float(F["zc"].loc["2026-10-12", c]), 3), "| last date in legend:", re.findall(r"2026-\d\d-\d\d", leg)[:1])
+        print("INSPECTOR (3020):", ins[:900].replace("\n", " | "))
+        await pg.screenshot(path=f"{SP}/v15_chart.png")
+        await pg.click("#tabs button[data-t=scan]"); await pg.wait_for_timeout(800)
+        print("CORE NOTE:", (await pg.inner_text("#core-note"))[-700:].replace("\n", " "))
+        print("CORE REC:", (await pg.inner_text("#core-rec"))[:500].replace("\n", " | "))
+        el = await pg.query_selector("#core-box"); await el.screenshot(path=f"{SP}/v15_core.png")
+        await pg.set_viewport_size({"width": 390, "height": 900}); await pg.wait_for_timeout(600)
+        for t in ("data", "chart", "scan"):
+            await pg.click(f"#tabs button[data-t={t}]"); await pg.wait_for_timeout(500); print(t, "hscroll:", await pg.evaluate("document.documentElement.scrollWidth>innerWidth"))
+        await pg.click("#tabs button[data-t=chart]"); await pg.wait_for_timeout(800); await pg.screenshot(path=f"{SP}/v15_phone.png", full_page=False)
+        print("errors:", errs[:5]); await b.close()
+asyncio.run(main())

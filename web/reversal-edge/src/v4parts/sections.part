@@ -1,0 +1,27 @@
+<section id="t-model" hidden>
+    <h2>Out-of-sample report cards</h2><div class="cards" id="cards"></div>
+    <h2 id="imp-title"></h2>
+    <div class="scrub"><span>retrain step</span><input type="range" id="impstep" min="0" max="1" value="1"><span id="impd"></span></div>
+    <div class="two"><div id="impbars"></div><div id="famarea"></div></div>
+    <div class="two"><div id="calib"></div><div id="roc"></div></div>
+  </section>
+  <section id="t-perf" hidden>
+    <div class="kpis" id="pk"></div>
+    <div id="eqplot"></div>
+    <div class="two"><div id="rhist"></div><div id="exits"></div></div>
+    <div id="monthly"></div>
+    <h2>Per-symbol attribution</h2><div class="tw"><table class="bl" id="attr"></table></div>
+  </section>
+  <section id="t-trades" hidden>
+    <div class="ctl"><label><input type="checkbox" id="trsym">selected symbol only</label><button class="btn ghost" id="dlcsv" hidden>Download trades CSV</button><span class="note">click a row to open the trade on the chart · click a header to sort</span></div>
+    <div class="tw" style="max-height:75vh"><table class="bl" id="trt"></table></div>
+  </section>
+  <section id="t-about" hidden><div class="about">
+    <h2 style="font-size:16px">What this page does</h2>
+    <p>Upload daily price history and this page runs the mean-reversion system on it, entirely in your browser: nothing is sent anywhere. For each day it estimates the calibrated probability that price closes half its gap to a fair-value mean within K days, then simulates trading those signals with next-open fills and costs.</p>
+    <p>It is a compact port of the full Python system in the quant-lab repository: the same mean definitions (Kalman, rolling Ornstein-Uhlenbeck, trend regression, moving averages, market residual), stationarity statistics (Hurst, ADF, variance ratio), triple-barrier labels, a purged walk-forward, regime gate, sizing and exits. The model is a regularised logistic regression on 22 features with bootstrap confidence bands and exact SHAP explanations; the Python version adds 188 features, stacked models and Venn-Abers intervals.</p>
+    <h2 style="font-size:16px">Reading the results honestly</h2>
+    <p>Every prediction is out of sample: a model only ever sees data from before the day it predicts. Even so, check the Model tab before trusting a number. Brier skill at or below zero means the probabilities are no better than always guessing the average; an AUC near 0.50 means no skill. The sample TSLA file shows modest ranking skill (AUC ≈ 0.57) but slightly negative Brier skill, and few trades: a trending single stock with no market file to hedge against is hard to trade this way.</p>
+    <p>Add a market file (for example SPY.csv) and choose "Market residual" as the traded mean to trade the stock's move relative to the market, hedged — the way the institutional version works.</p>
+    <p>Uploaded files stay in this browser only (they are remembered on this device when storage allows).</p>
+  </div></section>
