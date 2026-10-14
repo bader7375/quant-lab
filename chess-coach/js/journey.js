@@ -59,7 +59,9 @@ function nextStage(n) { const c = chapter(n); for (const st of STAGES) if (!stag
 function ruleProgress(c) {
   const r = c.rule || {}; const games = countedGames(c.n);
   if (r.kind === "opening_checklist") {
-    const last = games.slice(-r.window); const ok = last.filter((g) => g.metrics && g.metrics.openingScore >= 4 && !g.metrics.openingBlunder).length;
+    // a game that ended before your 10th move cannot be judged on the checklist: it neither counts nor takes a slot
+    const judged = games.filter((g) => g.metrics && g.metrics.openingScore != null);
+    const last = judged.slice(-r.window); const ok = last.filter((g) => g.metrics.openingScore >= 4 && !g.metrics.openingBlunder).length;
     return { met: last.length >= r.window && ok >= r.need, have: ok, need: r.need, unit: "مباريات مؤهلة من آخر " + r.window };
   }
   if (r.kind === "safety") {

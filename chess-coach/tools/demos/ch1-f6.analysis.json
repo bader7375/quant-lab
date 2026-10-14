@@ -1,0 +1,6253 @@
+{
+ "id": "ch1-f6",
+ "chapter": 1,
+ "kind": "coach",
+ "narrated": "w",
+ "white": "المدرّب (Stockfish 17.1)",
+ "black": "Maia-1100 (لاعب بمستوى 1100 تقريبًا)",
+ "event": "مباراة تدريبية مولّدة",
+ "start": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+ "depth": 20,
+ "engine": "Stockfish 17.1 (lite NNUE, WASM)",
+ "analysedAt": "2026-10-14T17:20:47.052Z",
+ "finalTerminal": false,
+ "plies": [
+  {
+   "fenBefore": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+   "san": "e4",
+   "uci": "e2e4",
+   "color": "w",
+   "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+   "lines": [
+    {
+     "san": [
+      "e4",
+      "c5",
+      "Nf3",
+      "Nc6",
+      "d4",
+      "cxd4",
+      "Nxd4",
+      "g6",
+      "Nc3",
+      "Bg7"
+     ],
+     "cp": 38,
+     "wdl": [
+      99,
+      894,
+      7
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "d4",
+      "d5",
+      "c4",
+      "e6",
+      "Nc3",
+      "Bb4",
+      "g3",
+      "Nf6",
+      "Bg2",
+      "Nc6"
+     ],
+     "cp": 34,
+     "wdl": [
+      88,
+      904,
+      8
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Nf3",
+      "d5",
+      "d4",
+      "Nf6",
+      "c4",
+      "e6",
+      "Nc3",
+      "c5",
+      "Bg5",
+      "cxd4"
+     ],
+     "cp": 29,
+     "wdl": [
+      74,
+      916,
+      10
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "e5",
+     "e4",
+     "Nf6",
+     "Nc3"
+    ],
+    "cp": -41,
+    "wdl": [
+     7,
+     885,
+     108
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "g1",
+       "c1",
+       "f1"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 3,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 0
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 3,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 0
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   },
+   "after": {
+    "cp": 40,
+    "wdl": [
+     105,
+     888,
+     7
+    ],
+    "line": [
+     "e6",
+     "d4",
+     "d5",
+     "Nc3",
+     "Nf6",
+     "e5",
+     "Nfd7",
+     "f4",
+     "c5",
+     "Nf3"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "g1",
+       "c1",
+       "f1"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 3,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 0
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+   "san": "e5",
+   "uci": "e7e5",
+   "color": "b",
+   "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2",
+   "lines": [
+    {
+     "san": [
+      "e6",
+      "d4",
+      "d5",
+      "Nc3",
+      "Nf6",
+      "e5",
+      "Nfd7",
+      "f4",
+      "c5",
+      "Nf3"
+     ],
+     "cp": 40,
+     "wdl": [
+      105,
+      888,
+      7
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "c5",
+      "Nf3",
+      "Nc6",
+      "d4",
+      "cxd4",
+      "Nxd4",
+      "Nf6",
+      "Nc3",
+      "e5",
+      "Ndb5"
+     ],
+     "cp": 43,
+     "wdl": [
+      117,
+      877,
+      6
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "e5",
+      "Nf3",
+      "Nc6",
+      "d4",
+      "exd4",
+      "Nxd4",
+      "Nf6",
+      "Nxc6",
+      "dxc6",
+      "Qxd8+"
+     ],
+     "cp": 45,
+     "wdl": [
+      123,
+      871,
+      6
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "d4",
+     "g6",
+     "Nf3",
+     "d6"
+    ],
+    "cp": 97,
+    "wdl": [
+     473,
+     526,
+     1
+    ]
+   },
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "g1",
+       "c1",
+       "f1"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 3,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 0
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   },
+   "after": {
+    "cp": 39,
+    "wdl": [
+     104,
+     889,
+     7
+    ],
+    "line": [
+     "Nf3",
+     "Nf6",
+     "d4",
+     "exd4",
+     "e5",
+     "Ne4",
+     "Bd3",
+     "Nc5",
+     "Nxd4",
+     "Nxd3+"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "g1",
+       "c1",
+       "f1"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2",
+   "san": "Nf3",
+   "uci": "g1f3",
+   "color": "w",
+   "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+   "lines": [
+    {
+     "san": [
+      "Nf3",
+      "Nf6",
+      "d4",
+      "exd4",
+      "e5",
+      "Ne4",
+      "Bd3",
+      "Nc5",
+      "Nxd4",
+      "Nxd3+"
+     ],
+     "cp": 39,
+     "wdl": [
+      104,
+      889,
+      7
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Nc3",
+      "Nc6",
+      "Nf3",
+      "Nf6",
+      "d4",
+      "exd4",
+      "Nxd4",
+      "Bb4",
+      "Nxc6",
+      "bxc6"
+     ],
+     "cp": 17,
+     "wdl": [
+      49,
+      935,
+      16
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bc4",
+      "Nf6",
+      "Nc3",
+      "Nc6",
+      "Bb3",
+      "Bc5",
+      "Nf3",
+      "d6",
+      "d3",
+      "Nd4"
+     ],
+     "cp": 6,
+     "wdl": [
+      34,
+      943,
+      23
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "Nf6",
+     "Nf3",
+     "d5",
+     "exd5"
+    ],
+    "cp": -39,
+    "wdl": [
+     7,
+     889,
+     104
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "g1",
+       "c1",
+       "f1"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   },
+   "after": {
+    "cp": 30,
+    "wdl": [
+     76,
+     914,
+     10
+    ],
+    "line": [
+     "Nc6",
+     "Nc3",
+     "Nf6",
+     "Bb5",
+     "Bd6",
+     "d4",
+     "exd4",
+     "Nxd4",
+     "a6",
+     "Be2"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "c1",
+       "f1"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "e5",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+   "san": "f6",
+   "uci": "f7f6",
+   "color": "b",
+   "fen": "rnbqkbnr/pppp2pp/5p2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
+   "lines": [
+    {
+     "san": [
+      "Nc6",
+      "Nc3",
+      "Nf6",
+      "Bb5",
+      "Bd6",
+      "d4",
+      "exd4",
+      "Nxd4",
+      "a6",
+      "Be2"
+     ],
+     "cp": 30,
+     "wdl": [
+      76,
+      914,
+      10
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Nf6",
+      "Nxe5",
+      "d6",
+      "Nf3",
+      "Nxe4",
+      "d4",
+      "d5",
+      "Bd3",
+      "Bd6",
+      "O-O"
+     ],
+     "cp": 50,
+     "wdl": [
+      144,
+      851,
+      5
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "d6",
+      "d4",
+      "exd4",
+      "Qxd4",
+      "Nc6",
+      "Qa4",
+      "g6",
+      "Bg5",
+      "Nf6",
+      "Bb5"
+     ],
+     "cp": 51,
+     "wdl": [
+      148,
+      847,
+      5
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "Nxe5",
+     "Qe7",
+     "d4",
+     "d6"
+    ],
+    "cp": 136,
+    "wdl": [
+     783,
+     217,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "c1",
+       "f1"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "e5",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   },
+   "played": {
+    "san": [
+     "f6",
+     "Bc4",
+     "d6",
+     "d4",
+     "Nc6",
+     "c3",
+     "Bg4",
+     "O-O",
+     "Nge7",
+     "Be2"
+    ],
+    "cp": 138,
+    "wdl": [
+     797,
+     203,
+     0
+    ],
+    "depth": 20
+   },
+   "after": {
+    "cp": 141,
+    "wdl": [
+     809,
+     191,
+     0
+    ],
+    "line": [
+     "Nxe5",
+     "Qe7",
+     "Nf3",
+     "d5",
+     "d3",
+     "dxe4",
+     "dxe4",
+     "Qxe4+",
+     "Be2",
+     "Bf5"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "c1",
+       "f1"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/pppp2pp/5p2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
+   "san": "Bc4",
+   "uci": "f1c4",
+   "color": "w",
+   "fen": "rnbqkbnr/pppp2pp/5p2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 1 3",
+   "lines": [
+    {
+     "san": [
+      "Nxe5",
+      "Qe7",
+      "Nf3",
+      "d5",
+      "d3",
+      "dxe4",
+      "dxe4",
+      "Qxe4+",
+      "Be2",
+      "Bf5"
+     ],
+     "cp": 141,
+     "wdl": [
+      809,
+      191,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bc4",
+      "c6",
+      "Nc3",
+      "d5",
+      "exd5",
+      "b5",
+      "Bb3",
+      "b4",
+      "Ne2",
+      "cxd5"
+     ],
+     "cp": 136,
+     "wdl": [
+      783,
+      217,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "d4",
+      "d5",
+      "exd5",
+      "e4",
+      "Qe2",
+      "f5",
+      "Qb5+",
+      "Nd7",
+      "Ng5",
+      "a6"
+     ],
+     "cp": 120,
+     "wdl": [
+      668,
+      332,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "d5",
+     "exd5",
+     "Qxd5",
+     "Nc3"
+    ],
+    "cp": 69,
+    "wdl": [
+     249,
+     749,
+     2
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "c1",
+       "f1"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   },
+   "after": {
+    "cp": 118,
+    "wdl": [
+     656,
+     344,
+     0
+    ],
+    "line": [
+     "c6",
+     "d4",
+     "d5",
+     "exd5",
+     "cxd5",
+     "Bb5+",
+     "Bd7",
+     "Bxd7+",
+     "Nxd7",
+     "dxe5"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "c1"
+      ],
+      "developed": 2,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/pppp2pp/5p2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 1 3",
+   "san": "c6",
+   "uci": "c7c6",
+   "color": "b",
+   "fen": "rnbqkbnr/pp1p2pp/2p2p2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+   "lines": [
+    {
+     "san": [
+      "c6",
+      "d4",
+      "d5",
+      "exd5",
+      "cxd5",
+      "Bb5+",
+      "Bd7",
+      "Bxd7+",
+      "Nxd7",
+      "dxe5"
+     ],
+     "cp": 118,
+     "wdl": [
+      656,
+      344,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "d6",
+      "d4",
+      "Nc6",
+      "h3",
+      "g6",
+      "Nc3",
+      "Na5",
+      "Be2",
+      "Bg7",
+      "Be3"
+     ],
+     "cp": 138,
+     "wdl": [
+      797,
+      203,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Nc6",
+      "d4",
+      "d6",
+      "a4",
+      "g6",
+      "a5",
+      "Bg7",
+      "a6",
+      "bxa6",
+      "O-O"
+     ],
+     "cp": 150,
+     "wdl": [
+      856,
+      144,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "d4",
+     "d6",
+     "Be3",
+     "Nc6"
+    ],
+    "cp": 165,
+    "wdl": [
+     909,
+     91,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "c1"
+      ],
+      "developed": 2,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   },
+   "after": {
+    "cp": 129,
+    "wdl": [
+     740,
+     260,
+     0
+    ],
+    "line": [
+     "d4",
+     "d5",
+     "exd5",
+     "cxd5",
+     "Bb5+",
+     "Bd7",
+     "Bxd7+",
+     "Qxd7",
+     "dxe5",
+     "Nc6"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [
+     "Bf7+"
+    ],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "c1"
+      ],
+      "developed": 2,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/pp1p2pp/2p2p2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4",
+   "san": "Nc3",
+   "uci": "b1c3",
+   "color": "w",
+   "fen": "rnbqkbnr/pp1p2pp/2p2p2/4p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R b KQkq - 1 4",
+   "lines": [
+    {
+     "san": [
+      "d4",
+      "d5",
+      "exd5",
+      "cxd5",
+      "Bb5+",
+      "Bd7",
+      "Bxd7+",
+      "Qxd7",
+      "dxe5",
+      "Nc6"
+     ],
+     "cp": 129,
+     "wdl": [
+      740,
+      260,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Nc3",
+      "d5",
+      "exd5",
+      "b5",
+      "Bb3",
+      "b4",
+      "Ne4",
+      "cxd5",
+      "Nxe5",
+      "fxe5"
+     ],
+     "cp": 120,
+     "wdl": [
+      668,
+      332,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bb3",
+      "d5",
+      "exd5",
+      "cxd5",
+      "O-O",
+      "d4",
+      "d3",
+      "Bg4",
+      "h3",
+      "Bxf3"
+     ],
+     "cp": 114,
+     "wdl": [
+      623,
+      377,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "d5",
+     "exd5",
+     "cxd5",
+     "Bb3"
+    ],
+    "cp": -9,
+    "wdl": [
+     20,
+     942,
+     38
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [
+     "Bf7+"
+    ],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b1",
+       "c1"
+      ],
+      "developed": 2,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   },
+   "after": {
+    "cp": 136,
+    "wdl": [
+     781,
+     219,
+     0
+    ],
+    "line": [
+     "d5",
+     "exd5",
+     "b5",
+     "Bb3",
+     "b4",
+     "Ne4",
+     "cxd5",
+     "Nxe5",
+     "g6",
+     "d4"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 6
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/pp1p2pp/2p2p2/4p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R b KQkq - 1 4",
+   "san": "b5",
+   "uci": "b7b5",
+   "color": "b",
+   "fen": "rnbqkbnr/p2p2pp/2p2p2/1p2p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R w KQkq b6 0 5",
+   "lines": [
+    {
+     "san": [
+      "d5",
+      "exd5",
+      "b5",
+      "Bb3",
+      "b4",
+      "Ne4",
+      "cxd5",
+      "Nxe5",
+      "g6",
+      "d4"
+     ],
+     "cp": 136,
+     "wdl": [
+      781,
+      219,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "d6",
+      "d4",
+      "g6",
+      "a4",
+      "Nh6",
+      "a5",
+      "Bg7",
+      "Be3",
+      "Nf7",
+      "h4"
+     ],
+     "cp": 152,
+     "wdl": [
+      864,
+      136,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "g6",
+      "d4",
+      "d6",
+      "O-O",
+      "Nd7",
+      "a4",
+      "a5",
+      "Ba2",
+      "Nh6",
+      "Nh4"
+     ],
+     "cp": 156,
+     "wdl": [
+      880,
+      120,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "Nxe5",
+     "Nh6",
+     "Nf3",
+     "b5"
+    ],
+    "cp": 320,
+    "wdl": [
+     1000,
+     0,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 6
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   },
+   "played": {
+    "san": [
+     "b5",
+     "Bb3",
+     "d6",
+     "d4",
+     "a5",
+     "a4",
+     "b4",
+     "Ne2",
+     "g6",
+     "h4"
+    ],
+    "cp": 171,
+    "wdl": [
+     926,
+     74,
+     0
+    ],
+    "depth": 20
+   },
+   "after": {
+    "cp": 179,
+    "wdl": [
+     944,
+     56,
+     0
+    ],
+    "line": [
+     "Nxe5",
+     "bxc4",
+     "Qh5+",
+     "g6",
+     "Nxg6",
+     "hxg6",
+     "Qxh8",
+     "Kf7",
+     "h4",
+     "Bg7"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [
+     "Bf7+"
+    ],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 6
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/p2p2pp/2p2p2/1p2p3/2B1P3/2N2N2/PPPP1PPP/R1BQK2R w KQkq b6 0 5",
+   "san": "Nxe5",
+   "uci": "f3e5",
+   "color": "w",
+   "fen": "rnbqkbnr/p2p2pp/2p2p2/1p2N3/2B1P3/2N5/PPPP1PPP/R1BQK2R b KQkq - 0 5",
+   "lines": [
+    {
+     "san": [
+      "Nxe5",
+      "bxc4",
+      "Qh5+",
+      "g6",
+      "Nxg6",
+      "hxg6",
+      "Qxh8",
+      "Kf7",
+      "h4",
+      "Bg7"
+     ],
+     "cp": 179,
+     "wdl": [
+      944,
+      56,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bb3",
+      "d6",
+      "d4",
+      "a5",
+      "a4",
+      "b4",
+      "Ne2",
+      "Qc7",
+      "O-O",
+      "g6"
+     ],
+     "cp": 173,
+     "wdl": [
+      929,
+      71,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bxg8",
+      "Rxg8",
+      "d4",
+      "d6",
+      "d5",
+      "b4",
+      "Ne2",
+      "a5",
+      "O-O",
+      "Qd7"
+     ],
+     "cp": 94,
+     "wdl": [
+      445,
+      554,
+      1
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "bxc4",
+     "d4",
+     "cxd3",
+     "cxd3"
+    ],
+    "cp": -339,
+    "wdl": [
+     0,
+     0,
+     1000
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 39,
+     "diff": 0
+    },
+    "phase": "opening",
+    "checks": [
+     "Bf7+"
+    ],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 6
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    }
+   },
+   "after": {
+    "cp": 142,
+    "wdl": [
+     823,
+     177,
+     0
+    ],
+    "line": [
+     "bxc4",
+     "Qh5+",
+     "Ke7",
+     "Qf7+",
+     "Kd6",
+     "Nxc4+",
+     "Kc7",
+     "d4",
+     "g5",
+     "h4"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 38,
+     "diff": 1
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [
+     "fxe5",
+     "bxc4"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "e5",
+       "type": "n",
+       "gain": 3,
+       "defended": false
+      },
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 2,
+       "defended": true
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [
+       "e"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/p2p2pp/2p2p2/1p2N3/2B1P3/2N5/PPPP1PPP/R1BQK2R b KQkq - 0 5",
+   "san": "fxe5",
+   "uci": "f6e5",
+   "color": "b",
+   "fen": "rnbqkbnr/p2p2pp/2p5/1p2p3/2B1P3/2N5/PPPP1PPP/R1BQK2R w KQkq - 0 6",
+   "lines": [
+    {
+     "san": [
+      "bxc4",
+      "Qh5+",
+      "Ke7",
+      "Qf7+",
+      "Kd6",
+      "Nxc4+",
+      "Kc7",
+      "d4",
+      "g5",
+      "h4"
+     ],
+     "cp": 142,
+     "wdl": [
+      823,
+      177,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Nh6",
+      "Qh5+",
+      "Ke7",
+      "Bb3",
+      "Qe8",
+      "Qxe8+",
+      "Kxe8",
+      "Nf3",
+      "Nf7",
+      "a4"
+     ],
+     "cp": 263,
+     "wdl": [
+      997,
+      3,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "fxe5",
+      "Qh5+",
+      "g6",
+      "Qxe5+",
+      "Ne7",
+      "Bb3",
+      "Rg8",
+      "Bxg8",
+      "d6",
+      "Qh8"
+     ],
+     "cp": 346,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "Nf7",
+     "Qe7",
+     "Bb3",
+     "b4"
+    ],
+    "cp": 457,
+    "wdl": [
+     1000,
+     0,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 39,
+     "b": 38,
+     "diff": 1
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [
+     "fxe5",
+     "bxc4"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "e5",
+       "type": "n",
+       "gain": 3,
+       "defended": false
+      },
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 2,
+       "defended": true
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 2,
+      "openFiles": [
+       "e"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "after": {
+    "cp": 358,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "Qh5+",
+     "g6",
+     "Qxe5+",
+     "Ne7",
+     "Bb3",
+     "Rg8",
+     "Bxg8",
+     "d6",
+     "Qh8",
+     "Nxg8"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 38,
+     "diff": -2
+    },
+    "phase": "opening",
+    "checks": [
+     "Bf7+",
+     "Qh5+"
+    ],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "f"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/p2p2pp/2p5/1p2p3/2B1P3/2N5/PPPP1PPP/R1BQK2R w KQkq - 0 6",
+   "san": "Qh5+",
+   "uci": "d1h5",
+   "color": "w",
+   "fen": "rnbqkbnr/p2p2pp/2p5/1p2p2Q/2B1P3/2N5/PPPP1PPP/R1B1K2R b KQkq - 1 6",
+   "lines": [
+    {
+     "san": [
+      "Qh5+",
+      "g6",
+      "Qxe5+",
+      "Ne7",
+      "Bb3",
+      "Rg8",
+      "Bxg8",
+      "d6",
+      "Qh8",
+      "Nxg8"
+     ],
+     "cp": 358,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "d4",
+      "Nf6",
+      "Bb3",
+      "d6",
+      "O-O",
+      "Nbd7",
+      "a4",
+      "b4",
+      "Ne2",
+      "a5"
+     ],
+     "cp": -119,
+     "wdl": [
+      0,
+      322,
+      678
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bb3",
+      "d6",
+      "d4",
+      "Nf6",
+      "O-O",
+      "a5",
+      "a4",
+      "b4",
+      "Ne2",
+      "Nbd7"
+     ],
+     "cp": -142,
+     "wdl": [
+      0,
+      162,
+      838
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "bxc4",
+     "Qh5+",
+     "Ke7",
+     "d4"
+    ],
+    "cp": -318,
+    "wdl": [
+     0,
+     0,
+     1000
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 38,
+     "diff": -2
+    },
+    "phase": "opening",
+    "checks": [
+     "Bf7+",
+     "Qh5+"
+    ],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "f"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "after": {
+    "cp": 317,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "g6",
+     "Qxe5+",
+     "Qe7",
+     "Qxh8",
+     "bxc4",
+     "Qxg8",
+     "d5",
+     "d4",
+     "cxd3",
+     "cxd3"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": true,
+    "material": {
+     "w": 36,
+     "b": 38,
+     "diff": -2
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 5
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "e5",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/p2p2pp/2p5/1p2p2Q/2B1P3/2N5/PPPP1PPP/R1B1K2R b KQkq - 1 6",
+   "san": "g6",
+   "uci": "g7g6",
+   "color": "b",
+   "fen": "rnbqkbnr/p2p3p/2p3p1/1p2p2Q/2B1P3/2N5/PPPP1PPP/R1B1K2R w KQkq - 0 7",
+   "lines": [
+    {
+     "san": [
+      "g6",
+      "Qxe5+",
+      "Qe7",
+      "Qxh8",
+      "bxc4",
+      "Qxg8",
+      "d5",
+      "d4",
+      "cxd3",
+      "cxd3"
+     ],
+     "cp": 317,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Ke7",
+      "Qxe5#"
+     ],
+     "cp": 9990,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": true,
+    "material": {
+     "w": 36,
+     "b": 38,
+     "diff": -2
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 5
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "e5",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "after": {
+    "cp": 316,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "Qxe5+",
+     "Qe7",
+     "Qxh8",
+     "bxc4",
+     "Qxg8",
+     "d5",
+     "O-O",
+     "Be6",
+     "Qh8",
+     "Nd7"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 38,
+     "diff": -2
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxg6+",
+     "Qxe5+",
+     "Bf7+"
+    ],
+    "goodCaptures": [
+     "Qxe5+"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "h5",
+       "type": "q",
+       "gain": 9,
+       "defended": false
+      },
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 5
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "e5",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "f"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/p2p3p/2p3p1/1p2p2Q/2B1P3/2N5/PPPP1PPP/R1B1K2R w KQkq - 0 7",
+   "san": "Qxe5+",
+   "uci": "h5e5",
+   "color": "w",
+   "fen": "rnbqkbnr/p2p3p/2p3p1/1p2Q3/2B1P3/2N5/PPPP1PPP/R1B1K2R b KQkq - 0 7",
+   "lines": [
+    {
+     "san": [
+      "Qxe5+",
+      "Qe7",
+      "Qxh8",
+      "bxc4",
+      "Qxg8",
+      "d5",
+      "O-O",
+      "Be6",
+      "Qh8",
+      "Nd7"
+     ],
+     "cp": 316,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bf7+",
+      "Kxf7",
+      "Qxe5",
+      "Nf6",
+      "Qf4",
+      "Kg8",
+      "e5",
+      "Nh5",
+      "Qf3",
+      "d5"
+     ],
+     "cp": -428,
+     "wdl": [
+      0,
+      0,
+      1000
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Qe2",
+      "bxc4",
+      "Qxc4",
+      "Bg7",
+      "d3",
+      "Ne7",
+      "Bg5",
+      "Ba6",
+      "Qc5",
+      "d6"
+     ],
+     "cp": -448,
+     "wdl": [
+      0,
+      0,
+      1000
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "gxh5",
+     "Be2",
+     "Nf6",
+     "d4"
+    ],
+    "cp": -716,
+    "wdl": [
+     0,
+     0,
+     1000
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 38,
+     "diff": -2
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxg6+",
+     "Qxe5+",
+     "Bf7+"
+    ],
+    "goodCaptures": [
+     "Qxe5+"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "h5",
+       "type": "q",
+       "gain": 9,
+       "defended": false
+      },
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 5
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "e5",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "f"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "after": {
+    "cp": 332,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "Qe7",
+     "Qxh8",
+     "bxc4",
+     "Qxg8",
+     "d5",
+     "O-O",
+     "d4",
+     "Ne2",
+     "d3",
+     "cxd3"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": true,
+    "material": {
+     "w": 36,
+     "b": 37,
+     "diff": -1
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 7
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h8",
+       "type": "r",
+       "gain": 5,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkbnr/p2p3p/2p3p1/1p2Q3/2B1P3/2N5/PPPP1PPP/R1B1K2R b KQkq - 0 7",
+   "san": "Ne7",
+   "uci": "g8e7",
+   "color": "b",
+   "fen": "rnbqkb1r/p2pn2p/2p3p1/1p2Q3/2B1P3/2N5/PPPP1PPP/R1B1K2R w KQkq - 1 8",
+   "lines": [
+    {
+     "san": [
+      "Qe7",
+      "Qxh8",
+      "bxc4",
+      "Qxg8",
+      "d5",
+      "O-O",
+      "d4",
+      "Ne2",
+      "d3",
+      "cxd3"
+     ],
+     "cp": 332,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Ne7",
+      "Bb3",
+      "Rg8",
+      "Bxg8",
+      "d6",
+      "Qh8",
+      "Nxg8",
+      "Qxg8",
+      "Qg5",
+      "Kf1"
+     ],
+     "cp": 362,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Be7",
+      "Qxh8",
+      "bxc4",
+      "Qxg8+",
+      "Bf8",
+      "d4",
+      "cxd3",
+      "Bh6",
+      "Qf6",
+      "cxd3"
+     ],
+     "cp": 518,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": true,
+    "material": {
+     "w": 36,
+     "b": 37,
+     "diff": -1
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 7
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h8",
+       "type": "r",
+       "gain": 5,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "g8",
+       "c8",
+       "f8"
+      ],
+      "developed": 0,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 1
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "after": {
+    "cp": 345,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "Bb3",
+     "Rg8",
+     "Bxg8",
+     "d6",
+     "Qh8",
+     "Nxg8",
+     "Qxg8",
+     "Qg5",
+     "Kf1",
+     "Qe7"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 37,
+     "diff": -1
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxe7+",
+     "Bf7+"
+    ],
+    "goodCaptures": [
+     "Qxh8"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 7
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h8",
+       "type": "r",
+       "gain": 5,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkb1r/p2pn2p/2p3p1/1p2Q3/2B1P3/2N5/PPPP1PPP/R1B1K2R w KQkq - 1 8",
+   "san": "Bb3",
+   "uci": "c4b3",
+   "color": "w",
+   "fen": "rnbqkb1r/p2pn2p/2p3p1/1p2Q3/4P3/1BN5/PPPP1PPP/R1B1K2R b KQkq - 2 8",
+   "lines": [
+    {
+     "san": [
+      "Bb3",
+      "Rg8",
+      "Bxg8",
+      "d6",
+      "Qh8",
+      "Nxg8",
+      "Qxg8",
+      "Qg5",
+      "Kf1",
+      "Qe7"
+     ],
+     "cp": 345,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Qxh8",
+      "bxc4",
+      "d4",
+      "d6",
+      "O-O",
+      "Be6",
+      "Bg5",
+      "Nd7",
+      "d5",
+      "cxd5"
+     ],
+     "cp": 324,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "d4",
+      "d5",
+      "Qxh8",
+      "dxc4",
+      "Bh6",
+      "Nd7",
+      "O-O",
+      "Qc7",
+      "Bg5",
+      "Nb6"
+     ],
+     "cp": 290,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "bxc4",
+     "Qxh8",
+     "d5",
+     "d4"
+    ],
+    "cp": 188,
+    "wdl": [
+     973,
+     27,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 37,
+     "diff": -1
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxe7+",
+     "Bf7+"
+    ],
+    "goodCaptures": [
+     "Qxh8"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c4",
+       "type": "b",
+       "gain": 3,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 7
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h8",
+       "type": "r",
+       "gain": 5,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "after": {
+    "cp": 315,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "Rg8",
+     "Bxg8",
+     "d6",
+     "Qh8",
+     "Nxg8",
+     "Qxg8",
+     "Qg5",
+     "Kf1",
+     "Qh4",
+     "d3"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 37,
+     "diff": -1
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 7
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h8",
+       "type": "r",
+       "gain": 5,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkb1r/p2pn2p/2p3p1/1p2Q3/4P3/1BN5/PPPP1PPP/R1B1K2R b KQkq - 2 8",
+   "san": "d5",
+   "uci": "d7d5",
+   "color": "b",
+   "fen": "rnbqkb1r/p3n2p/2p3p1/1p1pQ3/4P3/1BN5/PPPP1PPP/R1B1K2R w KQkq d6 0 9",
+   "lines": [
+    {
+     "san": [
+      "Rg8",
+      "Bxg8",
+      "d6",
+      "Qh8",
+      "Nxg8",
+      "Qxg8",
+      "Qg5",
+      "Kf1",
+      "Qh4",
+      "d3"
+     ],
+     "cp": 315,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "a5",
+      "Qxh8",
+      "a4",
+      "d4",
+      "axb3",
+      "Bh6",
+      "Kf7",
+      "Qxh7+",
+      "Ke8",
+      "Qh8"
+     ],
+     "cp": 361,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "b4",
+      "Qxh8",
+      "bxc3",
+      "dxc3",
+      "d5",
+      "Bh6",
+      "Nd7",
+      "exd5",
+      "cxd5",
+      "O-O-O"
+     ],
+     "cp": 409,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "Qxh8",
+     "d5",
+     "d4",
+     "b4"
+    ],
+    "cp": 438,
+    "wdl": [
+     1000,
+     0,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 37,
+     "diff": -1
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 7
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h8",
+       "type": "r",
+       "gain": 5,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 1,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "played": {
+    "san": [
+     "d5",
+     "Qxh8",
+     "Qd6",
+     "d3",
+     "b4",
+     "Ne2",
+     "a5",
+     "a4",
+     "Nd7",
+     "O-O"
+    ],
+    "cp": 443,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "depth": 20
+   },
+   "after": {
+    "cp": 447,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "Qxh8",
+     "Qd6",
+     "d3",
+     "b4",
+     "Ne2",
+     "a5",
+     "a4",
+     "bxa3",
+     "O-O",
+     "axb2"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 37,
+     "diff": -1
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxe7+"
+    ],
+    "goodCaptures": [
+     "Qxh8",
+     "Qxd5",
+     "exd5",
+     "Bxd5",
+     "Nxd5"
+    ],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 7
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h8",
+       "type": "r",
+       "gain": 5,
+       "defended": false
+      },
+      {
+       "sq": "d5",
+       "type": "p",
+       "gain": 1,
+       "defended": true
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkb1r/p3n2p/2p3p1/1p1pQ3/4P3/1BN5/PPPP1PPP/R1B1K2R w KQkq d6 0 9",
+   "san": "Qxh8",
+   "uci": "e5h8",
+   "color": "w",
+   "fen": "rnbqkb1Q/p3n2p/2p3p1/1p1p4/4P3/1BN5/PPPP1PPP/R1B1K2R b KQq - 0 9",
+   "lines": [
+    {
+     "san": [
+      "Qxh8",
+      "Qd6",
+      "d3",
+      "b4",
+      "Ne2",
+      "a5",
+      "a4",
+      "bxa3",
+      "O-O",
+      "axb2"
+     ],
+     "cp": 447,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "exd5",
+      "Rg8",
+      "d6",
+      "Rg7",
+      "O-O",
+      "Bf5",
+      "d3",
+      "Nd7",
+      "dxe7",
+      "Rxe7"
+     ],
+     "cp": 352,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Nxd5",
+      "cxd5",
+      "Qxh8",
+      "dxe4",
+      "d3",
+      "Qd6",
+      "O-O",
+      "Nd7",
+      "Qxh7",
+      "Qf6"
+     ],
+     "cp": 274,
+     "wdl": [
+      999,
+      1,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "Rg8",
+     "exd5",
+     "Bg7",
+     "Qe2"
+    ],
+    "cp": 52,
+    "wdl": [
+     127,
+     871,
+     2
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 37,
+     "diff": -1
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxe7+"
+    ],
+    "goodCaptures": [
+     "Qxh8",
+     "Qxd5",
+     "exd5",
+     "Bxd5",
+     "Nxd5"
+    ],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 1,
+      "control": 7
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h8",
+       "type": "r",
+       "gain": 5,
+       "defended": false
+      },
+      {
+       "sq": "d5",
+       "type": "p",
+       "gain": 1,
+       "defended": true
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "after": {
+    "cp": 442,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "a5",
+     "a3",
+     "a4",
+     "Ba2",
+     "b4",
+     "axb4",
+     "Bh3",
+     "gxh3",
+     "Qc8",
+     "Qxh7"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 32,
+     "diff": 4
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 6
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h7",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkb1Q/p3n2p/2p3p1/1p1p4/4P3/1BN5/PPPP1PPP/R1B1K2R b KQq - 0 9",
+   "san": "d4",
+   "uci": "d5d4",
+   "color": "b",
+   "fen": "rnbqkb1Q/p3n2p/2p3p1/1p6/3pP3/1BN5/PPPP1PPP/R1B1K2R w KQq - 0 10",
+   "lines": [
+    {
+     "san": [
+      "a5",
+      "a3",
+      "a4",
+      "Ba2",
+      "b4",
+      "axb4",
+      "Bh3",
+      "gxh3",
+      "Qc8",
+      "Qxh7"
+     ],
+     "cp": 442,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Qd6",
+      "O-O",
+      "a5",
+      "a4",
+      "Nd7",
+      "d4",
+      "b4",
+      "Ne2",
+      "Ba6",
+      "Re1"
+     ],
+     "cp": 450,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bg4",
+      "Qxh7",
+      "a5",
+      "exd5",
+      "a4",
+      "Ne4",
+      "Kd7",
+      "Qh4",
+      "Nf5",
+      "Qxg4"
+     ],
+     "cp": 462,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "O-O",
+     "Qd6",
+     "d4",
+     "b4"
+    ],
+    "cp": 468,
+    "wdl": [
+     1000,
+     0,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 32,
+     "diff": 4
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 6
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h7",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "played": {
+    "san": [
+     "d4",
+     "Qxh7",
+     "a5",
+     "Ne2",
+     "d3",
+     "cxd3",
+     "Kd7",
+     "Qf7",
+     "Kc7",
+     "a4"
+    ],
+    "cp": 485,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "depth": 20
+   },
+   "after": {
+    "cp": 506,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "Qf6",
+     "d3",
+     "Qf7+",
+     "Kd7",
+     "cxd3",
+     "Kc7",
+     "d4",
+     "Nd7",
+     "O-O",
+     "a5"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 32,
+     "diff": 4
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxf8+",
+     "Bf7+"
+    ],
+    "goodCaptures": [
+     "Qxh7"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c3",
+       "type": "n",
+       "gain": 2,
+       "defended": true
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 6
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [
+       "e4"
+      ],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h7",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkb1Q/p3n2p/2p3p1/1p6/3pP3/1BN5/PPPP1PPP/R1B1K2R w KQq - 0 10",
+   "san": "Qxh7",
+   "uci": "h8h7",
+   "color": "w",
+   "fen": "rnbqkb2/p3n2Q/2p3p1/1p6/3pP3/1BN5/PPPP1PPP/R1B1K2R b KQq - 0 10",
+   "lines": [
+    {
+     "san": [
+      "Qf6",
+      "d3",
+      "Qf7+",
+      "Kd7",
+      "cxd3",
+      "Kc7",
+      "d4",
+      "Nd7",
+      "O-O",
+      "a5"
+     ],
+     "cp": 506,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Qxh7",
+      "a5",
+      "Ne2",
+      "d3",
+      "Qf7+",
+      "Kd7",
+      "cxd3",
+      "Na6",
+      "d4",
+      "Nb4"
+     ],
+     "cp": 490,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "O-O",
+      "Nd7",
+      "Qxd4",
+      "a5",
+      "a4",
+      "b4",
+      "Ne2",
+      "c5",
+      "Qh8",
+      "Nc6"
+     ],
+     "cp": 481,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "dxc3",
+     "dxc3",
+     "Qd6",
+     "Bg5"
+    ],
+    "cp": 335,
+    "wdl": [
+     1000,
+     0,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 32,
+     "diff": 4
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxf8+",
+     "Bf7+"
+    ],
+    "goodCaptures": [
+     "Qxh7"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c3",
+       "type": "n",
+       "gain": 2,
+       "defended": true
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 6
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [
+       "e4"
+      ],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "h7",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "after": {
+    "cp": 497,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "a5",
+     "Ne2",
+     "Kd7",
+     "a4",
+     "d3",
+     "cxd3",
+     "Qb6",
+     "Qf7",
+     "bxa4",
+     "Rxa4"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 31,
+     "diff": 5
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [
+     "dxc3"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c3",
+       "type": "n",
+       "gain": 2,
+       "defended": true
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [
+       "e4"
+      ],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [
+       "g6"
+      ],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkb2/p3n2Q/2p3p1/1p6/3pP3/1BN5/PPPP1PPP/R1B1K2R b KQq - 0 10",
+   "san": "dxc3",
+   "uci": "d4c3",
+   "color": "b",
+   "fen": "rnbqkb2/p3n2Q/2p3p1/1p6/4P3/1Bp5/PPPP1PPP/R1B1K2R w KQq - 0 11",
+   "lines": [
+    {
+     "san": [
+      "a5",
+      "Ne2",
+      "Kd7",
+      "a4",
+      "d3",
+      "cxd3",
+      "Qb6",
+      "Qf7",
+      "bxa4",
+      "Rxa4"
+     ],
+     "cp": 497,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Kd7",
+      "Ne2",
+      "a5",
+      "a4",
+      "d3",
+      "cxd3",
+      "Ba6",
+      "Qf7",
+      "bxa4",
+      "Bc4"
+     ],
+     "cp": 498,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "d3",
+      "Qf7+",
+      "Kd7",
+      "O-O",
+      "c5",
+      "Be6+",
+      "Kc7",
+      "a4",
+      "Bxe6",
+      "Qxe6"
+     ],
+     "cp": 518,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "O-O",
+     "Kd7",
+     "Ne2",
+     "d3"
+    ],
+    "cp": 506,
+    "wdl": [
+     1000,
+     0,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 36,
+     "b": 31,
+     "diff": 5
+    },
+    "phase": "opening",
+    "checks": [],
+    "goodCaptures": [
+     "dxc3"
+    ],
+    "w": {
+     "hanging": [
+      {
+       "sq": "c3",
+       "type": "n",
+       "gain": 2,
+       "defended": true
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 0
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [
+       "e4"
+      ],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [
+       "g6"
+      ],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "played": {
+    "san": [
+     "dxc3",
+     "dxc3",
+     "c5",
+     "Qf7+",
+     "Kd7",
+     "Bf4",
+     "Kc6",
+     "Rd1",
+     "Bd7",
+     "Bd5+"
+    ],
+    "cp": 604,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "depth": 20
+   },
+   "after": {
+    "cp": 592,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "dxc3",
+     "Nd5",
+     "Qxg6+",
+     "Kd7",
+     "exd5",
+     "c5",
+     "Bg5",
+     "Be7",
+     "Qe6+",
+     "Ke8"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 33,
+     "b": 31,
+     "diff": 2
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxg6+",
+     "Qf7+",
+     "Qxe7+",
+     "Bf7+"
+    ],
+    "goodCaptures": [
+     "bxc3",
+     "dxc3"
+    ],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [
+       "e4"
+      ],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "c3",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "d",
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [
+       "c"
+      ],
+      "isolated": [
+       "g6"
+      ],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkb2/p3n2Q/2p3p1/1p6/4P3/1Bp5/PPPP1PPP/R1B1K2R w KQq - 0 11",
+   "san": "dxc3",
+   "uci": "d2c3",
+   "color": "w",
+   "fen": "rnbqkb2/p3n2Q/2p3p1/1p6/4P3/1BP5/PPP2PPP/R1B1K2R b KQq - 0 11",
+   "lines": [
+    {
+     "san": [
+      "dxc3",
+      "Nd5",
+      "Qxg6+",
+      "Kd7",
+      "exd5",
+      "c5",
+      "Bg5",
+      "Be7",
+      "Qe6+",
+      "Ke8"
+     ],
+     "cp": 592,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Qf7+",
+      "Kd7",
+      "dxc3",
+      "Kc7",
+      "Bf4+",
+      "Kb7",
+      "Rd1",
+      "Bd7",
+      "O-O",
+      "a5"
+     ],
+     "cp": 458,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bf7+",
+      "Kd7",
+      "dxc3",
+      "Kc7",
+      "Bf4+",
+      "Kb7",
+      "Rd1",
+      "Nd7",
+      "O-O",
+      "Qb6"
+     ],
+     "cp": 417,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "cxb2",
+     "Bxb2",
+     "c5",
+     "Qf7+"
+    ],
+    "cp": 300,
+    "wdl": [
+     1000,
+     0,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 33,
+     "b": 31,
+     "diff": 2
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxg6+",
+     "Qf7+",
+     "Qxe7+",
+     "Bf7+"
+    ],
+    "goodCaptures": [
+     "bxc3",
+     "dxc3"
+    ],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 2,
+      "openFiles": [],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 2
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [],
+      "passed": [
+       "e4"
+      ],
+      "islands": 1
+     }
+    },
+    "b": {
+     "hanging": [
+      {
+       "sq": "c3",
+       "type": "p",
+       "gain": 1,
+       "defended": false
+      }
+     ],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "d",
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [
+       "c"
+      ],
+      "isolated": [
+       "g6"
+      ],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "after": {
+    "cp": 609,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "Nd5",
+     "Qxg6+",
+     "Kd7",
+     "exd5",
+     "Kc7",
+     "Bg5",
+     "Qd7",
+     "Bf4+",
+     "Kb6",
+     "dxc6"
+    ]
+   },
+   "factsAfter": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 33,
+     "b": 30,
+     "diff": 3
+    },
+    "phase": "opening",
+    "checks": [
+     "Qd2+",
+     "Qd1+"
+    ],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 1,
+      "openFiles": [
+       "d"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [
+       "c"
+      ],
+      "isolated": [],
+      "passed": [
+       "e4"
+      ],
+      "islands": 2
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "d",
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [
+       "g6"
+      ],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  },
+  {
+   "fenBefore": "rnbqkb2/p3n2Q/2p3p1/1p6/4P3/1BP5/PPP2PPP/R1B1K2R b KQq - 0 11",
+   "san": "Na6",
+   "uci": "b8a6",
+   "color": "b",
+   "fen": "r1bqkb2/p3n2Q/n1p3p1/1p6/4P3/1BP5/PPP2PPP/R1B1K2R w KQq - 1 12",
+   "lines": [
+    {
+     "san": [
+      "Nd5",
+      "Qxg6+",
+      "Kd7",
+      "exd5",
+      "Kc7",
+      "Bg5",
+      "Qd7",
+      "Bf4+",
+      "Kb6",
+      "dxc6"
+     ],
+     "cp": 609,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "Bg4",
+      "Bf4",
+      "Kd7",
+      "h3",
+      "Bh5",
+      "g4",
+      "Kc8",
+      "Rd1",
+      "Nd7",
+      "Be6"
+     ],
+     "cp": 620,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    },
+    {
+     "san": [
+      "c5",
+      "Qf7+",
+      "Kd7",
+      "Bf4",
+      "Kc6",
+      "Rd1",
+      "Bd7",
+      "Bd5+",
+      "Kb6",
+      "Bxa8"
+     ],
+     "cp": 637,
+     "wdl": [
+      1000,
+      0,
+      0
+     ],
+     "depth": 20
+    }
+   ],
+   "threat": {
+    "san": [
+     "Bg5",
+     "Bg4",
+     "f3",
+     "Qc8"
+    ],
+    "cp": 665,
+    "wdl": [
+     1000,
+     0,
+     0
+    ]
+   },
+   "factsBefore": {
+    "turn": "b",
+    "inCheck": false,
+    "material": {
+     "w": 33,
+     "b": 30,
+     "diff": 3
+    },
+    "phase": "opening",
+    "checks": [
+     "Qd2+",
+     "Qd1+"
+    ],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 1,
+      "openFiles": [
+       "d"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [
+       "c"
+      ],
+      "isolated": [],
+      "passed": [
+       "e4"
+      ],
+      "islands": 2
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "b8",
+       "c8",
+       "f8"
+      ],
+      "developed": 1,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "d",
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [
+       "g6"
+      ],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   },
+   "played": {
+    "san": [
+     "Na6",
+     "Qf7+",
+     "Kd7",
+     "Bf4",
+     "c5",
+     "O-O-O+",
+     "Kc6",
+     "Rxd8",
+     "Kb6",
+     "Rd6+"
+    ],
+    "cp": 1867,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "depth": 20
+   },
+   "after": {
+    "cp": 1839,
+    "wdl": [
+     1000,
+     0,
+     0
+    ],
+    "line": [
+     "Qf7+",
+     "Kd7",
+     "Bf4",
+     "c5",
+     "O-O-O+",
+     "Kc6",
+     "Rxd8",
+     "Bg4",
+     "Rxa8",
+     "Kb6"
+    ]
+   },
+   "factsAfter": {
+    "turn": "w",
+    "inCheck": false,
+    "material": {
+     "w": 33,
+     "b": 30,
+     "diff": 3
+    },
+    "phase": "opening",
+    "checks": [
+     "Qxg6+",
+     "Qf7+",
+     "Qxe7+",
+     "Bf7+"
+    ],
+    "goodCaptures": [],
+    "w": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c1"
+      ],
+      "developed": 3,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": true,
+      "king": "e1"
+     },
+     "king": {
+      "sq": "e1",
+      "shield": 1,
+      "openFiles": [
+       "d"
+      ],
+      "attackers": 1
+     },
+     "center": {
+      "pawns": 1,
+      "pieces": 0,
+      "control": 3
+     },
+     "pawns": {
+      "doubled": [
+       "c"
+      ],
+      "isolated": [],
+      "passed": [
+       "e4"
+      ],
+      "islands": 2
+     }
+    },
+    "b": {
+     "hanging": [],
+     "dev": {
+      "undeveloped": [
+       "c8",
+       "f8"
+      ],
+      "developed": 2,
+      "castled": false,
+      "kingCenter": true,
+      "queenOut": false,
+      "king": "e8"
+     },
+     "king": {
+      "sq": "e8",
+      "shield": 0,
+      "openFiles": [
+       "d",
+       "e",
+       "f"
+      ],
+      "attackers": 2
+     },
+     "center": {
+      "pawns": 0,
+      "pieces": 0,
+      "control": 4
+     },
+     "pawns": {
+      "doubled": [],
+      "isolated": [
+       "g6"
+      ],
+      "passed": [],
+      "islands": 2
+     }
+    }
+   }
+  }
+ ]
+}
