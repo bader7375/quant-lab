@@ -42,6 +42,7 @@ function onlyMoveGap(G, r) {
 function keyMoments(G) {
   const own = G.recs.filter((r) => r.color === G.color && r.cls); const pick = [];
   const add = (r, kind) => { if (r && !pick.some((p) => p.r === r) && pick.length < 5) pick.push({ r, kind }); };
+  own.filter((r) => r.hung || r.missed).sort((a, b) => b.drop - a.drop).slice(0, 3).forEach((r) => add(r, "error")); // a piece left hanging or a missed threat is always a key moment
   own.filter((r) => r.drop >= 10).sort((a, b) => b.drop - a.drop).slice(0, 3).forEach((r) => add(r, r.missedChance ? "chance" : "error"));
   own.filter((r) => r.missedChance).sort((a, b) => b.gift - a.gift).slice(0, 1).forEach((r) => add(r, "chance"));
   const shine = (r) => Math.max(onlyMoveGap(G, r), r.gift || 0);
@@ -89,6 +90,7 @@ function openReview(n, G) {
   const c = chapter(n); const root = $("#v-chapter"); const m = G.metrics || computeMetrics(G);
   const s = chState(n); s.review.games = [...new Set([...(s.review.games || []), G.id])]; s.review.count = s.review.games.length; saveJourney();
   const moments = keyMoments(G); const sum = reviewSummary(G, c, m); const opening = (c.rule || {}).kind === "opening_checklist"; const prog = ruleProgress(c);
+  const safety = (c.rule || {}).kind === "safety";
   root.innerHTML = `
     <div class="whead"><button class="btn quiet" id="r-back">→ الفصل ${n}</button>
       <div class="wtitle"><b>مراجعة المباراة · ${esc(gameTitle(G))}</b><span class="note">${esc(G.reason || "")} · ${esc(OPP.label(G.opp.rating, G.opp.kind))}</span>${theoryNote(G)}</div></div>
@@ -96,6 +98,7 @@ function openReview(n, G) {
     <div class="panel"><h3>فرصك خلال المباراة</h3>${esChart(G, moments)}<p class="note">تقدير فرصك (من 100) بعد كل نقلة عند لاعبين بمستواك. الدوائر المرقّمة هي اللحظات الحاسمة أدناه، والدائرة المفرغة نقلة تراجعت عنها (خارج المنحنى).</p></div>
     ${opening ? `<div class="panel"><h3>قائمة الافتتاح في هذه المباراة</h3>${m.openingItems ? `<ul class="checklist live">${Object.keys(OPENING_ITEMS).map((k) => `<li class="${m.openingItems[k] ? "ok" : "fail"}">${esc(OPENING_ITEMS[k])}</li>`).join("")}</ul><p><bdi class="mono">${m.openingScore}/5</bdi>${m.openingBlunder ? " · وفيها خطأ فادح في أول 10 نقلات" : ""}. ${m.openingScore >= 4 && !m.openingBlunder ? "مباراة مؤهلة لشرط الفصل." : "ليست مؤهلة لشرط الفصل: يلزم 4 من 5 بدون خطأ فادح في أول 10 نقلات."}</p>` : `<p class="note">المباراة أقصر من 10 نقلات لك، فلم تُحكم القائمة.</p>`}
       ${prog.pending ? "" : `<p class="note">شرط إكمال الفصل الآن: <bdi class="mono">${prog.have}/${prog.need}</bdi> ${esc(prog.unit)}.</p>`}</div>` : ""}
+    ${safety ? safetyPanelHtml(G, m, prog) : ""}
     <h3 class="sect">اللحظات الحاسمة</h3>
     ${moments.length ? `<div class="moments">${moments.map((mo, i) => momentHtml(mo, i, G)).join("")}</div>` : `<p class="empty">لا لحظات حاسمة في البيانات: لم تتغير فرصك كثيرًا بأي نقلة.</p>`}
     ${moments.length && moments.length < 3 ? `<p class="note">${moments.length === 1 ? "لحظة واحدة فقط تستحق" : "لحظتان فقط تستحقان"} التوقف في هذه المباراة.</p>` : ""}
@@ -119,6 +122,19 @@ function openReview(n, G) {
   });
   reviewClaude($("#r-claude", root), G, c, m, moments);
   root.scrollIntoView?.({ block: "start" });
+}
+
+/* Chapter 2: every piece you left hanging and every threat you missed (attempts you took back included), against the
+   chapter's limit of one each. */
+function safetyPanelHtml(G, m, prog) {
+  const own = G.recs.filter((r) => r.color === G.color && r.cls); const bad = own.filter((r) => r.hung || r.missed);
+  const st = (k) => (k === 0 ? "ok" : k === 1 ? "warn" : "fail");
+  return `<div class="panel"><h3>الأمان في هذه المباراة</h3>
+    <ul class="checklist live"><li class="${st(m.hanging)}">قطع تركتها معلّقة: ${m.hanging} (المسموح 1)</li><li class="${st(m.missedThreats)}">تهديدات فاتتك: ${m.missedThreats} (المسموح 1)</li></ul>
+    ${bad.length ? `<ul class="facts">${bad.map((r) => `<li><bdi class="mv">${esc(moveLabel(r.fenBefore, r.san))}</bdi> ${r.hung ? "(قطعة معلّقة)" : "(تهديد فائت)"}: ${fmtNote(r.notes[0] || "")}${r.takenBack ? ` <span class="note">تراجعت عنها، وتبقى محسوبة.</span>` : ""}</li>`).join("")}</ul>` : `<p>لم تترك قطعة معلّقة ولم يفتك تهديد في ${arCount(m.attempts, "نقلة واحدة", "نقلتين", "نقلات", "نقلة")}.</p>`}
+    <p class="note">التهديدات التي رصدها المدرّب بعد نقلات الخصم: ${m.threats}. تلميحات طلبتها: ${m.hints}. نقلات غيّرتها بعد أسئلة الفحص: ${m.rechecks || 0}.</p>
+    <p>${esc(safetyVerdictText(m, G))}</p>
+    <p class="note">شرط إكمال الفصل الآن: <bdi class="mono">${prog.have}/${prog.need}</bdi> ${esc(prog.unit)}.</p></div>`;
 }
 
 /* The opening's name and how long the game stayed in positions the masters database knows (75+ games). */

@@ -55,6 +55,15 @@ const countsForChapter = (g) => g.finished && (g.result !== "abandoned" || ((g.m
 const countedGames = (n) => chapterGames(n).filter(countsForChapter);
 function nextStage(n) { const c = chapter(n); for (const st of STAGES) if (!stageDone(n, st.k)) return st; return STAGES[2]; }
 
+const safetyOk = (m) => !!m && (m.hanging ?? 9) <= 1 && (m.missedThreats ?? 9) <= 1;
+const safetyJudged = (m) => !!m && (m.moves >= 15 || !safetyOk(m));
+function safetyVerdictText(m, g) {
+  if (!m) return "";
+  const t = `قطع تركتها معلّقة: ${m.hanging}، تهديدات فاتتك: ${m.missedThreats} (المسموح 1 لكل منهما).`;
+  if (g && !countsForChapter(g)) return safetyOk(m) ? `${t} المباراة لم تكتمل، فلا تُحسب لصالحك.` : `${t} المباراة لم تكتمل، لكن تجاوز الحد فيها يقطع السلسلة.`;
+  if (!safetyJudged(m)) return `${t} المباراة أقصر من 15 نقلة لك، فلا تُحسب في السلسلة ولا تقطعها.`;
+  return safetyOk(m) ? `${t} مباراة مؤهلة لشرط الفصل.` : `${t} ليست مؤهلة: السلسلة تبدأ من جديد.`;
+}
 /* Completion rules: evaluated only from coached-game data. Each returns {met, have, need, text}. */
 function ruleProgress(c) {
   const r = c.rule || {}; const games = countedGames(c.n);
@@ -65,7 +74,10 @@ function ruleProgress(c) {
     return { met: last.length >= r.window && ok >= r.need, have: ok, need: r.need, unit: "مباريات مؤهلة من آخر " + r.window };
   }
   if (r.kind === "safety") {
-    let streak = 0; for (let i = games.length - 1; i >= 0; i--) { const m = games[i].metrics || {}; if ((m.hanging ?? 9) <= 1 && (m.missedThreats ?? 9) <= 1) streak++; else break; }
+    // judged after 15 of your moves; a shorter game counts only when it already broke a limit (it can fail, never pass).
+    // An unfinished game you ended early never counts for you, but one that broke a limit still breaks the streak.
+    const judged = chapterGames(c.n).filter((g) => g.finished && safetyJudged(g.metrics) && (countsForChapter(g) || !safetyOk(g.metrics)));
+    let streak = 0; for (let i = judged.length - 1; i >= 0; i--) { if (safetyOk(judged[i].metrics)) streak++; else break; }
     return { met: streak >= r.need, have: Math.min(streak, r.need), need: r.need, unit: "مباريات متتالية" };
   }
   const n = games.length;

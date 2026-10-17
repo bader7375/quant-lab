@@ -62,7 +62,7 @@ function LessonPlayer(root, L, n) {
   function summary() {
     board.update({ fen: START_FEN, last: null, marks: {}, arrows: [], interactive: false });
     const tasks = S.filter((s) => s.task).length; const done = [...solved].length;
-    card.innerHTML = `<h3>بماذا أفكر في أول عشر نقلات</h3><ul class="checklist">${L.checklist.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+    card.innerHTML = `<h3>${esc(L.checklistTitle || "بماذا أفكر في أول عشر نقلات")}</h3><ul class="checklist">${L.checklist.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
       <p class="note">حللت ${done} من ${tasks} تمارين.${done < tasks ? " يمكنك العودة إلى أي شريحة." : ""}</p>
       <div class="row"><button class="btn" id="l-done">أنهيت الدرس: احفظ القائمة</button></div>`;
     $("#l-done", card).onclick = () => { const st = chState(n); st.learn.done = true; st.learn.checklist = L.checklist; st.learn.at = now(); saveJourney(); go("chapter", n); };

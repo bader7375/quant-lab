@@ -130,6 +130,38 @@ The approved plan is `REFACTOR_PLAN.md`. User decisions: 17-chapter curriculum a
 - Not testable headless: Claude's live answers (the stand-in test in Step 3 covers the code paths).
 - Next: chapters 2–17, one at a time. Each needs its lesson, demos, play configuration and the rule metric its completion depends on.
 
+### Chapter 2 (done): الأمان أولًا (safety first)
+- **Learn** (`data/curriculum/ch02/learn.json`): six slides. Four positions come from real Lichess games between players rated about 1600, found by scanning the puzzle-game dataset for early pieces that were left hanging and then won. The slides cover:
+  - taking a bishop left hanging (London, 5...Bf5?? Qxf5);
+  - the Ng5 threat against f7 in the Two Knights (4...d5);
+  - two threats at once (Qg6 saves the queen and defends Bh3 indirectly);
+  - counting attackers and defenders on f6 (Be7; 6...Nd4 is the hope-chess move from the real game);
+  - "who takes after me?" before Nxe5 in the Italian;
+  - a blunder check, replaying slide 1's position from Black's side before the mistake.
+  - `verify_lesson.mjs` now reads each slide's claims from the lesson JSON (Chapter 1's claims were moved there). An accepted move now fails only when it is more than 60 cp from best or clearly losing (below −150), because the blunder-check slide starts at about −0.7. Both lessons PASS at depth 20.
+- **Watch**: two new games from `gen_demo.mjs`, which now takes the coach's colour and logs "safety events":
+  - "الملك يحمي قطعتين" (coach as White): Nxe5 removes the knight attacking c4; then the king is the only defender of both d8 and f7, so Bxf7+ Kxf7 Qxd8; then Qd5+ forks a knight left hanging. At the end the coach does not take a8, because the h8 rook defends it (`verify` line Qxa8 Rxa8).
+  - "الوزير أمام الملك" (coach as Black with 1...e5): White opens the e-file in front of Qe2/Ke1, and Re8 wins the queen.
+  - Both games pass `build_demo.mjs`. Every candidate's "why" was compared with its Stockfish score, and three texts were softened.
+- **Play** (only in the safety chapter):
+  - The opponent's threats are not announced. After every opponent move the coach asks the safety questions instead. "بماذا أفكر الآن؟" reveals the threat with an arrow and counts as a hint.
+  - Claude's comment on the opponent's move is told not to name threats or attacked pieces.
+  - A tap-only blunder check runs before each move: the move is shown but not played, with three questions and the buttons "play it" / "change it". It can be switched off in the panel, and changed moves are counted.
+  - A live safety counter shows the pieces left hanging and the threats missed against the limit of one each, plus the chapter streak.
+- **Review**: a safety panel lists every hanging piece and missed threat with the coach's note (taken-back attempts still count) and gives this game's verdict. Hanging pieces and missed threats are always key moments.
+- **Rule**:
+  - A game is judged after 15 of your moves; a shorter game counts only if it already broke a limit.
+  - A game you end early never counts for you, but if it broke a limit it still resets the streak, so abandoning a bad game cannot hide it.
+  - 3 judged games in a row are needed.
+- **Tests** (headless, no page errors):
+  - rule logic on synthetic games;
+  - the lesson solved, including a wrong Bf5 showing its explanation;
+  - both demos watched to the end;
+  - one game with the check step and a "change it", hidden threats (no "يهدد:" in the feed; the hint shows it), and a deliberate hanging move taken back that still counted as 1;
+  - three 22-move games by a Stockfish-depth-11 student (0 hanging, 0 missed, 2 and 4 threats handled) that complete Chapter 2 and unlock Chapter 3;
+  - learn, play and review at 390 px with nothing off-screen.
+- Limitation: a piece is counted as "hanging" or a threat as "missed" only when the move costs 10+ points and Stockfish's reply actually wins that material, so a hang the opponent cannot exploit is not counted.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

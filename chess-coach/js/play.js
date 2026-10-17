@@ -45,7 +45,7 @@ const plainNote = (t) => String(t).replace(/\[([^\]]+)\]/g, "$1");
 const unverifiedHtml = (bad) => (bad.length ? `<br><span class="note warnline">لم أتحقق من: ${bad.map((b) => `<bdi class="mv">${esc(b)}</bdi>`).join("، ")}</span>` : "");
 
 STAGE_RUNNERS.play = (n) => {
-  const c = chapter(n); const box = $("#stage-box"); const set = J.state.settings; const opening = (c.rule || {}).kind === "opening_checklist";
+  const c = chapter(n); const box = $("#stage-box"); const set = J.state.settings; const opening = (c.rule || {}).kind === "opening_checklist"; const safety = (c.rule || {}).kind === "safety";
   const games = chapterGames(n).slice().reverse();
   const open = J.games.filter((g) => g.chapter === n && !g.finished && g.sans.length).sort((a, b) => b.t - a.t);
   box.innerHTML = `<div class="panel"><h3>العب مع المدرّب</h3>
@@ -53,13 +53,16 @@ STAGE_RUNNERS.play = (n) => {
     <ul class="facts">
       <li>قبل نقلتك: زر «بماذا أفكر الآن؟» يعطيك أسئلة وأماكن تنظر إليها، ولا يكشف النقلة.</li>
       <li>بعد نقلتك: تقييمها (ممتازة، جيدة، غير دقيقة، خطأ، خطأ فادح)، والسبب، والنقلة الأفضل.</li>
-      <li>بعد نقلة الخصم: ماذا يهدد. وبعد الخطأ أو الخطأ الفادح تستطيع التراجع، لكنه يبقى محسوبًا في بيانات الفصل.</li>
+      ${safety ? `<li>في هذا الفصل لا أعلن تهديدات الخصم: ابحث عنها بنفسك. زر «بماذا أفكر الآن؟» يكشف التهديد ويُحسب تلميحًا.</li>
+      <li>قبل كل نقلة تظهر أسئلة الفحص، فتلعب النقلة أو تغيّرها (تستطيع إيقافها من عدّاد الأمان).</li>
+      <li>بعد الخطأ أو الخطأ الفادح تستطيع التراجع، لكن القطعة المعلّقة أو التهديد الفائت يبقى محسوبًا.</li>` : `<li>بعد نقلة الخصم: ماذا يهدد. وبعد الخطأ أو الخطأ الفادح تستطيع التراجع، لكنه يبقى محسوبًا في بيانات الفصل.</li>`}
     </ul>
+    ${safety ? `<p class="note">شرط الفصل: ${esc(c.rule.text)} المباراة تُحكم بعد 15 نقلة لك (الأقصر لا تُحسب إلا إذا تجاوزت الحد).</p>` : ""}
     ${open.length ? `<div class="callout">لديك مباراة لم تنتهِ بعد (${Math.ceil(open[0].sans.length / 2)} نقلة، ${open[0].color === "w" ? "بالأبيض" : "بالأسود"}).<div class="row"><button class="btn" id="p-resume">أكمل المباراة</button></div></div>` : ""}
     <div class="row"><b>تلعب بـ</b><div class="seg" role="radiogroup" aria-label="اللون">${[["w", "الأبيض"], ["b", "الأسود"], ["r", "عشوائي"]].map(([v, t], k) => `<label><input type="radio" name="p-color" value="${v}" ${k === 0 ? "checked" : ""}><span>${t}</span></label>`).join("")}</div></div>
     <p class="note">${esc(OPP.label(set.oppRating))}. يرتفع المستوى 100 بعد الفوز وينخفض 100 بعد الخسارة. التعليق: ${set.commentary === "every" ? "على كل نقلة" : "على النقلات المهمة فقط"} (يتغيّر من «التقدم»).</p>
     <div class="row"><button class="btn big" id="p-start">${open.length ? "ابدأ مباراة جديدة" : "ابدأ المباراة"}</button></div>
-    ${games.length ? `<h4>مبارياتك في هذا الفصل</h4><div class="tbl"><table><thead><tr><th>التاريخ</th><th>اللون</th><th>النتيجة</th><th>نقلاتك</th><th>أخطاء وأخطاء فادحة</th>${opening ? "<th>قائمة الافتتاح</th>" : ""}<th>تُحسب للفصل</th><th></th></tr></thead><tbody>${games.map((g) => { const m = g.metrics || {}; return `<tr><td class="num">${new Date(g.t).toISOString().slice(0, 10)}</td><td>${g.color === "w" ? "أبيض" : "أسود"}</td><td>${RESULT_AR[g.result] || "–"}</td><td class="num">${m.moves ?? "–"}</td><td class="num">${(m.mistakes ?? 0) + (m.blunders ?? 0)}</td>${opening ? `<td class="num">${m.openingScore == null ? "–" : m.openingScore + "/5"}</td>` : ""}<td>${countsForChapter(g) ? "نعم" : "لا"}</td><td><button class="btn quiet" data-rev="${g.id}">راجع</button></td></tr>`; }).join("")}</tbody></table></div>` : ""}</div>`;
+    ${games.length ? `<h4>مبارياتك في هذا الفصل</h4><div class="tbl"><table><thead><tr><th>التاريخ</th><th>اللون</th><th>النتيجة</th><th>نقلاتك</th><th>أخطاء وأخطاء فادحة</th>${opening ? "<th>قائمة الافتتاح</th>" : ""}${safety ? "<th>معلّقة / تهديدات فائتة</th>" : ""}<th>تُحسب للفصل</th><th></th></tr></thead><tbody>${games.map((g) => { const m = g.metrics || {}; return `<tr><td class="num">${new Date(g.t).toISOString().slice(0, 10)}</td><td>${g.color === "w" ? "أبيض" : "أسود"}</td><td>${RESULT_AR[g.result] || "–"}</td><td class="num">${m.moves ?? "–"}</td><td class="num">${(m.mistakes ?? 0) + (m.blunders ?? 0)}</td>${opening ? `<td class="num">${m.openingScore == null ? "–" : m.openingScore + "/5"}</td>` : ""}${safety ? `<td class="num">${m.hanging ?? "–"} / ${m.missedThreats ?? "–"}</td>` : ""}<td>${countsForChapter(g) ? "نعم" : "لا"}</td><td><button class="btn quiet" data-rev="${g.id}">راجع</button></td></tr>`; }).join("")}</tbody></table></div>` : ""}</div>`;
   $("#p-start", box).onclick = () => {
     for (const g of open) abandonGame(g, "بدأت مباراة جديدة قبل أن تنتهي هذه.");
     let col = ($('input[name="p-color"]:checked', box) || {}).value || "w"; if (col === "r") col = Math.random() < 0.5 ? "w" : "b";
@@ -73,6 +76,9 @@ STAGE_RUNNERS.play = (n) => {
 let PLAY_TOKEN = 0;
 function PlayGame(root, { n, color, rating, resume = null }) {
   const c = chapter(n); const set = J.state.settings; const opening = (c.rule || {}).kind === "opening_checklist";
+  // chapter 2 (safety): the opponent's threats are not announced (finding them is the skill); a hint reveals them, and
+  // an optional check step asks the safety questions before each move is played
+  const safety = (c.rule || {}).kind === "safety"; const blunderCheck = () => safety && set.blunderCheck !== false;
   const G = resume || { id: "g" + uid(), chapter: n, t: now(), color, opp: { kind: OPP.kind, rating, fallbacks: 0 }, start: START_FEN, sans: [], ucis: [], recs: [], takebacks: 0, hints: 0, threats: 0, finished: false };
   if (!J.games.includes(G)) J.games.push(G);
   const me = G.color, opp = me === "w" ? "b" : "w", oppRating = G.opp.rating;
@@ -80,7 +86,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
   for (const s of G.sans) { if (game.turn() === me) ownMoves++; game.move(s, { sloppy: true }); }
   const lastRec = G.recs.filter((r) => !r.takenBack).slice(-1)[0];
   let lastCp = lastRec && lastRec.cpAfter != null ? lastRec.cpAfter : 30;
-  let lastUci = G.ucis[G.ucis.length - 1] || null, pre = null, preRes = null, busy = false, threat = null, claudeQuiet = 0;
+  let lastUci = G.ucis[G.ucis.length - 1] || null, pre = null, preRes = null, busy = false, threat = null, threatReady = true, claudeQuiet = 0;
   const streak = { w: 0, l: 0 }, offered = {}; const token = ++PLAY_TOKEN;
   root.innerHTML = `
     <div class="whead"><button class="btn quiet" id="p-back">→ الفصل ${n}</button>
@@ -93,7 +99,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
         <div class="wctrl"><button class="ctl" id="p-hint">بماذا أفكر الآن؟</button><button class="ctl" id="p-end">أنهِ وراجع</button><button class="ctl" id="p-resign">استسلم</button></div>
         <div id="p-line"></div><div id="p-decide"></div><div id="p-offer"></div>
         <div id="p-odds"></div>
-        ${opening ? `<div class="livecheck" id="p-check"></div>` : ""}
+        ${opening ? `<div class="livecheck" id="p-check"></div>` : ""}${safety ? `<div class="livecheck" id="p-safe"></div>` : ""}
       </div>
       <div class="wside">
         <div class="panel coachfeed"><div class="chat-h"><b>المدرّب بجانبك</b><span class="note">الأحدث في الأعلى</span></div><div id="p-feed" aria-live="polite"></div></div>
@@ -128,7 +134,16 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     const st = new Chess(G.start); let h = "";
     G.sans.forEach((s, k) => { const p = st.fen().split(" "); if (p[1] === "w" || k === 0) h += `<span class="mnum">${p[5]}${p[1] === "w" ? "." : "..."}</span>`; st.move(s, { sloppy: true }); h += `<span class="mvbtn ${k === G.sans.length - 1 ? "on" : ""}">${esc(s)}</span>`; });
     const mvEl = $("#p-moves", root); mvEl.innerHTML = h || `<span class="note">لم تبدأ النقلات بعد.</span>`; mvEl.scrollTop = mvEl.scrollHeight;
-    liveChecklist();
+    liveChecklist(); liveSafety();
+  }
+  function liveSafety() {
+    const el = $("#p-safe", root); if (!el) return;
+    const m = computeMetrics(G); const st = (k) => (k === 0 ? "ok" : k === 1 ? "warn" : "fail");
+    const prog = ruleProgress(c);
+    el.innerHTML = `<div class="fh"><b>عدّاد الأمان في هذه المباراة</b><span class="note">نقلاتك ${m.moves} · تُحكم بعد 15 نقلة · السلسلة ${prog.have}/${prog.need}</span></div>
+      <ul class="checklist live"><li class="${st(m.hanging)}">قطع تركتها معلّقة: ${m.hanging} (المسموح 1)</li><li class="${st(m.missedThreats)}">تهديدات فاتتك: ${m.missedThreats} (المسموح 1)</li></ul>
+      <label class="note bcheck"><input type="checkbox" id="p-bc" ${set.blunderCheck !== false ? "checked" : ""}> اسألني أسئلة الفحص قبل أن ألعب كل نقلة</label>`;
+    $("#p-bc", el).onchange = (e) => { set.blunderCheck = e.target.checked; saveJourney(); };
   }
   function liveChecklist() {
     const el = $("#p-check", root); if (!el) return;
@@ -143,11 +158,27 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     const fen = game.fen(); preRes = null;
     pre = Engine.analyse(fen, { depth: 16, movetime: 1500, multipv: 3, low: true });
     pre.then((r) => { if (game.fen() === fen) preRes = r; }, () => {});
-    board.update({ fen, last: lastUci, interactive: true, onMove: onUserMove, arrows: threat ? [threatArrow(threat)] : [] });
+    board.update({ fen, last: lastUci, interactive: true, onMove: onUserMove, arrows: threat && (!safety || G.threatShown) ? [threatArrow(threat)] : [] });
     setStatus("دورك. خذ وقتك."); refreshUi();
   }
   const threatArrow = (t) => ({ from: t.pv[0].slice(0, 2), to: t.pv[0].slice(2, 4), color: "bad" });
-  async function onUserMove(m) {
+  function onUserMove(m) {
+    if (busy || G.finished || game.turn() !== me) return;
+    if (!blunderCheck()) return playMove(m);
+    busy = true; // the move is shown but not played: the safety questions first, then you decide
+    board.update({ interactive: false, fen: m.fenAfter, last: m.uci, arrows: [] });
+    decide.innerHTML = `<div class="callout"><b>فحص النقلة: ${esc(moveLabel(game.fen(), m.san))}</b> (لم تُلعب بعد)
+      <ul class="facts"><li>ماذا تغيّر بنقلة الخصم الأخيرة؟ ماذا يهاجم الآن؟</li><li>بعد نقلتي: هل تبقى كل قطعة محمية؟ عُدّ المهاجمين والمدافعين.</li><li>ما أقوى رد للخصم: كش؟ أسر؟ تهديد؟</li></ul>
+      <div class="row"><button class="btn" id="p-bc-go">فحصتها: العبها</button><button class="btn quiet" id="p-bc-back">غيّرها</button></div></div>`;
+    setStatus("افحص نقلتك قبل أن تلعبها.");
+    $("#p-bc-go", decide).onclick = () => { decide.innerHTML = ""; busy = false; playMove(m); };
+    $("#p-bc-back", decide).onclick = () => {
+      decide.innerHTML = ""; busy = false; G.rechecks = (G.rechecks || 0) + 1; save();
+      board.update({ fen: game.fen(), last: lastUci, interactive: true, onMove: onUserMove, arrows: threat && G.threatShown ? [threatArrow(threat)] : [] });
+      setStatus("اختر نقلة أخرى.");
+    };
+  }
+  async function playMove(m) {
     if (busy || G.finished || game.turn() !== me) return;
     busy = true; decide.innerHTML = ""; offerEl.innerHTML = ""; lineEl.innerHTML = "";
     const fenBefore = game.fen(), ply = G.sans.length, basePromise = pre, threatBefore = threat; threat = null;
@@ -169,7 +200,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     if (rec.masters && !(await Masters.lookup(game.fen()).catch(() => null))) rec.mastersLeft = true;
     showOpening();
     if (G.finished) return renderOwnCard(cd, rec); // the game was ended while this move was being rated
-    G.recs.push(rec); lastCp = after.cp; save();
+    G.recs.push(rec); lastCp = after.cp; save(); liveSafety();
     odds(after.cp, after.wdl, base.cp, me);
     renderOwnCard(cd, rec);
     if (claudeOk() && (set.commentary === "every" || rec.drop > 5)) explainMine($(".fx", cd), rec);
@@ -231,7 +262,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
       game.undo(); G.sans.pop(); G.ucis.pop(); ownMoves--; lastUci = G.ucis[G.ucis.length - 1] || null; lastCp = base.cp; threat = threatBefore;
       card(`<p class="note">تراجعت عن <bdi class="mv">${esc(rec.san)}</bdi>. فكّر مرة أخرى: ماذا يهدد الخصم؟ وما الذي تحققه نقلتك؟</p>`, "hint");
       pre = Promise.resolve(base); preRes = base; busy = false; save();
-      board.update({ fen: game.fen(), last: lastUci, interactive: true, onMove: onUserMove, arrows: threat ? [threatArrow(threat)] : [] });
+      board.update({ fen: game.fen(), last: lastUci, interactive: true, onMove: onUserMove, arrows: threat && (!safety || G.threatShown) ? [threatArrow(threat)] : [] });
       odds(base.cp, base.wdl); refreshUi(); setStatus("جرّب نقلة أخرى.");
     };
     $("#p-go", decide).onclick = () => { decide.innerHTML = ""; busy = false; closeLine(); afterMine(rec); };
@@ -282,7 +313,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     commentOpp(cd, rec);
   }
   async function commentOpp(cd, rec) {
-    const fenNow = rec.fen; const ul = $(".facts", cd); const add = (t) => ul.insertAdjacentHTML("beforeend", `<li>${fmtNote(t)}</li>`);
+    const fenNow = rec.fen; const ul = $(".facts", cd); threatReady = false; G.threatShown = false; const add = (t) => ul.insertAdjacentHTML("beforeend", `<li>${fmtNote(t)}</li>`);
     for (const t of moveFacts(rec.fenBefore, rec.san, "opp")) add(t);
     mastersSummary(rec.fenBefore, rec.san).then((ms) => { if (ms) ul.insertAdjacentHTML("beforeend", `<li class="mastersli">${mastersText(ms, rec.san, "opp")}</li>`); });
     if (game.in_check()) add("عالج الكش أولًا: حرّك الملك، أو ضع قطعة في طريق الكش، أو أسر القطعة التي تعطيه.");
@@ -299,18 +330,21 @@ function PlayGame(root, { n, color, rating, resume = null }) {
       if (tn.lines[0]) { const tc = Prob.ctx(fenNow); const gain = Prob.esFor(tn.cp, opp, tc) - Prob.esFor(base.cp, opp, tc); if (gain >= 8) th = { pv: tn.lines[0].pv.slice(0, 3), san: pvToSan(nf, tn.lines[0].pv, 3), gain: Math.round(gain) }; }
     }
     if (!alive() || game.fen() !== fenNow) return;
-    if (th) {
-      threat = th; G.threats = (G.threats || 0) + 1; rec.threat = th.san; save();
+    threatReady = true;
+    if (th) { threat = th; G.threats = (G.threats || 0) + 1; rec.threat = th.san; save(); }
+    if (safety) {
+      if (!game.in_check()) add("أسئلة الأمان: ماذا تغيّر بهذه النقلة؟ ماذا يهاجم الخصم الآن؟ هل ترك شيئًا بلا حماية؟ (في هذا الفصل لا أعلن التهديد؛ زر «بماذا أفكر الآن؟» يكشفه ويُحسب تلميحًا.)");
+    } else if (th) {
       add(`يهدد: [${th.san.join(" ")}]. عالج هذا التهديد قبل أي خطة أخرى.`);
       board.update({ arrows: [threatArrow(th)] });
     } else if (!game.in_check() && !Facts.positionFacts(fenNow, G.sans.length)[me].hanging.length) add("لا تهديد مباشرًا. فكّر في خطتك: أي قطعة لم تعمل بعد؟");
-    if (claudeOk() && (set.commentary === "every" || th || oppDrop >= 10)) explainTheirs($(".fx", cd), rec, th);
+    if (claudeOk() && (set.commentary === "every" || (!safety && th) || oppDrop >= 10)) explainTheirs($(".fx", cd), rec, safety ? null : th);
   }
 
   /* ---- hint: what to think about, never the move ---- */
   function showHint() {
     if (G.finished || game.turn() !== me || busy) return;
-    G.hints = (G.hints || 0) + 1; save();
+    G.hints = (G.hints || 0) + 1; if (threat && safety) { G.threatShown = true; board.update({ arrows: [threatArrow(threat)] }); } save();
     const fen = game.fen(); const f = Facts.positionFacts(fen, G.sans.length);
     const cd = card(`<div class="fh"><b>بماذا تفكر الآن؟</b><span class="note">تلميح لا يكشف النقلة</span></div><ul class="facts">${hintItems(f).map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul><p class="habit">قبل أن تلعب: ماذا يهدد الخصم؟ ما نقلاتي القسرية (كش، أسر، تهديد)؟ وبعد نقلتي، ما أقوى رد له؟</p><div class="fx"></div>`, "hint");
     if (claudeOk()) hintClaude($(".fx", cd), fen);
@@ -319,7 +353,8 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     const mine = f[me]; const out = [];
     out.push({ opening: "مرحلة الافتتاح: المركز، التطوير، أمان الملك.", middlegame: "وسط اللعب: ما خطتك؟ أي قطعة لم تعمل بعد؟ وماذا يريد الخصم؟", endgame: "النهاية: الملك قطعة مقاتلة الآن، والبيادق الحرة مهمة." }[f.phase]);
     if (f.inCheck) out.push("أنت في كش: حرّك الملك، أو ضع قطعة في الطريق، أو أسر القطعة التي تعطي الكش.");
-    if (threat) out.push(`تذكّر تهديد الخصم: [${threat.san.join(" ")}].`);
+    if (threat) out.push(safety ? `الخصم يهدد: [${threat.san.join(" ")}] (السهم الأحمر على الرقعة).` : `تذكّر تهديد الخصم: [${threat.san.join(" ")}].`);
+    else if (safety) out.push(threatReady ? "لا تهديد مباشرًا من الخصم الآن." : "المدرّب ما زال يفحص نقلة الخصم. اسأل الزر مرة أخرى بعد لحظة.");
     if (mine.hanging.length) out.push(`عدد قطعك التي يمكن أن تُكسب الآن: ${mine.hanging.length}. أيها؟`);
     if (f.goodCaptures.length) out.push("هناك أسر يكسب مادة. ابحث عنه.");
     if (f.checks.length) out.push(`عدد الكشات الممكنة لك: ${f.checks.length}. افحص كلًّا منها: هل يحقق شيئًا؟`);
@@ -376,8 +411,8 @@ DATA:
 POSITION AFTER: ${rec.fen} (the student plays ${me === "w" ? "White" : "Black"} and is to move)
 PIECES: ${pieceList(rec.fen)}
 GAME SO FAR: ${numberedLine(G.start, G.sans.slice(0, rec.ply + 1))}
-IF THE OPPONENT COULD MOVE AGAIN, STOCKFISH SAYS THEY WOULD PLAY: ${th ? numberedLine(nullFenOf(rec.fen), th.san) : "nothing dangerous"}
-FACTS (student's side): ${Facts.describe(Facts.positionFacts(rec.fen, rec.ply + 1), me).join(" ") || "none"}
+${safety ? `SAFETY CHAPTER: the student is training to find threats and hanging pieces alone. Do NOT name any threat, attacked piece, hanging piece or square under attack. Describe only the general idea of the move (development, centre, king safety) and end by asking the student to check what changed and what is attacked.` : `IF THE OPPONENT COULD MOVE AGAIN, STOCKFISH SAYS THEY WOULD PLAY: ${th ? numberedLine(nullFenOf(rec.fen), th.san) : "nothing dangerous"}
+FACTS (student's side): ${Facts.describe(Facts.positionFacts(rec.fen, rec.ply + 1), me).join(" ") || "none"}`}
 CHAPTER FOCUS: ${c.title}`;
     const allowed = allowedFrom(rec.fen, [th ? th.san : [], G.sans]);
     try {
@@ -402,7 +437,8 @@ CHAPTER FOCUS: ${c.title}`;
     finalizeGame(G); setStatus(msg); refreshUi();
     const prog = ruleProgress(c); const justDone = !wasDone && !!chState(n).completedAt;
     const cd = card(`<div class="fh"><b>انتهت المباراة: ${RESULT_AR[result]}</b></div><p>${esc(msg)}</p>
-      ${countsForChapter(G) ? (prog.pending ? "" : `<p>شرط إكمال الفصل: <bdi class="mono">${prog.have}/${prog.need}</bdi> ${esc(prog.unit)}.</p>`) : `<p class="note">مباراة لم تكتمل وفيها أقل من 20 نقلة لك: لا تُحسب في شرط إكمال الفصل.</p>`}
+      ${countsForChapter(G) ? (prog.pending ? "" : `<p>شرط إكمال الفصل: <bdi class="mono">${prog.have}/${prog.need}</bdi> ${esc(prog.unit)}.</p>`) : safety ? "" : `<p class="note">مباراة لم تكتمل وفيها أقل من 20 نقلة لك: لا تُحسب في شرط إكمال الفصل.</p>`}
+      ${safety ? `<p>${esc(safetyVerdictText(G.metrics, G))}</p>` : ""}
       ${justDone ? `<div class="callout good"><b>اكتمل الفصل ${n}.</b> ${n < CUR.chapters.length ? `الفصل ${n + 1} مفتوح الآن.` : ""}</div>` : ""}
       <p class="note">مستوى الخصم في المباراة القادمة: ${J.state.settings.oppRating}.</p>
       <div class="row"><button class="btn" data-a="review">راجع المباراة</button><button class="btn quiet" data-a="again">مباراة جديدة</button></div>`, "end");
@@ -425,7 +461,7 @@ CHAPTER FOCUS: ${c.title}`;
 
   /* ---- start or resume ---- */
   if (resume) card(`<p class="note">استأنفت المباراة من النقلة ${Math.floor(G.sans.length / 2) + 1}.</p>`, "hint");
-  else card(`<p>بدأت المباراة. أنت ${me === "w" ? "بالأبيض، فابدأ أنت" : "بالأسود، والخصم يبدأ"}.${opening ? " راقب قائمة الافتتاح تحت الرقعة." : ""}</p>`, "hint");
+  else card(`<p>بدأت المباراة. أنت ${me === "w" ? "بالأبيض، فابدأ أنت" : "بالأسود، والخصم يبدأ"}.${opening ? " راقب قائمة الافتتاح تحت الرقعة." : ""}${safety ? " راقب عدّاد الأمان تحت الرقعة. لن أعلن تهديدات الخصم: ابحث عنها بنفسك." : ""}</p>`, "hint");
   odds(lastCp, null);
   refreshUi();
   if (game.game_over()) checkEnd(); else if (game.turn() === me) userTurn(); else opponentTurn();
@@ -520,7 +556,7 @@ function computeMetrics(G) {
     avgDrop: fin.length ? +(fin.reduce((s, r) => s + r.drop, 0) / fin.length).toFixed(1) : null,
     openingScore: ck ? ck.score : null, openingItems: ck ? ck.items : null,
     openingBlunder: all.some((r) => r.own <= 10 && r.cls === "blunder"),
-    hanging: all.filter((r) => r.hung).length, missedThreats: all.filter((r) => r.missed).length,
+    hanging: all.filter((r) => r.hung).length, missedThreats: all.filter((r) => r.missed).length, rechecks: G.rechecks || 0,
     gifts: fin.filter((r) => r.gift >= 10).length, punished: fin.filter((r) => r.gift >= 10 && r.drop <= 5).length,
   };
 }
