@@ -5,14 +5,16 @@ Tools: load `ArtifactData` (and `WebSearch`) with ToolSearch ("select:ArtifactDa
 
 ## 1. Orient
 - TODAY = output of `TZ=Asia/Riyadh date +%F`; WEEKDAY = `TZ=Asia/Riyadh date +%A`.
-- Read: `me/profile` (get), `me/model` (get), `curriculum/syllabus` (get), `curriculum/presence` (get), `mornings` (query, order_by date desc, limit 10), `answers` (query, order_by date desc, limit 14).
-- If `mornings/TODAY` exists with source "agent" or "page+agent", stop: today is done. If it exists with source "page", keep every field it has (the person may already have answered its questions) and only ADD what is missing: career.paper, spirit, mind.article (and weekly on Fridays); set source to "page+agent".
+- Read: `me/profile` (get), `me/model` (get), `curriculum/syllabus` (get), `curriculum/presence` (get), `curriculum/quant` (get), `curriculum/charisma` (get), `mornings` (query, order_by date desc, limit 10), `answers` (query, order_by date desc, limit 14), `likes` (query, order_by date desc, limit 30).
+- If `mornings/TODAY` exists with source "agent" or "page+agent", stop: today is done. If it exists with source "page", keep every field it has (the person may already have answered its questions) and only ADD what is missing: career.paper, spirit, mind.article, quant (if absent), presence.bodyLanguage and presence.eyeContact (and weekly on Fridays); set source to "page+agent".
 - Weak topics: from the answers docs, count correct/total per `topic`. Prefer weak topics for the clinical case, ideas, and Friday questions.
+- Likes: each `likes` doc has `items` {key: {kind, ref, title, v, at}}; for the same key keep the newest `at`. v 1 means "more like this", v -1 means "less", 0 means cleared. Kinds: paper, chapter, presence, body, eye, article, exercise, puzzle, case, quant, breathing. Use them to choose what you are free to choose: papers, articles, puzzles, cases, exercises, ideas and examples close to the liked items and away from the disliked ones. Never skip or reorder the curricula because of a dislike; instead change the examples and framing toward what they like. Mention in the final report how likes shaped today.
 
 ## 2. Decide today's slots
 - Chapter section: take the most recent morning (date < TODAY) that has career.chapter. Today's section is the next section of that chapter in the syllabus; after the last section, section 1 of the next chapter. If there is no previous morning, use ch01 section 1.
 - Presence technique: the technique after the previous morning's presence.id in curriculum/presence.techniques (wrap around). Copy it verbatim into `presence`.
-- Finance track: the opposite of the previous morning's finance.track ("trading" or "personal").
+- Quant concept: the concept after the previous morning's quant.conceptId in curriculum/quant.concepts (wrap around); if no earlier morning has quant, the first concept. If curriculum/quant is missing, teach a core concept of your own choosing (start with RSI(2) mean reversion, then expected value per trade) with conceptId "x-<slug>".
+- Body language and eye contact: i = whole days from curriculum/charisma.startDate to TODAY; copy curriculum/charisma.bodyLanguage[i mod length] verbatim into presence.bodyLanguage and curriculum/charisma.eyeContact[i mod length] verbatim into presence.eyeContact. If curriculum/charisma is missing, leave both out and ignore the validator's two presence lines (the page then shows the drills without them).
 - Do not repeat a paper, article, puzzle, case theme, or ayah used in the last 10 mornings.
 
 ## 3. Research and write (English except `spirit`, which is Arabic)
@@ -24,23 +26,21 @@ MCQ format: {"id": short unique slug, "q": vignette-style stem, "options": [exac
 - career.paper: ONE real, recent (newest first, ideally the last 3 months) clinically important paper or guideline update relevant to hospital pharmacy, preferably tied to today's chapter or the person's interests (diabetes was their first example). Search several ways (journal sites, PubMed pages, guideline bodies). Fields: title, journal, published (month year), url, kind (trial/guideline/review/meta-analysis/cohort), population, finding (numbers only if seen in sources), bottom_line (one sentence), ward_change (what a hospital pharmacist does differently), strength (high/moderate/low), mcqs (2-3).
 - career.chapter: chapterId, chapterTitle, section (an integer, not a string), sectionTitle, minutes, body (450-650 words of ORIGINAL teaching, current with the latest guideline edition, which you confirm with WebSearch; paragraphs separated by blank lines; "## " sub-headings and "- " bullets allowed), pearls (3-5 one-liners), sources (2-4 {name,url} from search results), mcqs (exactly 5, at least 2 application-level).
 - career.ideas: 3 {title, body}: specific, actionable career ideas tied to today's topic (a protocol to propose, a teaching session, a mini audit, a certification step, a research question).
-- presence: the technique object copied from the program.
+- presence: the technique object copied from the program, plus bodyLanguage and eyeContact copied as described in step 2.
 - mind.article: one real, recent, well-supported cognition/brain-health finding {title, source, url, published, summary (80-120 words, including any caveats), takeaway (what to do today), strength (exactly one word: high, moderate or low)}.
 - mind.exercise: {title, minutes (5-10), steps [..], why}: an evidence-based practice for focus or presence.
 - mind.puzzle: {prompt, answer, explanation}: a genuinely clever ~3-minute logic, estimation or lateral puzzle. Solve it yourself twice to make sure the answer is correct and unique.
 - mind.case: {stem (the field must be called stem), options [4], answer (integer 0-3), explanation, seconds: 90}: a short inpatient vignette with ONE hidden problem (interaction, renal dosing error, missing therapy, contraindication), preferably in a weak topic.
 - spirit (Arabic): {ayah: {surah (Arabic name without the word سورة, e.g. البقرة), surahNo, ayahNo, ayahTo (optional), text (exact Arabic with full tashkeel), url: "https://quran.com/<surahNo>/<ayahNo>"}, tafsir: {text, source: "التفسير الميسر" or "تفسير السعدي", quoted: true only if you confirmed the exact wording in search results, otherwise a faithful Arabic paraphrase with quoted: false}, faida (one string of 2-4 warm, practical Arabic sentences; no weak hadith), verification (how you verified)}. Choose a short ayah suited to a morning. If api.quran.com is reachable (`curl -s https://api.quran.com/api/v4/verses/by_key/2:255?fields=text_uthmani`), take the text from it and set verification "api". Otherwise, first read `curriculum/ayat` (get): if it exists, it is a bank of ayat whose exact text was verified in advance. Pick the first one not used in the last 10 mornings, copy its fields exactly (do not retype the Arabic), and set verification "bank". If the bank is missing or used up, cross-check a short ayah word by word against at least two independent WebSearch results and set verification "cross-checked". For the tafsir, quote it only when search results show the exact wording (quoted: true); otherwise write a faithful paraphrase with quoted: false. If you still cannot verify an ayah's text exactly, omit `spirit` (the page then shows the adhkar alone); never guess Quran text.
-- finance: {track, title, body (120-180 words), action (one small step today), mcq}. Personal-finance notes must be halal-conscious (do not recommend interest-bearing products as the default; mention Sharia-compliant options where relevant). Trading notes may connect to their quant-lab project (a calibrated next-day probability model for US equities with purged walk-forward validation).
-- relationships: {title, body, action}: one small, research-backed practice.
-- joy: {title, body}: one specific, delightful idea.
+- quant: today's trading-strategy lesson, tied to their quant-lab project (a research pipeline that estimates the probability that each US stock's next-day return beats its own recent volatility, with purged walk-forward validation, LightGBM + Platt calibration, a logistic-regression control, cost-aware backtests and a single-name timing mode). They call their technical experience limited: explain plainly but rigorously, with a small worked number example. Fields: conceptId and title (from the concept), minutes (8-12), body (450-650 words: what the concept is, why it can work, when it fails, and the probability framing: base rate, hit rate, payoff, expected value; paragraphs separated by blank lines, "## " sub-headings and "- " bullets allowed), rules (the exact rules or steps as a list), math (the key formula in plain text), quantlab {file (the concept's file), how (what in that file connects and what to add or change, concretely), experiment (one honest test: costs included, purged walk-forward, compared with a simple baseline such as buy-and-hold)}, pitfalls (3-5), sources (2-4 {name,url} from search results), mcqs (2-3, testing understanding, not trivia). Verify every rule, threshold and formula with WebSearch. If the quant-lab repository is checked out in your working directory (look for src/quantlab), read the concept's file before writing quantlab.how; otherwise rely on the concept's hook and say less about the code.
 - headline: one specific sentence that frames this morning (no generic motivation).
-- FRIDAY ONLY: weekly: {mcqs: [10]}: integrative, case-based questions that combine this week's chapter sections and papers (read this week's mornings) with the person's weak topics. These join the page's Friday exam.
+- FRIDAY ONLY: weekly: {mcqs: [10]}: integrative, case-based questions that combine this week's chapter sections, papers and quant lessons (read this week's mornings; at most 2 of the 10 on quant) with the person's weak topics. These join the page's Friday exam.
 
 ## 4. Verify before writing
 1. Re-read every MCQ as an adversarial BCPS item reviewer: exactly one correct option, keyed index correct (count from 0), explanation correct, no ambiguity. Fix anything wrong.
 2. Re-check every dose, threshold and guideline claim you are not certain of with WebSearch.
 3. Re-check the Quran text and surah/ayah numbers once more.
-4. Assemble the document {date: TODAY, source: "agent", createdAt: ISO time, headline, career: {paper, chapter, ideas}, presence, mind: {article, exercise, puzzle, case}, spirit, finance, relationships, joy, weekly (Fridays only)} and save it to /tmp/morning.json. Validate it with this script and fix every error it prints:
+4. Assemble the document {date: TODAY, source: "agent", createdAt: ISO time, headline, career: {paper, chapter, ideas}, presence, mind: {article, exercise, puzzle, case}, spirit, quant, weekly (Fridays only)} and save it to /tmp/morning.json. Validate it with this script and fix every error it prints:
 
 ```python
 import json,sys
@@ -56,7 +56,16 @@ for i,q in enumerate((c.get('paper') or {}).get('mcqs',[])): mcq(q,f'paper.mcqs[
 ch=c.get('chapter') or {}; qs=ch.get('mcqs',[])
 if len(qs)!=5: E.append('chapter needs 5 mcqs')
 for i,q in enumerate(qs): mcq(q,f'chapter.mcqs[{i}]')
-mcq((d.get('finance') or {}).get('mcq',{}),'finance.mcq')
+qt=d.get('quant') or {}; qq=qt.get('mcqs',[])
+if not 2<=len(qq)<=3: E.append('quant needs 2-3 mcqs')
+for i,q in enumerate(qq): mcq(q,f'quant.mcqs[{i}]')
+for k in ['conceptId','title','body','rules','math','quantlab']:
+    if k not in qt: E.append('quant missing '+k)
+pr=d.get('presence') or {}
+for k in ['bodyLanguage','eyeContact']:
+    if not isinstance(pr.get(k),dict) or not pr[k].get('title'): E.append('presence.'+k+' missing')
+for k in ['finance','relationships','joy']:
+    if k in d: E.append(k+' is no longer part of the morning; remove it')
 cs=(d.get('mind') or {}).get('case') or {}
 if not isinstance(cs.get('stem'),str) or not isinstance(cs.get('options'),list) or len(cs['options'])!=4 or not isinstance(cs.get('answer'),int): E.append('mind.case needs stem, a list of 4 options and an int answer')
 if not isinstance(ch.get('section'),int): E.append('chapter.section must be an int')
@@ -66,9 +75,9 @@ sp=d.get('spirit') or {}
 if str(sp.get('ayah',{}).get('surah','')).startswith('سورة'): E.append('spirit.ayah.surah must not start with سورة')
 if not isinstance(sp.get('faida',''),str): E.append('spirit.faida must be one string')
 for i,q in enumerate((d.get('weekly') or {}).get('mcqs',[])): mcq(q,f'weekly.mcqs[{i}]')
-for k in ['date','headline','career','presence','mind','finance','relationships','joy']:
+for k in ['date','headline','career','presence','mind','quant']:
     if k not in d: E.append('missing '+k)
-ids=[q['id'] for q in (c.get('paper') or {}).get('mcqs',[])+qs+(d.get('weekly') or {}).get('mcqs',[])]
+ids=[q['id'] for q in (c.get('paper') or {}).get('mcqs',[])+qs+qq+(d.get('weekly') or {}).get('mcqs',[])]
 if len(ids)!=len(set(ids)): E.append('duplicate mcq ids')
 print('\n'.join(E) or 'OK')
 ```
@@ -76,8 +85,8 @@ print('\n'.join(E) or 'OK')
 ## 5. Write
 Immediately before writing, get `mornings/TODAY` again: the person may have pressed "Prepare this morning now" while you were researching.
 - If it does not exist: ArtifactData action "set", collection "mornings", doc_id TODAY, file_path /tmp/morning.json.
-- If it now exists with source "page": do not replace it. Keep its fields (the person may have answered its questions), add your career.paper, spirit and mind.article (and weekly on Fridays) into it, set source "page+agent", re-run the validator on the merged document, and write it with "set" passing its version as if_version.
+- If it now exists with source "page": do not replace it. Keep its fields (the person may have answered its questions), add your career.paper, spirit and mind.article, and quant, presence.bodyLanguage and presence.eyeContact if missing (and weekly on Fridays) into it, set source "page+agent", re-run the validator on the merged document, and write it with "set" passing its version as if_version.
 - If it exists with source "agent" or "page+agent": stop; another run already finished.
-Optionally, if you found a second highly relevant item, add one document to the `dispatches` collection: {id, date, domain (career|finance|health|growth|relationships|spirit|joy), title, summary, why, source, url, strength}.
+Optionally, if you found a second highly relevant item, add one document to the `dispatches` collection: {id, date, domain (career|finance|health|growth|spirit; finance means their quant and trading work), title, summary, why, source, url, strength}.
 
 Finish with a short plain-text report: what you wrote, what you verified and how, and anything you could not verify.

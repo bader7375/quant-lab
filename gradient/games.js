@@ -100,6 +100,7 @@
     '.gg-fb.gg-fb-good{border-left-color:var(--good)}',
     '.gg-fb.gg-fb-bad{border-left-color:var(--bad)}',
     '.gg-formula{font:13px/1.5 var(--f-mono);color:var(--muted);overflow-wrap:anywhere}',
+    '.gg-teach{padding:12px 12px 12px 30px;border:1px solid var(--rule);border-left:3px solid var(--glass);border-radius:8px;background:var(--raise);font-size:15px}',
     '.gg-rm *{transition:none!important;animation:none!important}',
     '@media (prefers-reduced-motion:reduce){.gg *{transition:none!important;animation:none!important}}'
   ].join('\n');
@@ -873,7 +874,7 @@
   });
 
   /* =====================================================================================
-     5. Pharmacy calc sprint
+     5. Pharmacy calculations (untimed, with step-by-step teaching)
      ===================================================================================== */
   const CALC_TYPES = ['dose', 'infusion', 'titration', 'crcl', 'dilution', 'mental'];
   const CALC_LABEL = {
@@ -924,7 +925,9 @@
     { d: 'Propofol', mg: 1000, vol: 100, doses: [10, 20, 30, 40, 50] }                         // 10000 mcg/mL
   ];
 
-  function q(text, answer, unit, formula) { return { text: text, answer: answer, unit: unit, formula: formula }; }
+  // text, numeric answer, unit, worked formula (shown after answering), and teaching steps (shown on "Teach me").
+  // The last teaching step names the final operation but never states its result.
+  function q(text, answer, unit, formula, steps) { return { text: text, answer: answer, unit: unit, formula: formula, steps: steps || [] }; }
 
   const GEN = {
     dose: function (rng) {
@@ -932,7 +935,10 @@
       const w = x.child ? randInt(8, 40, rng) : randInt(48, 110, rng);
       const ans = per * w;
       return q(x.d + ' ' + n2s(per) + ' ' + x.u + '/kg' + (x.extra || '') + ' for ' + an(w) + ' ' + w + ' kg ' + (x.child ? 'child' : 'patient') + '. Dose in ' + x.u + '?',
-        ans, x.u, n2s(per) + ' ' + x.u + '/kg ' + TIMES + ' ' + w + ' kg = ' + n2s(ans, 1) + ' ' + x.u);
+        ans, x.u, n2s(per) + ' ' + x.u + '/kg ' + TIMES + ' ' + w + ' kg = ' + n2s(ans, 1) + ' ' + x.u,
+        ['Weight-based dosing: dose = dose per kg ' + TIMES + ' body weight.',
+         'Dose per kg here is ' + n2s(per) + ' ' + x.u + '/kg; the weight is ' + w + ' kg.',
+         'Multiply: ' + n2s(per) + ' ' + TIMES + ' ' + w + ' = ? ' + x.u + (x.child ? ' (in real practice, check it does not exceed the adult maximum).' : '.')]);
     },
     infusion: function (rng) {
       const x = pick(INF_DRUGS, rng), rate = pick(x.rates, rng);
@@ -940,7 +946,10 @@
       return q(x.d + ' ' + n2s(x.amt) + ' ' + x.u + ' in ' + n2s(x.vol) + ' mL at ' + n2s(rate) + ' ' + x.u + '/h. Rate in mL/h?',
         ans, 'mL/h',
         n2s(x.amt) + ' ' + x.u + ' ' + DIVIDE + ' ' + n2s(x.vol) + ' mL = ' + n2s(conc, 3) + ' ' + x.u + '/mL; ' +
-        n2s(rate) + ' ' + x.u + '/h ' + DIVIDE + ' ' + n2s(conc, 3) + ' ' + x.u + '/mL = ' + n2s(ans, 1) + ' mL/h');
+        n2s(rate) + ' ' + x.u + '/h ' + DIVIDE + ' ' + n2s(conc, 3) + ' ' + x.u + '/mL = ' + n2s(ans, 1) + ' mL/h',
+        ['Step 1, concentration of the bag: amount ' + DIVIDE + ' volume = ' + n2s(x.amt) + ' ' + x.u + ' ' + DIVIDE + ' ' + n2s(x.vol) + ' mL = ' + n2s(conc, 3) + ' ' + x.u + '/mL.',
+         'Step 2, rate in mL/h = ordered dose per hour ' + DIVIDE + ' concentration. The ' + x.u + ' cancel, leaving mL/h.',
+         'Now work out: ' + n2s(rate) + ' ' + DIVIDE + ' ' + n2s(conc, 3) + ' = ? mL/h.']);
     },
     titration: function (rng) {
       let x, dose, w, conc, ans;
@@ -949,54 +958,73 @@
         conc = x.mg * 1000 / x.vol;                 // mcg/mL
         ans = dose * w * 60 / conc;                 // mL/h
       } while (ans < 3);
+      const perMin = dose * w;
       return q(x.d + ' ' + n2s(x.mg) + ' mg in ' + n2s(x.vol) + ' mL at ' + n2s(dose) + ' mcg/kg/min for ' + an(w) + ' ' + w + ' kg patient. Rate in mL/h?',
         ans, 'mL/h',
         n2s(x.mg) + ' mg ' + DIVIDE + ' ' + n2s(x.vol) + ' mL = ' + n2s(conc) + ' mcg/mL; ' +
-        n2s(dose) + ' ' + TIMES + ' ' + w + ' kg ' + TIMES + ' 60 ' + DIVIDE + ' ' + n2s(conc) + ' = ' + n2s(ans, 1) + ' mL/h');
+        n2s(dose) + ' ' + TIMES + ' ' + w + ' kg ' + TIMES + ' 60 ' + DIVIDE + ' ' + n2s(conc) + ' = ' + n2s(ans, 1) + ' mL/h',
+        ['Step 1, bag concentration in mcg/mL: ' + n2s(x.mg) + ' mg ' + TIMES + ' 1000 ' + DIVIDE + ' ' + n2s(x.vol) + ' mL = ' + n2s(conc) + ' mcg/mL.',
+         'Step 2, dose per minute: ' + n2s(dose) + ' mcg/kg/min ' + TIMES + ' ' + w + ' kg = ' + n2s(perMin, 3) + ' mcg/min.',
+         'Step 3, dose per hour: ' + TIMES + ' 60 = ' + n2s(perMin * 60, 2) + ' mcg/h.',
+         'Now work out: ' + n2s(perMin * 60, 2) + ' ' + DIVIDE + ' ' + n2s(conc) + ' = ? mL/h. One-line formula: dose ' + TIMES + ' weight ' + TIMES + ' 60 ' + DIVIDE + ' concentration.']);
     },
     crcl: function (rng) {
       const age = randInt(25, 90, rng), female = rng() < 0.5, w = randInt(45, 110, rng);
       const scr = randInt(7, 28, rng) / 10;
-      const ans = (140 - age) * w / (72 * scr) * (female ? 0.85 : 1);
+      const num = (140 - age) * w, den = 72 * scr;
+      const ans = num / den * (female ? 0.85 : 1);
       return q('Cockcroft' + NDASH + 'Gault: ' + an(age) + ' ' + age + '-year-old ' + (female ? 'woman' : 'man') +
         ', actual body weight ' + w + ' kg, SCr ' + n2s(scr) + ' mg/dL. Use actual body weight. CrCl in mL/min?',
         ans, 'mL/min',
         '(140 ' + MINUS + ' ' + age + ') ' + TIMES + ' ' + w + ' ' + DIVIDE + ' (72 ' + TIMES + ' ' + n2s(scr) + ')' +
-        (female ? ' ' + TIMES + ' 0.85' : '') + ' = ' + n2s(ans, 1) + ' mL/min');
+        (female ? ' ' + TIMES + ' 0.85' : '') + ' = ' + n2s(ans, 1) + ' mL/min',
+        ['Cockcroft' + NDASH + 'Gault: CrCl = (140 ' + MINUS + ' age) ' + TIMES + ' weight ' + DIVIDE + ' (72 ' + TIMES + ' SCr), then ' + TIMES + ' 0.85 for a woman.',
+         'Top: (140 ' + MINUS + ' ' + age + ') = ' + (140 - age) + ', ' + TIMES + ' ' + w + ' kg = ' + n2s(num) + '.',
+         'Bottom: 72 ' + TIMES + ' ' + n2s(scr) + ' = ' + n2s(den, 2) + '.',
+         'Now work out: ' + n2s(num) + ' ' + DIVIDE + ' ' + n2s(den, 2) + (female ? ', then ' + TIMES + ' 0.85 because she is a woman' : '') + ' = ? mL/min.']);
     },
     dilution: function (rng) {
       const kind = randInt(0, 5, rng);
       const v1f = function (c1, c2, v2) { return 'C1V1 = C2V2, so V1 = ' + n2s(c2) + '% ' + TIMES + ' ' + n2s(v2) + ' mL ' + DIVIDE + ' ' + n2s(c1) + '%'; };
       const v2f = function (c1, v1, c2) { return 'C1V1 = C2V2, so V2 = ' + n2s(c1) + '% ' + TIMES + ' ' + n2s(v1) + ' mL ' + DIVIDE + ' ' + n2s(c2) + '%'; };
+      const teachV1 = function (c1, c2, v2) { return ['Dilution rule: C1 ' + TIMES + ' V1 = C2 ' + TIMES + ' V2 (the amount of drug stays the same).',
+        'You know the stock C1 = ' + n2s(c1) + '%, the target C2 = ' + n2s(c2) + '% and the final volume V2 = ' + n2s(v2) + ' mL. You need V1.',
+        'Rearrange: V1 = C2 ' + TIMES + ' V2 ' + DIVIDE + ' C1. Now work out: ' + n2s(c2) + ' ' + TIMES + ' ' + n2s(v2) + ' ' + DIVIDE + ' ' + n2s(c1) + ' = ? mL.']; };
+      const teachV2 = function (c1, v1, c2) { return ['Dilution rule: C1 ' + TIMES + ' V1 = C2 ' + TIMES + ' V2 (the amount of drug stays the same).',
+        'You know C1 = ' + n2s(c1) + '%, V1 = ' + n2s(v1) + ' mL and the target C2 = ' + n2s(c2) + '%. You need the final volume V2.',
+        'Rearrange: V2 = C1 ' + TIMES + ' V1 ' + DIVIDE + ' C2. Now work out: ' + n2s(c1) + ' ' + TIMES + ' ' + n2s(v1) + ' ' + DIVIDE + ' ' + n2s(c2) + ' = ? mL.']; };
       if (kind === 0) {
         const c2 = pick([5, 10, 12.5, 20, 25], rng), v2 = pick([100, 250, 500, 1000], rng), v1 = c2 * v2 / 50;
         return q('How many mL of 50% dextrose are needed to make ' + n2s(v2) + ' mL of ' + n2s(c2) + '% dextrose?',
-          v1, 'mL', v1f(50, c2, v2) + ' = ' + n2s(v1, 1) + ' mL');
+          v1, 'mL', v1f(50, c2, v2) + ' = ' + n2s(v1, 1) + ' mL', teachV1(50, c2, v2));
       }
       if (kind === 1) {
         const c2 = pick([60, 70], rng), v2 = pick([100, 250, 500], rng), v1 = c2 * v2 / 95;
         return q('How many mL of 95% ethanol are needed to make ' + n2s(v2) + ' mL of ' + c2 + '% ethanol?',
-          v1, 'mL', v1f(95, c2, v2) + ' = ' + n2s(v1, 1) + ' mL');
+          v1, 'mL', v1f(95, c2, v2) + ' = ' + n2s(v1, 1) + ' mL', teachV1(95, c2, v2));
       }
       if (kind === 2) {
         const v1 = pick([10, 20, 50], rng), v2 = 8.4 * v1 / 4.2;
         return q(v1 + ' mL of 8.4% sodium bicarbonate is diluted to 4.2%. Final volume in mL?',
-          v2, 'mL', v2f(8.4, v1, 4.2) + ' = ' + n2s(v2, 1) + ' mL');
+          v2, 'mL', v2f(8.4, v1, 4.2) + ' = ' + n2s(v2, 1) + ' mL', teachV2(8.4, v1, 4.2));
       }
       if (kind === 3) {
         const v1 = pick([5, 10, 20], rng), c2 = pick([0.5, 1], rng), v2 = 2 * v1 / c2;
         return q(v1 + ' mL of lidocaine 2% is diluted to ' + n2s(c2) + '%. Final volume in mL?',
-          v2, 'mL', v2f(2, v1, c2) + ' = ' + n2s(v2, 1) + ' mL');
+          v2, 'mL', v2f(2, v1, c2) + ' = ' + n2s(v2, 1) + ' mL', teachV2(2, v1, c2));
       }
       if (kind === 4) {
         const v1 = pick([50, 100], rng), v2 = 25 * v1 / 5;
         return q(v1 + ' mL of 25% albumin is diluted with 0.9% sodium chloride to 5%. Final volume in mL?',
-          v2, 'mL', v2f(25, v1, 5) + ' = ' + n2s(v2, 1) + ' mL');
+          v2, 'mL', v2f(25, v1, 5) + ' = ' + n2s(v2, 1) + ' mL', teachV2(25, v1, 5));
       }
       let v1, v2, c2;
       do { v1 = pick([50, 100], rng); v2 = pick([250, 500, 1000], rng); c2 = 50 * v1 / v2; } while (c2 < 5);
       return q(v1 + ' mL of 50% dextrose is made up to ' + n2s(v2) + ' mL with sterile water. Final concentration in %?',
-        c2, '%', 'C1V1 = C2V2, so C2 = 50% ' + TIMES + ' ' + v1 + ' mL ' + DIVIDE + ' ' + n2s(v2) + ' mL = ' + n2s(c2, 1) + '%');
+        c2, '%', 'C1V1 = C2V2, so C2 = 50% ' + TIMES + ' ' + v1 + ' mL ' + DIVIDE + ' ' + n2s(v2) + ' mL = ' + n2s(c2, 1) + '%',
+        ['Dilution rule: C1 ' + TIMES + ' V1 = C2 ' + TIMES + ' V2.',
+         'You know C1 = 50%, V1 = ' + v1 + ' mL and the final volume V2 = ' + n2s(v2) + ' mL. You need the final concentration C2.',
+         'Rearrange: C2 = C1 ' + TIMES + ' V1 ' + DIVIDE + ' V2. Now work out: 50 ' + TIMES + ' ' + v1 + ' ' + DIVIDE + ' ' + n2s(v2) + ' = ? %.']);
     },
     mental: function (rng) {
       const kind = randInt(0, 2, rng);
@@ -1005,17 +1033,26 @@
         do { a = randInt(12, 98, rng); b = randInt(12, 98, rng); } while (a % 10 === 0 || b % 10 === 0);
         const tens = b - b % 10, ones = b % 10;
         return q(a + ' ' + TIMES + ' ' + b + ' = ?', a * b, '',
-          a + ' ' + TIMES + ' ' + tens + ' + ' + a + ' ' + TIMES + ' ' + ones + ' = ' + n2s(a * tens) + ' + ' + n2s(a * ones) + ' = ' + n2s(a * b));
+          a + ' ' + TIMES + ' ' + tens + ' + ' + a + ' ' + TIMES + ' ' + ones + ' = ' + n2s(a * tens) + ' + ' + n2s(a * ones) + ' = ' + n2s(a * b),
+          ['Split the second number into tens and ones: ' + b + ' = ' + tens + ' + ' + ones + '.',
+           'Multiply each part: ' + a + ' ' + TIMES + ' ' + tens + ' = ' + n2s(a * tens) + ', and ' + a + ' ' + TIMES + ' ' + ones + ' = ' + n2s(a * ones) + '.',
+           'Now add the two parts: ' + n2s(a * tens) + ' + ' + n2s(a * ones) + ' = ?']);
       }
       if (kind === 1) {
         let p, n, ans;
         do { p = pick([5, 12.5, 15, 20, 25, 30, 35, 40, 45, 60, 65, 75, 80, 85], rng); n = 8 * randInt(5, 120, rng); ans = p * n / 100; } while (ans < 3);
         return q('What is ' + n2s(p) + '% of ' + n2s(n) + '?', ans, '',
-          n2s(p) + ' ' + DIVIDE + ' 100 ' + TIMES + ' ' + n2s(n) + ' = ' + n2s(ans, 2));
+          n2s(p) + ' ' + DIVIDE + ' 100 ' + TIMES + ' ' + n2s(n) + ' = ' + n2s(ans, 2),
+          ['A percentage is a fraction of 100: ' + n2s(p) + '% = ' + n2s(p) + ' ' + DIVIDE + ' 100 = ' + n2s(p / 100, 4) + '.',
+           'Shortcut: 10% of ' + n2s(n) + ' is ' + n2s(n / 10, 2) + '; build ' + n2s(p) + '% from pieces of 10%, 5% and 1% if that is easier.',
+           'Now work out: ' + n2s(p / 100, 4) + ' ' + TIMES + ' ' + n2s(n) + ' = ?']);
       }
       const whole = 20 * randInt(2, 25, rng), p = 5 * randInt(1, 19, rng), part = whole * p / 100;
       return q(n2s(part) + ' is what percent of ' + n2s(whole) + '?', p, '%',
-        n2s(part) + ' ' + DIVIDE + ' ' + n2s(whole) + ' ' + TIMES + ' 100 = ' + p + '%');
+        n2s(part) + ' ' + DIVIDE + ' ' + n2s(whole) + ' ' + TIMES + ' 100 = ' + p + '%',
+        ['"What percent" means part ' + DIVIDE + ' whole ' + TIMES + ' 100.',
+         'Here the part is ' + n2s(part) + ' and the whole is ' + n2s(whole) + '.',
+         'Now work out: ' + n2s(part) + ' ' + DIVIDE + ' ' + n2s(whole) + ' ' + TIMES + ' 100 = ? %']);
     }
   };
 
@@ -1041,30 +1078,30 @@
   }
   function fmtAns(x) { return n2s(x, Math.abs(x) < 10 ? 2 : 1); }
 
+  const CALC_N = 10;
   defineGame({
-    id: 'calc', name: 'Pharmacy calc sprint', skill: 'Numeracy under time pressure', minutes: 2,
-    metric: { label: 'Correct per minute', unit: '/min', better: 'higher' },
-    trains: 'Fast, accurate dosing arithmetic: the calculations you do at the bench, against the clock.',
+    id: 'calcsteps', name: 'Pharmacy calculations', skill: 'Dosing math, step by step', minutes: 6,
+    metric: { label: 'Correct out of 10', unit: '/10', better: 'higher' },
+    trains: 'Accurate dosing arithmetic at your own pace: the calculations you do at the bench, with a teacher one tap away.',
     how: function () {
       return [
-        '90 seconds of mixed questions: weight-based doses, infusion rates, mcg/kg/min to mL/h, Cockcroft' + NDASH + 'Gault, dilutions and mental arithmetic.',
-        ['Type a number and press ', kbd('Enter'), ' or tap Submit. Answers within 2% count (within 0.5 for small numbers).'],
-        'Each answer shows the correct value and the formula. Skip shows the answer and counts as a miss.'
+        CALC_N + ' mixed questions, no clock: weight-based doses, infusion rates, mcg/kg/min to mL/h, Cockcroft' + NDASH + 'Gault, dilutions and mental arithmetic.',
+        ['Stuck? Tap ', h('strong', null, 'Teach me how'), ' to see the method with your numbers, step by step, before you answer.'],
+        ['Type a number and press ', kbd('Enter'), ' or tap Check. Answers within 2% count (within 0.5 for small numbers). Then read the worked solution and go to the next question.']
       ];
     },
     note: 'Arithmetic practice only. Check real doses against your local protocols.',
-    dp: 1,
-    fmt: function (v) { return Number(v).toFixed(1) + '/min'; },
-    big: function (v) { return Number(v).toFixed(1); },
-    delta: function (a, imp) { return (imp ? 'up ' : 'down ') + Number(a).toFixed(1) + '/min'; },
-    gap: function (a) { return Number(a).toFixed(1) + '/min'; },
+    dp: 0,
+    fmt: function (v) { return Math.round(v) + '/10'; },
+    big: function (v) { return String(Math.round(v)); },
+    delta: function (a, imp) { return (imp ? 'up ' : 'down ') + Math.round(a); },
+    gap: function (a) { return String(Math.round(a)); },
     expose: { makeQuestion: makeQuestion, isCorrect: isCorrect, parseAnswer: parseAnswer, types: CALC_TYPES.slice() },
     play: function (c) {
-      const DURATION = 90000;
-      let correct = 0, attempted = 0, cur = null, lastType = '', over = false, endAt = 0;
+      let i = 0, correct = 0, taught = 0, cur = null, lastType = '', answered = false, usedTeach = false;
       const byType = {};
       const qid = 'gg-calc-q-' + (++uid);
-      const timerEl = h('span', { class: 'gg-timer', role: 'timer', 'aria-label': 'Time left' }, '1:30');
+      const progEl = h('span', null, 'Question 1 of ' + CALC_N);
       const scoreEl = h('span', null, '0 correct');
       const kindEl = h('p', { class: 'gg-kicker' });
       const textEl = h('p', { class: 'gg-qtext', id: qid });
@@ -1073,104 +1110,94 @@
         spellcheck: 'false', enterkeyhint: 'done', maxlength: '16', 'aria-label': 'Your answer', 'aria-describedby': qid
       });
       const unitEl = h('span', { class: 'gg-unit' });
-      const submit = h('button', { type: 'submit', class: 'gg-btn gg-primary' }, 'Submit');
-      const skip = h('button', { type: 'button', class: 'gg-btn' }, 'Skip');
-      const form = h('form', { class: 'gg-form', novalidate: true }, input, unitEl, submit, skip);
+      const submit = h('button', { type: 'submit', class: 'gg-btn gg-primary' }, 'Check');
+      const teachBtn = h('button', { type: 'button', class: 'gg-btn' }, 'Teach me how');
+      const nextBtn = h('button', { type: 'button', class: 'gg-btn gg-primary', hidden: true }, 'Next question');
+      const form = h('form', { class: 'gg-form', novalidate: true }, input, unitEl, submit, teachBtn);
       const warn = h('p', { class: 'gg-note gg-warn', 'aria-live': 'polite', hidden: true }, 'Enter a number, e.g. 12.5');
-      const fb = h('div', { class: 'gg-fb', 'aria-live': 'polite' }, h('p', { class: 'gg-muted' }, 'The answer and formula for each question appear here.'));
+      const teachEl = h('ol', { class: 'gg-how gg-teach', 'aria-live': 'polite', hidden: true });
+      const fb = h('div', { class: 'gg-fb', 'aria-live': 'polite', hidden: true });
       add(c.el, [
-        h('div', { class: 'gg-meta' }, timerEl, scoreEl),
+        h('div', { class: 'gg-meta' }, progEl, scoreEl),
         h('div', { class: 'gg-q' }, kindEl, textEl),
-        form, warn, fb
+        form, warn, teachEl, fb, h('div', { class: 'gg-row' }, nextBtn)
       ]);
 
-      function nextQ() {
+      function showQ() {
         cur = makeQuestion(Math.random, lastType);
-        lastType = cur.type;
+        lastType = cur.type; answered = false; usedTeach = false;
+        progEl.textContent = 'Question ' + (i + 1) + ' of ' + CALC_N;
         kindEl.textContent = CALC_LABEL[cur.type];
         textEl.textContent = cur.text;
         unitEl.textContent = cur.unit;
-        input.value = '';
+        input.value = ''; input.disabled = false; submit.disabled = false; teachBtn.disabled = false;
+        teachEl.hidden = true; teachEl.textContent = ''; fb.hidden = true; nextBtn.hidden = true; warn.hidden = true;
+        focusEl(input);
       }
-      function record(ok) {
-        attempted++;
-        if (ok) correct++;
+      function teach() {
+        if (answered || !cur) return;
+        usedTeach = true;
+        teachEl.textContent = '';
+        add(teachEl, cur.steps.map(function (st) { return h('li', null, st); }));
+        teachEl.hidden = false;
+        teachBtn.disabled = true;
+        focusEl(input);
+      }
+      function mark(ok, given) {
+        answered = true;
         const b = byType[cur.type] || (byType[cur.type] = { correct: 0, attempted: 0 });
         b.attempted++;
-        if (ok) b.correct++;
-        scoreEl.textContent = correct + ' correct ' + MIDDOT + ' ' + attempted + ' tried';
-      }
-      function showFb(ok, given) {
+        if (ok) { correct++; b.correct++; }
+        if (usedTeach) taught++;
+        scoreEl.textContent = correct + ' correct' + (taught ? ' ' + MIDDOT + ' ' + taught + ' taught' : '');
         const ans = fmtAns(cur.answer) + (cur.unit ? (cur.unit === '%' ? '%' : ' ' + cur.unit) : '');
         fb.className = 'gg-fb ' + (ok ? 'gg-fb-good' : 'gg-fb-bad');
         fb.textContent = '';
         add(fb, [
-          h('p', { class: 'gg-kicker' }, 'Previous ' + MIDDOT + ' ' + CALC_LABEL[cur.type]),
-          h('p', null,
-            h('strong', { class: ok ? 'gg-good' : 'gg-bad' }, ok ? 'Correct' : given == null ? 'Skipped' : 'Not quite'),
+          h('p', null, h('strong', { class: ok ? 'gg-good' : 'gg-bad' }, ok ? 'Correct' : given == null ? 'Shown' : 'Not quite'),
             ok ? ': ' + ans : ': the answer is ' + ans + (given == null ? '' : ' (you entered ' + n2s(given, 4) + ')')),
           h('p', { class: 'gg-formula' }, cur.formula)
         ]);
+        if (!ok && !usedTeach) { teachEl.textContent = ''; add(teachEl, cur.steps.map(function (st) { return h('li', null, st); })); teachEl.hidden = false; }
+        fb.hidden = false;
+        input.disabled = true; submit.disabled = true; teachBtn.disabled = true;
+        nextBtn.textContent = i + 1 >= CALC_N ? 'See my score' : 'Next question';
+        nextBtn.hidden = false;
+        focusEl(nextBtn);
       }
-      function timeUp() { return performance.now() >= endAt; }
       c.s.on(form, 'submit', function (e) {
         e.preventDefault();
-        if (over) return;
-        if (timeUp()) { end(); return; }
+        if (answered) { next(); return; }
         const v = parseAnswer(input.value);
         if (v == null) { warn.hidden = false; focusEl(input); return; }
         warn.hidden = true;
-        const ok = isCorrect(v, cur.answer);
-        record(ok);
-        showFb(ok, v);
-        nextQ();
-        focusEl(input);
+        mark(isCorrect(v, cur.answer), v);
       });
-      c.s.on(skip, 'click', function () {
-        if (over) return;
-        if (timeUp()) { end(); return; }
-        warn.hidden = true;
-        record(false);
-        showFb(false, null);
-        nextQ();
-        focusEl(input);
-      });
-
-      function tick() {
-        const rem = endAt - performance.now();
-        if (rem <= 0) { timerEl.textContent = '0:00'; end(); return; }
-        const sec = Math.ceil(rem / 1000);
-        timerEl.textContent = Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
-        timerEl.classList.toggle('gg-low', rem <= 10000);
+      c.s.on(teachBtn, 'click', teach);
+      c.s.on(nextBtn, 'click', next);
+      function next() {
+        if (!answered) return;
+        i++;
+        if (i >= CALC_N) { end(); return; }
+        showQ();
       }
       function end() {
-        if (over) return;
-        over = true;
-        input.disabled = true;
-        const score = Math.round(correct / 1.5 * 10) / 10;
         let worst = null;
         Object.keys(byType).forEach(function (t) {
           const miss = byType[t].attempted - byType[t].correct;
           if (miss > 0 && (!worst || miss > worst.miss)) worst = { t: t, miss: miss };
         });
-        const summary = attempted === 0
-          ? 'No answers submitted in the 90 seconds.'
-          : correct + ' of ' + attempted + ' correct in 90 seconds (' + score.toFixed(1) + ' per minute)' +
-            (worst ? '; most misses on ' + CALC_NAME[worst.t] + '.' : ', with no misses.');
+        const summary = correct + ' of ' + CALC_N + ' correct' + (taught ? ', ' + taught + ' with teaching' : '') +
+          (worst ? '; most misses on ' + CALC_NAME[worst.t] + '.' : ', with no misses.');
         const rows = CALC_TYPES.filter(function (t) { return byType[t]; })
           .map(function (t) { return [CALC_LABEL[t], byType[t].correct + '/' + byType[t].attempted]; });
         c.finish({
-          score: score, detail: { correct: correct, attempted: attempted, byType: byType }, summary: summary,
-          stats: [['Correct', correct + '/' + attempted, attempted ? pct(correct / attempted) + '% accuracy' : 'none answered']],
+          score: correct, detail: { correct: correct, attempted: CALC_N, taught: taught, byType: byType }, summary: summary,
+          stats: [['Taught', String(taught), taught ? 'questions where you asked for the method' : 'solved without help']],
           table: { label: 'Correct by question type', rows: rows }
         });
       }
-
-      endAt = performance.now() + DURATION;
-      nextQ();
-      tick();
-      c.s.every(200, tick);
-      focusEl(input);
+      showQ();
     }
   });
 })();

@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Amiri+Quran&family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap">
 <style>
-/* Layout: a survey map of one life on top; beneath it, seven morning stations read like a field notebook; the Lab holds the instruments. */
+/* Layout: a survey map of one life on top; beneath it, six morning stations read like a field notebook; the Lab holds the instruments. */
 :root{
   --ground:#0c1517; --surface:#111d20; --raise:#172629; --rule:#24373b;
   --ink:#e3ece8; --muted:#8ba29e; --faint:#7b918c;
@@ -190,6 +190,45 @@ textarea{min-height:96px;resize:vertical}
 .overlay .inner{max-width:760px;margin-inline:auto;display:grid;gap:14px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:18px}
 .timer{font:600 20px var(--f-mono);color:var(--ember)}
 
+/* focus: breathing */
+.breath{display:grid;justify-items:center;gap:14px;text-align:center;padding:6px 0}
+.breath .orb{width:min(240px,62vw);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;position:relative;border:1px solid var(--rule)}
+.breath .orb i{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--glass) 60%,transparent),color-mix(in srgb,var(--glass) 14%,transparent) 72%);transform:scale(.32)}
+.breath .orb b{position:relative;font:600 40px/1 var(--f-mono)}
+.breath .phase{font:italic 500 clamp(20px,3vw,26px)/1.25 var(--f-display);min-height:1.3em}
+.breath .hint{color:var(--muted);font-size:14px;max-width:46ch}
+.callout.go{border-color:var(--glass);cursor:pointer;background:none;text-align:left;color:inherit}
+.callout.go:hover{background:var(--raise)}
+
+/* presence: eye contact trainer */
+.eyetrain{display:grid;justify-items:center;gap:14px;text-align:center}
+.eyes{width:min(340px,80vw);height:auto;display:block}
+.eyes .lid{transform-box:fill-box;transform-origin:center;transform:scaleY(0);animation:blink 5.3s infinite}
+.eyes .iris{transition:filter .2s}
+.eyes.held .iris{filter:drop-shadow(0 0 7px var(--growth))}
+.eyes.hit .ring{opacity:1}
+.eyes .ring{opacity:0;transition:opacity .2s}
+@keyframes blink{0%,94%,100%{transform:scaleY(0)}97%{transform:scaleY(1)}}
+.hold{width:min(300px,78vw);min-height:64px;border-radius:999px;border:2px solid var(--growth);background:var(--surface);font-weight:600;cursor:pointer;position:relative;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.hold i{position:absolute;inset:0 auto 0 0;width:0;background:color-mix(in srgb,var(--growth) 34%,transparent)}
+.hold span{position:relative}
+.say{font:italic 500 clamp(18px,2.6vw,22px)/1.35 var(--f-display);max-width:38ch}
+.reps{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.reps i{width:12px;height:12px;border-radius:50%;border:2px solid var(--growth)}
+.reps i.hit{background:var(--growth)}
+.reps i.miss{border-color:var(--bad)}
+.steps{margin:0;padding-left:20px;display:grid;gap:4px;max-width:70ch}
+
+/* likes, teach, quant */
+.likes{display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap}
+.likes button{border:1px solid var(--rule);background:transparent;border-radius:999px;padding:3px 10px;font-size:12.5px;cursor:pointer;color:var(--muted)}
+.likes button:hover{border-color:var(--muted)}
+.likes button.up[aria-pressed="true"]{border-color:var(--good);color:var(--good)}
+.likes button.down[aria-pressed="true"]{border-color:var(--bad);color:var(--bad)}
+.teach{white-space:pre-wrap;background:var(--raise);border-left:2px solid var(--glass);border-radius:0 6px 6px 0;padding:10px 12px;font-size:14px;max-width:72ch}
+.math{font:13.5px/1.65 var(--f-mono);background:var(--raise);border-radius:6px;padding:10px 12px;white-space:pre-wrap;overflow-x:auto;max-width:72ch;margin:0}
+code.path{font:12.5px var(--f-mono);background:var(--raise);padding:1px 6px;border-radius:4px;overflow-wrap:anywhere}
+
 /* exam */
 .exam{border:1px solid var(--career);border-radius:12px;padding:22px;display:grid;gap:16px;background:var(--surface)}
 .exam h2{font:italic 600 30px/1.1 var(--f-display)}
@@ -261,7 +300,7 @@ footer{font:11.5px/1.5 var(--f-mono);color:var(--faint);border-top:1px solid var
 
   <section class="hero">
     <div class="map" id="map">
-      <canvas id="terrain" aria-label="Contour map of your seven life domains. Peak height is your latest pulse; the dashed line points to today's highest-leverage domain."></canvas>
+      <canvas id="terrain" aria-label="Contour map of your five life domains. Peak height is your latest pulse; the dashed line points to today's highest-leverage domain."></canvas>
       <div class="sheet">Sheet <span id="sheetNo">—</span> · survey of one life</div>
       <div class="legend"><span>Contour interval 0.5 · index contour every 2.5</span><span>Peak height = latest pulse · ridges = coupling</span></div>
     </div>
@@ -286,7 +325,7 @@ footer{font:11.5px/1.5 var(--f-mono);color:var(--faint);border-top:1px solid var
 
 <div class="overlay" id="gameOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="gameTitle">
   <div class="inner">
-    <div class="spread"><h2 id="gameTitle" class="label" style="font-size:12px">Brain game</h2><button class="btn" id="gameClose" type="button">Close</button></div>
+    <div class="spread"><h2 id="gameTitle" class="label" style="font-size:12px">Practice</h2><button class="btn" id="gameClose" type="button">Close</button></div>
     <div id="gameMount"></div>
   </div>
 </div>
@@ -295,31 +334,42 @@ footer{font:11.5px/1.5 var(--f-mono);color:var(--faint);border-top:1px solid var
 <script>
 "use strict";
 /* ---------- constants ---------- */
+/* The "finance" key is kept so earlier pulse history still lines up; it now means the quant-lab work. */
 const DOMAINS = [
   {k:"career", n:"Career", x:.17, y:.30},
-  {k:"finance", n:"Finance", x:.34, y:.73},
+  {k:"finance", n:"Quant", x:.32, y:.75},
   {k:"health", n:"Health", x:.50, y:.24},
-  {k:"growth", n:"Growth", x:.67, y:.70},
-  {k:"relationships", n:"Relationships", x:.84, y:.31},
-  {k:"spirit", n:"Spirituality", x:.87, y:.80},
-  {k:"joy", n:"Enjoyment", x:.13, y:.80},
+  {k:"growth", n:"Presence", x:.68, y:.72},
+  {k:"spirit", n:"Spirituality", x:.84, y:.31},
 ];
 const DK = DOMAINS.map(d=>d.k);
 const dn = k => (DOMAINS.find(d=>d.k===k)||{n:k||"General"}).n;
 const STATIONS = [
-  {k:"career", d:"career", n:"Pharmacy", sub:"A new paper, today's chapter section with its exam, and ideas."},
-  {k:"presence", d:"growth", n:"Presence", sub:"Training to command the room: with the care team, on stage, at the table, and socially."},
-  {k:"mind", d:"health", n:"Mind", sub:"Sharp, present, intelligent: games, a clinical case, a puzzle, and the science."},
+  {k:"focus", d:"glass", n:"Focus", sub:"Two to five minutes of guided breathing to arrive before you start."},
   {k:"spirit", d:"spirit", n:"الروح", sub:"آية وتفسير، فائدة، وأذكار الصباح", rtl:true},
-  {k:"finance", d:"finance", n:"Finance", sub:"Trading and personal finance, alternating."},
-  {k:"relationships", d:"relationships", n:"People", sub:"One small practice for the people who matter."},
-  {k:"joy", d:"joy", n:"Joy", sub:"Something to enjoy today."},
+  {k:"career", d:"career", n:"Pharmacy", sub:"A new paper, today's chapter section with its exam, and ideas."},
+  {k:"presence", d:"growth", n:"Presence", sub:"Harvey Specter-level presence: body language and eye contact every day, plus a technique with a drill."},
+  {k:"mind", d:"health", n:"Mind", sub:"Sharp, present, intelligent: games, a clinical case, a puzzle, and the science."},
+  {k:"quant", d:"finance", n:"Quant", sub:"One strategy concept a day, from RSI(2) to probability and sizing, tied to your quant-lab."},
 ];
 const ENERGY = {
-  low:{n:"Low", min:"~12 min + adhkar", lvl:1},
-  steady:{n:"Steady", min:"~25 min", lvl:2},
-  sharp:{n:"Sharp", min:"45–60 min", lvl:3},
+  low:{n:"Low", min:"~15 min + adhkar", lvl:1, breath:120},
+  steady:{n:"Steady", min:"~30 min", lvl:2, breath:180},
+  sharp:{n:"Sharp", min:"45–60 min", lvl:3, breath:300},
 };
+/* Breathing patterns: [cue, seconds, orb size at the end of the phase] */
+const BREATHS = {
+  sigh:{n:"Cyclic sighing", cue:"Inhale through the nose, sip in a little more, then a long, slow exhale through the mouth.",
+    phases:[["Inhale through the nose",2.5,.84],["Sip in a little more",1,1],["Long, slow exhale through the mouth",6.5,.32]],
+    why:"In a randomized trial (Balban et al., Cell Reports Medicine, 2023), five minutes a day of cyclic sighing improved mood and lowered resting breathing rate more than mindfulness meditation did. The long exhale does the work."},
+  box:{n:"Box breathing", cue:"In for four, hold for four, out for four, hold for four.",
+    phases:[["Inhale",4,1],["Hold",4,1],["Exhale",4,.32],["Hold",4,.32]],
+    why:"Box breathing was another arm of the same trial and also improved mood. The even count gives a wandering mind something to hold."},
+  slow:{n:"Six breaths a minute", cue:"Five seconds in through the nose, five seconds out.",
+    phases:[["Inhale",5,1],["Exhale",5,.32]],
+    why:"Breathing near six breaths a minute raises heart-rate variability, a marker of calm alertness (Lehrer and Gevirtz, 2014)."},
+};
+const LIKE_KINDS = {paper:"Papers", chapter:"Chapter sections", presence:"Presence techniques", body:"Body-language exercises", eye:"Eye-contact drills", article:"Brain-science reads", exercise:"Focus exercises", puzzle:"Puzzles", case:"Clinical cases", quant:"Quant concepts", breathing:"Breathing patterns"};
 const TABS = [
   {k:"exams", n:"Exams"}, {k:"recall", n:"Recall"}, {k:"curriculum", n:"Curriculum"}, {k:"pulse", n:"Pulse"},
   {k:"forecasts", n:"Forecasts"}, {k:"experiments", n:"Experiments"}, {k:"model", n:"Model of you"},
@@ -332,13 +382,14 @@ const ADHKAR_DEFAULT = [{"id": "ayat-al-kursi", "text": "أَعُوذُ بِال
 /* ---------- state ---------- */
 const S = {
   db:null, sample:null, demo:false, ready:false, busy:false, preparing:false,
-  profile:null, model:null, log:null, syllabus:null, presenceProg:null, adhkarDoc:null,
-  checkins:[], forecasts:[], experiments:[], cards:[], dispatches:[],
+  profile:null, model:null, log:null, syllabus:null, presenceProg:null, adhkarDoc:null, charismaProg:null, quantProg:null,
+  checkins:[], forecasts:[], experiments:[], cards:[], dispatches:[], likes:{},
   mornings:[], answers:{}, exams:[], brain:[], day:null, spiritDoc:null, spiritLocal:{},
   tab:"exams", drafts:{}, revealed:false, recallPick:null, chat:[], sparMode:"open", chatBusy:false,
   outputs:{}, showAll:{}, examIdx:{}, caseStart:null, puzzleShown:false, freePhrase:0, freeTarget:33,
+  breathKey:"sigh", breathLen:null,
 };
-try{ S.tab = localStorage.getItem("gradient.tab") || "exams"; }catch(e){}
+try{ S.tab = localStorage.getItem("gradient.tab") || "exams"; const b=localStorage.getItem("gradient.breath"); if(BREATHS[b]) S.breathKey=b; }catch(e){}
 const MCQS = {};
 
 /* ---------- utils ---------- */
@@ -476,7 +527,7 @@ function morningMcqs(m){
   const c=m.career||{};
   add("paper", c.paper && c.paper.mcqs, "Paper: "+((c.paper&&c.paper.title)||""));
   add("chapter", c.chapter && c.chapter.mcqs, "Chapter "+((c.chapter&&c.chapter.chapterTitle)||"")+" · §"+((c.chapter&&c.chapter.section)||""));
-  if(m.finance && m.finance.mcq) add("finance", [m.finance.mcq], "Finance: "+(m.finance.title||""));
+  if(m.quant) add("quant", m.quant.mcqs, "Quant: "+(m.quant.title||""));
   const cq = caseQ(m); if(cq) out.push({qid:qkey(m.date,"case","case"), m:cq, src:"Clinical case"});
   if(m.weekly && Array.isArray(m.weekly.mcqs)) add("weekly", m.weekly.mcqs, "Weekly integrative");
   return out;
@@ -486,13 +537,48 @@ function chapterDone(m){ const c=m&&m.career&&m.career.chapter; if(!c||!Array.is
 function stationProgress(k){
   const m = morningToday(), done = (S.day&&S.day.done)||{};
   if(done[k]) return 1;
+  if(k==="focus") return (S.day&&S.day.focus) ? 1 : 0;
+  if(k==="presence"){ const d=S.day||{}, parts=[];
+    if(charismaToday("bodyLanguage")) parts.push(d.body?1:0);
+    if(charismaToday("eyeContact")) parts.push(d.eye?1:0);
+    if(m && m.presence && shows("presence",2)) parts.push(d.presenceFeedback?1:d.presenceAnswer?.5:0);
+    return parts.length ? parts.reduce((a,b)=>a+b,0)/parts.length : 0; }
   if(!m && k!=="spirit" && k!=="mind") return 0;
   if(k==="career"){ const qs=morningMcqs(m).filter(x=>/_(paper|chapter)_/.test(x.qid)); if(!qs.length) return 0; return qs.filter(x=>S.answers[x.qid]).length/qs.length; }
-  if(k==="presence") return (S.day&&S.day.presenceFeedback) ? 1 : (S.day&&S.day.presenceAnswer ? .5 : 0);
+  if(k==="quant"){ const qs=morningMcqs(m).filter(x=>/_quant_/.test(x.qid)); if(!qs.length) return 0; return qs.filter(x=>S.answers[x.qid]).length/qs.length; }
   if(k==="mind"){ const d=S.brain.find(b=>b.date===today()); const n=d?Object.keys(d.results||{}).length:0; const caseQ=m?S.answers[qkey(m.date,"case","case")]:null; return clamp((n + (caseQ?1:0))/ (lvl()===1?1:lvl()===2?2:4), 0, 1); }
   if(k==="spirit"){ const list=adhkar(); if(!list.length) return 0; const c=spiritCounts(); return list.filter(x=>(c[x.id]||0)>=x.count).length/list.length; }
-  if(k==="finance") return (m&&m.finance&&m.finance.mcq&&S.answers[qkey(m.date,"finance",m.finance.mcq.id)]) ? 1 : 0;
   return 0;
+}
+/* Daily body-language and eye-contact drills: today's morning may carry them; otherwise the program advances one per day. */
+const CHARISMA_START = "2026-10-20";
+function charismaToday(kind){
+  const m = morningToday(), own = m && m.presence && m.presence[kind];
+  if(own && typeof own==="object" && own.title) return own;
+  const list = (S.charismaProg && Array.isArray(S.charismaProg[kind])) ? S.charismaProg[kind].filter(x=>x&&x.title) : [];
+  if(!list.length) return null;
+  const start = (S.charismaProg && S.charismaProg.startDate) || CHARISMA_START;
+  const i = Math.round((new Date(today()+"T12:00:00") - new Date(start+"T12:00:00"))/864e5);
+  return list[((i % list.length) + list.length) % list.length];
+}
+function quantConcepts(){ return (S.quantProg && Array.isArray(S.quantProg.concepts)) ? S.quantProg.concepts.filter(c=>c&&c.id) : []; }
+function nextQuant(){
+  const cs = quantConcepts(); if(!cs.length) return null;
+  const last = S.mornings.find(m=>m.date<today() && m.quant && m.quant.conceptId);
+  const i = last ? cs.findIndex(c=>c.id===last.quant.conceptId) : -1;
+  return cs[(i+1) % cs.length];
+}
+/* Likes: one doc per day, items keyed by kind_ref; the newest verdict on an item wins. */
+const likeKey = (kind, ref) => skey(kind+"_"+ref);
+function likeVal(kind, ref){ const x=S.likes[likeKey(kind,ref)]; return x ? (+x.v||0) : 0; }
+function likeBar(kind, ref, title){
+  if(!ref) return "";
+  const v = likeVal(kind, String(ref)), a = `data-act="like" data-kind="${esc(kind)}" data-ref="${esc(ref)}" data-title="${esc(String(title||"").slice(0,140))}"`;
+  return `<span class="likes" role="group" aria-label="Should Gradient give you more like this?"><button type="button" class="up" ${a} data-v="1" aria-pressed="${v===1}">♥ More like this</button><button type="button" class="down" ${a} data-v="-1" aria-pressed="${v===-1}">Less</button></span>`;
+}
+function likedSummary(){
+  const items = Object.values(S.likes).filter(x=>x && (x.v===1||x.v===-1)).sort((a,b)=>(b.at||"").localeCompare(a.at||""));
+  return items.slice(0,60).map(x=>({kind:x.kind, title:x.title, v:x.v, date:(x.at||"").slice(0,10)}));
 }
 function lastFriday(){ const d=dow(today()); return addDays(today(), -((d-5+7)%7)); }
 function nextFriday(){ const d=dow(today()); return addDays(today(), (5-d+7)%7); }
@@ -626,7 +712,15 @@ function mcqHTML(x, n){
       const cls = rec ? (i===m.answer ? "right" : (i===rec.chosen ? "wrong" : "")) : "";
       return `<button class="opt ${cls}" data-act="answer" data-qid="${esc(x.qid)}" data-i="${i}" ${rec?"disabled":""}><span class="l">${L[i]}${cls==="right"?" ✓":cls==="wrong"?" ✗":""}</span><span>${esc(o)}</span></button>`; }).join("")}</div>
     ${rec?`<p class="expl"><b style="color:var(--${rec.correct?"good":"bad"})">${rec.correct?"Correct.":"Not quite."}</b> ${esc(m.explanation)}${rec.correct?"":" <span class=\"faint\">Added to Recall.</span>"}</p>`:""}
+    ${teachHTML(x.qid, rec?rec.chosen:null)}
   </div>`;
+}
+/* "Teach me how": before answering it teaches the method without the key; after answering it explains in depth. */
+function teachHTML(qid, chosen){
+  const pre = S.outputs["teach-"+qid], post = S.outputs["teachA-"+qid], answered = chosen!=null;
+  const busy = S.teaching===qid;
+  return `${pre?`<div class="teach" id="teach-${esc(qid)}">${esc(pre)}</div>`:""}${post?`<div class="teach" id="teachA-${esc(qid)}">${esc(post)}</div>`:""}
+    ${(answered?post:pre)?"":`<div class="row"><button class="btn small ghost" data-act="teach" data-qid="${esc(qid)}" data-chosen="${answered?esc(chosen):""}" ${S.sample&&!busy?"":"disabled"} ${S.sample?"":'title="Claude is not available in this view."'}>${busy?"Teaching…":answered?"Teach me how to answer this":"Teach me how to answer"}</button></div>`}`;
 }
 function mcqBlock(list, title){
   list = list.filter(x=>x && validQ(x.m));
@@ -689,6 +783,8 @@ function renderToday(){
     h += `<div class="empty"><span>The research agent prepares your morning at about 06:55 Riyadh time. If it hasn't run, Claude can prepare one now from its own knowledge (no new papers or Quran content; your adhkar are always here).</span>
       <div class="row"><button class="btn primary" data-act="prepare" ${S.sample&&!S.preparing?"":"disabled"}>${S.preparing?"Preparing…":"Prepare this morning now"}</button></div></div>`;
   }
+  if(!((S.day&&S.day.done)||{}).focus && !(S.day&&S.day.focus)){ const B=BREATHS[S.breathKey], secs=breathSecs();
+    h += `<button type="button" class="callout go" data-act="breathe"><span class="label" style="color:var(--glass)">Start here · ${Math.round(secs/60)} minutes</span><span><b>Breathe first.</b> ${esc(B.n)}, then الروح, then the rest.</span></button>`; }
   if(ex.live) h += `<a class="callout" href="#examSlot" style="text-decoration:none;color:inherit"><span class="label" style="color:var(--ember)">${esc(ex.label)}</span><span>${ex.ex&&ex.ex.done?`Done: ${ex.ex.score}/${ex.ex.total}`:`${examPool(ex.fri).length} questions from this week are waiting.`}</span></a>`;
   h += `<nav class="itinerary" aria-label="Stations">${STATIONS.map((s,i)=>{ const p=stationProgress(s.k);
     return `<a href="#st-${s.k}" style="--c:var(--${s.d})"><span class="dot ${p>=1?"done":p>0?"part":""}"></span><span class="nm"><b ${s.rtl?'lang="ar" style="font-family:var(--f-arabic)"':""}>${esc(s.n)}</b>${s.k===stationFor(lev.domain)?`<small style="color:var(--ember)">∇ today's leverage</small>`:""}</span><span class="mono faint" style="font-size:12px">${p>=1?"done":p>0?Math.round(p*100)+"%":""}</span></a>`; }).join("")}</nav>`;
@@ -702,7 +798,7 @@ function stationShell(s, i, inner){
   const p = stationProgress(s.k), done = ((S.day&&S.day.done)||{})[s.k];
   return `<section class="station ${s.rtl?"rtl":""}" id="st-${s.k}" style="--c:var(--${s.d})" ${s.rtl?'dir="rtl" lang="ar"':""}>
     <header>
-      <span class="num" dir="ltr" style="justify-self:start">${String(i+1).padStart(2,"0")} / 07</span>
+      <span class="num" dir="ltr" style="justify-self:start">${pad(i+1)} / ${pad(STATIONS.length)}</span>
       <h2 ${s.rtl?'style="font:600 34px/1.2 var(--f-arabic);color:var(--c)"':""}>${esc(s.n)}</h2>
       <p class="sub ${s.rtl?"ar":""}" ${s.rtl?'style="font-size:15px"':""}>${esc(s.sub)}</p>
       <div class="row"><button class="btn small ${done?"on":""}" data-act="stationDone" data-k="${s.k}">${done?(s.rtl?"✓ تم":"✓ Done"):(s.rtl?"تم":"Mark done")}</button>${p>0&&p<1&&!done?`<span class="mono faint" style="font-size:12px">${Math.round(p*100)}%</span>`:""}</div>
@@ -727,6 +823,7 @@ function vCareer(m){
       <p class="lede"><b>Bottom line:</b> ${esc(P.bottom_line)}</p>
       ${shows("career",2)?`<dl class="kv"><dt>Population</dt><dd>${esc(P.population)}</dd><dt>Finding</dt><dd>${esc(P.finding)}</dd><dt>On the ward</dt><dd>${esc(P.ward_change)}</dd></dl>`:""}
       ${mcqBlock(shows("career",2)?list:list.slice(0,1), "Check yourself")}
+      <div class="row">${likeBar("paper", P.url||P.title, P.title)}</div>
     </div>`;
   } else {
     h += `<div class="block"><span class="label">Paper of the day</span><p class="muted">No new paper today${m.source==="page"?": this morning was prepared without web access.":"."}</p></div>`;
@@ -741,7 +838,7 @@ function vCareer(m){
       ${arr(C.pearls).length?`<div class="prose"><h4>Pearls</h4><ul>${arr(C.pearls).map(p=>`<li>${esc(p)}</li>`).join("")}</ul></div>`:""}
       ${full && arr(C.sources).length?`<p class="faint" style="font-size:12.5px">Sources: ${arr(C.sources).map(s=>typeof s==="string"?esc(s):s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)).join(" · ")}</p>`:""}
       ${full?mcqBlock(list,"Section exam · 5 questions"):""}
-      <div class="row"><button class="btn small ghost" data-act="discuss" data-topic="chapter">Discuss this section with Claude</button></div>
+      <div class="spread"><button class="btn small ghost" data-act="discuss" data-topic="chapter">Discuss this section with Claude</button>${likeBar("chapter", C.chapterId+"."+C.section, C.chapterTitle+" · "+C.sectionTitle)}</div>
     </div>`;
   }
   if(arr(c.ideas).length && shows("career",2)){
@@ -755,20 +852,53 @@ function vCareer(m){
   if(!shows("career",2)) h += moreBtn("career");
   return h;
 }
+function evTag(e){ const w=(String(e||"").toLowerCase().match(/^\s*(high|moderate|low|strong|weak|anecdotal)/)||[])[1]; return w?`<span class="tag ${w}">${w} evidence</span>`:""; }
+function vBody(){
+  const b = charismaToday("bodyLanguage"); if(!b) return "";
+  const done = !!(S.day && S.day.body);
+  return `<div class="block">
+    <div class="spread"><span class="label">Body language · daily · ${esc(b.minutes||6)} min${b.n?` · ${esc(b.n)} of ${esc((S.charismaProg&&arr(S.charismaProg.bodyLanguage).length)||28)}`:""}</span>${evTag(b.evidence)}</div>
+    <h3>${esc(b.title)}</h3>
+    ${b.goal?`<p style="max-width:70ch"><b>Goal:</b> ${esc(b.goal)}</p>`:""}
+    <ol class="steps">${arr(b.steps).map(s=>`<li>${esc(s)}</li>`).join("")}</ol>
+    ${b.specter?`<p class="specter" style="font-size:19px">“${esc(b.specter)}”</p>`:""}
+    ${shows("presence",2)&&b.why?`<p class="muted" style="font-size:13.5px;max-width:70ch">${esc(b.why)}</p>`:""}
+    ${b.cultural?`<p class="faint" style="font-size:13px;max-width:70ch">${esc(b.cultural)}</p>`:""}
+    <div class="spread"><button class="btn small ${done?"on":""}" data-act="bodyDone" data-id="${esc(b.id||b.title)}">${done?"✓ Done today":"I did it"}</button>${likeBar("body", b.id||b.title, b.title)}</div>
+  </div>`;
+}
+function vEye(){
+  const e = charismaToday("eyeContact"); if(!e) return "";
+  const r = S.day && S.day.eye;
+  return `<div class="block">
+    <div class="spread"><span class="label">Eye contact · daily · ${esc(e.reps||5)} holds of ${esc(e.holdSeconds||3)} s</span>${evTag(e.evidence)}</div>
+    <h3>${esc(e.title)}</h3>
+    ${e.goal?`<p style="max-width:70ch">${esc(e.goal)}</p>`:""}
+    ${shows("presence",2)?`<ol class="steps">${arr(e.steps).map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`:""}
+    ${e.cultural?`<p class="faint" style="font-size:13px;max-width:70ch">${esc(e.cultural)}</p>`:""}
+    <div class="spread"><span class="row"><button class="btn primary small" data-act="eyeStart">${r?"Train again":"Start the eye-contact trainer"}</button>${r?`<span class="mono faint" style="font-size:12px">Today: ${esc(r.hits)}/${esc(r.reps)} holds · average ${esc(fmt(r.avg,1))} s</span>`:""}</span>${likeBar("eye", e.id||e.title, e.title)}</div>
+  </div>`;
+}
 function vPresence(m){
   const p = m && m.presence;
-  if(!p) return `<div class="block"><div class="empty">Today's presence technique arrives with your morning.</div></div>`;
+  let h = "";
+  if(p && p.technique){
+    const ctxName = {"care-team":"With the care team", presentation:"Presentations", negotiation:"Negotiation", social:"Social"}[p.context] || p.context;
+    h += `<div class="block">
+      <div class="spread"><span class="label">Technique of the day · ${esc(ctxName)}</span>${evTag(p.evidence)}</div>
+      <h3>${esc(p.technique)}</h3>
+      <p class="specter">“${esc(p.specter)}”</p>
+      ${shows("presence",2)?`<p style="max-width:70ch">${esc(p.why)}</p><blockquote>${esc(p.example)}</blockquote>`:""}
+      <div class="row">${likeBar("presence", p.id||p.technique, p.technique)}</div>
+    </div>`;
+  }
+  h += vBody() + vEye();
+  if(!p) return h || `<div class="block"><div class="empty">Today's presence training arrives with your morning.</div></div>`;
   const ans = S.drafts["presence"] ?? (S.day&&S.day.presenceAnswer) ?? "";
   const hedges = hedgesIn(ans);
   const fb = S.outputs.presence ?? (S.day&&S.day.presenceFeedback) ?? "";
   const drill = p.drill || {};
-  const ctxName = {"care-team":"With the care team", presentation:"Presentations", negotiation:"Negotiation", social:"Social"}[p.context] || p.context;
-  return `<div class="block">
-      <div class="spread"><span class="label">${esc(ctxName)}</span><span class="tag ${esc(p.evidence)}">${esc(p.evidence)} evidence</span></div>
-      <h3>${esc(p.technique)}</h3>
-      <p class="specter">“${esc(p.specter)}”</p>
-      ${shows("presence",2)?`<p style="max-width:70ch">${esc(p.why)}</p><blockquote>${esc(p.example)}</blockquote>`:""}
-    </div>
+  return h + `
     ${shows("presence",2)?`<div class="block">
       <span class="label">Drill · under 5 minutes</span>
       <p style="max-width:70ch"><b>Situation:</b> ${esc(drill.scenario)}</p>
@@ -784,8 +914,8 @@ function vPresence(m){
 function vMind(m){
   const M = (m&&m.mind)||{}, gs = games(), L=lvl();
   const pick = (S.showAll.mind || L>=3) ? gs
-    : L===2 ? gs.filter(g=>["reaction","calc","nback"].includes(g.id))
-    : gs.filter(g=>g.id===(dow(today())%2?"reaction":"calc"));
+    : L===2 ? gs.filter(g=>["reaction","calcsteps","nback"].includes(g.id))
+    : gs.filter(g=>g.id===(dow(today())%2?"reaction":"calcsteps"));
   let h = `<div class="block">
     <div class="spread"><span class="label">Sharpness check · tap a game</span><span class="faint" style="font-size:12.5px">Scores are saved; the line shows your trend.</span></div>
     ${gs.length?`<div class="games">${pick.map(g=>{ const hist=gameHistory(g.id), last=hist[hist.length-1], played=hist.some(r=>r.date===today());
@@ -800,15 +930,15 @@ function vMind(m){
     const x = {qid:qkey(m.date,"case","case"), m:cq, src:"Clinical case"};
     const rec = S.answers[x.qid];
     h += `<div class="block"><div class="spread"><span class="label">Clinical case · ${esc(M.case.seconds||90)} seconds</span>${S.caseStart&&!rec?`<span class="timer" id="caseTimer">${esc(M.case.seconds||90)}</span>`:rec&&rec.ms?`<span class="mono faint">${(rec.ms/1000).toFixed(0)} s</span>`:""}</div>
-      ${S.caseStart||rec?mcqHTML(x):`<p class="muted">One hidden problem in an inpatient chart. The clock starts when you open it.</p><div class="row"><button class="btn primary small" data-act="startCase">Open the case</button></div>`}</div>`;
+      ${S.caseStart||rec?mcqHTML(x):`<p class="muted">One hidden problem in an inpatient chart. The clock starts when you open it.</p><div class="row"><button class="btn primary small" data-act="startCase">Open the case</button></div>`}
+      ${rec?`<div class="row">${likeBar("case", m.date, String(M.case.stem||"").slice(0,90))}</div>`:""}</div>`;
   }
-  const sw = (String((M.article&&M.article.strength)||"").toLowerCase().match(/^\s*(high|moderate|low|strong|weak)/)||[])[1]||"";
-  if(M.article && shows("mind",2)) h += `<div class="block"><div class="spread"><span class="label">Read · brain science</span>${sw?`<span class="tag ${sw}">${sw} evidence</span>`:""}</div>
+  if(M.article && shows("mind",2)) h += `<div class="block"><div class="spread"><span class="label">Read · brain science</span>${evTag(M.article.strength)}</div>
     <h3>${esc(M.article.title)}</h3><p class="muted mono" style="font-size:12.5px">${esc(M.article.source)} · ${esc(M.article.published)}${M.article.url?` · <a href="${esc(M.article.url)}" target="_blank" rel="noopener">open ↗</a>`:""}</p>
-    <p style="max-width:70ch">${esc(M.article.summary)}</p><p><b>Today:</b> ${esc(M.article.takeaway)}</p></div>`;
-  if(M.exercise && shows("mind",2)) h += `<div class="block"><span class="label">Practice · ${esc(M.exercise.minutes)} min</span><h3>${esc(M.exercise.title)}</h3><ol style="margin:0;padding-left:20px;display:grid;gap:4px;max-width:70ch">${arr(M.exercise.steps).map(s=>`<li>${esc(s)}</li>`).join("")}</ol><p class="muted" style="font-size:13.5px">${esc(M.exercise.why)}</p></div>`;
+    <p style="max-width:70ch">${esc(M.article.summary)}</p><p><b>Today:</b> ${esc(M.article.takeaway)}</p><div class="row">${likeBar("article", M.article.url||M.article.title, M.article.title)}</div></div>`;
+  if(M.exercise && shows("mind",2)) h += `<div class="block"><span class="label">Practice · ${esc(M.exercise.minutes)} min</span><h3>${esc(M.exercise.title)}</h3><ol class="steps">${arr(M.exercise.steps).map(s=>`<li>${esc(s)}</li>`).join("")}</ol><p class="muted" style="font-size:13.5px">${esc(M.exercise.why)}</p><div class="row">${likeBar("exercise", M.exercise.title, M.exercise.title)}</div></div>`;
   if(M.puzzle && shows("mind",3)) h += `<div class="block"><span class="label">Puzzle · ~3 minutes</span><p style="max-width:70ch">${esc(M.puzzle.prompt)}</p>
-    ${S.puzzleShown?`<div class="out"><b>${esc(M.puzzle.answer)}</b>\n${esc(M.puzzle.explanation)}</div>`:`<div class="row"><button class="btn small" data-act="puzzle">Show the answer</button></div>`}</div>`;
+    ${S.puzzleShown?`<div class="out"><b>${esc(M.puzzle.answer)}</b>\n${esc(M.puzzle.explanation)}</div><div class="row">${likeBar("puzzle", m.date, String(M.puzzle.prompt||"").slice(0,90))}</div>`:`<div class="row"><button class="btn small" data-act="puzzle">Show the answer</button></div>`}</div>`;
   const note = (S.syllabus && S.syllabus.brainEvidenceNote) || (m && m.mind && m.mind.brainEvidenceNote);
   if(note && shows("mind",2)) h += `<p class="faint" style="font-size:12.5px;max-width:75ch">${esc(note)}</p>`;
   if(!shows("mind",3)) h += moreBtn("mind");
@@ -863,22 +993,47 @@ function vSpirit(m){
   </div>`;
   return h;
 }
-function vFinance(m){
-  const f = m && m.finance;
-  if(!f) return `<div class="block"><div class="empty">Today's finance note arrives with your morning.</div></div>`;
-  return `<div class="block"><span class="label">${f.track==="trading"?"Trading & quant":"Personal finance"}</span><h3>${esc(f.title)}</h3>
-    ${shows("finance",2)?`<p style="max-width:70ch">${esc(f.body)}</p>`:""}<p><b>One step today:</b> ${esc(f.action)}</p>
-    ${shows("finance",2)&&validQ(f.mcq)?mcqBlock([{qid:qkey(m.date,"finance",f.mcq.id), m:f.mcq, src:"Finance: "+f.title}],"Check"):""}</div>${shows("finance",2)?"":moreBtn("finance")}`;
+const breathSecs = () => S.breathLen || ENERGY[energy()].breath;
+function vFocus(){
+  const B = BREATHS[S.breathKey], f = S.day && S.day.focus, secs = breathSecs();
+  return `<div class="block">
+    <span class="label">Arrive · ${Math.round(secs/60)} minutes</span>
+    <h3>${esc(B.n)}</h3>
+    <p style="max-width:70ch">${esc(B.cue)} Phone face down. Sit tall, shoulders heavy, eyes soft or closed.</p>
+    <div class="row" role="group" aria-label="Breathing pattern">${Object.entries(BREATHS).map(([k,b])=>`<button type="button" class="btn small ${S.breathKey===k?"on":""}" data-act="breathPattern" data-v="${k}" aria-pressed="${S.breathKey===k}">${esc(b.n)}</button>`).join("")}</div>
+    <div class="row" role="group" aria-label="Length"><span class="label">Length</span>${[60,120,180,300].map(s=>`<button type="button" class="btn small ${secs===s?"on":""}" data-act="breathLen" data-v="${s}" aria-pressed="${secs===s}">${s/60} min</button>`).join("")}</div>
+    <div class="spread"><span class="row"><button class="btn primary" data-act="breathe">${f?"Breathe again":"Begin"}</button>${f?`<span class="mono faint" style="font-size:12px">Done today · ${esc(Math.round((+f.seconds||0)/60*10)/10)} min of ${esc((BREATHS[f.pattern]||B).n.toLowerCase())}</span>`:""}</span>${likeBar("breathing", S.breathKey, B.n)}</div>
+    ${shows("focus",2)?`<p class="faint" style="font-size:12.5px;max-width:72ch">${esc(B.why)}</p>`:""}
+  </div>`;
 }
-function vSimple(m, k){
-  const x = m && m[k];
-  if(!x) return `<div class="block"><div class="empty">Arrives with your morning.</div></div>`;
-  if(k==="joy" && !shows("joy",2)) return moreBtn("joy");
-  return `<div class="block"><h3>${esc(x.title)}</h3><p style="max-width:70ch">${esc(x.body)}</p>${x.action?`<p><b>Today:</b> ${esc(x.action)}</p>`:""}</div>`;
+function vQuant(m){
+  const Q = m && m.quant, cs = quantConcepts();
+  if(!Q || !Q.title){
+    const nq = nextQuant();
+    return `<div class="block"><div class="empty">Today's quant lesson arrives with your morning.${nq?` Next concept: <b>${esc(nq.title)}</b>. ${esc(nq.summary||"")}`:""}</div></div>`;
+  }
+  const c = cs.find(x=>x.id===Q.conceptId), full = shows("quant",2);
+  const list = arr(Q.mcqs).map(q=>({qid:qkey(m.date,"quant",q.id), m:q, src:"Quant: "+Q.title}));
+  const paras = String(Q.body||"").split(/\n{2,}/), lab = Q.quantlab || {};
+  const i = c ? cs.indexOf(c) : -1, nx = i>=0 ? cs[(i+1)%cs.length] : null;
+  return `<div class="block">
+      <div class="spread"><span class="label">Concept ${c?esc(c.n):""}${cs.length?` of ${cs.length}`:""}${c&&c.area?` · ${esc(c.area)}`:""} · ~${esc(Q.minutes||10)} min</span>${likeBar("quant", Q.conceptId||Q.title, Q.title)}</div>
+      <h3>${esc(Q.title)}</h3>
+      ${full||S.showAll.quantBody?`<div class="prose">${prose(Q.body)}</div>`:`<div class="prose">${prose(paras[0])}</div>${paras.length>1?`<button class="more" data-act="showAll" data-k="quantBody">Read the full lesson</button>`:""}`}
+    </div>
+    ${arr(Q.rules).length?`<div class="block"><span class="label">The rules</span><ol class="steps">${arr(Q.rules).map(r=>`<li>${esc(r)}</li>`).join("")}</ol></div>`:""}
+    ${Q.math?`<div class="block"><span class="label">The math</span><pre class="math">${esc(Q.math)}</pre></div>`:""}
+    ${lab.file||lab.how?`<div class="block"><span class="label">In your quant-lab</span>${lab.file?`<p><code class="path">${esc(lab.file)}</code></p>`:""}${lab.how?`<p style="max-width:70ch">${esc(lab.how)}</p>`:""}${lab.experiment&&full?`<p style="max-width:70ch"><b>Experiment:</b> ${esc(lab.experiment)}</p>`:""}</div>`:""}
+    ${full&&arr(Q.pitfalls).length?`<div class="block"><span class="label">Where it breaks</span><ul class="steps">${arr(Q.pitfalls).map(p=>`<li>${esc(p)}</li>`).join("")}</ul></div>`:""}
+    <div class="block">
+      ${mcqBlock(full?list:list.slice(0,1), "Check your understanding")}
+      ${full&&arr(Q.sources).length?`<p class="faint" style="font-size:12.5px">Sources: ${arr(Q.sources).map(s=>typeof s==="string"?esc(s):s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)).join(" · ")}</p>`:""}
+      <div class="row"><button class="btn small ghost" data-act="discuss" data-topic="quant">Ask the quant tutor</button>${nx?`<span class="faint" style="font-size:12.5px">Tomorrow: ${esc(nx.title)}</span>`:""}</div>
+    </div>${full?"":moreBtn("quant")}`;
 }
 function renderStations(){
   const m = morningToday();
-  const inner = {career:()=>vCareer(m), presence:()=>vPresence(m), mind:()=>vMind(m), spirit:()=>vSpirit(m), finance:()=>vFinance(m), relationships:()=>vSimple(m,"relationships"), joy:()=>vSimple(m,"joy")};
+  const inner = {focus:()=>vFocus(), spirit:()=>vSpirit(m), career:()=>vCareer(m), presence:()=>vPresence(m), mind:()=>vMind(m), quant:()=>vQuant(m)};
   $("stations").innerHTML = STATIONS.map((s,i)=>stationShell(s,i,safe(inner[s.k], `<div class="block"><div class="empty">This part of the morning could not be shown. The rest of the page is fine.</div></div>`))).join("");
 }
 
@@ -891,7 +1046,7 @@ function examView(){
     const n = examPool(o.fri).length, early = o.fri===today() && !morningToday() && new Date().getHours()<10;
     return `<div class="exam"><span class="label" style="color:var(--ember)">${esc(o.label)} · week ending ${esc(o.fri)}</span><h2>Weekly exam</h2>
       ${early?`<p class="muted">This week's last questions arrive with this morning's research (about 06:55). Start after that.</p>`:""}
-      <p style="max-width:70ch">${Math.min(n,25)} questions drawn from this week's papers, chapter sections, cases and finance notes, plus questions you missed before. Missed ones go back into Recall.</p>
+      <p style="max-width:70ch">${Math.min(n,25)} questions drawn from this week's papers, chapter sections, cases and quant lessons, plus questions you missed before. Missed ones go back into Recall.</p>
       <div class="row"><button class="btn primary" data-act="startExam" data-key="${esc(o.fri)}" ${n&&!early?"":"disabled"}>Start the exam</button></div></div>`;
   }
   return `<div class="exam">${examBody(ex)}</div>`;
@@ -914,7 +1069,7 @@ function examBody(ex){
     <div class="mcq"><p class="q" style="font-size:16.5px">${esc(x.m.q)}</p>
       <div class="opts">${x.m.options.map((o,k)=>{ const cls = chosen!=null ? (k===x.m.answer?"right":(k===chosen?"wrong":"")) : "";
         return `<button class="opt ${cls}" data-act="examAnswer" data-key="${esc(ex.key)}" data-i="${i}" data-k="${k}" ${chosen!=null?"disabled":""}><span class="l">${L[k]}</span><span>${esc(o)}</span></button>`; }).join("")}</div>
-      ${chosen!=null?`<p class="expl"><b style="color:var(--${chosen===x.m.answer?"good":"bad"})">${chosen===x.m.answer?"Correct.":"Not quite."}</b> ${esc(x.m.explanation)}</p>`:""}
+      ${chosen!=null?`<p class="expl"><b style="color:var(--${chosen===x.m.answer?"good":"bad"})">${chosen===x.m.answer?"Correct.":"Not quite."}</b> ${esc(x.m.explanation)}</p>${(()=>{ const tq=skey("ex_"+ex.key+"_"+i); MCQS[tq]={qid:tq, m:x.m, src:x.src}; return teachHTML(tq, chosen); })()}`:""}
     </div>
     <div class="row">
       <button class="btn small" data-act="examNav" data-key="${esc(ex.key)}" data-to="${i-1}" ${i===0?"disabled":""}>Previous</button>
@@ -966,7 +1121,7 @@ function viewRecall(){
     face = `<div class="card-face"><div class="spread">${chip(c.domain||"career")}<span class="label">missed before · seen ${c.reps||0}×</span></div>
       <p class="q">${esc(c.mcq.q)}</p>
       <div class="opts">${c.mcq.options.map((o,k)=>{ const cls = pick!=null ? (k===c.mcq.answer?"right":(k===pick?"wrong":"")) : ""; return `<button class="opt ${cls}" data-act="recallPick" data-k="${k}" ${pick!=null?"disabled":""}><span class="l">${L[k]}</span><span>${esc(o)}</span></button>`; }).join("")}</div>
-      ${pick!=null?`<p class="expl">${esc(c.mcq.explanation)}</p><div class="row"><button class="btn primary small" data-act="grade" data-id="${esc(c.id)}" data-q="${pick===c.mcq.answer?4:1}">Next</button></div>`:""}
+      ${pick!=null?`<p class="expl">${esc(c.mcq.explanation)}</p>${(()=>{ const tq=skey("rc_"+c.id); MCQS[tq]={qid:tq, m:c.mcq, src:c.src||""}; return teachHTML(tq, pick); })()}<div class="row"><button class="btn primary small" data-act="grade" data-id="${esc(c.id)}" data-q="${pick===c.mcq.answer?4:1}">Next</button></div>`:""}
     </div>`;
   } else if(c){
     face = `<div class="card-face"><div class="spread">${chip(c.domain)}<span class="label">seen ${c.reps||0}× · ease ${fmt(c.ease||2.5,2)}</span></div>
@@ -999,6 +1154,16 @@ function viewCurriculum(){
     <div class="syl">${syl.map(c=>`<details ${curKey&&curKey.startsWith(c.id+".")?"open":""}><summary><span class="mono faint">${String(c.n).padStart(2,"0")}</span><b>${esc(c.title)}</b><span class="faint" style="font-size:12.5px">${esc(c.system)}</span></summary>
       <ol>${(c.sections||[]).map(s=>{ const k=c.id+"."+s.n; return `<li class="${doneSet.has(k)?"done":k===curKey?"cur":""}">${esc(s.title)}${doneSet.has(k)?" ✓":k===curKey?" · today":""}</li>`; }).join("")}</ol>
       ${(c.guidelines||[]).length?`<p class="faint" style="font-size:12.5px;margin-top:6px">${c.guidelines.map(g=>esc(g.org+" "+g.name+" ("+g.year+")")).join(" · ")}</p>`:""}</details>`).join("")}</div>
+  </div>${viewQuantCurriculum()}`;
+}
+function viewQuantCurriculum(){
+  const cs = quantConcepts(); if(!cs.length) return "";
+  const seen = new Set(S.mornings.filter(m=>m.quant&&m.quant.conceptId).map(m=>m.quant.conceptId));
+  const cur = (morningToday()&&morningToday().quant&&morningToday().quant.conceptId) || (nextQuant()||{}).id;
+  return `<div class="sec" style="margin-top:12px">
+    <h2>Quant strategy, one concept a day</h2>
+    <p class="muted">${cs.length} concepts, each tied to a file in your quant-lab.</p>
+    <details><summary class="more">Show all ${cs.length} concepts</summary><ol style="padding-left:0;list-style:none;margin:8px 0 0">${cs.map(c=>`<li class="item" style="padding:8px 0"><div class="spread"><span><span class="mono faint">${pad(c.n||0)}</span> <b style="${c.id===cur?"color:var(--ember)":seen.has(c.id)?"color:var(--good)":""}">${esc(c.title)}</b>${c.id===cur?" · today":seen.has(c.id)?" ✓":""}</span><span class="faint" style="font-size:12.5px">${esc(c.area||"")}</span></div>${c.quantlab&&c.quantlab.file?`<span class="faint" style="font-size:12.5px"><code class="path">${esc(c.quantlab.file)}</code> ${esc(c.quantlab.hook||"")}</span>`:""}</li>`).join("")}</ol></details>
   </div>`;
 }
 function viewPulse(){
@@ -1105,6 +1270,7 @@ function viewModel(){
         ${h.evidence?`<p class="faint" style="font-size:12.5px">${esc(h.evidence)}</p>`:""}
         <div class="row">${["true","partly","wrong"].map(v=>`<button class="btn small ${h.feedback===v?"on":""}" data-act="hypFb" data-id="${esc(h.id)}" data-v="${v}">${v==="true"?"True":v==="partly"?"Partly":"Wrong"}</button>`).join("")}</div></div>`).join("")}</div>`:`<div class="empty">Press Update to have Claude form its first hypotheses.</div>`}
       ${Array.isArray(m.notes)&&m.notes.length?`<h2 style="margin-top:8px">Claude's notes to itself</h2><div class="list">${m.notes.slice(-6).reverse().map(n=>`<div class="item"><span class="faint mono" style="font-size:11.5px">${esc(n.date||"")}</span><span>${esc(n.text||n)}</span></div>`).join("")}</div>`:""}
+      ${viewLikes()}
     </div>
     <div class="sec">
       <h2>Tell it who you are</h2>
@@ -1115,6 +1281,16 @@ function viewModel(){
       <p class="faint" style="font-size:12.5px">The morning agent reads this every day to pick papers, examples and ideas.</p>
     </div>
   </div>`;
+}
+function viewLikes(){
+  const items = likedSummary(), by = {};
+  for(const x of items){ (by[x.kind] = by[x.kind] || {up:[], down:[]})[x.v>0?"up":"down"].push(x); }
+  return `<h2 style="margin-top:8px">What you like</h2>
+    <p class="muted">Every ♥ and “Less” you press. The morning agent and Update read these and lean toward what you like.</p>
+    ${items.length?`<div class="list">${Object.entries(by).map(([k,v])=>`<div class="item"><span class="label">${esc(LIKE_KINDS[k]||k)}</span>
+      ${v.up.length?`<p><span style="color:var(--good)">♥</span> ${v.up.map(x=>esc(x.title)).join(" · ")}</p>`:""}
+      ${v.down.length?`<p class="muted">Less: ${v.down.map(x=>esc(x.title)).join(" · ")}</p>`:""}</div>`).join("")}</div>`
+      :`<div class="empty">Nothing yet. Press ♥ More like this on any paper, drill, lesson or puzzle you enjoy.</div>`}`;
 }
 function viewDispatches(){
   const ds = S.dispatches.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
@@ -1127,6 +1303,7 @@ const MODES = {
   open:{n:"Open", rule:"Be a sharp, warm thinking partner. Be concise. Ask one good question back when it helps."},
   rounds:{n:"Rounds rehearsal", rule:"Play a busy, skeptical attending physician on ward rounds. The user is the clinical pharmacist making a recommendation. Push back realistically (time pressure, 'we've always done it this way', asking for evidence). Stay in character. When the user types 'debrief', step out and coach them on clarity, confidence, evidence use and SBAR structure."},
   case:{n:"Case discussion", rule:"Act as a senior clinical pharmacist preceptor. Discuss the case or topic Socratically: ask what they would check, what they'd recommend and why, then correct and teach. Be accurate and cite guidelines by name when relevant."},
+  quant:{n:"Quant tutor", rule:"Act as a patient, rigorous quant researcher teaching someone who built a research pipeline (quant-lab: next-day probability model for US stocks with purged walk-forward validation, calibration and cost-aware backtests) but calls their technical experience limited. Explain strategy concepts and probability plainly with small worked numbers, say when an edge is fragile, and point to what they could test in their own code."},
   redteam:{n:"Red-team a trade", rule:"The person will describe a trading idea or model. Attack it like a skeptical risk manager: look-ahead bias, overfitting, regime dependence, costs and slippage, sizing, what would falsify it. End with the single cheapest test that could kill the idea."},
   negotiate:{n:"Negotiation", rule:"Role-play the other side of a negotiation the user describes (salary, promotion, a deal). Be realistic and tough. When the user types 'debrief', step out and give specific feedback on anchoring, labelling, calibrated questions, BATNA and composure."},
   feynman:{n:"Explain it back", rule:"Ask the person to explain a concept as if to a smart 15-year-old or a new nurse. Find gaps, jargon and errors, then ask a probing follow-up. Score each explanation out of 10."},
@@ -1143,7 +1320,7 @@ function viewSpar(){
 /* ---------- render all (keeps focus) ---------- */
 function render(){
   const a = document.activeElement, id = a && a.id, sel = (a && typeof a.selectionStart==="number") ? [a.selectionStart,a.selectionEnd] : null;
-  const akey = a && !id && a.dataset && a.dataset.act ? ["act","id","qid","i","k","v","tab","key","to","topic","date"].filter(k=>a.dataset[k]!=null).map(k=>`[data-${k}="${CSS.escape(a.dataset[k])}"]`).join("") : null;
+  const akey = a && !id && a.dataset && a.dataset.act ? ["act","id","qid","i","k","v","tab","key","to","topic","date","kind","ref"].filter(k=>a.dataset[k]!=null).map(k=>`[data-${k}="${CSS.escape(a.dataset[k])}"]`).join("") : null;
   safe(renderHeader); safe(renderToday);
   safe(()=>{ $("examSlot").innerHTML = examView(); });
   safe(renderStations); safe(renderTabs); safe(renderPanel);
@@ -1167,24 +1344,26 @@ function progressPack(){
     quiz_by_topic_30d: topics,
     exams: S.exams.filter(e=>e.done).slice(0,6).map(e=>({week:e.key, score:e.score, total:e.total})),
     brain_games: brain,
-    presence_drills_done_7d: Object.entries((S.log&&S.log.days)||{}).filter(([d,v])=>d>addDays(today(),-7)&&v&&v.presence).length,
+    practice_days_last_7: (()=>{ const out={}; for(const [d,v] of Object.entries((S.log&&S.log.days)||{})) if(d>addDays(today(),-7)&&v) for(const k of ["focus","presence","body","eye","quiz","game","dhikr"]) if(v[k]) out[k]=(out[k]||0)+1; return out; })(),
+    eye_contact_today: (S.day&&S.day.eye) || null,
     adhkar_completion_today: Math.round(stationProgress("spirit")*100)+"%",
-    mornings_last_7: S.mornings.slice(0,7).map(m=>({date:m.date, chapter:m.career&&m.career.chapter&&(m.career.chapter.chapterTitle+" §"+m.career.chapter.section), chapterQuizDone:chapterDone(m), presence:m.presence&&m.presence.technique})),
+    likes: likedSummary().slice(0,40),
+    mornings_last_7: S.mornings.slice(0,7).map(m=>({date:m.date, chapter:m.career&&m.career.chapter&&(m.career.chapter.chapterTitle+" §"+m.career.chapter.section), chapterQuizDone:chapterDone(m), presence:m.presence&&m.presence.technique, quant:m.quant&&m.quant.title})),
     recall: {due: dueCards().length, missedQuestions: S.cards.filter(c=>c.type==="mcq").length},
     forecasts: (()=>{ const B=brier(); return {brier:B.n?+B.b.toFixed(3):null, resolved:B.n}; })(),
   };
 }
-const UPDATE_PROMPT = `You are Gradient, a personal-development intelligence for one person: a hospital clinical pharmacist in Saudi Arabia who uses this page every morning with coffee. The page serves seven stations: Pharmacy (paper + chapter + MCQs), Presence (charisma training), Mind (brain games, case, puzzle), Spirit (Quran, tafsir, adhkar; in Arabic), Finance, People, Joy. The map's domains are career, finance, health, growth, relationships, spirit, joy.
+const UPDATE_PROMPT = `You are Gradient, a personal-development intelligence for one person: a hospital clinical pharmacist in Saudi Arabia who uses this page every morning with coffee. The page serves six stations in this order: Focus (guided breathing), Spirit (Quran, tafsir, adhkar; in Arabic), Pharmacy (paper + chapter + MCQs), Presence (Harvey Specter-style charisma: daily body language and eye-contact drills plus a technique), Mind (brain games, case, puzzle), Quant (one trading-strategy concept a day tied to their quant-lab project). The map's domains are career (pharmacy), finance (now meaning the quant-lab and trading work), health (mind and body), growth (presence and charisma) and spirit.
 
-You receive their progress: quiz accuracy by topic, weekly exam scores, brain-game trends, pulse ratings, and your previous model of them (with their verdicts on your hypotheses).
+You receive their progress: quiz accuracy by topic, weekly exam scores, brain-game trends, practice days, pulse ratings, the items they marked "More like this" (v 1) or "Less" (v -1), and your previous model of them (with their verdicts on your hypotheses).
 
 Do this:
-1. Revise your model. Keep hypotheses they marked "true" (raise confidence). Rewrite or drop ones marked "wrong". Add at most two new ones grounded in specific evidence. 4 to 8 total, short stable ids, calibrated confidence.
+1. Revise your model. Keep hypotheses they marked "true" (raise confidence). Rewrite or drop ones marked "wrong". Add at most two new ones grounded in specific evidence; their likes are evidence of what keeps them engaged. 4 to 8 total, short stable ids, calibrated confidence. Domains must be one of career, finance, health, growth, spirit.
 2. Coupling (0 to 1) for the 4 to 8 domain pairs that most plausibly move together for them.
 3. focus: the domain where effort today propagates furthest, with 1-2 sentences citing their data.
 4. headline: one specific sentence for this morning (no generic motivation). If today is Friday mention the exam.
 5. review: their weakest pharmacy topic (from quiz_by_topic_30d; if no data, pick a high-yield hospital topic) and exactly 3 new vignette MCQs on it, accurate to current guidelines, format {"id","q","options":[4],"answer":0-3,"explanation","topic"}.
-6. memo: 1-3 sentences to your future self.
+6. memo: 1-3 sentences to your future self, including what kind of content they like or dislike if the likes show a pattern.
 
 Reply with ONLY this JSON:
 {"headline":"...","focus":{"domain":"career","why":"..."},"model":{"hypotheses":[{"id":"...","text":"...","domain":"career","confidence":0.6,"evidence":"..."}],"coupling":[{"a":"health","b":"career","w":0.6,"why":"..."}]},"review":{"topic":"...","mcqs":[...]},"memo":"..."}
@@ -1232,26 +1411,26 @@ async function prepareMorning(){
   const ns = nextSection(), techs = (S.presenceProg && S.presenceProg.techniques) || [];
   const prevP = S.mornings.find(m=>m.date<today()&&m.presence&&m.presence.id), ti = prevP ? techs.findIndex(t=>t.id===prevP.presence.id) : -1;
   const tech = techs.length ? techs[(ti+1)%techs.length] : null;
-  const prevF = S.mornings.find(m=>m.date<today()&&m.finance&&m.finance.track);
-  const track = prevF && prevF.finance.track==="trading" ? "personal" : "trading";
+  const qc = nextQuant() || {id:"q01", title:"RSI(2) mean reversion", summary:"Buy short-term oversold pullbacks in a long-term uptrend.", quantlab:{file:"src/quantlab/features/technical.py", hook:"where momentum and oscillator features are built"}};
+  const liked = likedSummary().slice(0,20).map(x=>(x.v>0?"+ ":"- ")+x.kind+": "+x.title).join("\n");
   S.preparing = true; render(); status("Claude is preparing this morning from its own knowledge. Usually 1–2 minutes.");
   const prompt = `You are preparing one morning of learning for a hospital clinical pharmacist in Saudi Arabia (English). No web access is available, so do NOT invent papers, URLs or statistics; teach established, guideline-consistent knowledge and say "check the current guideline" where recent changes may apply.
 About them: ${(S.profile&&S.profile.about||"").slice(0,1200)}
-Write JSON only:
+${liked?`What they marked "more like this" (+) or "less" (-); lean toward the + kinds in examples and ideas:\n${liked}\n`:""}Write JSON only:
 {"headline":"one specific sentence for this morning",
 "career":{"paper":null,"chapter":{"chapterId":"${ns?ns.ch.id:"ch01"}","chapterTitle":${JSON.stringify(ns?ns.ch.title:"Type 2 diabetes pharmacotherapy")},"section":${ns?Number(ns.sec.n)||1:1},"sectionTitle":${JSON.stringify(ns?ns.sec.title:"Overview")},"minutes":12,"body":"450-600 words, original, paragraphs separated by blank lines, '## ' sub-headings and '- ' bullets allowed","pearls":["3-5 one-liners"],"sources":[{"name":"guideline name and year to look up","url":""}],"mcqs":[5 MCQs]},"ideas":[{"title":"...","body":"..."},{"title":"...","body":"..."},{"title":"...","body":"..."}]},
 "presence":${tech?JSON.stringify(tech):'{"context":"care-team","technique":"...","why":"...","evidence":"moderate","example":"...","specter":"...","drill":{"scenario":"...","task":"...","criteria":"..."}}'},
 "mind":{"article":null,"exercise":{"title":"...","minutes":7,"steps":["..."],"why":"..."},"puzzle":{"prompt":"...","answer":"...","explanation":"..."},"case":{"stem":"90-second inpatient vignette with one hidden drug problem","options":["4 options"],"answer":0,"explanation":"...","seconds":90}},
-"finance":{"track":"${track}","title":"...","body":"120-180 words${track==="personal"?", halal-conscious":""}","action":"...","mcq":{MCQ}},
-"relationships":{"title":"...","body":"...","action":"..."},
-"joy":{"title":"...","body":"..."}}
+"quant":{"conceptId":${JSON.stringify(qc.id)},"title":${JSON.stringify(qc.title)},"minutes":10,"body":"400-550 words teaching this trading-strategy concept plainly but rigorously: the idea, why it can work, when it fails, and the probability framing (base rate, hit rate, payoff, expected value). Paragraphs separated by blank lines; '## ' sub-headings and '- ' bullets allowed","rules":["the exact rules or steps"],"math":"the key formula in plain text","quantlab":{"file":${JSON.stringify((qc.quantlab&&qc.quantlab.file)||"")},"how":"how this concept connects to that file of their quant-lab project","experiment":"one honest experiment to run there, with costs and purged walk-forward validation"},"pitfalls":["3-4 ways it breaks"],"sources":[{"name":"book or paper to look up","url":""}],"mcqs":[2 MCQs testing understanding]}}
+The quant concept: ${qc.summary||""} Link to their code: ${(qc.quantlab&&qc.quantlab.hook)||""}. Their quant-lab estimates the probability that each US stock's next-day return beats its own recent volatility, with purged walk-forward validation, calibration and cost-aware backtests.
 MCQ format: {"id":"short-slug","q":"vignette stem","options":["A","B","C","D"],"answer":0-3,"explanation":"why","topic":"topic tag"}. Keep the presence object exactly as given if one is provided.`;
   try{
     const res = await S.sample.json(prompt, {modelTier:"default", cache:false, onText:({text})=>status("Preparing… "+text.length.toLocaleString()+" characters")});
     if(!res || !res.career) throw {code:"invalid_json"};
     const ch = res.career.chapter;
     if(ch && Array.isArray(ch.mcqs)){ const seen = new Set(); ch.mcqs = ch.mcqs.map(normQ).filter(validQ); ch.mcqs.forEach((q,i)=>{ let id=String(q.id||""); if(!id||seen.has(skey(id))) id="c"+(i+1); seen.add(skey(id)); q.id=id; }); }
-    if(res.finance && res.finance.mcq){ normQ(res.finance.mcq); if(!res.finance.mcq.id) res.finance.mcq.id="f1"; if(!validQ(res.finance.mcq)) delete res.finance.mcq; }
+    if(res.quant && Array.isArray(res.quant.mcqs)){ const seen = new Set(); res.quant.mcqs = res.quant.mcqs.map(normQ).filter(validQ); res.quant.mcqs.forEach((q,i)=>{ let id=String(q.id||""); if(!id||seen.has(skey(id))) id="qt"+(i+1); seen.add(skey(id)); q.id=id; }); }
+    delete res.finance; delete res.relationships; delete res.joy;
     if(res.mind && res.mind.case) normQ(res.mind.case);
     if((await S.db.doc("mornings/"+today()).get()).exists){ status("Your researched morning arrived while Claude was writing, so it was kept."); return; }
     if(!await write("mornings/"+today(), Object.assign(res, {date:today(), source:"page", createdAt:new Date().toISOString()}))) return;
@@ -1270,33 +1449,167 @@ async function streamInto(key, prompt){
   }finally{ render(); }
 }
 
-/* ---------- games overlay ---------- */
-let gameCleanup = null, lastFocus = null;
+/* ---------- overlay (games, breathing, eye contact) ----------
+   Lives outside the re-rendered page so a store update never interrupts a running practice. */
+let gameCleanup = null, lastFocus = null, afterClose = null;
+function openOverlay(title, back, mountFn){
+  if(!$("gameOverlay").hidden) closeGame();
+  lastFocus = back; afterClose = null; document.querySelector(".wrap").inert = true;
+  $("gameTitle").textContent = title; $("gameOverlay").hidden = false; document.body.style.overflow="hidden";
+  const mount = $("gameMount"); mount.innerHTML = "";
+  try{ gameCleanup = mountFn(mount); }catch(e){ console.error(e); mount.innerHTML = `<div class="empty">This didn't start. Close and try again.</div>`; }
+  $("gameClose").focus();
+}
 function openGame(id){
   const g = games().find(x=>x.id===id); if(!g) return;
-  lastFocus = '.game[data-id="'+CSS.escape(id)+'"]'; document.querySelector(".wrap").inert = true;
-  $("gameTitle").textContent = g.skill; $("gameOverlay").hidden = false; document.body.style.overflow="hidden";
-  const mount = $("gameMount"); mount.innerHTML = "";
   const hist = gameHistory(g.id), best = gameBest(g);
-  try{
-    gameCleanup = g.mount(mount, {last: hist[hist.length-1]||null, best: best?best.score:null, reducedMotion: reduced.matches,
-      onDone: async (r)=>{ if(!r || typeof r.score!=="number" || !isFinite(r.score)) return;
-        const d = S.brain.find(b=>b.date===today()), results = Object.assign({}, (d&&d.results)||{});
-        results[g.id] = (results[g.id]||[]).concat([{score:r.score, detail:r.detail||{}, summary:String(r.summary||""), at:new Date().toISOString()}]).slice(-10);
-        if(S.demo){ if(d) d.results=results; else S.brain.unshift({date:today(), results}); }
-        else await write("brain/"+today(), {date:today(), results});
-        await bump("game"); } });
-  }catch(e){ mount.innerHTML = `<div class="empty">This game failed to start.</div>`; }
-  $("gameClose").focus();
+  openOverlay(g.skill, '.game[data-id="'+CSS.escape(id)+'"]', mount=>g.mount(mount, {last: hist[hist.length-1]||null, best: best?best.score:null, reducedMotion: reduced.matches,
+    onDone: async (r)=>{ if(!r || typeof r.score!=="number" || !isFinite(r.score)) return;
+      const d = S.brain.find(b=>b.date===today()), results = Object.assign({}, (d&&d.results)||{});
+      results[g.id] = (results[g.id]||[]).concat([{score:r.score, detail:r.detail||{}, summary:String(r.summary||""), at:new Date().toISOString()}]).slice(-10);
+      if(S.demo){ if(d) d.results=results; else S.brain.unshift({date:today(), results}); }
+      else await write("brain/"+today(), {date:today(), results});
+      await bump("game"); } }));
 }
 function closeGame(){
   try{ if(typeof gameCleanup==="function") gameCleanup(); }catch(e){}
   gameCleanup = null; $("gameMount").innerHTML = ""; $("gameOverlay").hidden = true; document.body.style.overflow="";
   document.querySelector(".wrap").inert = false;
-  render(); const back = lastFocus && document.querySelector(lastFocus); if(back) back.focus();
+  render();
+  const next = afterClose; afterClose = null;
+  if(next){ next(); return; }
+  const back = lastFocus && document.querySelector(lastFocus); if(back) back.focus();
 }
 $("gameClose").addEventListener("click", closeGame);
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !$("gameOverlay").hidden) closeGame(); });
+async function saveDay(fields, kind){
+  S.day = Object.assign({}, S.day||{}, fields);
+  render();
+  await write("days/"+today(), Object.assign({date:today()}, fields), "update");
+  if(kind) await bump(kind);
+}
+async function wakeLock(){ try{ return navigator.wakeLock ? await navigator.wakeLock.request("screen") : null; }catch(e){ return null; } }
+const mmss = s => Math.floor(s/60)+":"+pad(Math.floor(s%60));
+const ease = f => f<.5 ? 2*f*f : 1-Math.pow(-2*f+2,2)/2;
+
+function mountBreath(el, key, secs){
+  const P = BREATHS[key] || BREATHS.sigh, cyc = P.phases.reduce((a,p)=>a+p[1],0);
+  const total = Math.max(cyc, Math.round(secs/cyc)*cyc), still = reduced.matches;
+  el.innerHTML = `<div class="breath">
+    <span class="label">${esc(P.n)} · about ${Math.round(total/60)} min</span>
+    <div class="orb" aria-hidden="true"><i id="br-i"></i><b id="br-n">${Math.round(total/60)}′</b></div>
+    <p class="phase" id="br-ph" aria-live="polite">Sit tall. Let your shoulders drop.</p>
+    <p class="hint" id="br-left">${esc(P.cue)}</p>
+    <div class="row" style="justify-content:center" id="br-ctl"><button class="btn primary" id="br-go" type="button">Begin</button></div>
+  </div>`;
+  const orb = el.querySelector("#br-i"), ph = el.querySelector("#br-ph"), num = el.querySelector("#br-n"), left = el.querySelector("#br-left"), ctl = el.querySelector("#br-ctl");
+  let raf = 0, t0 = 0, lastI = -1, lock = null, over = false;
+  const frame = now=>{
+    const t = (now - t0)/1000;
+    if(t >= total){ finish(t); return; }
+    let x = t % cyc, i = 0, start = 0;
+    while(i < P.phases.length-1 && x >= start + P.phases[i][1]){ start += P.phases[i][1]; i++; }
+    const [cue, dur, to] = P.phases[i], from = P.phases[(i+P.phases.length-1)%P.phases.length][2];
+    const f = clamp((x-start)/dur, 0, 1);
+    if(!still) orb.style.transform = "scale("+(from + (to-from)*ease(f)).toFixed(3)+")";
+    else orb.style.transform = "scale("+to+")";
+    if(i!==lastI){ ph.textContent = cue; lastI = i; }
+    num.textContent = Math.max(1, Math.ceil(dur - (x-start)));
+    left.textContent = mmss(Math.max(0, total - t))+" left";
+    raf = requestAnimationFrame(frame);
+  };
+  const finish = async (t)=>{
+    if(over) return; over = true; cancelAnimationFrame(raf); if(lock) try{ lock.release(); }catch(e){}
+    orb.style.transform = "scale(.6)"; num.textContent = "✓"; ph.textContent = "You're here. Keep this pace as you start.";
+    left.textContent = "Next: الروح, with the ayah and your morning adhkar.";
+    ctl.innerHTML = `<button class="btn primary" type="button" id="br-next">Continue to الروح</button>`;
+    const nx = ctl.querySelector("#br-next"); nx.focus();
+    nx.addEventListener("click", ()=>{ afterClose = ()=>{ const s=$("st-spirit"); if(s){ s.scrollIntoView({behavior:reduced.matches?"auto":"smooth"}); const c=s.querySelector(".counter"); if(c) c.focus({preventScroll:true}); } }; closeGame(); });
+    await saveDay({focus:{pattern:key, seconds:Math.round(t), at:new Date().toISOString()}, done:Object.assign({}, (S.day&&S.day.done)||{}, {focus:true})}, "focus");
+  };
+  el.querySelector("#br-go").addEventListener("click", async ()=>{
+    ctl.innerHTML = `<button class="btn ghost small" type="button" id="br-stop">Finish early</button>`;
+    ctl.querySelector("#br-stop").addEventListener("click", ()=>{ const t=(performance.now()-t0)/1000; if(t>=45) finish(t); else closeGame(); });
+    t0 = performance.now(); raf = requestAnimationFrame(frame);
+    wakeLock().then(l=>{ if(over){ if(l) try{ l.release(); }catch(e){} } else lock = l; });
+  });
+  return ()=>{ over = true; cancelAnimationFrame(raf); if(lock) try{ lock.release(); }catch(e){} };
+}
+function openBreath(){ const k=S.breathKey; openOverlay("Focus · "+BREATHS[k].n, '[data-act="breathe"]', el=>mountBreath(el, k, breathSecs())); }
+
+const EYE_SVG = `<svg class="eyes" id="ey-svg" viewBox="0 0 320 130" aria-hidden="true">
+  <rect class="ring" x="6" y="6" width="308" height="118" rx="59" fill="none" stroke="var(--growth)" stroke-width="2"/>
+  ${[95,225].map(cx=>`<g transform="translate(${cx} 65)">
+    <path d="M-62 0 Q0 -48 62 0 Q0 48 -62 0Z" fill="var(--surface)" stroke="var(--muted)" stroke-width="2"/>
+    <circle class="iris" r="23" fill="var(--growth)"/><circle r="10" fill="var(--ground)"/><circle cx="7" cy="-8" r="4" fill="var(--ink)" opacity=".85"/>
+    <path class="lid" d="M-62 0 Q0 -48 62 0 Q0 48 -62 0Z" fill="var(--raise)" stroke="var(--muted)" stroke-width="2"/>
+  </g>`).join("")}
+</svg>`;
+function mountEye(el, drill){
+  const target = clamp(+drill.holdSeconds||3, 1, 12), reps = clamp(Math.round(+drill.reps||5), 1, 12);
+  const lines = arr(drill.lines).filter(l=>typeof l==="string" && l.trim()); const say = i => lines.length ? lines[i % lines.length] : "Say one clear sentence and hold until the last word.";
+  let rep = 0, holds = [], start = 0, raf = 0, holding = false, over = false;
+  const intro = ()=>{ el.innerHTML = `<div class="eyetrain">
+      <span class="label">${esc(drill.title)} · ${reps} holds of ${fmt(target,1)} s</span>
+      ${EYE_SVG}
+      <p style="max-width:56ch">${esc(drill.goal||"")}</p>
+      <ol class="steps" style="text-align:left">${arr(drill.steps).map(s=>`<li>${esc(s)}</li>`).join("")}</ol>
+      <p class="hint muted" style="max-width:56ch;font-size:14px">Look at the eyes, press and hold the button (or the Space bar) as you start speaking, and let go on the last word. Holding ${fmt(target,1)} s or more counts.</p>
+      ${drill.cultural?`<p class="faint" style="max-width:56ch;font-size:13px">${esc(drill.cultural)}</p>`:""}
+      <button class="btn primary" type="button" id="ey-go">Begin</button></div>`;
+    el.querySelector("#ey-go").addEventListener("click", stage); el.querySelector("#ey-go").focus(); };
+  const dots = ()=>`<div class="reps" aria-hidden="true">${Array.from({length:reps},(_,i)=>`<i class="${i<holds.length?(holds[i]>=target?"hit":"miss"):""}"></i>`).join("")}</div>`;
+  const stage = ()=>{
+    el.innerHTML = `<div class="eyetrain">
+      <span class="label">Hold ${rep+1} of ${reps} · target ${fmt(target,1)} s</span>${dots()}
+      ${EYE_SVG}
+      <p class="say">“${esc(say(rep))}”</p>
+      <button class="hold" type="button" id="ey-hold" aria-describedby="ey-msg"><i id="ey-fill"></i><span id="ey-lbl">Press and hold while you say it</span></button>
+      <p class="muted" id="ey-msg" aria-live="polite" style="min-height:1.5em;font-size:14px"></p></div>`;
+    const b = el.querySelector("#ey-hold");
+    b.addEventListener("pointerdown", e=>{ e.preventDefault(); try{ b.setPointerCapture(e.pointerId); }catch(_){} down(); });
+    b.addEventListener("pointerup", up); b.addEventListener("pointercancel", up);
+    b.addEventListener("contextmenu", e=>e.preventDefault());
+    b.focus();
+  };
+  const tick = ()=>{
+    const t = (performance.now()-start)/1000, fill = el.querySelector("#ey-fill"), lbl = el.querySelector("#ey-lbl"), svg = el.querySelector("#ey-svg");
+    if(fill) fill.style.width = Math.min(100, t/target*100)+"%";
+    if(lbl) lbl.textContent = fmt(t,1)+" s"+(t>=target?" ✓ finish the sentence":"");
+    if(svg) svg.classList.toggle("hit", t>=target);
+    if(t>target+4){ const msg=el.querySelector("#ey-msg"); if(msg) msg.textContent = "Past this point steady gaze starts to feel like a stare. Let go at the end of the thought."; }
+    raf = requestAnimationFrame(tick);
+  };
+  const down = ()=>{ const hb = el.querySelector("#ey-hold"); if(holding || over || !hb || hb.disabled) return; holding = true; start = performance.now(); const svg=el.querySelector("#ey-svg"); if(svg) svg.classList.add("held"); const msg=el.querySelector("#ey-msg"); if(msg) msg.textContent=""; raf = requestAnimationFrame(tick); };
+  const up = ()=>{
+    if(!holding) return; holding = false; cancelAnimationFrame(raf);
+    const t = (performance.now()-start)/1000; holds.push(t); rep++;
+    const msg = el.querySelector("#ey-msg"), b = el.querySelector("#ey-hold");
+    const note = t<target ? `${fmt(t,1)} s · broke early. Keep your eyes there through the last word.` : t>target+4 ? `${fmt(t,1)} s · held, but long. Release when the thought ends.` : `${fmt(t,1)} s · steady. That's the one.`;
+    if(rep>=reps){ done(); return; }
+    if(msg) msg.textContent = note; if(b) b.disabled = true;
+    setTimeout(()=>{ if(!over){ stage(); const m2=el.querySelector("#ey-msg"); if(m2) m2.textContent = note; } }, 900);
+  };
+  const done = async ()=>{
+    over = true;
+    const hits = holds.filter(t=>t>=target).length, avg = holds.reduce((a,b)=>a+b,0)/holds.length, best = Math.max(...holds);
+    el.innerHTML = `<div class="eyetrain">
+      <span class="label">${esc(drill.title)} · done</span>${dots()}
+      <p class="say">${hits} of ${reps} holds at ${fmt(target,1)} s or longer</p>
+      <p class="mono muted">average ${fmt(avg,1)} s · longest ${fmt(best,1)} s</p>
+      <p style="max-width:56ch">${hits===reps?"Clean. Use it today: hold the gaze through the last word of your next recommendation.":hits>=reps/2?"Good. The early breaks usually come mid-sentence, when you start thinking about the next word. Slow down instead of looking away.":"Normal for a first try. Shorter sentences, slower pace, and let the gaze rest on the bridge of the nose if direct eye contact feels too much."}</p>
+      ${drill.why?`<p class="faint" style="max-width:56ch;font-size:13px">${esc(drill.why)}</p>`:""}
+      <button class="btn primary" type="button" id="ey-close">Close</button></div>`;
+    el.querySelector("#ey-close").addEventListener("click", closeGame); el.querySelector("#ey-close").focus();
+    await saveDay({eye:{id:String(drill.id||drill.title||""), hits, reps, avg:+avg.toFixed(2), best:+best.toFixed(2), target, at:new Date().toISOString()}}, "eye");
+  };
+  const kd = e=>{ if(e.code!=="Space" || e.target.matches("input,textarea")) return; if(!el.querySelector("#ey-hold")) return; e.preventDefault(); if(!e.repeat) down(); };
+  const ku = e=>{ if(e.code!=="Space") return; if(!el.querySelector("#ey-hold")) return; e.preventDefault(); up(); };
+  document.addEventListener("keydown", kd); document.addEventListener("keyup", ku);
+  intro();
+  return ()=>{ over = true; cancelAnimationFrame(raf); document.removeEventListener("keydown", kd); document.removeEventListener("keyup", ku); };
+}
+function openEye(){ const d = charismaToday("eyeContact"); if(!d) return; openOverlay("Eye contact · "+d.title, '[data-act="eyeStart"]', el=>mountEye(el, d)); }
 
 /* ---------- spirit counters (debounced saves) ---------- */
 let spiritTimer = null, spiritSince = 0, boundDay = null;
@@ -1334,6 +1647,32 @@ const actions = {
     clearInterval(caseTick); caseTick = setInterval(()=>{ const left = Math.max(0, Math.ceil(secs - (performance.now()-S.caseStart)/1000)); const t=$("caseTimer"); if(t) t.textContent = left; if(left<=0){ clearInterval(caseTick); if(t) t.textContent="time"; } }, 250); },
   puzzle:()=>{ S.puzzleShown=true; render(); bump("puzzle"); },
   game:(el)=>openGame(el.dataset.id),
+  breathe:()=>openBreath(),
+  breathPattern:(el)=>{ if(!BREATHS[el.dataset.v]) return; S.breathKey=el.dataset.v; try{ localStorage.setItem("gradient.breath", S.breathKey); }catch(e){} render(); },
+  breathLen:(el)=>{ S.breathLen=+el.dataset.v||null; render(); },
+  bodyDone:(el)=>{ const cur = S.day && S.day.body; saveDay({body: cur ? false : {id:el.dataset.id, at:new Date().toISOString()}}, cur ? null : "body"); },
+  eyeStart:()=>openEye(),
+  like: async(el)=>{ const kind=el.dataset.kind, ref=el.dataset.ref, v=+el.dataset.v, key=likeKey(kind,ref);
+    const nv = likeVal(kind,ref)===v ? 0 : v, rec = {kind, ref, title:el.dataset.title||ref, v:nv, at:new Date().toISOString()};
+    S.likes = Object.assign({}, S.likes, {[key]:rec}); render();
+    if(nv) status(nv>0 ? "Noted. You'll get more like this." : "Noted. Less of this from now on.");
+    await write("likes/"+today(), {date:today(), items:{[key]:rec}}, "update"); if(nv) bump("like"); },
+  teach: async(el)=>{
+    const qid = el.dataset.qid, x = MCQS[qid]; if(!x || !S.sample || S.teaching) return;
+    const chosen = el.dataset.chosen==="" ? null : +el.dataset.chosen, L="ABCD", m = x.m;
+    const quant = /^Quant/.test(x.src||"") || /_quant_/.test(qid);
+    const who = quant ? "a patient, rigorous quant-trading and statistics tutor" : "an expert clinical pharmacy preceptor (BCPS level), accurate to current guidelines";
+    const q = `Question: ${m.q}\nOptions:\n${m.options.map((o,i)=>L[i]+". "+o).join("\n")}`;
+    const prompt = chosen==null
+      ? `You are ${who}. A learner is about to answer this multiple-choice question and pressed "Teach me how to answer". Teach the METHOD without giving away the answer: do not say which option is correct, do not eliminate options down to one, and do not hint at a letter.\n\n${q}\n\nIn plain text, under 170 words, no markdown headers: 1) what this question is really testing, 2) the key fact or rule to recall, 3) a step-by-step way to reason from the stem to the answer (what to notice first, how to test each option), 4) one memory hook.`
+      : `You are ${who}. The learner chose ${L[chosen]} on this question; the keyed answer is ${L[m.answer]}${chosen===m.answer?" (they were right)":" (they were wrong)"}.\n\n${q}\nKeyed explanation: ${m.explanation||""}\n\nTeach them how to answer this kind of question in future. Plain text, under 230 words, no markdown headers: 1) the concept being tested, 2) the reasoning path from the stem to the key, step by step, 3) one line on why each other option is wrong, 4) the general rule to carry forward and a memory hook. If anything in the question looks outdated or ambiguous, say so plainly.`;
+    const key = (chosen==null ? "teach-" : "teachA-")+qid;
+    S.teaching = qid; S.outputs[key] = "Thinking…"; render();
+    try{
+      const r = await S.sample(prompt, {cache:false, onText:({text})=>{ S.outputs[key]=text; const n=document.getElementById(key); if(n) n.textContent=text; }});
+      S.outputs[key] = r.text; bump("teach");
+    }catch(e){ S.outputs[key] = (e&&e.code==="not_granted") ? "Claude isn't allowed in this view." : "That didn't work ("+(e&&e.code||"error")+"). Press the button again."; setTimeout(()=>{ if(/^That didn't work|^Claude isn't/.test(S.outputs[key]||"")){ delete S.outputs[key]; render(); } }, 6000); }
+    finally{ S.teaching = null; render(); } },
   tap:(el)=>{
     const id = el.dataset.id, list = adhkar(), item = list.find(x=>x.id===id), counts = spiritCounts();
     const n = (counts[id]||0) + 1;
@@ -1389,6 +1728,7 @@ const actions = {
     if(ok){ delete S.drafts["c-f"]; delete S.drafts["c-b"]; } },
   discuss:(el)=>{ const m=morningToday(); let seed="";
     if(el.dataset.topic==="chapter"&&m&&m.career&&m.career.chapter){ const C=m.career.chapter; S.sparMode="case"; seed=`Today's section: ${C.chapterTitle}, §${C.section} ${C.sectionTitle}.\nKey pearls: ${(C.pearls||[]).join(" | ")}\n\nMy question: `; }
+    if(el.dataset.topic==="quant"&&m&&m.quant){ const Q=m.quant; S.sparMode="quant"; seed=`Today's quant concept: ${Q.title}.\nRules: ${arr(Q.rules).join(" | ")}\n\nMy question: `; }
     if(el.dataset.topic==="dispatch"){ const d=S.dispatches.find(x=>x.id===el.dataset.id); S.sparMode="open"; if(d) seed=`About this research: "${d.title}". ${d.summary}\n\nWhat I want to understand: `; }
     S.drafts["spar-in"]=seed; S.tab="spar"; render(); $("lab").scrollIntoView({behavior:"smooth"}); const t=$("spar-in"); if(t){ t.focus({preventScroll:true}); t.setSelectionRange(t.value.length,t.value.length);} },
   saveBaseline: async()=>{ const sc=Object.fromEntries(DK.map(k=>[k,+(S.drafts["p-"+k] ?? 5)]));
@@ -1437,7 +1777,7 @@ async function addMissCard(x){
   const id = x.qid.startsWith("card_") ? x.qid.slice(5) : skey("m_"+x.qid);
   if(S.cards.some(c=>c.id===id)) { await write("cards/"+id, {due:addDays(today(),1), reps:0, interval:1}, "update"); return; }
   const m = x.m, right = m.options[m.answer];
-  await write("cards/"+id, {id, type:"mcq", mcq:{q:m.q, options:m.options, answer:m.answer, explanation:m.explanation||"", topic:m.topic||"", id:m.id||""}, front:m.q, back:right+"\n\n"+(m.explanation||""), domain:/_finance_/.test(x.qid)?"finance":"career", src:String(x.src||""), ease:2.5, interval:1, reps:0, due:addDays(today(),1), createdAt:new Date().toISOString()});
+  await write("cards/"+id, {id, type:"mcq", mcq:{q:m.q, options:m.options, answer:m.answer, explanation:m.explanation||"", topic:m.topic||"", id:m.id||""}, front:m.q, back:right+"\n\n"+(m.explanation||""), domain:/_(quant|finance)_/.test(x.qid)?"finance":"career", src:String(x.src||""), ease:2.5, interval:1, reps:0, due:addDays(today(),1), createdAt:new Date().toISOString()});
 }
 document.addEventListener("click", e=>{
   const el = e.target.closest("[data-act]"); if(!el) return;
@@ -1458,9 +1798,12 @@ $("recompute").addEventListener("click", recompute);
 /* ---------- example data (only when the store is unreachable) ---------- */
 function loadDemo(){
   S.demo = true; S.morningsLoaded = true;
-  const base = {career:6.5, finance:6, health:5, growth:6, relationships:6, spirit:7, joy:4.5};
+  const base = {career:6.5, finance:6, health:5, growth:6, spirit:7};
   S.checkins = Array.from({length:10},(_,i)=>({date:addDays(today(),-i), sleep:6.5+(i%3)*.5, energy:3, scores:Object.fromEntries(DK.map(k=>[k, clamp(+(base[k]+Math.sin(i*1.7+k.length)).toFixed(1),0,10)]))}));
-  S.model = {coupling:[{a:"health",b:"career",w:.7},{a:"relationships",b:"joy",w:.6},{a:"spirit",b:"health",w:.4}], leverage:{domain:"health",why:"Example."}};
+  S.model = {coupling:[{a:"health",b:"career",w:.7},{a:"growth",b:"career",w:.6},{a:"spirit",b:"health",w:.4}], leverage:{domain:"health",why:"Example."}};
+  S.charismaProg = {startDate:today(), bodyLanguage:[{id:"b01",n:1,title:"Example: grounded stance",goal:"Stand still and steady.",steps:["Feet under your shoulders.","Weight even, knees soft, for 60 seconds."],minutes:5,why:"Example.",evidence:"moderate",specter:"Example principle.",cultural:""}],
+    eyeContact:[{id:"e01",n:1,title:"Example: two-second holds",goal:"Hold your gaze through one short sentence.",steps:["Look at the eyes on screen.","Hold while you speak."],holdSeconds:2,reps:3,lines:["I recommend we stop the infusion now."],why:"Example.",evidence:"moderate",cultural:""}]};
+  S.quantProg = {concepts:[{id:"q01",n:1,title:"Example: RSI(2) mean reversion",area:"Mean reversion",summary:"Example.",quantlab:{file:"src/quantlab/features/technical.py",hook:"Example."}},{id:"q02",n:2,title:"Example: expected value of a trade",area:"Probability",summary:"Example.",quantlab:{file:"src/quantlab/backtest/engine.py",hook:"Example."}}]};
   const ex = (id,q,o,a)=>({id,q,options:o,answer:a,explanation:"Example explanation.",topic:"Example"});
   S.mornings = [{date:today(), source:"example", headline:"Example morning: this is what a prepared morning looks like.",
     career:{paper:{title:"Example paper title",journal:"Example Journal",published:"2026",url:"",kind:"trial",population:"Example population",finding:"Example finding.",bottom_line:"Example bottom line.",ward_change:"Example ward change.",strength:"moderate",mcqs:[ex("p1","Example question about the paper?",["Option A","Option B","Option C","Option D"],1)]},
@@ -1468,8 +1811,8 @@ function loadDemo(){
       ideas:[{title:"Example idea",body:"Ideas appear here."}]},
     presence:{context:"care-team",technique:"Example technique",why:"Example.",evidence:"moderate",example:"Example words to say.",specter:"Example principle.",drill:{scenario:"Example scenario.",task:"Example task.",criteria:"Example criteria."}},
     mind:{case:{stem:"Example case.",options:["A","B","C","D"],answer:2,explanation:"Example.",seconds:90},puzzle:{prompt:"Example puzzle.",answer:"Example answer",explanation:"Example."}},
-    spirit:null, finance:{track:"personal",title:"Example finance note",body:"Example.",action:"Example step."},
-    relationships:{title:"Example practice",body:"Example.",action:"Example."}, joy:{title:"Example",body:"Example."}}];
+    spirit:null,
+    quant:{conceptId:"q01",title:"Example: RSI(2) mean reversion",minutes:10,body:"Example lesson text.\n\n## Why it can work\n- an example bullet",rules:["Example rule."],math:"Example formula",quantlab:{file:"src/quantlab/features/technical.py",how:"Example.",experiment:"Example experiment."},pitfalls:["Example pitfall."],sources:[],mcqs:[ex("qt1","Example quant question?",["A","B","C","D"],3)]}}];
   S.log = {days:Object.fromEntries([0,1,2,4].map(i=>[addDays(today(),-i),{quiz:true}]))};
 }
 
@@ -1479,11 +1822,12 @@ function subscribe(){
   const one = (path, key)=> db.doc(path).onSnapshot(s=>{ S[key] = s.exists ? s.data() : null; render(); }, onErr);
   one("me/profile","profile"); one("me/model","model"); one("me/log","log");
   one("curriculum/syllabus","syllabus"); one("curriculum/presence","presenceProg"); one("curriculum/adhkar","adhkarDoc");
+  one("curriculum/charisma","charismaProg"); one("curriculum/quant","quantProg");
   let dayUnsubs = [];
   const bindDay = ()=>{
     flushSpirit(); dayUnsubs.forEach(u=>u&&u());
     boundDay = today();
-    Object.assign(S, {day:null, spiritDoc:null, spiritLocal:{}, puzzleShown:false, caseStart:null, showAll:{}, catchup:null, practice:null});
+    Object.assign(S, {day:null, spiritDoc:null, spiritLocal:{}, puzzleShown:false, caseStart:null, showAll:{}, catchup:null, practice:null, breathLen:null});
     delete S.outputs.presence; delete S.drafts.presence; clearInterval(caseTick);
     dayUnsubs = [one("days/"+boundDay,"day"), one("spirit/"+boundDay,"spiritDoc")];
   };
@@ -1501,6 +1845,9 @@ function subscribe(){
   coll("experiments","experiments", c=>c.orderBy("start","desc").limit(50));
   coll("cards","cards", c=>c.orderBy("due").limit(1000));
   coll("dispatches","dispatches", c=>c.orderBy("date","desc").limit(40));
+  coll("likes",null, c=>c.orderBy("date","desc").limit(120), docs=>{ const out={};
+    for(const d of docs) for(const [k,v] of Object.entries(d.items||{})) if(v && (!out[k] || (v.at||"")>(out[k].at||""))) out[k]=v;
+    S.likes=out; });
 }
 async function boot(){
   render(); initTerrain();
