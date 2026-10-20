@@ -411,6 +411,7 @@ const skey = s => String(s).replace(/[^A-Za-z0-9_-]/g,"_").slice(0,180);
 const qkey = (date, slot, id) => skey(date+"_"+slot+"_"+(id||"q"));
 const arr = v => Array.isArray(v) ? v.filter(x=>x!=null) : (v ? [v] : []);
 const validQ = q => !!q && typeof q.q==="string" && Array.isArray(q.options) && q.options.length>=2 && Number.isInteger(q.answer) && q.answer>=0 && q.answer<q.options.length;
+const safeUrl = u => { const t=String(u??"").trim(); return /^https?:\/\//i.test(t) ? t : ""; };
 const safe = (f, fb="") => { try{ return f(); }catch(e){ console.error(e); return fb; } };
 const hedgesIn = s => HEDGES.filter(w=>new RegExp("\\b"+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b","i").test(s));
 function normQ(q){ if(q && typeof q.answer==="string"){ const t=q.answer.trim().toUpperCase(); q.answer=/^[A-D]$/.test(t)?"ABCD".indexOf(t):parseInt(t,10); } return q; }
@@ -538,7 +539,7 @@ function chapterDone(m){ const c=m&&m.career&&m.career.chapter; if(!c||!Array.is
 function stationProgress(k){
   const m = morningToday(), done = (S.day&&S.day.done)||{};
   if(done[k]) return 1;
-  if(k==="focus") return (S.day&&S.day.focus) ? 1 : 0;
+  if(k==="focus") return (done.focus!==false && S.day&&S.day.focus) ? 1 : 0;
   if(k==="presence"){ const d=S.day||{}, parts=[];
     if(charismaToday("bodyLanguage")) parts.push(d.body?1:0);
     if(charismaToday("eyeContact")) parts.push(d.eye?1:0);
@@ -719,9 +720,9 @@ function mcqHTML(x, n){
 /* "Teach me how": before answering it teaches the method without the key; after answering it explains in depth. */
 function teachHTML(qid, chosen){
   const pre = S.outputs["teach-"+qid], post = S.outputs["teachA-"+qid], answered = chosen!=null;
-  const busy = S.teaching===qid;
-  return `${pre?`<div class="teach" id="teach-${esc(qid)}">${esc(pre)}</div>`:""}${post?`<div class="teach" id="teachA-${esc(qid)}">${esc(post)}</div>`:""}
-    ${(answered?post:pre)?"":`<div class="row"><button class="btn small ghost" data-act="teach" data-qid="${esc(qid)}" data-chosen="${answered?esc(chosen):""}" ${S.sample&&!busy?"":"disabled"} ${S.sample?"":'title="Claude is not available in this view."'}>${busy?"Teaching…":answered?"Teach me how to answer this":"Teach me how to answer"}</button></div>`}`;
+  const busy = !!S.teaching, mine = S.teaching===qid;
+  return `${pre?`<div class="teach" tabindex="-1" aria-live="polite" id="teach-${esc(qid)}">${esc(pre)}</div>`:""}${post?`<div class="teach" tabindex="-1" aria-live="polite" id="teachA-${esc(qid)}">${esc(post)}</div>`:""}
+    ${(answered?post:pre)?"":`<div class="row"><button class="btn small ghost" data-act="teach" data-qid="${esc(qid)}" data-chosen="${answered?esc(chosen):""}" ${S.sample&&!busy?"":"disabled"} ${S.sample?"":'title="Claude is not available in this view."'}>${mine?"Teaching…":answered?"Teach me how to answer this":"Teach me how to answer"}</button></div>`}`;
 }
 function mcqBlock(list, title){
   list = list.filter(x=>x && validQ(x.m));
@@ -820,7 +821,7 @@ function vCareer(m){
     h += `<div class="block">
       <div class="spread"><span class="label">Paper of the day · ${esc(P.kind||"")}</span><span class="row"><span class="tag ${esc(P.strength||"")}">${esc(P.strength||"")} evidence</span></span></div>
       <h3>${esc(P.title)}</h3>
-      <p class="muted mono" style="font-size:12.5px">${esc(P.journal)} · ${esc(P.published)}${P.url?` · <a href="${esc(P.url)}" target="_blank" rel="noopener">open ↗</a>`:""}</p>
+      <p class="muted mono" style="font-size:12.5px">${esc(P.journal)} · ${esc(P.published)}${safeUrl(P.url)?` · <a href="${esc(safeUrl(P.url))}" target="_blank" rel="noopener">open ↗</a>`:""}</p>
       <p class="lede"><b>Bottom line:</b> ${esc(P.bottom_line)}</p>
       ${shows("career",2)?`<dl class="kv"><dt>Population</dt><dd>${esc(P.population)}</dd><dt>Finding</dt><dd>${esc(P.finding)}</dd><dt>On the ward</dt><dd>${esc(P.ward_change)}</dd></dl>`:""}
       ${mcqBlock(shows("career",2)?list:list.slice(0,1), "Check yourself")}
@@ -837,7 +838,7 @@ function vCareer(m){
       <h3>${esc(C.sectionTitle)}</h3>
       ${full?`<div class="prose">${prose(C.body)}</div>`:`<button class="more" data-act="showAll" data-k="chapter">Read the full section</button>`}
       ${arr(C.pearls).length?`<div class="prose"><h4>Pearls</h4><ul>${arr(C.pearls).map(p=>`<li>${esc(p)}</li>`).join("")}</ul></div>`:""}
-      ${full && arr(C.sources).length?`<p class="faint" style="font-size:12.5px">Sources: ${arr(C.sources).map(s=>typeof s==="string"?esc(s):s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)).join(" · ")}</p>`:""}
+      ${full && arr(C.sources).length?`<p class="faint" style="font-size:12.5px">Sources: ${arr(C.sources).map(s=>typeof s==="string"?esc(s):safeUrl(s.url)?`<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)).join(" · ")}</p>`:""}
       ${full?mcqBlock(list,"Section exam · 5 questions"):""}
       <div class="spread"><button class="btn small ghost" data-act="discuss" data-topic="chapter">Discuss this section with Claude</button>${likeBar("chapter", C.chapterId+"."+C.section, C.chapterTitle+" · "+C.sectionTitle)}</div>
     </div>`;
@@ -868,11 +869,12 @@ function vBody(){
     <div class="spread"><button class="btn small ${done?"on":""}" data-act="bodyDone" data-id="${esc(b.id||b.title)}">${done?"✓ Done today":"I did it"}</button>${likeBar("body", b.id||b.title, b.title)}</div>
   </div>`;
 }
+const respectOn = () => { try{ return localStorage.getItem("gradient.respect")==="1"; }catch(e){ return false; } };
 function vEye(){
   const e = charismaToday("eyeContact"); if(!e) return "";
   const r = S.day && S.day.eye;
   return `<div class="block">
-    <div class="spread"><span class="label">Eye contact · daily · ${esc(e.reps||5)} holds of ${esc(e.holdSeconds||3)} s</span>${evTag(e.evidence)}</div>
+    <div class="spread"><span class="label">Eye contact · daily · ${esc(e.reps||5)} holds of ${esc(respectOn()?Math.min(+e.holdSeconds||3,3):(e.holdSeconds||3))} s${respectOn()?" · respect mode":""}</span>${evTag(e.evidence)}</div>
     <h3>${esc(e.title)}</h3>
     ${e.goal?`<p style="max-width:70ch">${esc(e.goal)}</p>`:""}
     ${shows("presence",2)?`<ol class="steps">${arr(e.steps).map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`:""}
@@ -935,7 +937,7 @@ function vMind(m){
       ${rec?`<div class="row">${likeBar("case", m.date, String(M.case.stem||"").slice(0,90))}</div>`:""}</div>`;
   }
   if(M.article && shows("mind",2)) h += `<div class="block"><div class="spread"><span class="label">Read · brain science</span>${evTag(M.article.strength)}</div>
-    <h3>${esc(M.article.title)}</h3><p class="muted mono" style="font-size:12.5px">${esc(M.article.source)} · ${esc(M.article.published)}${M.article.url?` · <a href="${esc(M.article.url)}" target="_blank" rel="noopener">open ↗</a>`:""}</p>
+    <h3>${esc(M.article.title)}</h3><p class="muted mono" style="font-size:12.5px">${esc(M.article.source)} · ${esc(M.article.published)}${safeUrl(M.article.url)?` · <a href="${esc(safeUrl(M.article.url))}" target="_blank" rel="noopener">open ↗</a>`:""}</p>
     <p style="max-width:70ch">${esc(M.article.summary)}</p><p><b>Today:</b> ${esc(M.article.takeaway)}</p><div class="row">${likeBar("article", M.article.url||M.article.title, M.article.title)}</div></div>`;
   if(M.exercise && shows("mind",2)) h += `<div class="block"><span class="label">Practice · ${esc(M.exercise.minutes)} min</span><h3>${esc(M.exercise.title)}</h3><ol class="steps">${arr(M.exercise.steps).map(s=>`<li>${esc(s)}</li>`).join("")}</ol><p class="muted" style="font-size:13.5px">${esc(M.exercise.why)}</p><div class="row">${likeBar("exercise", M.exercise.title, M.exercise.title)}</div></div>`;
   if(M.puzzle && shows("mind",3)) h += `<div class="block"><span class="label">Puzzle · ~3 minutes</span><p style="max-width:70ch">${esc(M.puzzle.prompt)}</p>
@@ -961,7 +963,7 @@ function vSpirit(m){
     h += `<div class="block">
       <span class="ar-label">آية اليوم</span>
       <p class="ayah">${esc(A.text)} <span class="orn">﴿${esc(arDigits(A.ayahTo&&A.ayahTo!==A.ayahNo?A.ayahNo+"–"+A.ayahTo:A.ayahNo))}﴾</span></p>
-      <p class="ar muted" style="font-size:14.5px">سورة ${esc(String(A.surah||"").replace(/^\s*سورة\s+/,""))} · ${A.url?`<a href="${esc(A.url)}" target="_blank" rel="noopener">quran.com ↗</a>`:""}</p>
+      <p class="ar muted" style="font-size:14.5px">سورة ${esc(String(A.surah||"").replace(/^\s*سورة\s+/,""))} · ${safeUrl(A.url)?`<a href="${esc(safeUrl(A.url))}" target="_blank" rel="noopener">quran.com ↗</a>`:""}</p>
     </div>
     <div class="block">
       <span class="ar-label">التفسير · ${esc(sp.tafsir&&sp.tafsir.source)}${sp.tafsir&&sp.tafsir.quoted===false?" (بتصرف)":""}</span>
@@ -1028,7 +1030,7 @@ function vQuant(m){
     ${full&&arr(Q.pitfalls).length?`<div class="block"><span class="label">Where it breaks</span><ul class="steps">${arr(Q.pitfalls).map(p=>`<li>${esc(p)}</li>`).join("")}</ul></div>`:""}
     <div class="block">
       ${mcqBlock(full?list:list.slice(0,1), "Check your understanding")}
-      ${full&&arr(Q.sources).length?`<p class="faint" style="font-size:12.5px">Sources: ${arr(Q.sources).map(s=>typeof s==="string"?esc(s):s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)).join(" · ")}</p>`:""}
+      ${full&&arr(Q.sources).length?`<p class="faint" style="font-size:12.5px">Sources: ${arr(Q.sources).map(s=>typeof s==="string"?esc(s):safeUrl(s.url)?`<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noopener">${esc(s.name)}</a>`:esc(s.name)).join(" · ")}</p>`:""}
       <div class="row"><button class="btn small ghost" data-act="discuss" data-topic="quant">Ask the quant tutor</button>${nx?`<span class="faint" style="font-size:12.5px">Tomorrow: ${esc(nx.title)}</span>`:""}</div>
     </div>${full?"":moreBtn("quant")}`;
 }
@@ -1070,7 +1072,7 @@ function examBody(ex){
     <div class="mcq"><p class="q" style="font-size:16.5px">${esc(x.m.q)}</p>
       <div class="opts">${x.m.options.map((o,k)=>{ const cls = chosen!=null ? (k===x.m.answer?"right":(k===chosen?"wrong":"")) : "";
         return `<button class="opt ${cls}" data-act="examAnswer" data-key="${esc(ex.key)}" data-i="${i}" data-k="${k}" ${chosen!=null?"disabled":""}><span class="l">${L[k]}</span><span>${esc(o)}</span></button>`; }).join("")}</div>
-      ${chosen!=null?`<p class="expl"><b style="color:var(--${chosen===x.m.answer?"good":"bad"})">${chosen===x.m.answer?"Correct.":"Not quite."}</b> ${esc(x.m.explanation)}</p>${(()=>{ const tq=skey("ex_"+ex.key+"_"+i); MCQS[tq]={qid:tq, m:x.m, src:x.src}; return teachHTML(tq, chosen); })()}`:""}
+      ${chosen!=null?`<p class="expl"><b style="color:var(--${chosen===x.m.answer?"good":"bad"})">${chosen===x.m.answer?"Correct.":"Not quite."}</b> ${esc(x.m.explanation)}</p>${(()=>{ const tq=skey("ex_"+ex.key+"_"+x.qid); MCQS[tq]={qid:tq, m:x.m, src:x.src}; return teachHTML(tq, chosen); })()}`:""}
     </div>
     <div class="row">
       <button class="btn small" data-act="examNav" data-key="${esc(ex.key)}" data-to="${i-1}" ${i===0?"disabled":""}>Previous</button>
@@ -1164,7 +1166,7 @@ function viewQuantCurriculum(){
   return `<div class="sec" style="margin-top:12px">
     <h2>Quant strategy, one concept a day</h2>
     <p class="muted">${cs.length} concepts, each tied to a file in your quant-lab.</p>
-    <details><summary class="more">Show all ${cs.length} concepts</summary><ol style="padding-left:0;list-style:none;margin:8px 0 0">${cs.map(c=>`<li class="item" style="padding:8px 0"><div class="spread"><span><span class="mono faint">${pad(c.n||0)}</span> <b style="${c.id===cur?"color:var(--ember)":seen.has(c.id)?"color:var(--good)":""}">${esc(c.title)}</b>${c.id===cur?" · today":seen.has(c.id)?" ✓":""}</span><span class="faint" style="font-size:12.5px">${esc(c.area||"")}</span></div>${c.quantlab&&c.quantlab.file?`<span class="faint" style="font-size:12.5px"><code class="path">${esc(c.quantlab.file)}</code> ${esc(c.quantlab.hook||"")}</span>`:""}</li>`).join("")}</ol></details>
+    <details><summary class="more">Show all ${cs.length} concepts</summary><ol style="padding-left:0;list-style:none;margin:8px 0 0">${cs.map(c=>`<li class="item" style="padding:8px 0"><div class="spread"><span><span class="mono faint">${esc(pad(+c.n||0))}</span> <b style="${c.id===cur?"color:var(--ember)":seen.has(c.id)?"color:var(--good)":""}">${esc(c.title)}</b>${c.id===cur?" · today":seen.has(c.id)?" ✓":""}</span><span class="faint" style="font-size:12.5px">${esc(c.area||"")}</span></div>${c.quantlab&&c.quantlab.file?`<span class="faint" style="font-size:12.5px"><code class="path">${esc(c.quantlab.file)}</code> ${esc(c.quantlab.hook||"")}</span>`:""}</li>`).join("")}</ol></details>
   </div>`;
 }
 function viewPulse(){
@@ -1298,7 +1300,7 @@ function viewDispatches(){
   return `<div class="sec"><h2>Dispatches</h2><p class="muted" style="max-width:72ch">Extra research picked for you, found on the open web and checked for what it does and doesn't show.</p>
     ${ds.length?`<div class="list">${ds.map(d=>`<div class="item"><div class="spread"><span class="row">${chip(d.domain)}<span class="label faint">${esc(d.date||"")}</span></span>${d.strength?`<span class="label">${esc(d.strength)}</span>`:""}</div>
       <h3 style="font:600 18px/1.3 var(--f-display)">${esc(d.title)}</h3><p style="max-width:72ch">${esc(d.summary)}</p>${d.why?`<p class="muted" style="max-width:72ch"><b>For you:</b> ${esc(d.why)}</p>`:""}
-      <div class="row">${d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.source||"Source")} ↗</a>`:`<span class="faint">${esc(d.source||"")}</span>`}<button class="btn small ghost" data-act="discuss" data-topic="dispatch" data-id="${esc(d.id)}">Discuss</button></div></div>`).join("")}</div>`:`<div class="empty">No dispatches yet.</div>`}</div>`;
+      <div class="row">${safeUrl(d.url)?`<a href="${esc(safeUrl(d.url))}" target="_blank" rel="noopener">${esc(d.source||"Source")} ↗</a>`:`<span class="faint">${esc(d.source||"")}</span>`}<button class="btn small ghost" data-act="discuss" data-topic="dispatch" data-id="${esc(d.id)}">Discuss</button></div></div>`).join("")}</div>`:`<div class="empty">No dispatches yet.</div>`}</div>`;
 }
 const MODES = {
   open:{n:"Open", rule:"Be a sharp, warm thinking partner. Be concise. Ask one good question back when it helps."},
@@ -1507,7 +1509,7 @@ function mountBreath(el, key, secs){
   let raf = 0, t0 = 0, lastI = -1, lock = null, over = false;
   const frame = now=>{
     const t = (now - t0)/1000;
-    if(t >= total){ finish(t); return; }
+    if(t >= total){ finish(total); return; }
     let x = t % cyc, i = 0, start = 0;
     while(i < P.phases.length-1 && x >= start + P.phases[i][1]){ start += P.phases[i][1]; i++; }
     const [cue, dur, to] = P.phases[i], from = P.phases[(i+P.phases.length-1)%P.phases.length][2];
@@ -1526,17 +1528,19 @@ function mountBreath(el, key, secs){
     ctl.innerHTML = `<button class="btn primary" type="button" id="br-next">Continue to الروح</button>`;
     const nx = ctl.querySelector("#br-next"); nx.focus();
     nx.addEventListener("click", ()=>{ afterClose = ()=>{ const s=$("st-spirit"); if(s){ s.scrollIntoView({behavior:reduced.matches?"auto":"smooth"}); const c=s.querySelector(".counter"); if(c) c.focus({preventScroll:true}); } }; closeGame(); });
-    await saveDay({focus:{pattern:key, seconds:Math.round(t), at:new Date().toISOString()}, done:Object.assign({}, (S.day&&S.day.done)||{}, {focus:true})}, "focus");
+    await saveDay({focus:{pattern:key, seconds:Math.round(Math.min(t,total)), at:new Date().toISOString()}, done:Object.assign({}, (S.day&&S.day.done)||{}, {focus:true})}, "focus");
   };
   el.querySelector("#br-go").addEventListener("click", async ()=>{
     ctl.innerHTML = `<button class="btn ghost small" type="button" id="br-stop">Finish early</button>`;
-    ctl.querySelector("#br-stop").addEventListener("click", ()=>{ const t=(performance.now()-t0)/1000; if(t>=45) finish(t); else closeGame(); });
+    const stop = ctl.querySelector("#br-stop"); stop.focus();
+    stop.addEventListener("click", ()=>{ const t=(performance.now()-t0)/1000; if(t>=45) finish(t); else closeGame(); });
     t0 = performance.now(); raf = requestAnimationFrame(frame);
     wakeLock().then(l=>{ if(over){ if(l) try{ l.release(); }catch(e){} } else lock = l; });
   });
   return ()=>{ over = true; cancelAnimationFrame(raf); if(lock) try{ lock.release(); }catch(e){} };
 }
-function openBreath(){ const k=S.breathKey; openOverlay("Focus · "+BREATHS[k].n, '[data-act="breathe"]', el=>mountBreath(el, k, breathSecs())); }
+function openBreath(from){ const k=S.breathKey, back = from && from.closest("#today") ? '#today [data-act="breathe"]' : '#st-focus [data-act="breathe"]';
+  openOverlay("Focus · "+BREATHS[k].n, back, el=>mountBreath(el, k, breathSecs())); }
 
 const EYE_SVG = `<svg class="eyes" id="ey-svg" viewBox="0 0 320 130" aria-hidden="true">
   <rect class="ring" x="6" y="6" width="308" height="118" rx="59" fill="none" stroke="var(--growth)" stroke-width="2"/>
@@ -1553,6 +1557,8 @@ function mountEye(el, drill){
   let target = respect ? Math.min(base, 3) : base;
   const lines = arr(drill.lines).filter(l=>typeof l==="string" && l.trim()); const say = i => lines.length ? lines[i % lines.length] : "Say one clear sentence and hold until the last word.";
   let rep = 0, holds = [], start = 0, raf = 0, holding = false, over = false;
+  /* How far past the target still counts: generous normally, tight in Respect mode. */
+  const slack = ()=> respect ? 1 : 4, isHit = t => t>=target && t<=target+slack();
   const intro = ()=>{ el.innerHTML = `<div class="eyetrain">
       <span class="label">${esc(drill.title)} · ${reps} holds of ${fmt(target,1)} s</span>
       ${EYE_SVG}
@@ -1564,7 +1570,7 @@ function mountEye(el, drill){
       <button class="btn primary" type="button" id="ey-go">Begin</button></div>`;
     el.querySelector("#ey-respect").addEventListener("click", ()=>{ respect=!respect; target = respect ? Math.min(base,3) : base; try{ localStorage.setItem("gradient.respect", respect?"1":"0"); }catch(e){} intro(); el.querySelector("#ey-respect").focus(); });
     el.querySelector("#ey-go").addEventListener("click", stage); el.querySelector("#ey-go").focus(); };
-  const dots = ()=>`<div class="reps" aria-hidden="true">${Array.from({length:reps},(_,i)=>`<i class="${i<holds.length?(holds[i]>=target?"hit":"miss"):""}"></i>`).join("")}</div>`;
+  const dots = ()=>`<div class="reps" aria-hidden="true">${Array.from({length:reps},(_,i)=>`<i class="${i<holds.length?(isHit(holds[i])?"hit":"miss"):""}"></i>`).join("")}</div>`;
   const stage = ()=>{
     el.innerHTML = `<div class="eyetrain">
       <span class="label">Hold ${rep+1} of ${reps} · target ${fmt(target,1)} s${respect?" · respect mode":""}</span>${dots()}
@@ -1582,9 +1588,9 @@ function mountEye(el, drill){
   const tick = ()=>{
     const t = (performance.now()-start)/1000, fill = el.querySelector("#ey-fill"), lbl = el.querySelector("#ey-lbl"), svg = el.querySelector("#ey-svg");
     if(fill) fill.style.width = Math.min(100, t/target*100)+"%";
-    if(lbl) lbl.textContent = fmt(t,1)+" s"+(t>=target?" ✓ finish the sentence":"");
-    if(svg) svg.classList.toggle("hit", t>=target);
-    if(t>target+4){ const msg=el.querySelector("#ey-msg"); if(msg) msg.textContent = "Past this point steady gaze starts to feel like a stare. Let go at the end of the thought."; }
+    if(lbl) lbl.textContent = fmt(t,1)+" s"+(isHit(t)?" ✓ finish the sentence":t>target?" · let go now":"");
+    if(svg) svg.classList.toggle("hit", isHit(t));
+    if(t>target+slack()){ const msg=el.querySelector("#ey-msg"); if(msg) msg.textContent = respect ? "Lower your gaze now. In Respect mode a short, steady look is the respectful one." : "Past this point steady gaze starts to feel like a stare. Let go at the end of the thought."; }
     raf = requestAnimationFrame(tick);
   };
   const down = ()=>{ const hb = el.querySelector("#ey-hold"); if(holding || over || !hb || hb.disabled) return; holding = true; start = performance.now(); const svg=el.querySelector("#ey-svg"); if(svg) svg.classList.add("held"); const msg=el.querySelector("#ey-msg"); if(msg) msg.textContent=""; raf = requestAnimationFrame(tick); };
@@ -1592,17 +1598,17 @@ function mountEye(el, drill){
     if(!holding) return; holding = false; cancelAnimationFrame(raf);
     const t = (performance.now()-start)/1000; holds.push(t); rep++;
     const msg = el.querySelector("#ey-msg"), b = el.querySelector("#ey-hold");
-    const note = t<target ? `${fmt(t,1)} s · broke early. Keep your eyes there through the last word.` : t>target+4 ? `${fmt(t,1)} s · held, but long. Release when the thought ends.` : `${fmt(t,1)} s · steady. That's the one.`;
+    const note = t<target ? `${fmt(t,1)} s · broke early. Keep your eyes there through the last word.` : t>target+slack() ? (respect ? `${fmt(t,1)} s · too long for Respect mode. Lower your gaze at about ${fmt(target,1)} s.` : `${fmt(t,1)} s · held, but long. Release when the thought ends.`) : `${fmt(t,1)} s · steady. That's the one.`;
     if(rep>=reps){ done(); return; }
     if(msg) msg.textContent = note; if(b) b.disabled = true;
     setTimeout(()=>{ if(!over){ stage(); const m2=el.querySelector("#ey-msg"); if(m2) m2.textContent = note; } }, 900);
   };
   const done = async ()=>{
     over = true;
-    const hits = holds.filter(t=>t>=target).length, avg = holds.reduce((a,b)=>a+b,0)/holds.length, best = Math.max(...holds);
+    const hits = holds.filter(isHit).length, avg = holds.reduce((a,b)=>a+b,0)/holds.length, best = Math.max(...holds);
     el.innerHTML = `<div class="eyetrain">
       <span class="label">${esc(drill.title)} · done</span>${dots()}
-      <p class="say">${hits} of ${reps} holds at ${fmt(target,1)} s or longer</p>
+      <p class="say">${hits} of ${reps} holds ${respect?`between ${fmt(target,1)} and ${fmt(target+slack(),1)} s`:`at ${fmt(target,1)} s or longer`}</p>
       <p class="mono muted">average ${fmt(avg,1)} s · longest ${fmt(best,1)} s</p>
       <p style="max-width:56ch">${hits===reps?"Clean. Use it today: hold the gaze through the last word of your next recommendation.":hits>=reps/2?"Good. The early breaks usually come mid-sentence, when you start thinking about the next word. Slow down instead of looking away.":"Normal for a first try. Shorter sentences, slower pace, and let the gaze rest on the bridge of the nose if direct eye contact feels too much."}</p>
       ${drill.why?`<p class="faint" style="max-width:56ch;font-size:13px">${esc(drill.why)}</p>`:""}
@@ -1654,7 +1660,7 @@ const actions = {
     clearInterval(caseTick); caseTick = setInterval(()=>{ const left = Math.max(0, Math.ceil(secs - (performance.now()-S.caseStart)/1000)); const t=$("caseTimer"); if(t) t.textContent = left; if(left<=0){ clearInterval(caseTick); if(t) t.textContent="time"; } }, 250); },
   puzzle:()=>{ S.puzzleShown=true; render(); bump("puzzle"); },
   game:(el)=>openGame(el.dataset.id),
-  breathe:()=>openBreath(),
+  breathe:(el)=>openBreath(el),
   breathPattern:(el)=>{ if(!BREATHS[el.dataset.v]) return; S.breathKey=el.dataset.v; try{ localStorage.setItem("gradient.breath", S.breathKey); }catch(e){} render(); },
   breathLen:(el)=>{ S.breathLen=+el.dataset.v||null; render(); },
   bodyDone:(el)=>{ const cur = S.day && S.day.body; saveDay({body: cur ? false : {id:el.dataset.id, at:new Date().toISOString()}}, cur ? null : "body"); },
@@ -1663,21 +1669,21 @@ const actions = {
     const nv = likeVal(kind,ref)===v ? 0 : v, rec = {kind, ref, title:el.dataset.title||ref, v:nv, at:new Date().toISOString()};
     S.likes = Object.assign({}, S.likes, {[key]:rec}); render();
     if(nv) status(nv>0 ? "Noted. You'll get more like this." : "Noted. Less of this from now on.");
-    await write("likes/"+today(), {date:today(), items:{[key]:rec}}, "update"); if(nv) bump("like"); },
+    await write("likes/"+today(), {date:today(), items:{[key]:rec}}, "update"); },
   teach: async(el)=>{
     const qid = el.dataset.qid, x = MCQS[qid]; if(!x || !S.sample || S.teaching) return;
     const chosen = el.dataset.chosen==="" ? null : +el.dataset.chosen, L="ABCD", m = x.m;
-    const quant = /^Quant/.test(x.src||"") || /_quant_/.test(qid);
+    const quant = /^(Quant|Finance)/.test(x.src||"") || /_(quant|finance)_/.test(qid);
     const who = quant ? "a patient, rigorous quant-trading and statistics tutor" : "an expert clinical pharmacy preceptor (BCPS level), accurate to current guidelines";
     const q = `Question: ${m.q}\nOptions:\n${m.options.map((o,i)=>L[i]+". "+o).join("\n")}`;
     const prompt = chosen==null
       ? `You are ${who}. A learner is about to answer this multiple-choice question and pressed "Teach me how to answer". Teach the METHOD without giving away the answer: do not say which option is correct, do not eliminate options down to one, and do not hint at a letter.\n\n${q}\n\nIn plain text, under 170 words, no markdown headers: 1) what this question is really testing, 2) the key fact or rule to recall, 3) a step-by-step way to reason from the stem to the answer (what to notice first, how to test each option), 4) one memory hook.`
       : `You are ${who}. The learner chose ${L[chosen]} on this question; the keyed answer is ${L[m.answer]}${chosen===m.answer?" (they were right)":" (they were wrong)"}.\n\n${q}\nKeyed explanation: ${m.explanation||""}\n\nTeach them how to answer this kind of question in future. Plain text, under 230 words, no markdown headers: 1) the concept being tested, 2) the reasoning path from the stem to the key, step by step, 3) one line on why each other option is wrong, 4) the general rule to carry forward and a memory hook. If anything in the question looks outdated or ambiguous, say so plainly.`;
     const key = (chosen==null ? "teach-" : "teachA-")+qid;
-    S.teaching = qid; S.outputs[key] = "Thinking…"; render();
+    S.teaching = qid; S.outputs[key] = "Thinking…"; render(); { const n=document.getElementById(key); if(n) n.focus({preventScroll:true}); }
     try{
       const r = await S.sample(prompt, {cache:false, onText:({text})=>{ S.outputs[key]=text; const n=document.getElementById(key); if(n) n.textContent=text; }});
-      S.outputs[key] = r.text; bump("teach");
+      S.outputs[key] = r.text;
     }catch(e){ S.outputs[key] = (e&&e.code==="not_granted") ? "Claude isn't allowed in this view." : "That didn't work ("+(e&&e.code||"error")+"). Press the button again."; setTimeout(()=>{ if(/^That didn't work|^Claude isn't/.test(S.outputs[key]||"")){ delete S.outputs[key]; render(); } }, 6000); }
     finally{ S.teaching = null; render(); } },
   tap:(el)=>{
