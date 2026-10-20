@@ -1,0 +1,480 @@
+{
+ "concepts": [
+  {
+   "id": "q01",
+   "n": 1,
+   "title": "RSI(2) mean reversion",
+   "area": "Mean reversion",
+   "summary": "Buy a stock that is above its 200-day average when its 2-period RSI shows a sharp 2-3 day drop, and sell on the first close above the 5-day average. This lesson introduces the 'edge = conditional probability minus base rate' framing used throughout the course.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "rsi_2 already exists (_rsi(c, 2), which uses ewm(alpha=1/n): Wilder smoothing once past a short warm-up, because pandas' default adjust=True seeds the first few values differently). dist_sma_200 > 0 means the close is above the 200-day SMA, but that SMA needs only 100 days of history (min_periods=100). The exit's 5-day SMA is missing: add dist_sma_5 and a connors_setup flag below the rsi_2 line."
+   }
+  },
+  {
+   "id": "q02",
+   "n": 2,
+   "title": "What 'the probability of a trade' means",
+   "area": "Probability",
+   "summary": "A probability is only meaningful once you define the trial (which day, which stock), the outcome (what counts as a win) and the horizon. Your model's p and a rule's hit rate answer different questions unless those three match.",
+   "quantlab": {
+    "file": "src/quantlab/labels.py",
+    "hook": "make_labels turns every (date, ticker) row into a trial: y=1 if fwd_ret > 0.30*sigma*sqrt(h), y=0 if fwd_ret < -0.30*sigma*sqrt(h), and NaN in the noise band. Noise-band rows are dropped from training and calibration (drop_neutral=True), so p estimates P(y=1 | features, and the move is big enough to leave the band). That is not P(fwd_ret > 0), and it is not P(a multi-day trade ends in profit)."
+   }
+  },
+  {
+   "id": "q03",
+   "n": 3,
+   "title": "Base rates: the number every signal must beat",
+   "area": "Probability",
+   "summary": "Before praising any setup, measure how often the outcome happens anyway. In an uptrending stock, up days already outnumber down days, so a 55% win rate may be no better than doing nothing.",
+   "quantlab": {
+    "file": "src/quantlab/evaluation/metrics.py",
+    "hook": "classification_metrics returns base_rate next to accuracy for exactly this reason, and labels.label_summary gives positive_rate. Compute P(fwd_ret > 0) on all days and on days above the 200-day SMA before you look at any signal."
+   }
+  },
+  {
+   "id": "q04",
+   "n": 4,
+   "title": "Expected value per trade",
+   "area": "Probability",
+   "summary": "EV = p x average win - (1 - p) x average loss - round-trip cost. This number, not the win rate, decides whether a rule makes money.",
+   "quantlab": {
+    "file": "src/quantlab/timing.py",
+    "hook": "timing_summary reports hit_rate, trades and gross_ann_return but not EV per trade. Note that 'trades' counts entries and exits separately, so a round trip counts twice. Add avg_win, avg_loss and ev_per_round_trip net of 2 x cost_bps."
+   }
+  },
+  {
+   "id": "q05",
+   "n": 5,
+   "title": "Hit rate versus payoff ratio",
+   "area": "Probability",
+   "summary": "A strategy can win 80% of the time and still lose money if its losses are 5 times its wins. Mean-reversion rules typically have a high hit rate and a low payoff ratio, while trend rules are the reverse.",
+   "quantlab": {
+    "file": "src/quantlab/backtest/engine.py",
+    "hook": "performance_summary reports only hit_rate (the share of positive days). Add the payoff ratio (avg win / avg loss) and the profit factor. Also note that timing_summary's hit_rate counts days out of the market as non-wins, so it is not a per-trade hit rate."
+   }
+  },
+  {
+   "id": "q06",
+   "n": 6,
+   "title": "Calibration: does 60% really mean 60%?",
+   "area": "Probability",
+   "summary": "A model can rank days correctly but still state the wrong probabilities. Calibration maps its scores so that among all days it calls 60%, about 60% actually happen.",
+   "quantlab": {
+    "file": "src/quantlab/models/calibration.py",
+    "hook": "Calibrator('sigmoid') is Platt scaling, fit only on the inner validation block. reliability_curve prints promised versus observed frequency per bin, and expected_calibration_error summarises the gap. Read the docstring on why isotonic was rejected."
+   }
+  },
+  {
+   "id": "q07",
+   "n": 7,
+   "title": "Brier score and Brier skill",
+   "area": "Probability",
+   "summary": "The Brier score is the mean squared error of probabilities. Brier skill compares it with always predicting the base rate, so skill <= 0 means your probabilities add nothing.",
+   "quantlab": {
+    "file": "src/quantlab/evaluation/metrics.py",
+    "hook": "classification_metrics computes brier and brier_skill = 1 - brier / brier_base, where brier_base is the error of always predicting the base rate. train.py records brier_skill for every fold, so check whether it is positive in most folds."
+   }
+  },
+  {
+   "id": "q08",
+   "n": 8,
+   "title": "Sample size: how many trades before you believe it",
+   "area": "Statistics",
+   "summary": "A hit rate measured on N trades has standard error sqrt(p(1-p)/N). With 100 trades and a hit rate near 50-60%, the 95% interval is about +/- 10 points, so most short-term setups need hundreds of trades.",
+   "quantlab": {
+    "file": "src/quantlab/backtest/engine.py",
+    "hook": "performance_summary reports t_stat = mean daily return / its standard error, and its comment says that below ~2 the edge cannot be told apart from luck. timing_summary has no t_stat, so compute it yourself for a single-name run, and apply the same test to your RSI(2) trade list before trusting a hit rate."
+   }
+  },
+  {
+   "id": "q09",
+   "n": 9,
+   "title": "Z-score and Bollinger %b mean reversion",
+   "area": "Mean reversion",
+   "summary": "Measure how far price is from its recent average in units of its recent standard deviation, and bet on a return toward the average when that distance is extreme. This is the same idea as RSI(2) on a different scale.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "_z(x, window) is a trailing z-score, and bollinger_pctb = (c - 20d mean) / (2 x 20d std). That is a rescaled %b: -1 is the lower band and +1 the upper band, whereas the standard %b runs from 0 at the lower band to 1 at the upper band. Test 'buy when bollinger_pctb < -1 (a close below the lower band) and above the 200-day SMA' with the same base-rate comparison used for RSI(2)."
+   }
+  },
+  {
+   "id": "q10",
+   "n": 10,
+   "title": "IBS: internal bar strength",
+   "area": "Mean reversion",
+   "summary": "IBS = (close - low) / (high - low) says where today's close sits in today's range. In studies of equity-index ETFs, a close near the low (IBS < 0.2) has tended to precede a next-day gain, but the published evidence is thin and mostly ignores costs.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "close_loc_value = (c - l) / (h - l + EPS) is exactly IBS. Bucket it into quintiles and compare P(fwd_ret > 0) per bucket with the base rate. Then check how often IBS < 0.2 coincides with RSI(2) < 10."
+   }
+  },
+  {
+   "id": "q11",
+   "n": 11,
+   "title": "Streaks: consecutive down days",
+   "area": "Mean reversion",
+   "summary": "Counting consecutive down closes is the crudest oversold measure. It overlaps heavily with RSI(2), which teaches you that many 'different' signals are really the same signal.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "_streak gives the signed length of the current same-direction run, clipped at +/-10. Compare P(up next day | streak <= -3) with P(up next day | rsi_2 < 10), and measure their correlation."
+   }
+  },
+  {
+   "id": "q12",
+   "n": 12,
+   "title": "Trend filters: the 200-day moving average",
+   "area": "Trend",
+   "summary": "Trading only in the direction of the long-term average removes many of the worst mean-reversion trades, at the cost of lag: the filter flips only after much of a decline has happened.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "dist_sma_200 is the volatility-scaled log distance from the 200-day SMA, so its sign means above or below. It uses min_periods=100, so early values are shorter averages. cross_sectional.build_market adds mkt_dist_sma_200 for a market-level filter."
+   }
+  },
+  {
+   "id": "q13",
+   "n": 13,
+   "title": "Time-series momentum",
+   "area": "Trend & momentum",
+   "summary": "Hold an asset when its own past return over 6-12 months is positive, and stand aside when it is negative. The aim is to sit out long bear markets; the price is lag and whipsaw losses when the trend turns.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "mom_252_21 and mom_126_21 are past returns that skip the last month, divided by volatility. A pure rule 'hold if mom_252_21 > 0' can be scored in single-name mode against buy-and-hold with timing.timing_backtest."
+   }
+  },
+  {
+   "id": "q14",
+   "n": 14,
+   "title": "Cross-sectional momentum and the skip month",
+   "area": "Trend & momentum",
+   "summary": "Rank stocks against each other by past 12-month return and buy the leaders. The most recent month is skipped because at that horizon returns tend to reverse instead.",
+   "quantlab": {
+    "file": "src/quantlab/features/cross_sectional.py",
+    "hook": "RANKED includes mom_252_21, so cs_rank_mom_252_21 is each stock's daily percentile among its peers. Because mom_252_21 is divided by volatility, this ranks risk-adjusted momentum, not raw 12-month return. Join that column into the predictions frame and pass it as score_col to backtest/engine.build_weights for a pure top-minus-bottom momentum book."
+   }
+  },
+  {
+   "id": "q15",
+   "n": 15,
+   "title": "Why the sign flips: 1-day reversal versus 12-month momentum",
+   "area": "Mean reversion vs momentum",
+   "summary": "The same price history predicts reversal at days-to-weeks horizons and continuation at months-to-a-year horizons. Choosing the horizon is choosing the strategy family.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "rev_1d, rev_5d and rev_21d are negated, volatility-scaled returns, while mom_* are positive ones. The README calls reversal 'the strongest genuine 1-day equity effect'. To see coefficient signs in the logistic control (models/base.py), read pipe[-1].coef_[0] after fitting, because feature_importance reports only |coef|. The quantile transform is monotone, so it keeps signs, but rev_1d is just ret_1d negated and rescaled, and with correlated inputs one coefficient's sign can mislead. A one-feature check is cleaner."
+   }
+  },
+  {
+   "id": "q16",
+   "n": 16,
+   "title": "Gap behaviour: overnight versus intraday returns",
+   "area": "Price patterns",
+   "summary": "A day's return splits into the overnight gap (close to open) and the session (open to close). Large gaps, especially down gaps, behave differently from intraday moves.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "overnight_ret (identical to gap_open), intraday_ret and overnight_share_21 already split the day. Test whether large negative overnight_ret is followed by positive intraday_ret more often than the base rate. Remember that you can only act on it at the open."
+   }
+  },
+  {
+   "id": "q17",
+   "n": 17,
+   "title": "Seasonality: the turn-of-the-month effect",
+   "area": "Seasonality",
+   "summary": "Index returns have historically been concentrated around the last and first few trading days of each month, often linked to pay-day and fund flows. Calendar effects are easy to find by data mining, so they need extra scepticism.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "calendar_features builds is_month_end (within 2 calendar days of month-end) and is_month_start (day <= 3). They are the same for every stock on a date, so on their own they cannot change the cross-sectional ranking (a tree model can use them only through interactions). Test them in single-name mode against the base rate."
+   }
+  },
+  {
+   "id": "q18",
+   "n": 18,
+   "title": "Mean-reversion half-life (Ornstein-Uhlenbeck)",
+   "area": "Mean reversion",
+   "summary": "Model a price's deviation from its mean as an Ornstein-Uhlenbeck process. Regressing the change on the lagged deviation gives a slope b, and half-life = -ln(2)/b (approximately, for small b) tells you how long a typical gap takes to halve, which should match your holding period.",
+   "quantlab": {
+    "file": "src/quantlab/features/technical.py",
+    "hook": "autocorr_21 is the lag-1 autocorrelation of daily returns, computed over a rolling 63-day window despite its name, and a negative value hints at mean reversion. Add a rolling 'halflife_63' feature from the OU regression of the log price's distance to its 20-day SMA, and compare it with how long RSI(2) trades actually last."
+   }
+  },
+  {
+   "id": "q19",
+   "n": 19,
+   "title": "Pairs trading and cointegration",
+   "area": "Statistical arbitrage",
+   "summary": "Two related prices can each wander while their spread stays mean-reverting (cointegrated). You trade the spread, not either stock alone, but only after testing that it is stationary.",
+   "quantlab": {
+    "file": "src/quantlab/features/cross_sectional.py",
+    "hook": "build_beta regresses each stock's daily return on the equal-weight market return to get beta_63 and the residual idio_ret_1d. A pair trade is similar but works on price levels: regress one log price on the other to get a hedge ratio, then test the level residual (the spread) for stationarity, for example with an Engle-Granger (ADF) test. A residual of returns, like idio_ret_1d, is almost always stationary, so testing it says nothing about the pair."
+   }
+  },
+  {
+   "id": "q20",
+   "n": 20,
+   "title": "Measuring volatility: EWMA and range estimators",
+   "area": "Risk",
+   "summary": "Every sizing and labelling rule needs a volatility estimate. EWMA weights recent days more heavily, and high-low range estimators use intraday information that the close throws away.",
+   "quantlab": {
+    "file": "src/quantlab/labels.py",
+    "hook": "realised_vol is the causal EWMA standard deviation that scales the label (halflife 21). technical.py adds vol_10, vol_63, parkinson_21 and garman_klass_21. Compare the two families on a calm and a volatile year."
+   }
+  },
+  {
+   "id": "q21",
+   "n": 21,
+   "title": "Volatility targeting",
+   "area": "Risk & sizing",
+   "summary": "Scale position size by target volatility / forecast volatility, so the strategy takes similar risk in calm and stormy markets. In many equity backtests this has improved Sharpe and reduced drawdowns, but that is not guaranteed for every asset or period.",
+   "quantlab": {
+    "file": "src/quantlab/timing.py",
+    "hook": "timing_backtest sets pos = 1 whenever p > threshold, and preds already carries sigma (the EWMA daily volatility). In a copy of timing_backtest, replace pos with min(1, target_daily_vol / sigma) on the days it would hold, and compare Sharpe and max_drawdown in timing_summary against the 0/1 version."
+   }
+  },
+  {
+   "id": "q22",
+   "n": 22,
+   "title": "Position sizing and the Kelly criterion",
+   "area": "Risk & sizing",
+   "summary": "For a bet that wins b times the stake with probability p and otherwise loses the whole stake, the Kelly fraction f* = p - (1 - p)/b maximises long-run growth when p and b are known exactly. Betting more than Kelly lowers growth: at about twice Kelly, growth falls to roughly zero, and beyond that capital shrinks.",
+   "quantlab": {
+    "file": "src/quantlab/timing.py",
+    "hook": "timing_backtest uses a 0/1 position. A trade does not lose its whole stake, so with an average win W and an average loss L (as fractions), the Kelly position is f*/L = p/L - (1 - p)/W. Use the calibrated p and your measured W and L, cap the result at 1 (no leverage), and see how the equity curve and drawdown change. Small average losses make raw Kelly ask for heavy leverage while ignoring the rare large loss, which is one reason for the cap and for fractional Kelly."
+   }
+  },
+  {
+   "id": "q23",
+   "n": 23,
+   "title": "Why fractional Kelly",
+   "area": "Risk & sizing",
+   "summary": "Kelly assumes your p is correct, but an estimated p is always noisy and usually optimistic. In the standard continuous approximation, half-Kelly keeps about three-quarters of full Kelly's growth rate with half the volatility, and it is much more robust to an overstated edge.",
+   "quantlab": {
+    "file": "src/quantlab/models/calibration.py",
+    "hook": "expected_calibration_error is the average gap between promised and observed probabilities, in either direction. As a crude, conservative haircut, shift p down by the ECE, recompute the Kelly fraction, and see how much of the full-Kelly bet survives."
+   }
+  },
+  {
+   "id": "q24",
+   "n": 24,
+   "title": "Risk of ruin and drawdowns",
+   "area": "Risk",
+   "summary": "Risk of ruin is the probability that a sequence of losses takes you below a level you can't recover from, financially or psychologically. It rises steeply with bet size and with a lower payoff ratio.",
+   "quantlab": {
+    "file": "src/quantlab/timing.py",
+    "hook": "_stats computes max_drawdown from the equity curve. Using your strategy's hit rate and payoff ratio, simulate many trade sequences at 1x, 0.5x and 0.25x size and count how often equity ever falls 30% below its peak."
+   }
+  },
+  {
+   "id": "q25",
+   "n": 25,
+   "title": "Transaction costs and slippage",
+   "area": "Costs",
+   "summary": "Spread, commission, slippage against your intended price and market impact are paid on every trade. Short-horizon strategies earn small amounts per trade, so costs decide whether they survive.",
+   "quantlab": {
+    "file": "src/quantlab/backtest/engine.py",
+    "hook": "run_backtest charges cost = turnover x cost_bps / 1e4, and cost_sensitivity reruns it at 0, 2, 5, 10 and 20 bps. The module docstring lists what is not modelled (impact, borrow, slippage against the close), and each of these makes results worse."
+   }
+  },
+  {
+   "id": "q26",
+   "n": 26,
+   "title": "Turnover and the breakeven cost",
+   "area": "Costs",
+   "summary": "Breakeven cost = average gross return / average turnover: the cost per unit traded at which profit falls to zero. If it is below what you really pay, the strategy is not tradeable.",
+   "quantlab": {
+    "file": "src/quantlab/backtest/engine.py",
+    "hook": "_breakeven_cost_bps implements this, and the README calls the breakeven cost the most valuable output of the repo. timing_summary computes the same for the single-name timing book. Compare RSI(2), which trades only occasionally, with the daily model, which can change position much more often."
+   }
+  },
+  {
+   "id": "q27",
+   "n": 27,
+   "title": "Sharpe, Sortino, max drawdown and Calmar",
+   "area": "Performance",
+   "summary": "Sharpe divides return by total volatility, while Sortino uses only downside volatility. Max drawdown is the worst peak-to-trough loss, and Calmar is return divided by that drawdown. Each one hides something the others reveal.",
+   "quantlab": {
+    "file": "src/quantlab/backtest/engine.py",
+    "hook": "performance_summary has sharpe, max_drawdown and calmar but no Sortino. Add sortino = mean x 252 / (downside deviation x sqrt(252)), where downside deviation = sqrt(mean(min(r, 0)^2)) over all days, and compare the two for a negatively skewed mean-reversion book."
+   }
+  },
+  {
+   "id": "q28",
+   "n": 28,
+   "title": "The right benchmark: buy-and-hold for a single stock",
+   "area": "Performance",
+   "summary": "A timing rule for one stock must beat simply holding it, and on a risk-adjusted basis. A rule that is invested 20% of the time also has to be judged per unit of exposure.",
+   "quantlab": {
+    "file": "src/quantlab/timing.py",
+    "hook": "timing_summary reports excess_ann_return, excess_sharpe and time_in_market, and timing_verdict only says BEAT when excess Sharpe > 0.3 and excess return > 0. Compute return per day invested as well."
+   }
+  },
+  {
+   "id": "q29",
+   "n": 29,
+   "title": "Look-ahead bias",
+   "area": "Research hygiene",
+   "summary": "Look-ahead bias means using any information that was not available at the moment of the decision. Common examples are centred moving averages, same-day closes used for an open entry, and revised data. It produces backtests that cannot be traded.",
+   "quantlab": {
+    "file": "tests/test_no_lookahead.py",
+    "hook": "The test rebuilds every feature on a panel truncated 120 trading days early (the synthetic panel from tests/conftest.py, not your upload) and fails if any shared-date value changes. Run it after adding dist_sma_5 and connors_setup. A deliberately centred rolling mean should make it fail."
+   }
+  },
+  {
+   "id": "q30",
+   "n": 30,
+   "title": "Survivorship bias",
+   "area": "Research hygiene",
+   "summary": "Testing on today's index members leaves out companies that went bankrupt or were removed. Buy-the-dip rules are flattered most, because every dip you 'bought' belonged to a survivor.",
+   "quantlab": {
+    "file": "src/quantlab/data/universe.py",
+    "hook": "default_universe returns a bundled snapshot of current S&P 500 members. apply_membership restricts the panel to point-in-time members, but it can only keep names you have prices for, so delisted names' price history is also needed. The README calls this the largest single bias in the repo."
+   }
+  },
+  {
+   "id": "q31",
+   "n": 31,
+   "title": "Purged k-fold and embargo",
+   "area": "Validation",
+   "summary": "When a label looks h days ahead, training rows near the test boundary already contain the test period's outcome. Purging removes training rows whose label window overlaps the test period, and the embargo drops a further buffer of rows next to the test block to guard against dependence that outlasts the label.",
+   "quantlab": {
+    "file": "src/quantlab/validation/splits.py",
+    "hook": "purged_walk_forward leaves purge_days + embargo_days (default 5 + 10) between train and test, and splits on dates. validate_config rejects purge_days < label.horizon, so a 5-day-hold label needs a purge of at least 5."
+   }
+  },
+  {
+   "id": "q32",
+   "n": 32,
+   "title": "Walk-forward analysis",
+   "area": "Validation",
+   "summary": "Train on the past, test on the next block, roll forward and repeat. This is the closest a backtest gets to how you would actually have traded, and it shows performance period by period.",
+   "quantlab": {
+    "file": "src/quantlab/models/train.py",
+    "hook": "run_walk_forward trains, calibrates on inner_val and scores each test block once, and fold_metrics records daily_auc, auc, brier_skill, ece_raw and ece_calibrated per period (daily_auc is NaN for a single name). Read the fold table, not just the pooled result."
+   }
+  },
+  {
+   "id": "q33",
+   "n": 33,
+   "title": "Overfitting and the simple-model control",
+   "area": "Research hygiene",
+   "summary": "More flexible models and more rules fit noise more easily. The cheapest guard is to demand that any complex approach beat a simple one on identical data and splits.",
+   "quantlab": {
+    "file": "src/quantlab/easy.py",
+    "hook": "run_everything fits a logistic control on the same folds, and summarize warns when boosting beats it by <= 0.002 AUC. For rules, the equivalent control is buy-and-hold or the 200-day filter alone."
+   }
+  },
+  {
+   "id": "q34",
+   "n": 34,
+   "title": "Multiple testing: deflated Sharpe and PBO",
+   "area": "Research hygiene",
+   "summary": "The best of many backtests is biased upward. The deflated Sharpe ratio adjusts the best Sharpe for the number of variants tried (and for skew, fat tails and sample length), and the probability of backtest overfitting (PBO) estimates how often the in-sample winner falls below the median out of sample.",
+   "quantlab": {
+    "file": "src/quantlab/backtest/engine.py",
+    "hook": "performance_summary gives Sharpe and t_stat for one run only. Keep a log of every variant (threshold, exit, filter) you test, and deflate the best Sharpe by the number of trials before you believe it."
+   }
+  },
+  {
+   "id": "q35",
+   "n": 35,
+   "title": "Regime dependence",
+   "area": "Validation",
+   "summary": "Edges change with volatility, trend and liquidity regimes. A rule that only works in calm bull markets is a regime bet, and you need to know that before the regime changes.",
+   "quantlab": {
+    "file": "src/quantlab/features/cross_sectional.py",
+    "hook": "build_market creates mkt_vol_z, mkt_drawdown and mkt_dist_sma_200 from the equal-weight panel. In single-name mode these are just the stock itself and are dropped, so split RSI(2) trades by the stock's own vol_z_252 and drawdown_252 instead, or use a multi-name panel. Compare EV per trade by regime. easy._caveats already flags skill that appears in at most one fold."
+   }
+  },
+  {
+   "id": "q36",
+   "n": 36,
+   "title": "Monte Carlo and the bootstrap of trades",
+   "area": "Statistics",
+   "summary": "One backtest is one path. Resampling trades, or blocks of days, thousands of times gives a distribution of returns and drawdowns, which shows how much of the result was luck.",
+   "quantlab": {
+    "file": "src/quantlab/timing.py",
+    "hook": "timing_backtest returns daily net_return. Bootstrap blocks of it (or the list of round-trip trade returns) 5,000 times and report the 5th percentile of annual return and the 95th percentile of drawdown."
+   }
+  },
+  {
+   "id": "q37",
+   "n": 37,
+   "title": "Label design: horizon and volatility scaling",
+   "area": "Labels & ML",
+   "summary": "The label defines what the model learns. A fixed 1-day sign label, a volatility-scaled label with a dropped noise band, and a multi-day label each ask a different question.",
+   "quantlab": {
+    "file": "src/quantlab/labels.py",
+    "hook": "make_labels uses threshold_sigma x sigma x sqrt(h) and drops the noise band. To match a 3-5 day mean-reversion hold, set label.horizon to 3-5 and keep split.purge_days >= horizon (the default 5 covers h <= 5). Delete the feature cache as well: the labels are cached with the features, and the cache key ignores label.horizon. Watch positive_rate in label_summary. With h > 1, fwd_ret is an overlapping h-day return, so timing_backtest and run_backtest, which treat it as a one-day return, no longer give a valid P&L."
+   }
+  },
+  {
+   "id": "q38",
+   "n": 38,
+   "title": "Triple-barrier labels",
+   "area": "Labels & ML",
+   "summary": "A trade ends at whichever comes first: a profit target, a stop-loss or a time limit. Labelling by which barrier is hit first matches how trades really end.",
+   "quantlab": {
+    "file": "src/quantlab/labels.py",
+    "hook": "Today y depends only on the close h days ahead. Add make_triple_barrier_labels beside make_labels, with barriers at +/- k x sigma and a time limit of h days, and keep fwd_ret for the backtest."
+   }
+  },
+  {
+   "id": "q39",
+   "n": 39,
+   "title": "Meta-labeling",
+   "area": "Labels & ML",
+   "summary": "Let a simple rule decide the direction and timing, then train a model only to predict whether that rule's trade will succeed, and use its probability to take, skip or size the trade.",
+   "quantlab": {
+    "file": "src/quantlab/timing.py",
+    "hook": "Use connors_setup as the primary signal and keep only setup days. The label must be the outcome of the rule's trade (for example, did the round trip to the 5-day-SMA exit make money after costs), not the 1-day make_labels target. Setups are rare, so one ticker gives too few rows for run_walk_forward's defaults (min_train_days counts dates): pool many tickers or lower split.min_train_days. Then take, skip or size each trade by the model's p on the setup day, held for the whole trade, and score the result with timing_backtest."
+   }
+  },
+  {
+   "id": "q40",
+   "n": 40,
+   "title": "Feature importance pitfalls",
+   "area": "Labels & ML",
+   "summary": "Importance shows what the model used, not what is true or causal. Correlated features split the credit, and market-wide features can dominate without improving stock selection.",
+   "quantlab": {
+    "file": "src/quantlab/models/train.py",
+    "hook": "importance is LightGBM gain, normalised per fold and averaged. rsi_2, rev_1d, streak and close_loc_value overlap heavily. easy._caveats warns when at least 3 of the top 5 features are market-wide (mkt_*, breadth_*, cs_dispersion, avg_corr_proxy)."
+   }
+  },
+  {
+   "id": "q41",
+   "n": 41,
+   "title": "Probability thresholds and EV per trade",
+   "area": "Probability",
+   "summary": "Trading whenever p > 0.5 ignores costs and payoffs. The right threshold is the one where EV per trade, after costs, is positive, and it must be chosen without looking at the test data.",
+   "quantlab": {
+    "file": "src/quantlab/timing.py",
+    "hook": "timing_backtest(threshold=0.5) trades whenever p > 0.5. config.BacktestConfig.min_probability adds a probability floor to the cross-sectional book (a top-ranked name is bought only if p >= min_probability). Pick the threshold on the inner validation block, never on the test folds."
+   }
+  },
+  {
+   "id": "q42",
+   "n": 42,
+   "title": "Combining signals",
+   "area": "Labels & ML",
+   "summary": "Several weak, partly independent signals can be combined into a stronger one by equal-weighting z-scores, by a linear model, or by a tree model. Correlation between the signals limits how much you gain.",
+   "quantlab": {
+    "file": "src/quantlab/models/base.py",
+    "hook": "LogisticModel is a median imputer, a QuantileTransformer to normal, and a regularised logistic regression (C=0.05), which is the simplest learned combiner. Compare it with an equal-weight average of z-scored rsi_2, close_loc_value and streak on the same folds."
+   }
+  },
+  {
+   "id": "q43",
+   "n": 43,
+   "title": "Paper trading discipline",
+   "area": "Execution",
+   "summary": "Before risking money, record each signal before the market opens and compare the live results with the backtest. The gap shows the costs, delays and biases the backtest missed.",
+   "quantlab": {
+    "file": "src/quantlab/pipeline.py",
+    "hook": "predict_latest scores the newest date, and easy.run_everything saves tomorrow_predictions.csv. Archive each day's file with a timestamp before the open, then after about 3 months compare live hit rate and EV with the walk-forward numbers."
+   }
+  }
+ ],
+ "version": 1,
+ "builtAt": "2026-10-20",
+ "note": "Quant strategy curriculum; one concept per morning, tied to quant-lab files."
+}

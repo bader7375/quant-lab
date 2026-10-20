@@ -1,0 +1,88 @@
+{
+ "conceptId": "q01",
+ "title": "RSI(2) mean reversion: buying sharp dips inside an uptrend",
+ "minutes": 12,
+ "body": "## The idea\nBuy a stock that is in a long-term uptrend but has just fallen sharply for 2-3 days, and sell when it bounces. Connors' version, as StockCharts describes it, has three parts: a 200-day moving-average filter, a 2-period RSI entry (buy below 10), and an exit on a close above the 5-day moving average. StockCharts reports that Connors found buying below 5 beat buying below 10. This lesson uses below 10 as the base case because it gives more trades to test, and below 5 as the one variant declared in advance.\n\n## How fast RSI(2) moves\nWith n = 2, Wilder smoothing gives each new day half the weight. Suppose average up and average down are both 1 (RSI 50). A 2-point drop takes them to 0.5 and 1.5 (RSI 25). A second 2-point drop gives 0.25 and 1.75 (RSI 12.5). A 1-point drop after that gives 0.125 and 1.375 (RSI 8.3). In this example, three red days produce a signal. Your repo already computes this: `_rsi(c, 2)` in features/technical.py uses `ewm(alpha=1/n)`, which follows Wilder's recursion once past a short warm-up (pandas' default `adjust=True` seeds the first few values differently from TA-Lib).\n\n## Why it can work\n- A seller who has to sell now (because of redemptions, margin calls or a scary headline) can push the price below fair value. The buyer who absorbs that selling is providing liquidity, and the bounce is that buyer's pay. Nagel (2012) reads short-term reversal returns this way, and finds that their expected returns rise sharply when the VIX is high.\n- The 200-day filter tries to keep you to dips inside healthy trends, where a forced seller is a likelier cause than bad news.\n- Part of measured close-to-close \"reversal\" can be bid-ask bounce, which you cannot capture.\n\n## When it fails\n- **Trends:** a stock that is falling for a real reason keeps falling, and the 200-day average lags, so a bear market begins while the filter still reads \"uptrend\".\n- **Crashes:** the classic rules have no stop-loss (StockCharts reports that Connors argued stops hurt performance), so many small wins can be followed by one trade that gives several of them back.\n- **Costs:** the gain per trade is small, and every trade pays twice, on entry and on exit.\n- **Time out of the market:** one third-party test on the Nasdaq-100 index (Oct 2016 to Oct 2026, entry on RSI(2) < 5) reported a 75% win rate but about 2.4% a year, against about 20% for buy-and-hold, with a smaller max drawdown (-25% vs -35.7%). It made only 65 trades, so even that win rate is uncertain by about plus or minus 10 points.\n\n## The probability framing\nThe edge is a gap between two conditional probabilities over the same horizon:\n- Base rate: P(up over next k days | close above 200-day SMA)\n- Setup rate: P(up over next k days | above 200-day SMA AND RSI(2) < 10)\n\nCompare against the above-200 base rate, not all days, or you credit RSI with the trend filter's work. Then turn it into money: EV = p x avg win - (1 - p) x avg loss - round-trip cost. Then check the noise: with 100 trades and p near 0.6, the standard error is sqrt(0.6 x 0.4 / 100) = 0.049, about plus or minus 10 points at 95%.\n\n## Today's experiment\n- In features/technical.py, below the `rsi_2` line, add `f[\"dist_sma_5\"] = np.log(c / c.rolling(5, min_periods=5).mean())` and `f[\"connors_setup\"] = ((f[\"rsi_2\"] < 10) & (c > c.rolling(200, min_periods=200).mean())).astype(float)`. The existing `dist_sma_200` uses `min_periods=100`, which is too short for this rule.\n- Delete `data/cache/features_*.parquet`, because the cache key ignores feature code. Then run `pytest tests/test_no_lookahead.py`.\n- **Rule test:** in timing.py, write `connors_position()`, which enters at the close of a setup day and exits at the first close above the 5-day SMA. Put that 0/1 series in `p` and call `timing_backtest(..., threshold=0.5)` on the out-of-sample dates that `run_walk_forward` scored, so the rule, the model and buy-and-hold share the same days. Each entry and each exit pays `cost_bps`.\n- **Model test:** run single-name `run_everything` with and without the new columns, and compare AUC, Brier skill, `excess_sharpe` and `breakeven_cost_bps`.\n- On several tickers, log trades, hit rate, average win and loss, EV per trade and time in market, and check results fold by fold.",
+ "rules": [
+  "Data: daily bars with adjusted closes. Every signal is computed from the close of day t.",
+  "Trend filter: long setups only when the close is above its 200-day simple moving average, with a full 200 days of history required.",
+  "Entry (base case): the 2-period RSI (Wilder smoothing) closes below 10. Buy at the close of day t.",
+  "Entry (the one variant declared in advance): the 2-period RSI closes below 5, the stricter level StockCharts reports Connors found worked better.",
+  "Exit: sell at the close of the first day the close is above its 5-day simple moving average.",
+  "No stop-loss, as in the classic version (StockCharts reports that Connors argued stops hurt performance). No adding to a losing position and one position per stock at a time in this lesson. Long only in this lesson.",
+  "Mirror short (not tested today): below the 200-day SMA, short when RSI(2) is above 90 (Connors found above 95 worked better) and cover on a close below the 5-day SMA.",
+  "Costs: cost_bps is charged on each entry and each exit, as timing_backtest does on every position change, so a round trip pays 2 x cost_bps, even though the comment in config.py calls cost_bps a round-trip cost."
+ ],
+ "math": "Change_t = C_t - C_(t-1); Up_t = max(Change_t, 0); Down_t = max(-Change_t, 0). Seed: AvgUp_n = mean(Up_1..Up_n), AvgDown_n = mean(Down_1..Down_n). Wilder smoothing (alpha = 1/n): AvgUp_t = ((n - 1) x AvgUp_(t-1) + Up_t) / n, and the same for AvgDown_t. (The repo's pandas ewm(alpha=1/n) with the default adjust=True seeds differently, so its first few values differ from this; after a short warm-up the two agree.) RS_t = AvgUp_t / AvgDown_t. RSI_t = 100 - 100 / (1 + RS_t) (100 if AvgDown_t = 0). For RSI(2), n = 2, so AvgUp_t = (AvgUp_(t-1) + Up_t) / 2: each new day carries half the weight. Edge = P(up | close > SMA200 and RSI2 < 10) - P(up | close > SMA200). EV per trade = p x avg win - (1 - p) x avg loss - round-trip cost. Standard error of a hit rate = sqrt(p(1 - p) / N).",
+ "quantlab": {
+  "file": "src/quantlab/features/technical.py",
+  "how": "rsi_2 already exists (_rsi(c, 2), Wilder smoothing via ewm(alpha=1/n) after a short warm-up). Below that line, add dist_sma_5 and connors_setup, which uses a full 200-day SMA because the existing dist_sma_200 has min_periods=100. Delete data/cache/features_*.parquet, since cached_features keys on the provider, threshold_sigma and data fingerprint but not on the feature code or the label horizon. Run pytest tests/test_no_lookahead.py. Then test the pure rule through timing.timing_backtest, and test the model through easy.run_everything in single-name mode (fewer than 20 tickers).",
+  "experiment": "Upload one liquid ticker with at least 10 years of daily OHLCV and Adj Close. (1) Using only the out-of-sample dates in the predictions from run_walk_forward, compute the base rate P(fwd_ret > 0 | close above the full 200-day SMA) and the setup rate P(fwd_ret > 0 | connors_setup == 1), each with its count N and standard error sqrt(p(1-p)/N). With the default label.horizon = 1, fwd_ret is the next-day return. Setup days cluster together, so treat these standard errors as optimistic. (2) Write connors_position(): a loop over the feature frame that sets position = 1 on a setup day and each day after it, and back to 0 on the first day whose close is above the 5-day SMA (dist_sma_5 > 0), because you sell at that close. Build preds_rule = preds[['fwd_ret']].assign(p=position.reindex(preds.index).fillna(0.0)) and run timing_backtest(preds_rule, cfg.backtest, threshold=0.5) at cost_bps = 5. Then read timing_summary: trades / 2 = round trips (approximately), time_in_market, breakeven_cost_bps, strategy versus buy_hold Sharpe and max drawdown. (3) Repeat once with RSI(2) < 5, the only declared variant. (4) Re-run run_everything('upload') with and without dist_sma_5 and connors_setup, deleting the feature cache between runs, and compare AUC and Brier skill against the logistic control. (5) Shift the rule position by one day (enter on the next close) to see how much edge depends on trading the signal close. Write down the result for this ticker before testing a second one."
+ },
+ "pitfalls": [
+  "Stale feature cache: cached_features keys on the provider, threshold_sigma and the data fingerprint, not on the feature code or label.horizon. New columns therefore silently fail to appear until you delete data/cache/features_*.parquet or call cached_features with force=True.",
+  "Trading the same close that produced the signal: fwd_ret runs from close t to close t+1, so the backtest assumes you bought at the close used to compute RSI(2). StockCharts notes that Connors places orders just before the close, which is near that close but not the same. Re-run with the entry delayed one day to see how much of the edge depends on this.",
+  "Judging by win rate: a 70-80% hit rate with small wins and occasional large losses can have negative EV after costs. Always report average win, average loss, the worst trade and EV per trade, and compare with buy-and-hold.",
+  "Tuning on the test folds: trying RSI thresholds of 3, 5, 10 and 15 and exits of 3, 5 and 10 days, then reporting the best, is multiple testing even with purged walk-forward. Declare the base case and one variant in advance.",
+  "Survivorship: today's index members are the companies whose dips recovered. Dips that ended in delisting are missing from the data, which flatters a buy-the-dip rule more than most strategies."
+ ],
+ "sources": [
+  {
+   "name": "StockCharts ChartSchool: RSI(2) trading strategy",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/rsi-2"
+  },
+  {
+   "name": "TA-Lib: RSI function (Wilder smoothing)",
+   "url": "https://ta-lib.org/functions/rsi.html"
+  },
+  {
+   "name": "Nagel, Evaporating Liquidity (NBER Working Paper 17653; Review of Financial Studies 2012)",
+   "url": "https://nber.org/papers/w17653"
+  },
+  {
+   "name": "Backtrex: Does the Connors RSI(2) strategy work on the Nasdaq 100? (third-party backtest)",
+   "url": "https://backtrex.com/en/backtests/connors-rsi-2-nasdaq-100"
+  }
+ ],
+ "mcqs": [
+  {
+   "id": "q01-m1",
+   "q": "On your out-of-sample days, a stock closed higher the next day on 54% of all days, on 56% of days when it was above its 200-day SMA, and on 60% of days with RSI(2) < 10 AND above the 200-day SMA. How much edge does the RSI condition itself add?",
+   "options": [
+    "60 points, because that is the probability of a win",
+    "About 4 percentage points (60% vs the 56% above-200 base rate), and win/loss sizes and costs still need checking",
+    "About 6 percentage points (60% vs the 54% all-days base rate)",
+    "10 percentage points (60% vs a 50% coin flip)"
+   ],
+   "answer": 1,
+   "explanation": "The RSI condition sits on top of the trend filter, so its contribution must be measured against the above-200 base rate of 56%. Comparing with all days (54%) credits RSI with the 2 points the trend filter earned, and comparing with 50% ignores the base rate entirely. Even 4 points is only a probability gap. It becomes an edge only if EV after costs is positive and the gap is larger than its sampling noise.",
+   "topic": "base rate"
+  },
+  {
+   "id": "q01-m2",
+   "q": "An RSI(2) backtest shows a 75% hit rate, an average win of +1.0%, an average loss of -3.5%, and costs of 0.1% per round trip. What is the expected value per trade?",
+   "options": [
+    "+0.75%, because three trades in four win",
+    "-0.125%",
+    "-0.225%",
+    "0%, because hit rate and payoff always balance out"
+   ],
+   "answer": 2,
+   "explanation": "EV = 0.75 x 1.0 - 0.25 x 3.5 - 0.1 = 0.75 - 0.875 - 0.1 = -0.225% per trade. The high hit rate hides losses 3.5 times the size of the wins. -0.125% is what you get if you forget costs: the rule already loses money before costs, and costs, which are paid on every trade, make it worse.",
+   "topic": "expected value"
+  },
+  {
+   "id": "q01-m3",
+   "q": "You test RSI thresholds of 3, 5, 10 and 15 against exits on the 3-, 5- and 10-day SMA (12 combinations) on the same walk-forward test folds, and report the best Sharpe. What is the main problem?",
+   "options": [
+    "None, because the folds are purged and embargoed, so the result is out of sample",
+    "The best of 12 tries is biased upward by selection: the test folds have quietly become training data for choosing the rules",
+    "Sharpe cannot be computed for a strategy that is out of the market most days",
+    "RSI(2) is undefined for thresholds below 5"
+   ],
+   "answer": 1,
+   "explanation": "Purging stops the model from learning future labels, but it does not stop you from choosing rules by looking at test results. The maximum of 12 noisy Sharpe ratios is inflated even if no rule has any real edge. Declare one base case and one variant in advance, log every variant you try, and deflate the best result by the number of trials (concept q34).",
+   "topic": "multiple testing"
+  }
+ ]
+}

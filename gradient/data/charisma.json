@@ -1,0 +1,1270 @@
+{
+ "startDate": "2026-10-20",
+ "bodyLanguage": [
+  {
+   "id": "b01",
+   "n": 1,
+   "title": "Grounded Stance",
+   "goal": "Stand so you look and feel immovable: weight centred, no swaying, shuffling or hip-popping.",
+   "steps": [
+    "0:00-1:00 - Face a mirror. Feet about hip-width, toes slightly out, knees soft (not locked). Rock gently forward/back and side to side, then settle where weight is spread evenly over both feet.",
+    "1:00-2:30 - Arms relaxed at your sides. Hold completely still for 90 seconds. Each time you catch a weight shift or sway, reset and note it. Target: zero shifts in the last 30 seconds.",
+    "2:30-4:00 - Keep the stance and say aloud 3 times, slowly: 'Good morning. I'm the clinical pharmacist on this team. I've reviewed all the medication profiles.' Feet and hips must not move while you talk.",
+    "4:00-5:00 - Record 30 seconds of the same lines on your phone. Watch on mute and count every sway, foot shuffle or hip pop. Write the number down: this is your baseline."
+   ],
+   "minutes": 5,
+   "why": "Swaying, weight-shifting and foot-shuffling are movement with no message, so observers tend to read them as restlessness or discomfort. There is no controlled trial of a 'grounded stance'; this is a coaching fundamental. It matters because every later exercise (gestures, voice, gaze) looks more deliberate when the lower body is quiet.",
+   "evidence": "anecdotal",
+   "specter": "The person who doesn't need to move is the one the whole room ends up watching.",
+   "cultural": ""
+  },
+  {
+   "id": "b02",
+   "n": 2,
+   "title": "Tall Spine, Level Chin",
+   "goal": "Make upright posture with a level chin your default, and learn to reset to it in one breath, without believing the power-pose hormone myths.",
+   "steps": [
+    "0:00-1:00 - Stand side-on to a mirror. Imagine a string lifting the crown of your head. Roll shoulders up, back, and let them drop. Ears roughly over shoulders, chin parallel to the floor.",
+    "1:00-2:00 - Chin calibration: tilt chin up ~2 cm (reads as looking down on people), down ~2 cm (reads as hiding), then level. Repeat 5 times until level feels normal.",
+    "2:00-4:00 - Hold the posture and read aloud 4 times: 'Today's priority patients are bed 4, bed 9 and bed 12. I'll start with bed 4.' Check ear-over-shoulder alignment after each.",
+    "4:00-5:00 - Slump fully for 10 seconds, then reset to tall in a single breath. 4 cycles. The skill is the fast reset, not holding stiffly all day.",
+    "5:00-6:00 - Choose 3 posture cues for today (e.g. badging in, opening a patient chart, entering the lift) and reset each time."
+   ],
+   "minutes": 6,
+   "why": "Be honest about the evidence. The 2010 power-pose claims (higher testosterone, lower cortisol, more risk-taking) failed replication: Ranehill et al. (2015, N=200) found an effect on self-reported feelings of power but none on hormones or behaviour, and the original first author, Dana Carney, said in 2016 that she no longer believes power-pose effects are real. The p-curve debate that followed (Simmons & Simonsohn, 2017; Cuddy, Schultz & Fosse, 2018) narrowed the defensible claim to 'felt power', and Crede (2019) pointed out that most of those studies had no neutral-posture group; where one existed, the slumped pose, not the expansive one, drove the difference. A 2022 meta-analysis (Korner et al., Psychological Bulletin; 88 studies, about 9,800 people) found reliable but modest effects of upright or expansive versus slumped postures on self-reported feelings, less reliable behavioural effects with signs of publication bias, and no effect on hormones or other physiology. So train posture to avoid the slump penalty and for how you are perceived, not for hormones.",
+   "evidence": "moderate",
+   "specter": "Stand like you've already read the file, because you have.",
+   "cultural": ""
+  },
+  {
+   "id": "b03",
+   "n": 3,
+   "title": "Stillness Baseline: Count Your Fidgets",
+   "goal": "Find your personal fidget habits on video and cut them by half.",
+   "steps": [
+    "0:00-2:00 - Record yourself (waist up, hands visible) explaining a recent clinical intervention for 90 seconds, as you would to a colleague. Don't try to be still yet.",
+    "2:00-3:30 - Watch it on mute. Tally every non-purposeful movement: touching face, hair or beard, adjusting glasses or headwear, clicking a pen, rubbing hands, rocking, shrugging. Write down your top 2 habits.",
+    "3:30-5:30 - Record again with the same story. Rule: hands either gesture with meaning or rest. When you feel the urge for a top habit, hold still and finish the sentence first.",
+    "5:30-6:00 - Compare the counts. Target: at least 50% fewer in take 2. Keep both numbers for Day 28."
+   ],
+   "minutes": 6,
+   "why": "In a randomised study (Chertoff & Mesler, University of Lethbridge; N=388), people who watched a short video of someone fidgeting (handling objects, touching themselves, tapping a foot) during a game of checkers rated that person higher in emotionality, which includes anxiety, and lower in agreeableness, conscientiousness and openness than viewers of a version where both players sat still. It is a single study of a person who wasn't speaking, so treat it as a strong hint rather than settled fact. Video counting works because most fidgets are automatic and invisible to you in the moment.",
+   "evidence": "weak",
+   "specter": "Every unnecessary movement is a leak. Plug the leaks and what's left is signal.",
+   "cultural": "Adjusting headwear (shemagh, ghutra, hijab or niqab) is a very common habit. One deliberate adjustment before you start speaking is fine; repeated touching mid-sentence reads as nervousness."
+  },
+  {
+   "id": "b04",
+   "n": 4,
+   "title": "Head Stillness and the Slow Nod",
+   "goal": "Keep your head still while you speak, and swap rapid repeated nodding for one slow, deliberate nod.",
+   "steps": [
+    "0:00-1:00 - Mirror. Say 'The dose is appropriate for her renal function.' Watch for head bobbing or tilting on each word. Repeat until the head stays still for the whole sentence.",
+    "1:00-2:30 - Contrast drill: 5 quick nods (the anxious 'yes-yes-yes'), then 1 slow nod: down over about 1 second, brief pause, up over about 1 second. Do the pair 5 times so you feel the difference.",
+    "2:30-4:00 - Play 90 seconds of any lecture or podcast. Listen as if in a meeting and give a single slow nod only when you genuinely agree with a point: 3-4 nods maximum.",
+    "4:00-5:00 - 'Acknowledge, then answer' aloud 3 times: slow nod, 1-second pause, then 'Understood. Here's what I recommend.'"
+   ],
+   "minutes": 5,
+   "why": "Rapid, repeated nodding reads as eagerness to please; one slower nod signals that you've weighed the point and accept it. Extra head movement while you speak also competes with your words. This is coaching practice, not a tested intervention.",
+   "evidence": "anecdotal",
+   "specter": "Agree slowly. It makes your agreement worth something.",
+   "cultural": "In Saudi conversation, nods and short acknowledgments ('na'am', 'tamam') are polite and expected, especially with seniors. Keep them; just make them single and unhurried rather than continuous."
+  },
+  {
+   "id": "b05",
+   "n": 5,
+   "title": "The Composed Resting Face",
+   "goal": "Build a relaxed, composed resting face (loose jaw, smooth brow, soft eyes) and switch deliberately between warm and neutral.",
+   "steps": [
+    "0:00-1:00 - Mirror. Tense your whole face for 5 seconds, then release. 3 times. Notice what jaw, brow and lips feel like at rest.",
+    "1:00-2:30 - Jaw: teeth slightly apart behind closed lips, tongue resting. Brow: smooth the space between your eyebrows. Hold this neutral face for 60 seconds while breathing normally.",
+    "2:30-4:00 - Every 10 seconds, switch between neutral and a genuine small smile (eyes slightly narrowed, not just the mouth). Say 'Good morning, how are you today?' with the warm face and 'That combination isn't safe' with the neutral face.",
+    "4:00-5:00 - Selfie video: hold the neutral face for 20 seconds while thinking about a stressful case. Look for tight lips, raised brows or a frown. Repeat until the neutral face holds."
+   ],
+   "minutes": 5,
+   "why": "A tight jaw, a furrowed brow and pressed lips are easily read as stress, irritation or disapproval, even when you're only concentrating. The goal is not to hide emotion but to choose which expression you show: warm for rapport, neutral for a firm clinical point. Coaching practice; no trial of this specific drill.",
+   "evidence": "anecdotal",
+   "specter": "Your face shouldn't tell them the score before you do.",
+   "cultural": ""
+  },
+  {
+   "id": "b06",
+   "n": 6,
+   "title": "Home Base for Nervous Hands",
+   "goal": "Have three default hand positions so your hands never wander, fidget or hide.",
+   "steps": [
+    "0:00-1:00 - Learn the 3 home bases: (1) arms relaxed at your sides; (2) hands loosely together at navel height, one resting in the other; (3) seated, forearms on the table with hands visible and still.",
+    "1:00-2:30 - Mirror: hold each home base for 30 seconds. Check for fists, white knuckles, hand-wringing or rubbing thumbs, and loosen them.",
+    "2:30-4:00 - Say these lines, making one gesture per sentence and returning to a home base after each: 'There are two problems with this regimen.' / 'First, the dose is too high.' / 'Second, there's an interaction with amiodarone.'",
+    "4:00-5:00 - Ban-list check: hands in pockets, arms tightly crossed, hands hidden behind your back while talking, clicking a pen. Rule for today: put the pen down before you speak."
+   ],
+   "minutes": 5,
+   "why": "Hidden or busy hands draw attention and are commonly read as discomfort, and in one study watching someone fidget lowered observers' trait ratings (see b03). Deciding in advance where your hands rest removes the 'what do I do with my hands?' problem that drives fidgeting. The positions themselves are coaching conventions.",
+   "evidence": "weak",
+   "specter": "Hands at rest say you're not reaching for anything.",
+   "cultural": "Indicate people with an open hand rather than a pointed finger, and use your right hand to pass documents or medications; both are customary courtesy in Saudi Arabia."
+  },
+  {
+   "id": "b07",
+   "n": 7,
+   "title": "The Deliberate Pause Before Answering",
+   "goal": "Replace instant or filler-led answers with a calm 1-2 second pause, so your answer sounds considered and certain.",
+   "steps": [
+    "0:00-1:00 - List 6 questions you get often, e.g. 'Is this dose OK?', 'Can we give this through a feeding tube?', 'Why not the brand?', 'Do we really need to hold it?'",
+    "1:00-4:00 - For each: read it aloud (or play a recording of yourself asking it), then pause: lips closed, one quiet breath through the nose, neutral face, eyes up or briefly down to think, count 'one-two' silently. Then answer with the conclusion first, e.g. 'Yes. Give 40 mg once daily.'",
+    "4:00-5:00 - Redo 3 questions with nothing in front of the answer: no 'um', 'so', 'actually' or 'basically'.",
+    "5:00-6:00 - Record one answer and check that the pause looks like thinking, not freezing: still body, relaxed face, then a clean answer."
+   ],
+   "minutes": 6,
+   "why": "Listeners use 'um'/'uh' and tone of voice to judge how sure a speaker is (Brennan & Williams, 1995), and a study using real, unscripted speech found filled pauses lowered listeners' ratings of a speaker's readiness and certainty whether the speaker was an expert or a novice (disfluent experts were also seen as more careful). A short silent pause avoids the filler and gives you time to retrieve the right answer; keep it short, because long hesitations can also read as doubt. Looking briefly away while thinking is normal: Glenberg et al. (1998) found people avert their gaze more as questions get harder, and that doing so helps retrieval. The 1-2 second figure is a coaching rule, not a measured optimum.",
+   "evidence": "weak",
+   "specter": "Answer when you're ready, not when they're impatient.",
+   "cultural": "With a senior consultant or an elder, a brief pause and a slight nod before answering is polite and shows you're taking the question seriously."
+  },
+  {
+   "id": "b08",
+   "n": 8,
+   "title": "The Unhurried Walk",
+   "goal": "Walk at a deliberate pace with full strides and a quiet upper body through corridors, wards and into meetings.",
+   "steps": [
+    "0:00-1:00 - Walk 10 steps at your usual pace, then 10 steps at about 80% of that speed with a full stride (no shuffling). Notice the difference.",
+    "1:00-3:00 - Walk a loop for 2 minutes: head level, eyes at horizon height (not on the floor or a phone), arms swinging naturally, shoulders down, nothing in your hands.",
+    "3:00-4:30 - Stop-and-turn drill: walk, stop on a mark, stand fully still for 2 seconds, turn your whole body (not just your head) toward an imagined colleague and say 'Doctor, do you have a minute about bed 7?' 5 repetitions.",
+    "4:30-6:00 - Record 20 seconds of walking toward the camera. Check for bouncing, hurrying, looking down, or arms clamped to your sides."
+   ],
+   "minutes": 6,
+   "why": "Rushing usually reads as stress or being behind; a steady pace with a level head reads as composed. No controlled study is relied on here; this is a practitioner principle. In a real emergency, move fast: the goal is urgency without panic.",
+   "evidence": "anecdotal",
+   "specter": "Arrive like the room was waiting for you, not like you were chasing it.",
+   "cultural": ""
+  },
+  {
+   "id": "b09",
+   "n": 9,
+   "title": "Entering the Room: The Two-Second Pause",
+   "goal": "Enter a ward, office or meeting with a brief pause and a scan, then move with purpose.",
+   "steps": [
+    "0:00-1:00 - Use a real door at home: open it fully, step in one pace, stop.",
+    "1:00-2:30 - The pause: stand still for 2 seconds, scan left to right at face height, pick your destination, then walk there. 5 entries.",
+    "2:30-4:00 - Add the greeting: after the scan, look at the most senior person (or the person you came to see) and say 'Assalamu alaikum. Good morning, everyone.' Then walk to your place. 4 entries.",
+    "4:00-5:00 - Practise the exit: finish your sentence, slow nod, 'Thank you,' turn and leave without rushing or backing out.",
+    "5:00-6:00 - Plan today's two real entrances (e.g. morning round, a meeting) and do them this way."
+   ],
+   "minutes": 6,
+   "why": "First seconds shape impressions, and a brief pause shows you're neither rushed nor asking permission to be there. This is coaching practice without a specific trial behind it. Keep the pause short (about 2 seconds) so it reads as composure, not hesitation.",
+   "evidence": "anecdotal",
+   "specter": "Take one beat at the door; it tells the room who sets the pace.",
+   "cultural": "Saudi etiquette is to greet the most senior or eldest person present first, and the scan helps you find them. A group 'Assalamu alaikum' is natural and appreciated. If that person is of the opposite gender, greet them by title with a brief look and a lowered gaze rather than holding eye contact."
+  },
+  {
+   "id": "b10",
+   "n": 10,
+   "title": "Sitting Like You Belong",
+   "goal": "Sit fully back, upright and settled, forearms on the table: never perched on the edge, never sprawled.",
+   "steps": [
+    "0:00-1:00 - Sit at a table: hips all the way back in the chair, spine upright (lightly touching the backrest is fine), feet flat.",
+    "1:00-2:00 - Forearms on the table, hands visible, shoulders down. Hold 60 seconds without touching your face or phone.",
+    "2:00-3:30 - Lean-in drill: on a key point, lean forward about 10 degrees from the hips and say 'This is the part that matters. The interaction is clinically significant.' Then return to upright. 4 times.",
+    "3:30-4:30 - Contrast: perch on the edge with hands in your lap (reads nervous), then lean far back with hands behind your head (reads arrogant). Return to the middle.",
+    "4:30-5:00 - Before your next meeting starts: notes laid out, phone face-down, settled in your seat."
+   ],
+   "minutes": 5,
+   "why": "People who were trying to look intelligent tended to sit up straighter (Murphy, 2007), but reports of that study disagree on whether posture itself raised observers' ratings; looking at your partner while speaking was the clearer cue. A forward lean on key points directs attention. The middle position avoids both submissive perching and dominant sprawling; these details are coaching practice.",
+   "evidence": "weak",
+   "specter": "Sit like your seat at the table was never in question.",
+   "cultural": "Avoid pointing the soles of your feet or shoes at anyone (e.g. ankle on knee); in a majlis, sit upright and let the host guide seating."
+  },
+  {
+   "id": "b11",
+   "n": 11,
+   "title": "Slow, Deliberate Gestures",
+   "goal": "Gesture less often, more slowly and inside the 'gesture box', so each movement adds meaning.",
+   "steps": [
+    "0:00-1:00 - The gesture box: shoulders to waist, about shoulder-width. In front of a mirror, trace its edges with both hands.",
+    "1:00-3:00 - Say: 'We have three options. Option one, reduce the dose. Option two, switch agents. Option three, monitor and wait.' One clear gesture per option (place each option in the air left, centre, right), at half your usual speed, holding each gesture for a moment.",
+    "3:00-4:30 - Record it once with fast, chopping gestures and once at half speed. Watch both on mute and decide which looks in control.",
+    "4:30-6:00 - Repeat 3 times at half speed, finishing every gesture back at a home base (b06)."
+   ],
+   "minutes": 6,
+   "why": "Fast, frequent, jerky movement is easily read as nervous energy, while slower, purposeful gestures look controlled. Direct research on gesture speed is limited; this is mainly coaching practice. The gesture box keeps hands visible and in the listener's line of sight without becoming theatrical.",
+   "evidence": "anecdotal",
+   "specter": "Move half as much and twice as deliberately.",
+   "cultural": ""
+  },
+  {
+   "id": "b12",
+   "n": 12,
+   "title": "Open Palms vs Palm-Down",
+   "goal": "Use open palms to signal openness and palm-down gestures to signal firmness, on purpose.",
+   "steps": [
+    "0:00-1:00 - Mirror. Palms up, slightly open, at waist height: 'Let me explain my reasoning.' Palm down, flat, moving slightly downward: 'That's not negotiable.'",
+    "1:00-3:00 - Six lines, palm direction matched to the message: 'I'm open to your thoughts' (up) / 'Here are the options' (up, offering) / 'This is the maximum dose' (down) / 'We stop the infusion now' (down) / 'What would work for you?' (up) / 'The decision is made' (down).",
+    "3:00-4:00 - Remove: pointing at people, chopping toward someone, hands in pockets.",
+    "4:00-5:00 - Record 3 of the lines and check that palm direction matches each message."
+   ],
+   "minutes": 5,
+   "why": "Visible open hands are widely taught as a cue of openness, and palm-down movements as a cue of firmness. These meanings come from coaching convention rather than strong controlled studies, so use them as consistent signals, not proven persuasion levers.",
+   "evidence": "anecdotal",
+   "specter": "Show your hands when you're open; flatten them when the matter's closed.",
+   "cultural": "Indicate people, places or documents with an open hand rather than a single finger, which can come across as rude."
+  },
+  {
+   "id": "b13",
+   "n": 13,
+   "title": "Illustrator Gestures",
+   "goal": "Use gestures that picture what you're saying (size, trend, sequence, comparison): the gesture type with the best experimental evidence.",
+   "steps": [
+    "0:00-1:00 - Learn 4 illustrators: SIZE (hands apart for big or increase, close for small); TREND (hand rising for increasing, falling for decreasing); SEQUENCE (place steps left to right); COMPARISON (one hand for 'this', the other for 'that').",
+    "1:00-4:00 - Say each line with the matching illustrator, 3 times each: 'Her creatinine has doubled since Monday' (rising hand) / 'The dose needs to come down by half' (hand lowering) / 'First we load, then we maintain' (left, then right) / 'Option A is cheaper; option B is safer' (left hand, right hand).",
+    "4:00-5:30 - Give a 60-second explanation of a drug interaction to the camera using at least 3 illustrators.",
+    "5:30-7:00 - Watch on mute. Could someone guess part of the message from your hands alone? Redo the parts where the gestures were random."
+   ],
+   "minutes": 7,
+   "why": "Cascio Rizzo, Berger and Zhou (2025, Journal of Marketing Research) analysed about 2,200 TED talks and ran two preregistered experiments (685 and 892 participants). In the first, an 11-second product pitch delivered with illustrator gestures was rated more competent (5.34 on a 7-point scale vs 4.79-4.94) and easier to understand than the same pitch with pointing ('highlighter') gestures, unrelated movement or no movement; the second found the same advantage for persuasion across three products. Illustrators help listeners understand, and that understanding feeds credibility. Caveat: it is one paper using short consumer-product pitches, so the size of the effect in clinical talk is unknown.",
+   "evidence": "moderate",
+   "specter": "Don't just say the number. Show them how big it is.",
+   "cultural": ""
+  },
+  {
+   "id": "b14",
+   "n": 14,
+   "title": "Steepling: When and When Not",
+   "goal": "Use the steeple (fingertips touching) as an occasional calm 'listening in control' position without overusing it.",
+   "steps": [
+    "0:00-1:00 - Seated, forearms on the table. Bring fingertips together with palms apart, at lower-chest height: not at your face, not raised high.",
+    "1:00-2:30 - Play a 60-second audio clip. While listening, hold the steeple for 15-20 seconds, release smoothly to a home base, repeat.",
+    "2:30-4:00 - Speaking drill: open the steeple into an open-palm gesture as you start: 'I've thought about this. My recommendation is to switch to oral today.' Then return to a home base. 4 times.",
+    "4:00-5:00 - Rule for today: no more than 2-3 steeples per meeting, only while listening or pausing, and never while a senior is criticising you."
+   ],
+   "minutes": 5,
+   "why": "The steeple is popular in body-language books as a confidence cue, but no strong controlled research shows it raises perceived authority, and overuse looks staged or smug. Its real value is as a calm, still place for your hands while you listen.",
+   "evidence": "anecdotal",
+   "specter": "Real confidence is quiet: one steeple, not ten.",
+   "cultural": "With very senior figures in conservative settings, a steeple can look overly self-assured; hands resting quietly on the table is safer."
+  },
+  {
+   "id": "b15",
+   "n": 15,
+   "title": "Land the Sentence: Downward Endings",
+   "goal": "End statements with a falling pitch so recommendations sound like conclusions, not questions.",
+   "steps": [
+    "0:00-1:00 - Say 'We should hold the metformin' twice: once rising at the end like a question, once falling. Feel the difference.",
+    "1:00-3:00 - Read 6 recommendations, letting your pitch drop slightly on the last word and stopping cleanly: 'I recommend stopping the clopidogrel.' / 'The level is therapeutic.' / 'We switch to oral today.' / 'This needs a renal dose adjustment.' / 'Start potassium replacement now.' / 'No further changes.'",
+    "3:00-4:30 - Record 3 of the lines. Does each sound like an answer? Redo any that rise.",
+    "4:30-6:00 - Lower, not forced: speak from a relaxed chest voice and don't push your voice down. If it strains, stop and speak normally."
+   ],
+   "minutes": 6,
+   "why": "Lower-pitched voices were preferred for leadership and rated stronger and more competent in laboratory studies (Klofstad, Anderson & Peters, 2012), and men's voices digitally lowered in pitch were rated more dominant (Puts, Gaulin & Verdolini, 2006). Those studies used altered recordings in hypothetical settings and do not show that forcing your own voice lower helps, so this drill deliberately does not train pitch level. What it trains is intonation: listeners use tone of voice as a cue to how sure a speaker is (Brennan & Williams, 1995), and a rising end makes a statement sound like a question. That part rests on a small number of lab studies, so treat it as a sensible habit rather than a proven persuasion effect.",
+   "evidence": "weak",
+   "specter": "A recommendation ends with a full stop, not a question mark.",
+   "cultural": "Clinical discussion in Saudi hospitals is often in English and social talk in Arabic; practise falling endings in both languages."
+  },
+  {
+   "id": "b16",
+   "n": 16,
+   "title": "Slow the Tempo",
+   "goal": "Speak at a deliberate pace with short pauses between ideas.",
+   "steps": [
+    "0:00-1:00 - Read a ~100-word paragraph (e.g. part of a drug monograph) at your usual speed and time it.",
+    "1:00-3:00 - Read it again about 20% slower, with a short pause at every full stop and a longer one between key points. Keep the energy up: slower, not sleepy.",
+    "3:00-4:30 - Explain a case for 60 seconds at the slower pace, using pauses instead of 'and so... and then...'.",
+    "4:30-6:00 - Play both recordings and mark which version sounds more in command."
+   ],
+   "minutes": 6,
+   "why": "Fast, run-on speech often sounds nervous and makes complex clinical information harder to follow; slowing slightly and pausing between ideas improves clarity. No single speaking rate has been shown to maximise authority. A University of Michigan analysis of 1,380 survey-introduction calls (Benki et al., presented at a 2011 conference, not peer-reviewed) found interviewers who spoke moderately fast, about 3.5 words per second, did better than very fast or very slow ones, and those who never paused did worst. So slow down only if you rush: aim for deliberate with pauses, not slow motion.",
+   "evidence": "weak",
+   "specter": "Rushing is for people afraid of being interrupted.",
+   "cultural": ""
+  },
+  {
+   "id": "b17",
+   "n": 17,
+   "title": "Volume to the Back of the Room",
+   "goal": "Be clearly heard on ward rounds and in meetings without shouting, all the way to the last word.",
+   "steps": [
+    "0:00-1:00 - Stand 4-5 metres from a wall. Breathe low into your belly.",
+    "1:00-3:00 - Say 'Good morning. I have three medication updates.' toward the wall at 3 levels: conversational, projected (as if to the back row), and over-loud (once only, to feel the ceiling). Settle on projected.",
+    "3:00-4:00 - Keep the volume through the final word: 'The INR is three point eight.' The last word should be as loud as the first. 5 times.",
+    "4:00-5:00 - Record from across the room. Can you hear every word? If your throat feels tight or scratchy at any point, drop the volume and stop for today."
+   ],
+   "minutes": 5,
+   "why": "Trailing off at sentence ends or speaking too quietly on a noisy ward means people miss your recommendation, and you sound unsure. Projecting from the breath rather than the throat protects your voice. Coaching practice, not a researched intervention.",
+   "evidence": "anecdotal",
+   "specter": "If it's worth saying on rounds, it's worth hearing at the back.",
+   "cultural": "In Saudi social settings a raised voice can read as anger; project for clarity, not force, especially with elders."
+  },
+  {
+   "id": "b18",
+   "n": 18,
+   "title": "Kill the Fillers",
+   "goal": "Replace 'um', 'uh', 'like' and 'basically' with silence, especially in front of a recommendation.",
+   "steps": [
+    "0:00-2:00 - Record a 60-second explanation (e.g. why an antibiotic needs adjusting). Count the fillers.",
+    "2:00-4:00 - Redo it. Whenever you feel a filler coming, close your lips and pause silently instead.",
+    "4:00-5:00 - Pause-first drill: '[pause] The culture came back. [pause] It's sensitive to cefazolin. [pause] We can de-escalate today.' 3 times.",
+    "5:00-6:00 - Count again. Target: half the first count. Keep both numbers for Day 28."
+   ],
+   "minutes": 6,
+   "why": "In a study using real, unscripted speech, filled pauses lowered listeners' ratings of a speaker's readiness and certainty for experts and novices alike, and listeners were less willing to go back to a disfluent speaker; Brennan and Williams (1995) also showed listeners treat fillers as a sign of uncertainty. Some fillers are normal in natural speech; the aim is not zero fillers but no filler in front of a recommendation.",
+   "evidence": "weak",
+   "specter": "Silence buys you time; 'um' spends your credibility.",
+   "cultural": "Arabic fillers such as 'ya'ni' or 'ba'dain' count too when they come in front of a clinical point."
+  },
+  {
+   "id": "b19",
+   "n": 19,
+   "title": "Take Up Space Without Arrogance",
+   "goal": "Occupy your natural space (stance, elbows, materials) without shrinking or sprawling.",
+   "steps": [
+    "0:00-1:00 - Seated, spot your 'shrinking' habits: elbows clamped, notes stacked small, legs tucked. Fix them: elbows slightly off the ribs, notes laid out in front of you.",
+    "1:00-2:00 - Standing: feet hip-width (not wider), arms free, weight centred.",
+    "2:00-3:30 - Contrast drill: shrink (hunch, arms tight) for 10 seconds, sprawl (feet wide, arm over the next chair) for 10 seconds, settle in the middle. 3 rounds.",
+    "3:30-5:00 - In the middle position, say 'Let me walk you through the numbers' while placing a printout in the centre of the table and turning it toward the listener. 3 times."
+   ],
+   "minutes": 5,
+   "why": "A meta-analysis of nonverbal behaviour and status (Hall, Coats & LeBeau, 2005) found that people believe cues such as open, expansive posture signal dominance and high status, but that these beliefs are stronger and more widespread than the actual links. So expansiveness changes how you are read more than what you are. Too much of it can look arrogant (a coaching judgment, not a finding of that meta-analysis); the middle position avoids looking submissive while staying collegial.",
+   "evidence": "weak",
+   "specter": "Own your space; don't annex anyone else's.",
+   "cultural": "Keep more distance across genders; same-gender colleagues may stand closer than in Western settings. In a majlis, don't stretch your legs out toward others."
+  },
+  {
+   "id": "b20",
+   "n": 20,
+   "title": "Stand When You Present",
+   "goal": "Default to standing when you present a case, data or a recommendation to a group.",
+   "steps": [
+    "0:00-1:00 - Prepare a 60-second case summary: patient, problem, recommendation.",
+    "1:00-3:00 - Deliver it seated, then standing (grounded feet, home-base hands). Record both.",
+    "3:00-5:00 - Standing version again, adding a 2-second pause before you start, falling endings, and one illustrator gesture per key point.",
+    "5:00-7:00 - Finish with 'Any questions?', hold still for 3 seconds, then 'Thank you.' Check the playback for leaning on the table or swaying."
+   ],
+   "minutes": 7,
+   "why": "Standing makes you more visible, frees your breath and arms, and marks the moment as a presentation. This is coaching practice without a specific trial. Read the room: in a small seated discussion, standing alone can feel too formal.",
+   "evidence": "anecdotal",
+   "specter": "When it's your case, take the floor.",
+   "cultural": "Standing when a senior person enters is customary respect in Saudi workplaces; follow the meeting's norm for presenting to leadership."
+  },
+  {
+   "id": "b21",
+   "n": 21,
+   "title": "Handshake, and Greetings Without One",
+   "goal": "Greet with confidence: a firm, brief, right-handed handshake where appropriate, and a respectful no-touch greeting where not.",
+   "steps": [
+    "0:00-1:00 - Handshake form (with a same-gender family member or a rolled towel): right hand, web of thumb to web of thumb, firm but not crushing, about 2 seconds, release.",
+    "1:00-2:30 - Add eyes and words: look, smile, 'Assalamu alaikum. I'm [name], the clinical pharmacist.' Release on the last word. 5 times.",
+    "2:30-4:00 - No-touch greeting: right hand on the heart, slight nod, a brief warm glance (or lowered gaze), 'Assalamu alaikum, nice to meet you.' 5 times.",
+    "4:00-5:00 - Decision rule: with someone of the opposite gender, greet verbally with a nod or hand on heart and never reach first. If you yourself don't shake hands across genders and a hand is offered, keep your right hand on your chest, smile and say 'Pleased to meet you' warmly; rehearse this once aloud.",
+    "5:00-6:00 - Rehearse aloud: meeting a new consultant (same gender); meeting a new head nurse (opposite gender)."
+   ],
+   "minutes": 6,
+   "why": "In an fMRI study, observed business interactions that began with a handshake were rated more favourably, and the handshake softened the impact of avoidant behaviour (Dolcos et al., 2012). It was small (18 participants) and used animated characters, so the evidence is weak. A confident greeting that fits the culture matters more than the handshake itself.",
+   "evidence": "weak",
+   "specter": "Greet like you've closed a hundred deals: brief, warm, finished.",
+   "cultural": "Between men, or between women, the common Saudi greeting is a handshake with 'Assalamu alaikum' (reply 'Wa alaikum assalam'), and same-gender greetings can be warmer and longer. Many Saudi Muslims, men and women, do not shake hands with the opposite gender for religious reasons: greet verbally with a nod or a hand on the heart, and never initiate a cross-gender handshake. If you don't shake hands across genders and one is offered, a hand on the heart with a smile and a warm greeting is widely understood and polite, not rude."
+  },
+  {
+   "id": "b22",
+   "n": 22,
+   "title": "Careful Mirroring",
+   "goal": "Build rapport by matching pace, volume and energy, not by copying gestures.",
+   "steps": [
+    "0:00-1:00 - Watch a 60-second interview clip. Note the person's speaking speed, volume, energy and posture.",
+    "1:00-3:00 - Pause the clip and answer aloud as if to them, matching their tempo and energy (calm and slow, or brisk and crisp).",
+    "3:00-4:30 - Posture echo: when they lean forward, wait 5-10 seconds, then take up a similar (not identical) posture. Never copy within a second, never move for move.",
+    "4:30-6:00 - Lead test: after matching, gradually slow and calm your own voice. In real life, notice whether the other person follows. With an angry family member, match their seriousness, not their anger."
+   ],
+   "minutes": 6,
+   "why": "Chartrand and Bargh (1999) found that being mimicked made interactions feel smoother and increased liking, and a 2016 meta-analysis (Vicaria & Dickens) linked mimicry and coordination to better rapport. But later replications have been mixed, mimicry that gets noticed can backfire, and matching tempo and energy (what this drill trains) has been studied less than copying gestures. Treat it as a sensible rapport habit, not a reliable lever.",
+   "evidence": "weak",
+   "specter": "Meet them at their pace, then set the pace.",
+   "cultural": "Mirroring includes formality: if a senior uses formal greetings and titles ('Dr.', 'Ustadh'), match that before moving to anything casual."
+  },
+  {
+   "id": "b23",
+   "n": 23,
+   "title": "Use Silence After Your Point",
+   "goal": "After a key statement, offer or refusal, stop talking and hold the silence.",
+   "steps": [
+    "0:00-1:00 - Write 4 end lines: a recommendation, a price, a refusal, a question.",
+    "1:00-3:00 - For each: say it once, then stay silent and still, face relaxed, for 5 seconds (count silently). No extra explanation, no softeners, no 'does that make sense?'.",
+    "3:00-4:30 - Negotiation run: 'Our ceiling is 1.2 million riyals.' 5 seconds of silence. 'If you include on-site training, we can sign this quarter.' 5 seconds of silence. 3 times.",
+    "4:30-6:00 - Record and watch: during the silence, are you nodding, smiling nervously or touching your face? Remove it and redo."
+   ],
+   "minutes": 6,
+   "why": "People tend to over-explain after stating a position, which can sound like doubt and invites the other side to keep pushing. A short silence lets the statement land and passes the next move to the other person. This is common negotiation-training practice, not a finding from a specific study cited here.",
+   "evidence": "anecdotal",
+   "specter": "Say it once, then let the silence do the arguing.",
+   "cultural": "Saudi negotiation is relationship-first: use silence after a position, not as a cold tactic at the start, and keep a warm face so it reads as patience rather than disrespect."
+  },
+  {
+   "id": "b24",
+   "n": 24,
+   "title": "Composure Under Pushback",
+   "goal": "Keep face, body and voice steady when challenged, then respond with substance.",
+   "steps": [
+    "0:00-1:00 - Write 4 typical challenges: 'Why are you questioning my order?' / 'We've always done it this way.' / 'That's not your call.' / 'Just approve it.'",
+    "1:00-4:00 - Have someone read them, or record and play them back. For each: neutral face, still body, home-base hands, 2-second pause, then calmly: 'I understand. My concern is patient safety: the dose exceeds the renal maximum. Here's an alternative.'",
+    "4:00-5:30 - Check the video for leaks: eye-roll, pressed lips, smirk, sharp breath in, arms crossing.",
+    "5:30-7:00 - Repeat the two hardest challenges until your face stays neutral the whole time."
+   ],
+   "minutes": 7,
+   "why": "Defensive expressions and sudden movements escalate conflict and show you've been rattled; a neutral face and a structured answer keep the focus on the clinical issue. 'Acknowledge, state the concern, offer an alternative' is a common de-escalation pattern, not a tested intervention.",
+   "evidence": "anecdotal",
+   "specter": "When they push, get calmer, not louder.",
+   "cultural": "Saudi communication is often indirect and face-saving. Where possible, raise a concern about a senior's order privately and respectfully ('Doctor, may I share a concern?') rather than contradicting them in front of the team."
+  },
+  {
+   "id": "b25",
+   "n": 25,
+   "title": "Listening Presence",
+   "goal": "Look fully engaged while listening: still body, steady gaze, few but clear acknowledgments.",
+   "steps": [
+    "0:00-1:00 - Play a 2-3 minute talk. Sit upright, phone out of reach.",
+    "1:00-4:00 - Listen with a still head, eyes on the speaker's face, the occasional slow nod and no fidgeting. Pause twice to summarise aloud: 'So the main concern is...'",
+    "4:00-5:00 - Lean in slightly when the key point arrives.",
+    "5:00-6:00 - Plan for today: in your next real conversation, wait one full second after the person finishes before you reply."
+   ],
+   "minutes": 6,
+   "why": "A Northeastern University study summarised by the BPS Research Digest found people who made more eye contact were rated more intelligent, especially while talking and, less strongly, while listening; Murphy (2007) likewise found that looking at your partner was one of the few behaviours that raised observers' ratings. In one study, watching someone fidget lowered observers' trait ratings (Chertoff & Mesler; see b03). Summarising shows you processed what was said and gives you the next move.",
+   "evidence": "weak",
+   "specter": "The best negotiator in the room is usually its best listener.",
+   "cultural": "When listening to an elder or a senior consultant, a slightly softer, lower gaze with nods and 'na'am' shows respect; across genders, look toward the speaker's face briefly and keep the gaze lowered."
+  },
+  {
+   "id": "b26",
+   "n": 26,
+   "title": "Ward-Round Run-Through",
+   "goal": "Combine stance, voice, gaze and gestures in one complete ward-round recommendation.",
+   "steps": [
+    "0:00-1:00 - Prepare a realistic case, e.g. a patient on enoxaparin whose creatinine clearance has fallen to 25 mL/min.",
+    "1:00-2:00 - Enter (b09) and stand grounded at the bedside position (b01) with home-base hands (b06).",
+    "2:00-5:00 - Deliver it 3 times on camera: 'Dr. Ahmed, about bed 12. Her creatinine clearance is 25. I recommend reducing enoxaparin to 1 mg/kg once daily. I'll check an anti-Xa level if needed.' Use a pause before starting, an illustrator gesture on 'reducing', a falling ending, eye contact through the last word, then silence.",
+    "5:00-7:00 - Score each take 1-5 for stillness, pace, falling endings, gaze and gestures.",
+    "7:00-8:00 - Pick one element to improve on today's real round."
+   ],
+   "minutes": 8,
+   "why": "Skills practised separately need to be combined under realistic conditions before they show up on a real round. Reviewing yourself on video against a simple checklist is a practical form of deliberate practice. Program-design principle, not a specific trial.",
+   "evidence": "anecdotal",
+   "specter": "Bring them the answer, not your homework.",
+   "cultural": ""
+  },
+  {
+   "id": "b27",
+   "n": 27,
+   "title": "Negotiation Run-Through",
+   "goal": "Combine anchoring, palm signals, silence and composure in a supplier or formulary negotiation.",
+   "steps": [
+    "0:00-1:00 - Scenario: agreeing price and terms with a supplier representative for a new formulary product.",
+    "1:00-2:00 - Seated (b10): notes laid out, forearms on the table, hands visible.",
+    "2:00-5:00 - Deliver to camera: 'We value this partnership. We've reviewed three suppliers. To list this product, the price needs to be 15% lower.' (5 seconds of still silence.) Then answer an imagined pushback: 'I understand. That's our position. If you include training and a 12-month price lock, we can move forward this month.' (Silence.)",
+    "5:00-7:00 - Review: open palms on 'we value', palm down on 'needs to be', no self-touch during silences, falling endings.",
+    "7:00-8:00 - Deliver the final line once more, cleaner."
+   ],
+   "minutes": 8,
+   "why": "Brings together cues trained separately (b12 palms, b15 endings, b23 silence, b03 stillness). The evidence behind them ranges from moderate (illustrator gestures) through weak (fidgeting, intonation) to anecdotal (palm direction, silence), so treat this as rehearsing a calm, consistent style, not a guaranteed tactic.",
+   "evidence": "anecdotal",
+   "specter": "Make your number the one everybody else has to move from.",
+   "cultural": "In Saudi business, start with relationship talk and hospitality (accept the coffee), keep firmness courteous, and never make the other side lose face in front of their colleagues."
+  },
+  {
+   "id": "b28",
+   "n": 28,
+   "title": "Day-28 Video Audit",
+   "goal": "Measure progress against your Day-3 and Day-18 baselines and define your personal presence signature.",
+   "steps": [
+    "0:00-2:00 - Record a 90-second talk on the same topic you used on Day 3 (b03).",
+    "2:00-5:00 - Score each 1-5: grounded stance, posture and chin, stillness (count fidgets), illustrator gestures, palm signals, pace, falling endings, fillers (count), eye contact through last words, composure.",
+    "5:00-6:30 - Compare your fidget count with Day 3 (b03) and your filler count with Day 18 (b18). Your 2 highest scores are your signature strengths.",
+    "6:30-8:00 - Your 2 lowest scores: schedule those exercises again next week."
+   ],
+   "minutes": 8,
+   "why": "Counting fidgets and fillers shows real change and corrects the common bias of judging yourself by how nervous you felt. Cycling back to your weakest elements follows deliberate-practice principles. Program-design guidance, not a tested protocol.",
+   "evidence": "anecdotal",
+   "specter": "Measure it, fix it, own it.",
+   "cultural": ""
+  }
+ ],
+ "eyeContact": [
+  {
+   "id": "e01",
+   "n": 1,
+   "title": "First Contact",
+   "goal": "Get comfortable meeting a gaze for one short, complete greeting.",
+   "steps": [
+    "Look at the on-screen eyes. Relax your face and drop your shoulders.",
+    "Press and hold the button, meet the eyes, and say the line at a normal pace.",
+    "Release on the last word. Look away slowly (slightly down) for 2 seconds, then do the next rep.",
+    "Breathe out between reps and blink normally. This is not a staring contest."
+   ],
+   "holdSeconds": 2,
+   "reps": 5,
+   "lines": [
+    "Good morning.",
+    "Assalamu alaikum.",
+    "Nice to meet you.",
+    "Thank you, doctor.",
+    "I'll check on that."
+   ],
+   "why": "A short greeting is the lowest-pressure moment to build the habit of looking at the face while you speak. A 2-second hold is below the roughly 3.3-second average preferred gaze reported by Binetti et al. (2016), so it's a comfortable starting point.",
+   "evidence": "moderate",
+   "cultural": "With same-gender peers, direct eye contact during a greeting is expected and reads as sincerity. Across genders, many Saudi Muslims lower their gaze as a religious practice (ghadd al-basar): a brief glance at the face, or a lowered gaze with a warm greeting, is fully respectful and still confident. Picture a same-gender colleague for these reps, and switch on Respect mode in the trainer for the opposite gender."
+  },
+  {
+   "id": "e02",
+   "n": 2,
+   "title": "Soft Eyes",
+   "goal": "Hold gaze with a relaxed, warm face instead of a hard stare.",
+   "steps": [
+    "Before pressing, relax your forehead, jaw and the muscles around your eyes.",
+    "Press and hold; look at the eyes with a slight softening, as you would at a friend.",
+    "Say the line and let a small genuine smile appear when the line is friendly.",
+    "Release at the end. Every 2 reps, check a mirror or camera: raised brows or wide eyes? Relax them."
+   ],
+   "holdSeconds": 2,
+   "reps": 6,
+   "lines": [
+    "How are you today?",
+    "It's good to see you.",
+    "Thanks for waiting.",
+    "Take your time.",
+    "I appreciate your help.",
+    "Let's sort this out together."
+   ],
+   "why": "Eye contact is read through the face around it: wide, fixed eyes and tense brows look intense or hostile, while relaxed eyes look warm. Chen et al. (2013) found that listeners who looked more at a speaker's eyes were less persuaded when they disagreed with the speaker (and more receptive when they already agreed), and suggested eye contact signals connection in friendly settings but challenge when there is disagreement. That's why warmth matters more than intensity.",
+   "evidence": "weak",
+   "cultural": ""
+  },
+  {
+   "id": "e03",
+   "n": 3,
+   "title": "The Triangle",
+   "goal": "Move your gaze smoothly between left eye, right eye and the bridge of the nose so contact feels natural, not fixed.",
+   "steps": [
+    "Press and hold. Look at the left eye for the first part of the line, move to the right eye mid-line, and finish on the bridge of the nose.",
+    "Keep shifts small and slow, never darting.",
+    "Release at the end of the line.",
+    "Next rep, start on the right eye."
+   ],
+   "holdSeconds": 2.5,
+   "reps": 6,
+   "lines": [
+    "I've reviewed his medications.",
+    "The dose looks appropriate.",
+    "Her potassium is normal today.",
+    "We can switch to oral this afternoon.",
+    "Let me check the interaction.",
+    "I'll update the chart."
+   ],
+   "why": "Small shifts within the face aren't seen as breaking eye contact. In the 'eye contact illusion' study (Rogers et al., 2019, Perception; summarised by the BPS Research Digest), 46 people had 4-minute conversations with a researcher who looked mostly at their eyes or mostly at their mouth, and both groups reported the same amount of eye contact: people read gaze anywhere on their face as eye contact. It is one small study, and 'triangle' is a coaching label, not a research term.",
+   "evidence": "weak",
+   "cultural": "Especially useful when full direct eye contact would feel too intense, such as with a senior figure or across genders, because it keeps you on the face without fixing on the eyes."
+  },
+  {
+   "id": "e04",
+   "n": 4,
+   "title": "Bridge-of-Nose Anchor",
+   "goal": "Use one anchor point between the eyes when nerves make direct eye contact uncomfortable.",
+   "steps": [
+    "Find the point just above the bridge of the nose, between the on-screen eyes.",
+    "Press and hold; keep your gaze on that point while you say the line.",
+    "Release. Alternate reps between the anchor point and true eye-to-eye contact, and notice which is easier.",
+    "Move toward true eye contact as the week goes on."
+   ],
+   "holdSeconds": 2.5,
+   "reps": 6,
+   "lines": [
+    "Excuse me, doctor, a quick medication question.",
+    "The culture results are back.",
+    "I recommend checking a level.",
+    "Can we review bed 9?",
+    "That combination needs monitoring.",
+    "I'll call you back in ten minutes."
+   ],
+   "why": "Because people generally read gaze anywhere on their face as eye contact (the eye contact illusion, Rogers et al., 2019, which tested gaze at the mouth), the bridge of the nose, which is even closer to the eyes, is a reasonable stand-in. It lowers your anxiety while you still look engaged.",
+   "evidence": "weak",
+   "cultural": "A good default for opposite-gender professional conversations in Saudi settings: it shows attention while staying modest. Lowering the gaze altogether is equally respectful."
+  },
+  {
+   "id": "e05",
+   "n": 5,
+   "title": "Name, Then Gaze",
+   "goal": "Lock in eye contact at the moment you say someone's name or title.",
+   "steps": [
+    "Press and hold the instant you begin the person's name or title.",
+    "Say the name and the short sentence while holding gaze.",
+    "Release at the end, pause 1 second, then the next line.",
+    "Say names warmly, with a falling tone."
+   ],
+   "holdSeconds": 2.5,
+   "reps": 6,
+   "lines": [
+    "Dr. Khalid, I've reviewed the regimen.",
+    "Sister Sara, please hold the 2 p.m. dose.",
+    "Abu Fahad, how are you feeling today?",
+    "Dr. Noura, the level is back.",
+    "Mr. Ali, this is your new medication.",
+    "Ustadh Saad, thank you for your time."
+   ],
+   "why": "Pairing a name with eye contact makes the message unmistakably personal and is an easy anchor habit to build. Coaching technique; no study of this exact pairing.",
+   "evidence": "anecdotal",
+   "cultural": "Titles ('Dr.', 'Ustadh', 'Abu [son's name]') are respectful in Saudi culture; with seniors and elders, pair the title, not just the first name, with your gaze. With opposite-gender colleagues (e.g. Sister Sara, Dr. Noura), a brief look at the face as you say the title, then a lowered gaze, keeps it respectful."
+  },
+  {
+   "id": "e06",
+   "n": 6,
+   "title": "Hold Through the Last Word",
+   "goal": "Keep eye contact until the final word of a sentence has landed, instead of looking away early.",
+   "steps": [
+    "Press and hold on the first word.",
+    "Keep your gaze steady. The urge to look away usually comes in the last 2-3 words, so resist it.",
+    "Release only after the last word is fully spoken, plus a half-second beat.",
+    "If you looked away early, redo the rep."
+   ],
+   "holdSeconds": 3,
+   "reps": 6,
+   "lines": [
+    "I recommend we stop the aspirin.",
+    "The interaction is clinically significant.",
+    "This dose is safe for her kidneys.",
+    "We need a level before the next dose.",
+    "He can go home on this regimen.",
+    "That's my recommendation."
+   ],
+   "why": "Looking away before you finish can make a solid point look uncertain. Looking at your partner while speaking was the behaviour most clearly linked to higher perceived intelligence (and to measured IQ) when people tried to appear smart (Murphy, 2007), and a separate Northeastern University study found the same pattern. Both are correlational, and holding through the last word is a practical application rather than something they tested directly.",
+   "evidence": "moderate",
+   "cultural": "With opposite-gender colleagues or very senior figures, hold on the face region (e03, e08) rather than the eyes and lower your gaze after the last word; keep the firmness in your voice."
+  },
+  {
+   "id": "e07",
+   "n": 7,
+   "title": "The 3.3-Second Anchor",
+   "goal": "Set your internal clock to the average comfortable gaze duration.",
+   "steps": [
+    "Press and hold; say the line at a natural pace, aiming to finish at about 3.3 seconds (the trainer's target).",
+    "Release and note whether you finished early or late.",
+    "Adjust your pace, not your volume, on the next rep.",
+    "Last 2 reps: hide the timer and judge about 3 seconds by feel."
+   ],
+   "holdSeconds": 3.3,
+   "reps": 6,
+   "lines": [
+    "The INR is three point two, slightly above target.",
+    "We can switch to oral levofloxacin today.",
+    "I'd suggest reducing the dose by half.",
+    "His creatinine clearance is under thirty.",
+    "Let's review this together after rounds.",
+    "I'll prepare the discharge medications now."
+   ],
+   "why": "In Binetti et al. (2016, Royal Society Open Science), about 500 London Science Museum visitors from 56 nations watched an actor make eye contact for between 0.1 and 10.3 seconds; the average preferred duration was about 3.3 seconds, and preference did not depend on the viewer's gender, personality or how attractive they found the actor. Limits: the participants watched a video of an actor rather than having a live conversation, and individual preferences differed.",
+   "evidence": "moderate",
+   "cultural": "The 3.3-second figure comes from a multinational museum sample in London. In Saudi settings it fits same-gender peers; use shorter, softer or lowered gaze across genders or with very senior figures."
+  },
+  {
+   "id": "e08",
+   "n": 8,
+   "title": "Respect Mode: Seniors and Opposite Gender",
+   "goal": "Practise a shorter, softer, respectful gaze for senior figures or opposite-gender colleagues while still sounding fully confident.",
+   "steps": [
+    "Press and hold; look at the face region (triangle or bridge of the nose) rather than locking onto the eyes.",
+    "Say the line calmly and confidently.",
+    "At the end, release and lower your gaze slowly and slightly downward (not sideways), with a small nod.",
+    "Keep voice and posture fully confident; only the gaze softens."
+   ],
+   "holdSeconds": 3,
+   "reps": 5,
+   "lines": [
+    "Dr. Abdullah, may I share a concern about the regimen?",
+    "With respect, I'd suggest a lower dose.",
+    "Thank you, Dr. Huda. I'll follow up this afternoon.",
+    "The committee has approved the change.",
+    "I'll send you the summary today."
+   ],
+   "why": "Confidence doesn't require a dominant stare. A respectful pattern (face region, shorter holds, a downward break) keeps you engaged while honouring hierarchy and gender norms. Cultural Atlas describes direct eye contact in Saudi Arabia as expected between people of similar age, gender and status, so it needs adapting outside those cases, and for many Muslims lowering the gaze between unrelated men and women is a religious instruction (Qur'an 24:30-31). Note the hold is deliberately shorter than e07.",
+   "evidence": "weak",
+   "cultural": "Many Saudi colleagues, men and women, practise lowering the gaze between unrelated men and women (ghadd al-basar): look at the face briefly to show attention, then lower your gaze. This is a mark of good manners and faith, not a lack of confidence. With elders and very senior consultants, a softer gaze likewise signals respect."
+  },
+  {
+   "id": "e09",
+   "n": 9,
+   "title": "Numbers With Your Eyes",
+   "goal": "Say key clinical numbers while holding gaze, instead of reading them off the chart.",
+   "steps": [
+    "Read the line once, then look up.",
+    "Press and hold and say the whole line from memory with eye contact.",
+    "Release after the unit or final word.",
+    "Real-life rule: if you need your notes, look down, read, look up, then speak."
+   ],
+   "holdSeconds": 3.5,
+   "reps": 6,
+   "lines": [
+    "The vancomycin level came back high, so we hold the next dose.",
+    "Her creatinine clearance is 25 mL per minute.",
+    "Potassium is 5.9; I recommend holding the spironolactone.",
+    "The INR is 4.1, with no bleeding.",
+    "We're targeting an AUC of 400 to 600.",
+    "Give 40 mg once daily."
+   ],
+   "why": "Reading the key number off a page while you say it breaks contact at the most important moment. 'Look down, read, look up, speak' separates reading from speaking so your gaze is on the person when the conclusion lands. Public-speaking practice, not a tested finding.",
+   "evidence": "anecdotal",
+   "cultural": ""
+  },
+  {
+   "id": "e10",
+   "n": 10,
+   "title": "Break Down, Not Sideways",
+   "goal": "End eye contact calmly with a slow downward glance (to notes or chart) rather than a quick sideways dart.",
+   "steps": [
+    "Press and hold and say the line with eye contact.",
+    "Release and do the break: Type A, a slow glance down to an imagined chart for 1 second and back up. Do one Type B (quick sideways dart) only to feel the contrast.",
+    "All other reps: Type A only.",
+    "Optional: watch yourself in a mirror and judge which looks composed."
+   ],
+   "holdSeconds": 3.5,
+   "reps": 6,
+   "lines": [
+    "Let me check the chart.",
+    "I'll confirm the dose and come back to you.",
+    "The allergy is documented as a rash.",
+    "We can give this through the NG tube.",
+    "There's an alternative on formulary.",
+    "I'll write it up now."
+   ],
+   "why": "Breaking gaze is normal and necessary: people look away more when thinking hard, and it helps retrieval (Glenberg et al., 1998). How you break affects impressions. A slow, purposeful glance to your notes looks like thinking, while rapid sideways darting is commonly read as evasive; that second part is coaching wisdom, not a tested finding.",
+   "evidence": "weak",
+   "cultural": "A downward break is also the respectful way to end gaze with elders and across genders in Saudi Arabia."
+  },
+  {
+   "id": "e11",
+   "n": 11,
+   "title": "Look Away to Think, Return to Deliver",
+   "goal": "Look away while you think, then come back to eye contact for the answer.",
+   "steps": [
+    "Read the bracketed question silently, as if it was just asked.",
+    "With the button released, look slightly down or away for 1-2 seconds while you think.",
+    "Look back at the eyes, press and hold, and deliver the answer (the unbracketed part).",
+    "Release on the last word."
+   ],
+   "holdSeconds": 3.5,
+   "reps": 6,
+   "lines": [
+    "[Can we crush this tablet?] No, it's extended-release; I'll suggest an alternative.",
+    "[Is it safe in pregnancy?] Yes, labetalol is a preferred option in pregnancy.",
+    "[Why the dose change?] Her kidney function has dropped.",
+    "[Do we need a level?] Yes, before the fourth dose.",
+    "[Can she take the calcium with the ciprofloxacin?] Separate them: ciprofloxacin at least two hours before the calcium.",
+    "[Is it on formulary?] Not this one, but there's an equivalent."
+   ],
+   "why": "Glenberg et al. (1998) found that people avert their gaze more as questions get harder and that doing so improves recall, because looking away cuts visual input that competes with thinking. So don't force eye contact while you think; bring it back for the conclusion, where it signals certainty.",
+   "evidence": "moderate",
+   "cultural": ""
+  },
+  {
+   "id": "e12",
+   "n": 12,
+   "title": "Listening Gaze",
+   "goal": "Keep steady, relaxed gaze while listening, with short acknowledgments.",
+   "steps": [
+    "Imagine the person on screen is describing a problem to you.",
+    "Press and hold and 'listen' silently for about 2 seconds with a slow nod.",
+    "Then say the acknowledgment line, still holding gaze.",
+    "Release; no fidgeting between reps."
+   ],
+   "holdSeconds": 3.5,
+   "reps": 6,
+   "lines": [
+    "I see.",
+    "Go on.",
+    "So the main concern is the bleeding risk.",
+    "That makes sense.",
+    "Tell me more about that.",
+    "Understood."
+   ],
+   "why": "A Northeastern University study summarised by the BPS Research Digest found people who made more eye contact were judged more intelligent, mainly while talking and to a lesser extent while listening; Murphy (2007) also found looking at a partner raised observers' ratings. The listening link is the weaker of the two. Steady listening gaze also tells the speaker you're fully with them, which earns you the floor when it's your turn.",
+   "evidence": "weak",
+   "cultural": "When listening to an elder or a senior, a softer gaze with frequent 'na'am' and nods is respectful. Across genders, attentive nods and a lowered gaze show you are listening just as well."
+  },
+  {
+   "id": "e13",
+   "n": 13,
+   "title": "Answering a Challenge",
+   "goal": "Hold steady eye contact while responding calmly to a challenge.",
+   "steps": [
+    "Read the bracketed challenge silently and pause 1 second.",
+    "Press and hold, meet the eyes, and deliver the response at a calm pace.",
+    "Hold through the last word, then release slowly.",
+    "Neutral face: no apologetic smile, no frown."
+   ],
+   "holdSeconds": 4,
+   "reps": 6,
+   "lines": [
+    "[Why are you questioning my order?] Because the dose exceeds the renal maximum; here's an alternative.",
+    "[We always use this antibiotic.] I understand. The culture shows resistance, so it won't work here.",
+    "[Just approve it.] I can't approve it as written, but I can approve this modification.",
+    "[That's not your area.] Medication safety is my area; I'd like us to decide together.",
+    "[Are you sure?] Yes. I checked the guideline and the levels.",
+    "[It's urgent.] Then let's fix the dose now and give it immediately."
+   ],
+   "why": "Steady gaze while calmly giving your reasoning shows you're not intimidated; dropping your eyes and speeding up does the opposite. Because eye contact can increase resistance in listeners who already disagree (Chen et al., 2013), pair it with a calm face and a concrete alternative rather than an intense stare.",
+   "evidence": "weak",
+   "cultural": "If the challenger is a senior consultant, handle it privately where possible, use 'Dr.' and a respectful tone, and use the respect-mode gaze from e08."
+  },
+  {
+   "id": "e14",
+   "n": 14,
+   "title": "Saying No With Your Eyes",
+   "goal": "Deliver a refusal or limit while holding gaze, without softening it with a nervous smile or looking away.",
+   "steps": [
+    "Press and hold.",
+    "Say the line in a calm, falling tone while keeping eye contact.",
+    "Hold 1 second of silence after the last word, then release.",
+    "No nervous laugh and no 'sorry, sorry'."
+   ],
+   "holdSeconds": 4,
+   "reps": 6,
+   "lines": [
+    "No, I can't dispense that without a prescription.",
+    "That's not something we can do.",
+    "I won't approve a dose above the maximum.",
+    "No, we need to wait for the level.",
+    "That price doesn't work for us.",
+    "I'm not able to make an exception."
+   ],
+   "why": "A refusal said while looking away or smiling apologetically is easily heard as negotiable. Steady gaze plus a short silence signals the limit is real. Coaching practice; no specific study.",
+   "evidence": "anecdotal",
+   "cultural": "Saudi communication often softens refusals to save face. A respectful opener ('With respect...', 'I'm sorry, but...') keeps it polite while your gaze keeps it firm. Across genders, a brief look and a lowered gaze is enough; the firmness lives in your words and tone."
+  },
+  {
+   "id": "e15",
+   "n": 15,
+   "title": "One Thought, One Person",
+   "goal": "Meeting rule: deliver one complete thought to one person, then move to the next.",
+   "steps": [
+    "Imagine three people at the table: left, centre, right. The on-screen eyes are whoever you're addressing now.",
+    "Press and hold for the whole sentence to one person, then release.",
+    "Turn your head slightly as if to the next person, press and hold again for the next sentence.",
+    "Never move your eyes mid-sentence; switch only between thoughts."
+   ],
+   "holdSeconds": 4,
+   "reps": 6,
+   "lines": [
+    "We have a problem with the current regimen.",
+    "The dose is too high for his kidneys.",
+    "I recommend extending the interval to every 48 hours.",
+    "Pharmacy will adjust the order today.",
+    "Nursing will monitor for side effects.",
+    "We'll recheck labs on Thursday."
+   ],
+   "why": "Scanning a group continuously (the 'lighthouse') leaves no one feeling addressed; finishing a thought with one person creates a series of real one-to-one connections. Widely taught in public speaking, though not directly tested; it fits the finding that eye contact while speaking is linked to perceived intelligence (Murphy, 2007).",
+   "evidence": "anecdotal",
+   "cultural": "Include everyone, opposite-gender colleagues too, but give them shorter, face-region or lowered glances where a full hold would be inappropriate."
+  },
+  {
+   "id": "e16",
+   "n": 16,
+   "title": "Anchor the Number",
+   "goal": "State your opening number in a negotiation while holding gaze, without hedging.",
+   "steps": [
+    "Press and hold.",
+    "Say the number clearly, with a falling tone.",
+    "Keep holding in silence for 1-2 seconds after the number.",
+    "Only then release."
+   ],
+   "holdSeconds": 4.5,
+   "reps": 6,
+   "lines": [
+    "Our budget for this contract is 1.2 million riyals.",
+    "We need the price to be 15% lower.",
+    "Delivery within 48 hours is a requirement.",
+    "We'd need a 12-month price lock.",
+    "Our target is a three-year agreement.",
+    "That's our offer."
+   ],
+   "why": "The moment you state a number is when a wavering gaze or rising tone does the most damage, because it signals the number is flexible. Negotiation-training practice. Eye contact can increase resistance in an already sceptical listener (Chen et al., 2013), so keep a calm, neutral face, not a challenging stare.",
+   "evidence": "anecdotal",
+   "cultural": "Saudi negotiations are relationship-driven: state numbers firmly, but after rapport, and keep it courteous."
+  },
+  {
+   "id": "e17",
+   "n": 17,
+   "title": "Hold Through the Silence",
+   "goal": "Keep eye contact and stillness during the silence after your point.",
+   "steps": [
+    "Press and hold.",
+    "Say the line (about 2-3 seconds).",
+    "Keep holding in silence until the timer ends.",
+    "Relaxed face, normal blinking, steady breath during the silence."
+   ],
+   "holdSeconds": 5,
+   "reps": 6,
+   "lines": [
+    "Those are the terms.",
+    "That's what the evidence supports.",
+    "I recommend we stop it today.",
+    "The decision is yours, doctor.",
+    "What would make this work for you?",
+    "I'll wait for your answer."
+   ],
+   "why": "Silence after a point lets it land and invites a response. Relaxed, steady gaze during the silence shows comfort, while looking away immediately often signals discomfort. The long hold is training overload; in real life you can soften your gaze after 3-4 seconds of silence. Coaching practice.",
+   "evidence": "anecdotal",
+   "cultural": "Keep the expression warm during the silence; a cold stare can feel disrespectful in Saudi settings. Across genders, hold the stillness but lower your gaze during the silence rather than keeping eye contact."
+  },
+  {
+   "id": "e18",
+   "n": 18,
+   "title": "Pushback Without Flinching",
+   "goal": "Stay in eye contact while the other person disagrees, then restate your position.",
+   "steps": [
+    "Read the bracketed pushback silently and imagine hearing it, keeping your gaze steady.",
+    "Press and hold and say the response calmly.",
+    "Hold through the last word, then release.",
+    "Watch for bursts of blinking, dropping your eyes, or a flinch-smile."
+   ],
+   "holdSeconds": 5,
+   "reps": 6,
+   "lines": [
+    "[That's too expensive.] I understand. The value is in the outcomes; the price stands.",
+    "[The patient wants the brand.] I understand. The generic is equivalent and covered.",
+    "[Your recommendation is overkill.] I hear you. The interaction risk justifies it.",
+    "[Other hospitals don't do this.] Perhaps. Our policy follows the guideline.",
+    "[We don't have time.] It takes two minutes and prevents a serious error.",
+    "[I disagree.] That's fair. Let's look at the data together."
+   ],
+   "why": "Holding steady gaze while acknowledging the other view and calmly restating yours shows composure under pressure. Pair it with a neutral or warm face: intense eye contact with someone who already disagrees can increase their resistance (Chen et al., 2013).",
+   "evidence": "weak",
+   "cultural": "With seniors or across genders, use respect-mode gaze (e08): calm, courteous words with a softer or lowered gaze rather than locked eyes."
+  },
+  {
+   "id": "e19",
+   "n": 19,
+   "title": "Warm Gaze vs Firm Gaze",
+   "goal": "Switch on purpose between warm gaze (rapport) and firm gaze (decision).",
+   "steps": [
+    "Odd reps (1, 3, 5) are WARM: soft eyes, slight smile, relaxed head.",
+    "Even reps (2, 4, 6) are FIRM: neutral face, level head, still body.",
+    "Press and hold and deliver the line in the matching mode.",
+    "Release; check a mirror or camera now and then."
+   ],
+   "holdSeconds": 5,
+   "reps": 6,
+   "lines": [
+    "It's good to work with you again.",
+    "We stop the infusion now.",
+    "How's your family?",
+    "This needs to change today.",
+    "Thank you, I really appreciate it.",
+    "My answer is no."
+   ],
+   "why": "The same eye contact means different things depending on the face around it: with a smile it reads as warmth, with a neutral face as seriousness. Chen et al. (2013) suggested eye contact signals connection in friendly contexts but challenge when there is disagreement, so choosing the mode deliberately matters.",
+   "evidence": "weak",
+   "cultural": "Picture same-gender colleagues for these reps. Across genders, warmth and firmness come from your tone and words with a brief glance, not a long hold; and asking a man about his family is usually phrased generally ('How is the family?'), not about his wife by name."
+  },
+  {
+   "id": "e20",
+   "n": 20,
+   "title": "Group Rhythm: Three People",
+   "goal": "Apply one-thought-one-person to a three-person group at longer holds.",
+   "steps": [
+    "Assign Dr. A (left), Dr. B (centre), Nurse C (right).",
+    "Each rep: turn your head to that person, press and hold, deliver the thought, release.",
+    "Cover all three by rep 3, then go round again.",
+    "Include the quietest person, not only the most senior."
+   ],
+   "holdSeconds": 5,
+   "reps": 6,
+   "lines": [
+    "Dr. A, the antibiotic choice is right, but the dose is low.",
+    "Dr. B, I'd suggest 2 grams every 8 hours.",
+    "Nurse C, please give the next dose as an extended infusion.",
+    "Dr. A, we'll check levels on day three.",
+    "Dr. B, I'll update the order now.",
+    "Nurse C, call me if there's any reaction."
+   ],
+   "why": "Extends e15 to longer, multi-person delivery, which is the real format of ward rounds and MDT meetings. Coaching practice.",
+   "evidence": "anecdotal",
+   "cultural": "Address the most senior person first, then include everyone; give opposite-gender colleagues shorter, face-region or lowered glances."
+  },
+  {
+   "id": "e21",
+   "n": 21,
+   "title": "Owning the Close",
+   "goal": "Hold gaze on the closing line of a recommendation or negotiation and finish cleanly.",
+   "steps": [
+    "Press and hold; say the closing line slowly with a falling tone.",
+    "Hold through the last word plus a 1-2 second silent beat.",
+    "Then a slow nod, release, and a slow downward glance to your notes.",
+    "Repeat."
+   ],
+   "holdSeconds": 5.5,
+   "reps": 6,
+   "lines": [
+    "Then we're agreed. I'll update the order now.",
+    "So we switch to oral today and review tomorrow.",
+    "Let's sign this week.",
+    "I'll send the final terms this afternoon.",
+    "Good. We'll proceed with the lower dose.",
+    "Thank you. I'll take it from here."
+   ],
+   "why": "The close is where uncertainty shows most: trailing off, looking down early, or adding 'if that's okay?'. Holding gaze through a short summary and a nod marks the decision as made. Coaching practice.",
+   "evidence": "anecdotal",
+   "cultural": "Across genders or with very senior figures, close with a brief look, a slow nod and a lowered gaze rather than a long hold."
+  },
+  {
+   "id": "e22",
+   "n": 22,
+   "title": "Social Storytelling Gaze",
+   "goal": "Use warm, steady eye contact in social conversation: majlis, dinner, conference coffee break.",
+   "steps": [
+    "Imagine telling a short story to one person.",
+    "Press and hold with a warm face and deliver the line with expression.",
+    "Release, glance away naturally, come back for the next line.",
+    "Let natural smiles happen; this is social, not a negotiation."
+   ],
+   "holdSeconds": 5.5,
+   "reps": 6,
+   "lines": [
+    "You won't believe what happened on rounds today.",
+    "I went into pharmacy because of my grandfather's medications.",
+    "The best advice I ever got was to ask one more question.",
+    "We were the only team that caught the interaction.",
+    "Tell me, how did you get into this field?",
+    "That's a great story. What happened next?"
+   ],
+   "why": "Social charisma combines presence with warmth: steady, friendly eye contact and genuine interest in the other person. The BPS-summarised finding that eye contact while talking raises perceived intelligence comes from casual conversations between strangers, so it applies socially too; the rest is coaching guidance.",
+   "evidence": "weak",
+   "cultural": "In a majlis or family gathering, warm eye contact with same-gender peers is natural; with elders, a softer gaze and attentive listening are valued as much as good storytelling. With opposite-gender guests or colleagues, keep glances brief and let warmth come through your words and attention."
+  },
+  {
+   "id": "e23",
+   "n": 23,
+   "title": "The Long Recommendation",
+   "goal": "Hold eye contact across a two-sentence recommendation.",
+   "steps": [
+    "Press and hold and deliver both sentences as one connected thought.",
+    "If you must look away to think, release, think, then press again and finish.",
+    "Hold through the very last word.",
+    "Release slowly with a nod."
+   ],
+   "holdSeconds": 6,
+   "reps": 5,
+   "lines": [
+    "Her creatinine clearance is 25. I recommend reducing enoxaparin to 1 mg/kg once daily.",
+    "The culture shows MRSA. I recommend vancomycin with AUC-guided dosing.",
+    "He's had two falls this month. I suggest stopping the zolpidem.",
+    "The INR is 4.5 without bleeding. I recommend holding one dose and rechecking tomorrow.",
+    "Meropenem will drop his valproate level. I recommend a different antibiotic."
+   ],
+   "why": "Real recommendations often run longer than one breath. A 6-second hold is well above the roughly 3.3-second average comfortable duration (Binetti et al., 2016); it's a deliberate overload intended to make 3-4 second real-world holds feel easy, though that training logic itself has not been tested. A brief glance away between sentences is normal.",
+   "evidence": "anecdotal",
+   "cultural": "With seniors or across genders, split this into shorter face-region holds, or a brief look and a lowered gaze, rather than one long hold."
+  },
+  {
+   "id": "e24",
+   "n": 24,
+   "title": "Recover a Lost Gaze",
+   "goal": "If you break eye contact mid-sentence, return calmly and finish strong.",
+   "steps": [
+    "Press and hold and start the line.",
+    "At the bracket, glance down for about 1 second while still holding the button.",
+    "Come back to the eyes calmly (no apology, no restart) and finish with a falling tone.",
+    "Release after the last word."
+   ],
+   "holdSeconds": 6,
+   "reps": 6,
+   "lines": [
+    "The level is [glance down] within range, so no change.",
+    "I recommend [glance down] switching to apixaban.",
+    "We'll need [glance down] a repeat potassium at 6 p.m.",
+    "Our offer is [glance down] final for this quarter.",
+    "The interaction [glance down] is moderate; we'll monitor.",
+    "Let's proceed [glance down] with the plan."
+   ],
+   "why": "Losing eye contact is normal. What reads as nerves is the scramble afterward: apologising, restarting, rushing. Returning calmly and finishing shows composure. Coaching practice.",
+   "evidence": "anecdotal",
+   "cultural": ""
+  },
+  {
+   "id": "e25",
+   "n": 25,
+   "title": "Pressure Hold",
+   "goal": "State a firm position and hold eye contact through a long silence under imagined pressure.",
+   "steps": [
+    "Imagine a tense negotiation or a frustrated consultant across from you.",
+    "Press and hold and state the position (about 3 seconds).",
+    "Keep holding in silence with a relaxed face and steady breath until the target.",
+    "Release with a slow nod."
+   ],
+   "holdSeconds": 6.5,
+   "reps": 5,
+   "lines": [
+    "Patient safety comes first; I can't approve this dose.",
+    "Our final offer is 1.1 million riyals.",
+    "I won't sign off until the level is back.",
+    "This needs the committee's approval.",
+    "That's our position."
+   ],
+   "why": "Training overload: holding well beyond the comfortable average (about 3.3 seconds, Binetti et al., 2016) under imagined stress is meant to build tolerance so normal holds feel easy; that idea is untested. In real life, a long stare at someone who disagrees can increase their resistance (Chen et al., 2013). Use this as practice, then apply shorter, warmer holds.",
+   "evidence": "anecdotal",
+   "cultural": "In real Saudi workplace conflict, especially with seniors, a long fixed stare would be seen as confrontational; put the firmness in your words and voice and soften the gaze."
+  },
+  {
+   "id": "e26",
+   "n": 26,
+   "title": "The Executive Introduction",
+   "goal": "Introduce yourself to a director, committee or new consultant with steady, confident gaze.",
+   "steps": [
+    "Press and hold and deliver each line as part of one introduction.",
+    "Hold through the last word; falling tone.",
+    "Between reps, a brief downward glance, then back.",
+    "Fill in the brackets with your real details."
+   ],
+   "holdSeconds": 6.5,
+   "reps": 5,
+   "lines": [
+    "Assalamu alaikum. I'm the clinical pharmacist for the medical wards.",
+    "I've been a clinical pharmacist here for [X] years.",
+    "My focus this year is reducing medication errors at discharge.",
+    "I'd value ten minutes with you next week to share our data.",
+    "It's a pleasure to meet you."
+   ],
+   "why": "A short, confident self-introduction with steady eye contact is a high-impact moment in a hospital (new consultants, directors, committees), and it's predictable, so you can rehearse it. Coaching practice.",
+   "evidence": "anecdotal",
+   "cultural": "Greet the most senior person first, use 'Assalamu alaikum' and titles. With opposite-gender leaders, use respect-mode gaze and don't initiate a handshake; if one is offered and you don't shake hands across genders, a hand on the heart with a warm greeting is polite."
+  },
+  {
+   "id": "e27",
+   "n": 27,
+   "title": "Real-Life Transfer Day",
+   "goal": "Warm up on the trainer, then complete three real eye-contact missions today.",
+   "steps": [
+    "Trainer warm-up: 5 reps at the target hold with the lines below.",
+    "Mission 1 (ward round): hold gaze through the last word of one recommendation.",
+    "Mission 2 (meeting): use one-thought-one-person for at least 3 sentences.",
+    "Mission 3 (social): one warm, roughly 3-second gaze with a genuine smile when greeting someone you know.",
+    "Tonight: note which mission felt hardest and repeat that drill tomorrow."
+   ],
+   "holdSeconds": 6.5,
+   "reps": 5,
+   "lines": [
+    "I recommend we stop the PPI; there's no ongoing indication.",
+    "Let's start with the highest-risk patients.",
+    "Our latest audit shows fewer errors since we changed the process.",
+    "We can implement this next month.",
+    "Thank you all; I'll circulate the plan."
+   ],
+   "why": "Skills learned on a screen don't automatically transfer to real conversations; specific real-world missions bridge the gap. Practice-design principle.",
+   "evidence": "anecdotal",
+   "cultural": "Pick missions that suit the person: same-gender peers for full holds, seniors and opposite-gender colleagues with respect-mode gaze."
+  },
+  {
+   "id": "e28",
+   "n": 28,
+   "title": "Final Exam: Full Case Under Pressure",
+   "goal": "Deliver a complete case recommendation with long holds, controlled breaks and a clean close.",
+   "steps": [
+    "Treat the 8 reps as one continuous case presentation, pressing and holding for each line.",
+    "Between reps, glance down to 'your notes' and come back.",
+    "Hold through every last word, with a falling tone.",
+    "On the last rep: close, a silent beat, a slow nod, release.",
+    "Then present the same case to your phone camera and compare it with your Day 1 recording."
+   ],
+   "holdSeconds": 7,
+   "reps": 8,
+   "lines": [
+    "Good morning, Dr. Faisal. I'd like to discuss bed 12.",
+    "She's 78, with atrial fibrillation and new acute kidney injury.",
+    "Her creatinine clearance has dropped to 28.",
+    "She's on rivaroxaban 20 mg daily, which is now too high.",
+    "I recommend reducing it to 15 mg daily.",
+    "We should also stop the ibuprofen.",
+    "I'll recheck her renal function in 48 hours.",
+    "Do you agree with the plan?"
+   ],
+   "why": "Brings everything together: name plus gaze, numbers with your eyes, holding through the last word, controlled breaks and the close. The 7-second hold is a deliberate over-target; on the real round, shorter 3-5 second holds should then feel natural. Practice-design principle.",
+   "evidence": "anecdotal",
+   "cultural": "If the consultant is very senior or of the opposite gender, use respect-mode gaze while keeping the same confident words and voice."
+  }
+ ],
+ "sources": [
+  {
+   "name": "Binetti et al. (2016) Pupil dilation as an index of preferred mutual gaze duration, Royal Society Open Science",
+   "url": "https://eprints.nottingham.ac.uk/34694"
+  },
+  {
+   "name": "BPS Research Digest: Psychologists have identified the length of eye contact people find most comfortable (3.3 s average)",
+   "url": "https://www.bps.org.uk/research-digest/psychologists-have-identified-length-eye-contact-people-find-most-comfortable"
+  },
+  {
+   "name": "BPS Research Digest: Here's a simple trick for anyone who finds eye contact too intense (eye contact illusion)",
+   "url": "https://bps.org.uk/research-digest/heres-simple-trick-anyone-who-finds-eye-contact-too-intense"
+  },
+  {
+   "name": "Rogers et al. (2019) Contact is in the eye of the beholder: The eye contact illusion, Perception",
+   "url": "https://ro.ecu.edu.au/ecuworkspost2013/5962"
+  },
+  {
+   "name": "Chen, Minson, Schone & Heinrichs (2013) In the eye of the beholder: Eye contact increases resistance to persuasion, Psychological Science",
+   "url": "https://www.hks.harvard.edu/publications/eye-beholder-eye-contact-increases-resistance-persuasion"
+  },
+  {
+   "name": "Murphy (2007) Appearing smart: The impression management of intelligence, person perception accuracy, and behavior in social interaction, Personality and Social Psychology Bulletin",
+   "url": "https://doi.org/10.1177/0146167206294871"
+  },
+  {
+   "name": "Glenberg, Schroeder & Robertson (1998) Averting the gaze disengages the environment and facilitates remembering, Memory & Cognition",
+   "url": "https://doi.org/10.3758/bf03211385"
+  },
+  {
+   "name": "Ranehill et al. (2015) power-posing replication (no effect on hormones or behaviour), Psychological Science (PDF)",
+   "url": "https://www.zne.uzh.ch/dam/jcr:e5fc4c3c-d50e-4aa9-96ab-4389e426d20d/Psychological%20Science-2015-Ranehill-0956797614553946.pdf"
+  },
+  {
+   "name": "Crede (2019) A negative effect of a contractive pose is not evidence for the positive effect of an expansive pose, Meta-Psychology",
+   "url": "https://open.lnu.se/index.php/metapsychology/article/view/1723"
+  },
+  {
+   "name": "Korner, Roseler, Schutz & Bushman (2022) Dominance and prestige: meta-analytic review of body position effects, Psychological Bulletin",
+   "url": "https://doi.org/10.1037/bul0000356"
+  },
+  {
+   "name": "SPSP Character & Context: Korner & Schutz on the effects of wide body positions (2022 meta-analysis)",
+   "url": "https://spsp.org/news/character-and-context-blog/korner-schutz-effects-wide-body-positions"
+  },
+  {
+   "name": "Chertoff & Mesler: Fidgeting and first impressions: the impact of nonverbal cues on personality perception (University of Lethbridge)",
+   "url": "https://opus.uleth.ca/items/b498cb3f-e39a-4cb4-888e-22e29247f6de"
+  },
+  {
+   "name": "UBC News (2025): Want to be more persuasive? Talk with your hands (Cascio Rizzo, Berger & Zhou, Journal of Marketing Research)",
+   "url": "https://news.ubc.ca/2025/11/talk-with-your-hands-to-be-more-persuasive/"
+  },
+  {
+   "name": "Duke Chronicle (2012): Study finds preference for leaders with lower-pitched voices (Klofstad et al.)",
+   "url": "https://dukechronicle.com/article/2012/04/study-finds-preference-leaders-lower-pitched-voices"
+  },
+  {
+   "name": "Puts, Gaulin & Verdolini (2006) Dominance and the evolution of sexual dimorphism in human voice pitch, Evolution and Human Behavior",
+   "url": "https://pure.psu.edu/en/publications/dominance-and-the-evolution-of-sexual-dimorphism-in-human-voice-p/"
+  },
+  {
+   "name": "Disfluency in spontaneous speech: social attribution and behavioral consequences (filled pauses and perceived readiness/certainty)",
+   "url": "https://escholarship.org/uc/item/8579j2fh"
+  },
+  {
+   "name": "University of Michigan News (2011): Persuasive speech: the way we, um, talk sways our listeners (Benki et al.)",
+   "url": "https://news.umich.edu/persuasive-speech-the-way-we-um-talk-sways-our-listeners"
+  },
+  {
+   "name": "Dolcos et al. (2012) The power of a handshake: neural correlates of evaluative judgments in observed social interactions, Journal of Cognitive Neuroscience",
+   "url": "https://doi.org/10.1162/jocn_a_00295"
+  },
+  {
+   "name": "Cultural Atlas: Saudi Arabian Culture - Greetings",
+   "url": "https://culturalatlas.sbs.com.au/saudi-arabian-culture/saudi-arabian-culture-greetings"
+  },
+  {
+   "name": "Cultural Atlas: Saudi Arabian Culture - Communication (eye contact, indirectness)",
+   "url": "https://culturalatlas.sbs.com.au/saudi-arabian-culture/saudi-arabian-culture-communication"
+  }
+ ],
+ "version": 1
+}
