@@ -51,9 +51,9 @@ STAGE_RUNNERS.play = (n) => {
   box.innerHTML = `<div class="panel"><h3>العب مع المدرّب</h3>
     <p>${esc(c.play)}</p>
     <ul class="facts">
-      <li>قبل نقلتك: زر «بماذا أفكر الآن؟» يعطيك أسئلة وأماكن تنظر إليها، ولا يكشف النقلة.</li>
+      <li>قبل نقلتك: زر «تلميح» يريك أفضل نقلة عند Stockfish ولماذا هي الأفضل، ويُحسب تلميحًا.</li>
       <li>بعد نقلتك: تقييمها (ممتازة، جيدة، غير دقيقة، خطأ، خطأ فادح)، والسبب، والنقلة الأفضل.</li>
-      ${safety ? `<li>في هذا الفصل لا أعلن تهديدات الخصم: ابحث عنها بنفسك. زر «بماذا أفكر الآن؟» يكشف التهديد ويُحسب تلميحًا.</li>
+      ${safety ? `<li>في هذا الفصل لا أعلن تهديدات الخصم: ابحث عنها بنفسك. زر «تلميح» يكشف التهديد وأفضل نقلة، ويُحسب تلميحًا.</li>
       <li>قبل كل نقلة تظهر أسئلة الفحص، فتلعب النقلة أو تغيّرها (تستطيع إيقافها من عدّاد الأمان).</li>
       <li>بعد الخطأ أو الخطأ الفادح تستطيع التراجع، لكن القطعة المعلّقة أو التهديد الفائت يبقى محسوبًا.</li>` : `<li>بعد نقلة الخصم: ماذا يهدد. وبعد الخطأ أو الخطأ الفادح تستطيع التراجع، لكنه يبقى محسوبًا في بيانات الفصل.</li>`}
     </ul>
@@ -96,7 +96,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
         <div class="boardcap"><span class="turn" id="p-turn"></span><span class="note" id="p-status"></span></div>
         <div class="openname note" id="p-open"></div>
         <div class="board" id="p-board"></div>
-        <div class="wctrl"><button class="ctl" id="p-hint">بماذا أفكر الآن؟</button><button class="ctl" id="p-end">أنهِ وراجع</button><button class="ctl" id="p-resign">استسلم</button></div>
+        <div class="wctrl"><button class="ctl" id="p-hint">تلميح: أفضل نقلة</button><button class="ctl" id="p-end">أنهِ وراجع</button><button class="ctl" id="p-resign">استسلم</button></div>
         <div id="p-line"></div><div id="p-decide"></div><div id="p-offer"></div>
         <div id="p-odds"></div>
         ${opening ? `<div class="livecheck" id="p-check"></div>` : ""}${safety ? `<div class="livecheck" id="p-safe"></div>` : ""}
@@ -333,7 +333,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     threatReady = true;
     if (th) { threat = th; G.threats = (G.threats || 0) + 1; rec.threat = th.san; save(); }
     if (safety) {
-      if (!game.in_check()) add("أسئلة الأمان: ماذا تغيّر بهذه النقلة؟ ماذا يهاجم الخصم الآن؟ هل ترك شيئًا بلا حماية؟ (في هذا الفصل لا أعلن التهديد؛ زر «بماذا أفكر الآن؟» يكشفه ويُحسب تلميحًا.)");
+      if (!game.in_check()) add("أسئلة الأمان: ماذا تغيّر بهذه النقلة؟ ماذا يهاجم الخصم الآن؟ هل ترك شيئًا بلا حماية؟ (في هذا الفصل لا أعلن التهديد؛ زر «تلميح» يكشفه مع أفضل نقلة، ويُحسب تلميحًا.)");
     } else if (th) {
       add(`يهدد: [${th.san.join(" ")}]. عالج هذا التهديد قبل أي خطة أخرى.`);
       board.update({ arrows: [threatArrow(th)] });
@@ -342,12 +342,29 @@ function PlayGame(root, { n, color, rating, resume = null }) {
   }
 
   /* ---- hint: what to think about, never the move ---- */
-  function showHint() {
+  /* ---- hint: Stockfish's best move with the reasons, computed locally (no Claude call, so it costs no usage) ---- */
+  async function showHint() {
     if (G.finished || game.turn() !== me || busy) return;
-    G.hints = (G.hints || 0) + 1; if (threat && safety) { G.threatShown = true; board.update({ arrows: [threatArrow(threat)] }); } save();
+    G.hints = (G.hints || 0) + 1; if (threat && safety) G.threatShown = true; save();
     const fen = game.fen(); const f = Facts.positionFacts(fen, G.sans.length);
-    const cd = card(`<div class="fh"><b>بماذا تفكر الآن؟</b><span class="note">تلميح لا يكشف النقلة</span></div><ul class="facts">${hintItems(f).map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul><p class="habit">قبل أن تلعب: ماذا يهدد الخصم؟ ما نقلاتي القسرية (كش، أسر، تهديد)؟ وبعد نقلتي، ما أقوى رد له؟</p><div class="fx"></div>`, "hint");
-    if (claudeOk()) hintClaude($(".fx", cd), fen);
+    const cd = card(`<div class="fh"><b>تلميح</b><span class="note">أفضل نقلة عند Stockfish ولماذا</span></div><div class="hbest"><p class="note">Stockfish يبحث...</p></div>
+      <details><summary class="note">أسئلة تساعدك على إيجادها بنفسك في المرة القادمة</summary><ul class="facts">${hintItems(f).map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul></details>`, "hint");
+    let r = preRes; if (!r) { try { r = await pre; } catch { r = null; } }
+    if (!alive() || game.fen() !== fen) return;
+    const el = $(".hbest", cd);
+    if (!r || !r.best || !r.lines.length) { el.innerHTML = `<p class="note">تعذّر الحصول على أفضل نقلة الآن. جرّب الزر مرة أخرى.</p>`; return; }
+    const san = sanOf(fen, r.best); const line = pvToSan(fen, r.lines[0].pv, 5); const pc = Prob.ctx(fen, G.sans.length);
+    const es = (l) => Prob.esFor(l.cpWhite, me, pc); const esBest = es(r.lines[0]);
+    const close = r.lines.slice(1).filter((l) => esBest - es(l) <= 3).map((l) => sanOf(fen, l.pv[0]));
+    const next = r.lines[1] ? Math.round(esBest - es(r.lines[1])) : null;
+    const why = bestMoveWhy(fen, san, r.best, threat);
+    if (next != null && next >= 10) why.push(`هي النقلة الجيدة الوحيدة تقريبًا: أقرب بديل يخفض فرصك ${next} نقطة.`);
+    if (!why.length) why.push("تحسّن موقع قطعة دون أن تترك شيئًا بلا حماية: Stockfish يراها الأفضل هنا.");
+    el.innerHTML = `<p><b>أفضل نقلة: <bdi class="mv">${esc(moveLabel(fen, san))}</bdi></b> · فرصك بعدها <bdi class="mono">${Math.round(esBest)}%</bdi></p>
+      <ul class="facts">${why.map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul>
+      ${line.length > 1 ? `<p class="note">ما يتوقعه Stockfish بعدها: <bdi class="mv">${esc(numberedLine(fen, line))}</bdi></p>` : ""}
+      ${close.length ? `<p class="note">نقلات قريبة منها في القوة: ${close.map(mv).join("، ")}.</p>` : ""}`;
+    board.update({ arrows: [...(threat && (!safety || G.threatShown) ? [threatArrow(threat)] : []), { from: r.best.slice(0, 2), to: r.best.slice(2, 4), color: "good" }] });
   }
   function hintItems(f) {
     const mine = f[me]; const out = [];
@@ -366,19 +383,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     if (mine.king && mine.king.attackers >= 3) out.push(`عدد قطع الخصم التي تهاجم المربعات حول ملكك: ${mine.king.attackers}.`);
     return out;
   }
-  async function hintClaude(el, fen) {
-    el.innerHTML = coachHtml("المدرّب", "يفكّر...");
-    const prompt = `${COACH_RULES}\n${LEVEL_RULES[c.level] || ""}
-TASK: The student asks what to think about BEFORE choosing a move. In Arabic, 2-3 short sentences: what matters most in this position and which questions to ask. Do NOT name any move and do not name a destination square; point to ideas and areas of the board only.
-DATA:
-${factSheet({ fen, ply: G.sans.length, start: G.start, moves: G.sans, threat: threat ? threat.san : null })}
-CHAPTER FOCUS: ${c.title}: ${c.goal}`;
-    const strip = (t) => t.replace(SAN_RE, "…"); // a hint never shows a move, whatever the model writes
-    try {
-      const t = await askClaude(prompt, { tier: "quick", onText: (x) => { el.innerHTML = coachHtml("المدرّب", esc(strip(x.text))); } });
-      el.innerHTML = coachHtml("المدرّب", esc(strip(t)));
-    } catch (e) { claudeFail(el, e); }
-  }
+
 
   /* ---- Claude's explanations, grounded in the move's data ---- */
   async function explainMine(el, rec) {
@@ -469,6 +474,22 @@ CHAPTER FOCUS: ${c.title}`;
 
 /* What a move does, from the position alone: captures, checks, a new threat, a piece taken out of danger. */
 const YOUR_AR = { p: "بيدقك", n: "حصانك", b: "فيلك", r: "رخّك", q: "وزيرك", k: "ملكك" };
+/* Why Stockfish's best move is good, in words, from the move and the position only (no engine numbers, no Claude). */
+function bestMoveWhy(fen, san, uci, threat) {
+  const g = new Chess(fen); const m = g.move(san, { sloppy: true }); if (!m) return [];
+  // moveFacts describes a move already played; the hint describes one not played yet
+  const out = moveFacts(fen, san, "me").map((t) => t.replace(/^أسرت /, "تأسر ").replace("نقلتك تهاجم", "تهاجم").replace(/^أخرجت /, "تُخرج ")); const N = Facts.NAME_AR;
+  if (threat && threat.pv[0]) {
+    const tFrom = threat.pv[0].slice(0, 2), tTo = threat.pv[0].slice(2, 4);
+    if (m.to === tFrom) out.unshift(`تأسر القطعة التي كانت تهددك: الخصم كان يريد [${threat.san[0]}].`);
+    else if (m.from === tTo) out.unshift(`تُبعد ${N[m.piece]} المهدَّد: الخصم كان يريد [${threat.san[0]}].`);
+    else out.push(`انتبه: الخصم كان يهدد [${threat.san[0]}]، وهذه النقلة تعالج ذلك أو تصنع شيئًا أقوى منه.`);
+  }
+  if (m.flags.includes("k") || m.flags.includes("q")) out.push("تبييت: الملك في أمان والرخ يدخل اللعب.");
+  else if ((m.piece === "n" || m.piece === "b") && m.from[1] === (m.color === "w" ? "1" : "8")) out.push(`تطوّر ${N[m.piece]} الذي لم يعمل بعد.`);
+  if (m.piece === "p" && ["d4", "e4", "d5", "e5"].includes(m.to)) out.push("بيدق في المركز: يسيطر على مربعات مهمة ويفتح طرق قطعك.");
+  return out;
+}
 function moveFacts(fenBefore, san, who) {
   const g = new Chess(fenBefore); const mv = g.move(san, { sloppy: true }); if (!mv) return [];
   const side = mv.color, other = side === "w" ? "b" : "w"; const N = Facts.NAME_AR; const you = who === "me"; const out = [];

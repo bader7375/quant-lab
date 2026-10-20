@@ -160,6 +160,7 @@ The approved plan is `REFACTOR_PLAN.md`. User decisions: 17-chapter curriculum a
   - one game with the check step and a "change it", hidden threats (no "يهدد:" in the feed; the hint shows it), and a deliberate hanging move taken back that still counted as 1;
   - three 22-move games by a Stockfish-depth-11 student (0 hanging, 0 missed, 2 and 4 threats handled) that complete Chapter 2 and unlock Chapter 3;
   - learn, play and review at 390 px with nothing off-screen.
+- **Hint button (all chapters, 2026-10-20, by request)**: "تلميح: أفضل نقلة" now shows Stockfish's best move with a green arrow, your chances after it, why it is good, the line Stockfish expects and any moves close in strength. The explanation is built in the page from the move and the position (capture, check, the threat it answers, development, castling, centre, "the only good move"), so it makes no Claude call and costs no usage. The questions that help you find the move yourself sit under it, folded. Each hint is still counted.
 - Limitation: a piece is counted as "hanging" or a threat as "missed" only when the move costs 10+ points and Stockfish's reply actually wins that material, so a hang the opponent cannot exploit is not counted.
 
 ## Earlier state (exam-style version, kept as Practice)
