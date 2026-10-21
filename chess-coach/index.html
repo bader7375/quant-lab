@@ -294,6 +294,9 @@ h4 { margin: 0; font-size: .95rem; font-weight: 600; }
 .livecheck .checklist li.ok { background: color-mix(in srgb, var(--good) 18%, var(--surface)); color: var(--ink); }
 .livecheck .checklist li.fail { background: color-mix(in srgb, var(--blunder) 16%, var(--surface)); color: var(--ink); }
 .livecheck .checklist li.warn { background: color-mix(in srgb, var(--inacc) 22%, var(--surface)); color: var(--ink); } .livecheck .checklist li.warn::before { content: "! "; }
+.cands { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 0; } .cands .cand { display: inline-flex; gap: 2px; }
+.wboard > .bcheck { display: flex; gap: 6px; align-items: center; } .wboard > .bcheck input { width: 18px; height: 18px; flex: none; }
+.dpools { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
 .livecheck .bcheck { display: flex; gap: 6px; align-items: center; } .livecheck .bcheck input { width: 18px; height: 18px; flex: none; }
 .checklist.live li.warn { color: var(--mistake); } .checklist.live li.warn::marker { content: "!  "; }
 .checklist.live { gap: 2px; }
@@ -354,4 +357,5 @@ svg text.mkt.back { fill: var(--ink); }
 <script src="js/review.js"></script>
 <script src="js/learn.js"></script>
 <script src="js/warmup.js"></script>
+<script src="js/drill.js"></script>
 <script src="js/app.js"></script>

@@ -163,6 +163,37 @@ The approved plan is `REFACTOR_PLAN.md`. User decisions: 17-chapter curriculum a
 - **Hint button (all chapters, 2026-10-20, by request)**: "تلميح: أفضل نقلة" now shows Stockfish's best move with a green arrow, your chances after it, why it is good, the line Stockfish expects and any moves close in strength. The explanation is built in the page from the move and the position (capture, check, the threat it answers, development, castling, centre, "the only good move"), so it makes no Claude call and costs no usage. The questions that help you find the move yourself sit under it, folded. Each hint is still counted.
 - Limitation: a piece is counted as "hanging" or a threat as "missed" only when the move costs 10+ points and Stockfish's reply actually wins that material, so a hang the opponent cannot exploit is not counted.
 
+### Chapter 3 (done) and a new stage for every chapter: C. مواقف (positions), 2026-10-21
+The user asked for training beyond whole games and puzzles: endless positions on each chapter's theme, taken from real players' games, and played "like an engine", with every move thought through. Whole games stay as they were.
+- **Stage C, مواقف** (`js/drill.js`); the stages are now A Learn, B Watch, C Positions, D Play, E Review. Each position is played several moves deep against Stockfish's best defence. Every move goes through an engine's routine:
+  - tap up to 3 candidate moves on the board; nothing is played, they are drawn as arrows;
+  - choose one of them;
+  - Stockfish scores each candidate (with `searchmoves`, a new `Engine.analyse` option) next to its own top 3. The card says whether the best move was among your candidates and gives the reasons from `bestMoveWhy`.
+  - Mate positions are judged by mate distance: the shortest mate, a slower mate, a lost mate, or stalemate.
+  - A "fast" switch skips the candidate step.
+  - A position you get wrong comes back 10 minutes later at the earliest.
+  - Everything is computed in the page; there are no Claude calls (chat is still there if you ask).
+  - The stage counts as done after 10 positions.
+- **Position pools** (`tools/positions/build_pools.py`, from 51,200 Lichess games with server analysis): `data/positions/`
+  - ch01-opening: 3000 balanced positions at plies 8–16, players rated 1000–1800;
+  - ch02-safety: 2500 positions just before a real move that lost 250+ cp while a safe move existed; the card later shows the move actually played;
+  - ch02-punish: 2500 positions just after such a move;
+  - ch03-mates: 3000 forced mates in 1–4, from ply 20 on.
+  - Spot check against Stockfish 17.1 on 40 per pool: opening between −128 and +165 cp; safety at −50 or better for the mover; punish +99 to +598; mates found in 39/40.
+- **Chapter 3 (الكش مات الأساسي)**:
+  - Learn: six FEN slides: back-rank mate, ladder mate, the KQK box (Qc6, a knight's move away), stalemate (Qc7 stalemates, Qb7#), KRK cutting off (Ra7) and the final opposition mate. `verify_lesson.mjs` now takes `fen` slides, a `stalemate` claim and mate-distance acceptance (at most one move slower). PASS at depth 26; depth-dependent mate counts were removed from the texts.
+  - Watch: KQK and KRK, Stockfish against the longest defence, narrated; built with `verify` Qb3 = stalemate.
+  - Positions: random KQK and KRK (generated in the page, Stockfish mate distance 3–8 and 3–15), plus the real-game mates.
+  - Rule `mates`: KQK in 10 moves or fewer and KRK in 20 or fewer, twice each, no stalemate, from the Positions stage.
+- **Opening a chapter early**: a locked chapter has a "افتح هذا الفصل الآن" button (`chState(n).unlocked`); the previous chapter stays incomplete in the data.
+- **Tests** (headless, no page errors):
+  - the opening drill with candidates (4/4 moves, best among candidates 4/4);
+  - the safety drill in fast mode, showing the real game's move;
+  - two KQK and two KRK solved; the rule went 1/4 to 4/4 and opened Chapter 4;
+  - a real-game mate;
+  - the Chapter 3 lesson and both demos;
+  - all at 390 px with nothing off-screen.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

@@ -6,8 +6,9 @@ const J = { state: null, games: [] };
 const STAGES = [
   { k: "learn", ar: "تعلّم", letter: "A", what: "درس قصير على رقعة تفاعلية، وفي آخره قائمة «بماذا أفكر»." },
   { k: "watch", ar: "شاهد", letter: "B", what: "ألعب مباراة كاملة وأشرح كل نقلة. توقف متى شئت، واسأل، وجرّب «ماذا لو؟»." },
-  { k: "play", ar: "العب", letter: "C", what: "تلعب مباراة كاملة وأنا بجانبك أعلّق على كل نقلة." },
-  { k: "review", ar: "راجع", letter: "D", what: "بعد المباراة: اللحظات الحاسمة، ما أحسنت فيه، ما تعمل عليه، ودرس واحد." },
+  { k: "drill", ar: "مواقف", letter: "C", what: "مواقف بلا نهاية على موضوع الفصل، أغلبها من مباريات حقيقية. تلعبها كالمحرك: مرشحات، ثم اختيار، ثم مقارنة بـ Stockfish." },
+  { k: "play", ar: "العب", letter: "D", what: "تلعب مباراة كاملة وأنا بجانبك أعلّق على كل نقلة." },
+  { k: "review", ar: "راجع", letter: "E", what: "بعد المباراة: اللحظات الحاسمة، ما أحسنت فيه، ما تعمل عليه، ودرس واحد." },
 ];
 const pad2 = (n) => String(n).padStart(2, "0");
 const J0 = () => ({ v: 1, created: now(), ch: {}, settings: { commentary: "every", odds: "human", oppRating: 1100 } });
@@ -28,6 +29,7 @@ async function journeyInit() {
 const chapter = (n) => CUR.chapters.find((c) => c.n === n);
 function chapterStatus(n) {
   const s = J.state.ch[n]; if (s && s.completedAt) return "done";
+  if (s && s.unlocked) return "open"; // opened early by the student's choice
   if (n === 1 || (J.state.ch[n - 1] && J.state.ch[n - 1].completedAt)) return "open";
   return "locked";
 }
@@ -37,6 +39,7 @@ function stageReady(c, k) {
   const ct = content(c);
   if (k === "learn") return !!ct.learn;
   if (k === "watch") return !!(ct.watch && ct.watch.length);
+  if (k === "drill") return !!(ct.drill && ct.drill.pools.length);
   if (k === "play") return !!ct.play;
   if (k === "review") return !!ct.play;
   return false;
@@ -45,6 +48,7 @@ function stageDone(n, k) {
   const s = chState(n);
   if (k === "learn") return !!s.learn.done;
   if (k === "watch") return !!s.watch.done;
+  if (k === "drill") return ((s.drill && s.drill.count) || 0) >= 10;
   if (k === "play") return chapterGames(n).length > 0;
   if (k === "review") return !!s.review.count;
   return false;
@@ -73,6 +77,11 @@ function ruleProgress(c) {
     const last = judged.slice(-r.window); const ok = last.filter((g) => g.metrics.openingScore >= 4 && !g.metrics.openingBlunder).length;
     return { met: last.length >= r.window && ok >= r.need, have: ok, need: r.need, unit: "مباريات مؤهلة من آخر " + r.window };
   }
+  if (r.kind === "mates") { // 2 basic mates of each kind from random positions, within the move limit, no stalemate
+    const ms = (chState(c.n).drill || { mates: [] }).mates || [];
+    const q = Math.min(2, ms.filter((x) => x.kind === "kqk" && x.ok && x.moves <= 10).length), rk = Math.min(2, ms.filter((x) => x.kind === "krk" && x.ok && x.moves <= 20).length);
+    return { met: q + rk >= 4, have: q + rk, need: 4, unit: `كش ناجح (وزير ${q}/2، رخ ${rk}/2)` };
+  }
   if (r.kind === "safety") {
     // judged after 15 of your moves; a shorter game counts only when it already broke a limit (it can fail, never pass).
     // An unfinished game you ended early never counts for you, but one that broke a limit still breaks the streak.
@@ -88,6 +97,7 @@ function ruleProgress(c) {
 const ICON = {
   lock: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="5" y="10" width="14" height="10" rx="2" fill="currentColor"/></svg>`,
   check: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  drill: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 12h16M12 4v16" stroke="currentColor" stroke-width="1.4"/><rect x="4" y="4" width="8" height="8" fill="currentColor" opacity=".35"/><rect x="12" y="12" width="8" height="8" fill="currentColor" opacity=".35"/></svg>`,
   learn: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.6 12 6c2.5-1.4 5.5-1.5 8-.5V19c-2.5-1-5.5-.9-8 .5-2.5-1.4-5.5-1.5-8-.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 6v13.5" stroke="currentColor" stroke-width="1.8"/></svg>`,
   watch: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10.5 8.5v5l4-2.5z" fill="currentColor"/><path d="M8 20h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`,
   play: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 20h7M10 20l.8-4.5M14.2 15.5L15 20M8.5 15.5h7c0-2-1.5-3-1.5-5 1.2-.6 2-1.8 2-3.2A3.7 3.7 0 0 0 12 3.6a3.7 3.7 0 0 0-4 3.7c0 1.4.8 2.6 2 3.2 0 2-1.5 3-1.5 5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>`,
@@ -159,19 +169,20 @@ function renderChapter(n) {
     <div class="panel chead">
       <div><span class="eyebrow">الفصل ${n} · ${esc(CUR.parts.find((p) => p.n === c.part).title)}</span><h2>${esc(c.title)}</h2><p class="note" dir="ltr" style="text-align:right">${esc(c.en)}</p></div>
       <p class="lead">${esc(c.goal)}</p>
-      ${st === "locked" ? `<div class="callout">هذا الفصل يُفتح عندما يكتمل الفصل ${n - 1}. يمكنك قراءة ما فيه الآن.</div>` : ""}
+      ${st === "locked" ? `<div class="callout">هذا الفصل يُفتح عندما يكتمل الفصل ${n - 1}. يمكنك قراءة ما فيه الآن، أو فتحه الآن باختيارك (الفصل ${n - 1} يبقى غير مكتمل في بياناتك).<div class="row"><button class="btn" id="ch-unlock">افتح هذا الفصل الآن</button></div></div>` : ""}
     </div>
     <div class="cols">
       <div class="panel"><h3>ما الذي ستتعلمه</h3><ul class="topics">${c.topics.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>${n > 1 ? `<p class="note">المتطلب السابق: الفصل ${n - 1} (${esc(chapter(n - 1).title)}).</p>` : `<p class="note">لا يحتاج متطلبًا سابقًا.</p>`}</div>
       <div class="panel"><h3>متى يكتمل الفصل؟</h3><p>${esc(c.rule.text)}</p>
         ${prog.pending ? `<p class="note">يُحسب من مبارياتك المعلَّق عليها في هذا الفصل عندما تصبح جاهزة.</p>` : `<div class="progress"><i style="width:${pct}%"></i></div><p class="note"><span class="mono">${prog.have} / ${prog.need}</span> ${esc(prog.unit)}</p>`}
-        <p class="note">الحكم من بيانات مبارياتك، لا من اختبار.</p>
+        <p class="note">${c.rule.kind === "mates" ? "الحكم من نتائجك في المواقف العشوائية (مرحلة المواقف)، لا من اختبار." : "الحكم من بيانات مبارياتك، لا من اختبار."}</p>
         ${s.completedAt ? `<div class="callout good">اكتمل في ${new Date(s.completedAt).toISOString().slice(0, 10)}.</div>` : ""}</div>
     </div>
     <div class="stages">${stageCards}</div>
     ${s.learn && s.learn.checklist ? `<div class="panel"><h3>بماذا أفكر (من الدرس)</h3><ul class="checklist">${s.learn.checklist.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
     <div id="stage-box"></div>`;
   $("#ch-back", el).onclick = () => go("journey");
+  const ul = $("#ch-unlock", el); if (ul) ul.onclick = () => { chState(n).unlocked = now(); saveJourney(); renderChapter(n); };
   for (const b of $$("[data-stage]", el)) b.onclick = () => openStage(n, b.dataset.stage);
 }
 function openStage(n, k) {

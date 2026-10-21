@@ -101,7 +101,7 @@ const Engine = {
   },
   /* Result: {best, cp (White's view), wdl ([w,d,l] per mille, White's view), lines:[{pv, cpWhite, wdlWhite, depth}], terminal}.
      skill < 20 weakens the move choice. low: a background job that a foreground request may interrupt. signal: abort -> "stop". */
-  analyse(fen, { movetime = 0, depth = 0, nodes = 0, multipv = 1, skill = 20, low = false, signal = null } = {}) {
+  analyse(fen, { movetime = 0, depth = 0, nodes = 0, multipv = 1, skill = 20, low = false, signal = null, searchmoves = null } = {}) {
     const job = () => new Promise((res) => {
       const g = new Chess(fen);
       if (g.game_over()) {
@@ -127,7 +127,7 @@ const Engine = {
       this.w.postMessage("setoption name Skill Level value " + skill);
       this.w.postMessage("setoption name MultiPV value " + multipv);
       this.w.postMessage("position fen " + fen);
-      let go = "go"; if (depth) go += " depth " + depth; if (movetime) go += " movetime " + movetime; if (nodes) go += " nodes " + nodes;
+      let go = "go"; if (depth) go += " depth " + depth; if (movetime) go += " movetime " + movetime; if (nodes) go += " nodes " + nodes; if (searchmoves && searchmoves.length) go += " searchmoves " + searchmoves.join(" ");
       this.w.postMessage(go);
     });
     if (!low && this.current && this.current.low && this.w) this.w.postMessage("stop"); // a foreground request cuts a background search short

@@ -24,7 +24,7 @@ function LessonPlayer(root, L, n) {
   $("#l-back", root).onclick = () => go("chapter", n);
   $("#l-prev", root).onclick = () => show(i - 1);
   $("#l-next", root).onclick = () => show(i + 1);
-  const fenOf = (s) => { const g = new Chess(); for (const m of s.moves) g.move(m); return g.fen(); };
+  const fenOf = (s) => { const g = new Chess(s.fen || START_FEN); for (const m of s.moves) g.move(m); return g.fen(); }; // a slide starts from the initial position or its own fen
   function show(k) {
     i = Math.max(0, Math.min(S.length, k)); tries = 0;
     $("#l-prog", root).textContent = i < S.length ? `الشريحة ${i + 1} من ${S.length}` : "الخلاصة";
@@ -33,7 +33,7 @@ function LessonPlayer(root, L, n) {
     if (i === S.length) return summary();
     const s = S[i]; const fen = fenOf(s); const g = new Chess(fen); const stm = g.turn();
     $("#l-turn", root).innerHTML = `<i class="${stm}"></i>الدور ${stm === "w" ? "للأبيض" : "للأسود"}`;
-    const last = s.moves.length ? (() => { const h = new Chess(); let mv; for (const m of s.moves) mv = h.move(m); return mv.from + mv.to; })() : null;
+    const last = s.moves.length ? (() => { const h = new Chess(s.fen || START_FEN); let mv; for (const m of s.moves) mv = h.move(m); return mv.from + mv.to; })() : null;
     board.update({ fen, orient: stm, last, marks: s.marks || {}, arrows: s.arrows || [], interactive: !!s.task && !solved.has(i), onMove: (m) => tryMove(s, fen, m) });
     card.innerHTML = `<h3>${esc(s.title)}</h3><p>${esc(s.text)}</p>${s.task ? `<div class="callout"><b>مهمة:</b> ${esc(s.task.prompt)}</div><div id="l-fb"></div>` : ""}`;
     if (s.task && solved.has(i)) $("#l-fb", card).innerHTML = `<div class="callout good">${esc(s.task.success)}</div>`;
@@ -67,6 +67,6 @@ function LessonPlayer(root, L, n) {
       <div class="row"><button class="btn" id="l-done">أنهيت الدرس: احفظ القائمة</button></div>`;
     $("#l-done", card).onclick = () => { const st = chState(n); st.learn.done = true; st.learn.checklist = L.checklist; st.learn.at = now(); saveJourney(); go("chapter", n); };
   }
-  Chat($("#l-chat", root), { level: c.level, chips: ["لماذا هذه القاعدة مهمة؟", "ما الخطأ الشائع هنا؟"], getContext: () => { const s = S[Math.min(i, S.length - 1)]; return { fen: fenOf(s), ply: s.moves.length, start: START_FEN, moves: s.moves, extra: `LESSON SLIDE: ${s.title}. ${s.text}` }; } });
+  Chat($("#l-chat", root), { level: c.level, chips: ["لماذا هذه القاعدة مهمة؟", "ما الخطأ الشائع هنا؟"], getContext: () => { const s = S[Math.min(i, S.length - 1)]; return { fen: fenOf(s), ply: s.fen ? 60 : s.moves.length, start: s.fen || START_FEN, moves: s.moves, extra: `LESSON SLIDE: ${s.title}. ${s.text}` }; } });
   show(0);
 }
