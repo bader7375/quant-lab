@@ -232,6 +232,29 @@ The user asked for advice with every training: the best way to do it and the fas
 - It also gives your time against your own average: per technique the last 10 answers; per pool a running average per move. When you are slower, it gives the shortcut.
 - Tests: headless runs of the technique, vision and Positions drills show the method panels and advice, with no page errors and nothing off-screen at 390 px.
 
+### Chapter 4 (done): التكتيك كأفكار, 2026-10-23
+- **Motif tags** (`js/techniques.js`): fork (and knight fork), pin (setting one up, or attacking a pinned piece), skewer, discovered attack and removing the defender, computed statically for a move. Stockfish's choice of that move is what makes it a working tactic. Pins and skewers ignore a pawn in front, and a skewer needs a winnable piece behind.
+- **Pool** `data/positions/ch04-tactics.json` (`tools/positions/build_tactics.py`, then `tag_pools.mjs`):
+  - 7000 positions right after a real opponent's mistake or blunder (the mover gains 250+ cp), tagged at depth 13;
+  - 2472 kept whose best move carries a motif: fork 1446 (knight fork 445), discovered 517, pin 465, removal 307, skewer 130;
+  - every other pool was re-tagged with the motifs too.
+- **Learn**: six FEN slides, verified (PASS at depth 20, which caught a missing recapture pawn and an unbalanced position):
+  - the knight fork Nc7+;
+  - the queen double attack Qd3+;
+  - attacking a pinned knight with a pawn (d5, not Rxe6+);
+  - the skewer Bg2+;
+  - the discovered attack Nd4+;
+  - removing the defender Bxc6.
+- **Watch**: two coach-vs-Maia games, found by scanning earlier generated games for coach moves that carry motifs:
+  - Bg4's pin backfires (Bxf7+, then Ng5+ uncovers the queen on g4), then Ne6 and dxe5 forks;
+  - as Black: Bb4 pins c3, Qa5 adds a second attacker, then Bxc3+ and the Qxc3+ fork, and finally the e5 pawn fork.
+- **Techniques**: fork, pin, skewer, discovered attack, removing the defender, plus vision of the opponent's unprotected pieces, each with best and fastest ways. **Positions**: the tactics pool, 3 moves each.
+- **Rule `tactics`**: chances are the opponent's errors that gave you 10+ points in Chapter 4 games, and a chance is used when you kept it. The rule needs 5 or more chances, 60% or more used, and the last game within the safety limits.
+- Tests (headless, no page errors):
+  - rule logic on synthetic games: under 5 chances; 4 of 6 met; unsafe last game not met;
+  - lesson, both demos, the Positions drill, three technique drills and the vision task;
+  - 390 px with nothing off-screen.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

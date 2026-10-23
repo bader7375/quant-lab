@@ -38,7 +38,59 @@
     if (lone && m.piece === "q" && ek && knightJump(m.to, ek) && !g.in_stalemate()) t.push("qknight");
     if (lone && m.piece === "r" && ek && !/[+#]/.test(m.san)) { const [x, y] = kd(m.to, ek); if ((x === 1 || y === 1) && Math.max(x, y) >= 2) t.push("rcut"); }
     if (g.in_stalemate()) t.push("stalemate");
+    t.push(...motifs(G0, G1, m, me, opp));
     return t;
+  }
+
+  /* Tactical motifs of a move: fork, pin, skewer, discovered attack, removing the defender. Static (no engine): the
+     tag says what the move sets up; whether it works is Stockfish's best move choosing it. */
+  const V = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 };
+  const F = "abcdefgh"; const at = (f, r) => (f >= 0 && f < 8 && r >= 0 && r < 8 ? F[f] + (r + 1) : null);
+  const xy = (sq) => [F.indexOf(sq[0]), +sq[1] - 1];
+  const RAYS = { b: [[1, 1], [1, -1], [-1, 1], [-1, -1]], r: [[1, 0], [-1, 0], [0, 1], [0, -1]] }; RAYS.q = RAYS.b.concat(RAYS.r);
+  function lineTargets(G, sq) { // along each ray of the slider on sq: the first and second pieces met
+    const p = G[sq]; const out = []; if (!RAYS[p.type]) return out;
+    for (const [dx, dy] of RAYS[p.type]) {
+      let [f, r] = xy(sq); const hit = [];
+      for (;;) { f += dx; r += dy; const s = at(f, r); if (!s) break; if (G[s]) { hit.push(s); if (hit.length === 2) break; } }
+      out.push(hit);
+    }
+    return out;
+  }
+  function between(a, b, c) { // is c strictly between a and b on a straight line or diagonal
+    const [ax, ay] = xy(a), [bx, by] = xy(b), [cx, cy] = xy(c); const dx = Math.sign(bx - ax), dy = Math.sign(by - ay);
+    if (!(ax === bx || ay === by || Math.abs(bx - ax) === Math.abs(by - ay))) return false;
+    let x = ax + dx, y = ay + dy; while (x !== bx || y !== by) { if (x === cx && y === cy) return true; x += dx; y += dy; } return false;
+  }
+  function motifs(G0, G1, m, me, opp) {
+    const t = []; const mover = G1[m.to];
+    // fork: the moved piece attacks two targets (the king, a more valuable piece, or a piece it can win)
+    const targets = Object.keys(G1).filter((s) => G1[s].color === opp && Facts.attackers(G1, s, me).some((a) => a.sq === m.to)
+      && (G1[s].type === "k" || V[G1[s].type] > V[mover.type] || Facts.see(G1, s, me) > 0));
+    if (targets.length >= 2) { t.push("fork"); if (mover.type === "n") t.push("knightfork"); }
+    // pin and skewer: the moved slider sees two enemy pieces on one line
+    for (const [a, b] of lineTargets(G1, m.to)) {
+      if (!a || !b || G1[a].color !== opp || G1[b].color !== opp) continue;
+      if (G1[a].type === "p") continue; // a pawn in front is not worth a pin
+      if ((G1[b].type === "k" || G1[b].type === "q" || V[G1[b].type] > V[G1[a].type]) && G1[a].type !== "k" && G1[b].type !== "p") t.push("pin");
+      else if ((G1[a].type === "k" || G1[a].type === "q") && G1[b].type !== "p" && V[G1[a].type] > V[G1[b].type] && (G1[a].type === "k" || Facts.see(G1, b, me) > 0 || !Facts.attackers(G1, b, opp).length)) t.push("skewer");
+    }
+    // exploiting a pin: the moved piece attacks a piece that cannot move because your slider pins it to its king
+    for (const x of targets.length ? targets : Object.keys(G1).filter((q) => G1[q].color === opp && Facts.attackers(G1, q, me).some((a) => a.sq === m.to))) {
+      if (G1[x].type === "k") continue;
+      if (Object.entries(G1).some(([s, p]) => p.color === me && s !== m.to && RAYS[p.type] && lineTargets(G1, s).some(([a, b]) => a === x && b && G1[b].type === "k" && G1[b].color === opp))) { t.push("pin"); break; }
+    }
+    // discovered attack: another of your sliders now reaches the king or a piece it can win, through the square just left
+    for (const [s, p] of Object.entries(G1)) {
+      if (p.color !== me || s === m.to || !RAYS[p.type]) continue;
+      for (const [a] of lineTargets(G1, s)) if (a && G1[a].color === opp && between(s, a, m.from) && (G1[a].type === "k" || Facts.see(G1, a, me) > 0 || V[G1[a].type] > V[p.type])) { t.push("discovered"); break; }
+    }
+    // removing the defender: you capture a piece that was the only defender of another piece you attack
+    if (m.captured) for (const [s, p] of Object.entries(G0)) {
+      if (p.color !== opp || s === m.to || p.type === "k") continue;
+      const defs = Facts.attackers(G0, s, opp); if (defs.length === 1 && defs[0].sq === m.to && Facts.attackers(G0, s, me).length) { t.push("removal"); break; }
+    }
+    return [...new Set(t)];
   }
   const T = { tagsOf, knightJump };
   if (isNode) module.exports = T; else root.Tech = T;

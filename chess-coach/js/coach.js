@@ -179,6 +179,10 @@ function visionAdvice(kind, fen, miss, extra) {
     if (byKnight) out.push("أغلب ما فاتك هجوم بالحصان: ابدأ بحصاني الخصم قبل أي قطعة أخرى.");
     for (const s of extra.slice(0, 2)) out.push(`${nm(s)} ليس مهاجَمًا الآن: تأكد أن خط الهجوم ليس مسدودًا بقطعة.`);
   }
+  if (kind === "targets") {
+    for (const s of miss.slice(0, 3)) out.push(`${nm(s)} لا يحميه شيء${G[s].type === "n" ? "، والحصان نادرًا ما يحميه أحد" : ""}: هدف للشوكة أو الهجوم المزدوج.`);
+    for (const s of extra.slice(0, 3)) { const d = Facts.attackers(G, s, opp)[0]; if (d) out.push(`${nm(s)} محمي بـ ${N[d.type]} على ${d.sq} (${how(d.type)}).`); }
+  }
   if (kind === "kingbox") {
     const wg = new Chess(fen.replace(" w ", " b ")); const GB = Facts.grid(wg);
     for (const s of miss.slice(0, 3)) out.push(G[s] ? `الملك يستطيع أخذ ${nm(s)} لأنه بلا حماية: القطعة بجانب الملك تحتاج حارسًا.` : `${s} حر: لا قطعة لك تهاجمه. افحص كل مربع من الثمانية بالترتيب.`);
@@ -278,7 +282,7 @@ function TechniqueSession(root, n, T) {
         const n = asBlack.moves().length; if (n < 1 || n > 5) continue; return f;
       }
     }
-    const items = await drillPool(kind === "queen" ? "ch01-opening.json" : "ch02-safety.json");
+    const items = await drillPool(kind === "queen" ? "ch01-opening.json" : kind === "targets" ? "ch04-tactics.json" : "ch02-safety.json");
     for (let i = 0; i < 200; i++) { const it = items[Math.floor(Math.random() * items.length)]; const g = new Chess(it.fen); const me = g.turn(); const G = Facts.grid(g);
       if (kind === "queen" && !Object.values(G).some((p) => p.type === "q" && p.color === me)) continue;
       if (i < 150 && !visionTruth(kind, it.fen).size) continue; // mostly positions with something to find
@@ -289,6 +293,7 @@ function TechniqueSession(root, n, T) {
     const g = new Chess(f); const me = g.turn(), opp = me === "w" ? "b" : "w"; const G = Facts.grid(g); const set = new Set();
     if (kind === "queen") { const q = Object.keys(G).find((s) => G[s].type === "q" && G[s].color === me); for (const [s, p] of Object.entries(G)) if (p.color === opp && Facts.attackers(G, s, me).some((a) => a.sq === q)) set.add(s); }
     if (kind === "loose") for (const [s, p] of Object.entries(G)) { if (p.color === me && !"kp".includes(p.type) && !Facts.attackers(G, s, me).length) set.add(s); }
+    if (kind === "targets") for (const [s, p] of Object.entries(G)) { if (p.color === opp && !"kp".includes(p.type) && !Facts.attackers(G, s, opp).length) set.add(s); }
     if (kind === "attacked") for (const [s, p] of Object.entries(G)) { if (p.color === me && p.type !== "k" && Facts.attackers(G, s, opp).length) set.add(s); }
     if (kind === "kingbox") { const bk = new Chess(f.replace(" w ", " b ")); for (const m of bk.moves({ verbose: true })) set.add(m.to); }
     return set;

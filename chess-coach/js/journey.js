@@ -82,6 +82,12 @@ function ruleProgress(c) {
     const q = Math.min(2, ms.filter((x) => x.kind === "kqk" && x.ok && x.moves <= 10).length), rk = Math.min(2, ms.filter((x) => x.kind === "krk" && x.ok && x.moves <= 20).length);
     return { met: q + rk >= 4, have: q + rk, need: 4, unit: `كش ناجح (وزير ${q}/2، رخ ${rk}/2)` };
   }
+  if (r.kind === "tactics") { // tactical chances = opponent errors that gave you 10+ points; used = you kept them
+    const ms = games.map((g) => g.metrics || {}); const chances = ms.reduce((a, m) => a + (m.gifts || 0), 0), used = ms.reduce((a, m) => a + (m.punished || 0), 0);
+    const last = games[games.length - 1]; const safe = !!last && safetyOk(last.metrics);
+    const need = Math.max(3, Math.ceil(0.6 * Math.max(r.need, chances)));
+    return { met: chances >= r.need && used >= 0.6 * chances && safe, have: Math.min(used, need), need, unit: `فرصة استغليتها من ${chances}${chances < r.need ? ` (يلزم ${r.need} فرص على الأقل)` : ""}${last && !safe ? " · آخر مباراة تجاوزت حد الأمان" : ""}` };
+  }
   if (r.kind === "safety") {
     // judged after 15 of your moves; a shorter game counts only when it already broke a limit (it can fail, never pass).
     // An unfinished game you ended early never counts for you, but one that broke a limit still breaks the streak.
