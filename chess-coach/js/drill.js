@@ -46,7 +46,7 @@ async function randomBasicMate(kind) {
 
 function DrillSession(root, n, P) {
   const c = chapter(n); const set = J.state.settings; const ps = poolState(n, P.id); const mateGoal = P.goal === "mate";
-  let item = null, game = null, me = "w", own = 0, cands = [], base = null, basePromise = null, recs = [], startFen = null, busy = false, optimal = null, token = 0;
+  let tMove = 0; let item = null, game = null, me = "w", own = 0, cands = [], base = null, basePromise = null, recs = [], startFen = null, busy = false, optimal = null, token = 0;
   root.innerHTML = `
     <div class="whead"><button class="btn quiet" id="d-back">→ الفصل ${n}</button><div class="wtitle"><b>${esc(P.title)}</b><span class="note" id="d-prog"></span></div></div>
     <div class="watch">
@@ -86,14 +86,14 @@ function DrillSession(root, n, P) {
       $("#d-src", root).textContent = `من مباراة حقيقية على Lichess (متوسط تقييم اللاعبين ${item.r})، النقلة ${Math.floor(item.ply / 2) + 1}.${P.srcNote ? " " + P.srcNote : ""}`;
     }
     startFen = item.fen; game = new Chess(item.fen); me = game.turn(); prog();
-    card(`<p>${esc(P.task)}</p><p class="note">أنت ${me === "w" ? "بالأبيض" : "بالأسود"}. ${mateGoal ? "الهدف: كش مات بأقصر طريق، بلا stalemate." : `تلعب ${P.own} نقلات من هنا.`}</p>`, "hint");
+    card(`<p>${esc(P.task)}</p><p class="note">أنت ${me === "w" ? "بالأبيض" : "بالأسود"}. ${mateGoal ? "الهدف: كش مات بأقصر طريق، بلا stalemate." : `تلعب ${P.own} نقلات من هنا.`}</p>${methodHtml(P).replace("<details class=\"method\" open>", ps.done >= 3 ? "<details class=\"method\">" : "<details class=\"method\" open>")}`, "hint");
     myTurn(t);
   }
   function myTurn(t) {
     if (!alive(t)) return;
     const fen = game.fen(); base = null; cands = [];
     basePromise = Engine.analyse(fen, { depth: mateGoal ? 20 : 15, movetime: 1600, multipv: 3 }); basePromise.then((r) => { if (game.fen() === fen) base = r; }, () => {});
-    busy = false; drawCands();
+    busy = false; drawCands(); tMove = now();
     $("#d-turn", root).innerHTML = `<i class="${me}"></i>دورك`; $("#d-plan", root).innerHTML = planHtml(fen, item && item.ply != null ? item.ply + 2 * own : 40);
     board.update({ fen, orient: me, interactive: true, arrows: [], onMove: (m) => onCandidate(m, t) });
     setStatus(set.drillFast ? "العب نقلتك." : "سجّل مرشحاتك على الرقعة (حتى 3)، ثم اختر واحدة.");
@@ -126,7 +126,7 @@ function DrillSession(root, n, P) {
     if (!alive(t)) return;
     game.move(m.san); own++;
     const rec = rate(fen, m, b, score, myCands);
-    recs.push(rec); renderRec(cd, rec, fen, b, myCands, score);
+    rec.secs = Math.max(1, Math.round((now() - tMove) / 1000)); recs.push(rec); renderRec(cd, rec, fen, b, myCands, score);
     const over = finished(rec);
     if (over) return endItem(over, t);
     $("#d-turn", root).innerHTML = `<i class="${me === "w" ? "b" : "w"}"></i>دور الخصم`; setStatus("الخصم يرد (Stockfish، أفضل دفاع)...");
@@ -181,6 +181,19 @@ function DrillSession(root, n, P) {
     }
     return own >= P.own || noReply ? "end" : null;
   }
+  /* advice for this position: candidates, the big mistake, speed against your average for this pool */
+  function drillAdvice() {
+    const out = []; const avg = ps.secs || null; const mine = Math.round(recs.reduce((s, r) => s + (r.secs || 0), 0) / Math.max(1, recs.length));
+    const withC = recs.filter((r) => r.nc > 0); const missB = withC.filter((r) => !r.candBest);
+    if (set.drillFast) out.push("لعبت بلا مرشحات. الطريقة الأفضل: سجّل 2 أو 3 مرشحات قبل كل نقلة، وأولها دائمًا الكشات والأسر.");
+    else if (missB.length) out.push(`أفضل نقلة لم تكن بين مرشحاتك في ${missB.length} من ${withC.length}. ابدأ مرشحاتك بالنقلات القسرية (كش، أسر، تهديد)، ثم نقلة تحسّن أسوأ قطعة.`);
+    else if (withC.length) out.push("أفضل نقلة كانت دائمًا بين مرشحاتك: رؤيتك جيدة، ركّز الآن على الاختيار بينها (أيها يترك قطعًا بلا حماية؟).");
+    const worst = recs.slice().sort((a, b) => (b.drop || 0) - (a.drop || 0))[0];
+    if (worst && (mateGoal ? !worst.ok : (worst.drop || 0) >= 10)) out.push(`أكبر خطأ: [${worst.san}] (الأفضل [${worst.best}]). قبل نقلة كهذه طبّق الخطوة الأخيرة من «أفضل طريقة».`);
+    out.push(avg ? (mine > avg * 1.3 ? `متوسطك هنا ${mine} ثانية للنقلة، أبطأ من معدلك (${avg}). ${P.fast || ""}` : mine < avg * 0.8 ? `متوسطك ${mine} ثانية للنقلة، أسرع من معدلك (${avg}).` : `متوسطك ${mine} ثانية للنقلة (معدلك ${avg}).`) : `متوسطك ${mine} ثانية للنقلة.`);
+    ps.secs = avg ? Math.round(avg * 0.7 + mine * 0.3) : mine;
+    return `<div class="advice"><b>نصيحة لتتحسن</b><ul class="facts">${out.map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul></div>`;
+  }
   function endItem(why, t) {
     if (!alive(t)) return;
     busy = true; board.update({ interactive: false });
@@ -200,6 +213,7 @@ function DrillSession(root, n, P) {
     const cd = card(`<div class="fh"><b>${ok ? "أحسنت" : "انتهى الموقف"}</b></div><p>${esc(head)}</p>
       ${set.drillFast ? "" : `<p class="note">أفضل نقلة كانت بين مرشحاتك في ${candB} من ${recs.length}.</p>`}
       ${!ok && item.i != null ? `<p class="note">سيعود إليك هذا الموقف لاحقًا.</p>` : ""}
+      ${drillAdvice()}
       ${c.rule.kind === "mates" ? `<p class="note">شرط الفصل: <bdi class="mono">${prog2.have}/${prog2.need}</bdi> ${esc(prog2.unit)}.</p>` : ""}
       <div class="row"><button class="btn" data-a="next">الموقف التالي</button><button class="btn quiet" data-a="again">أعد هذا الموقف</button></div>`, "end");
     $('[data-a="next"]', cd).onclick = () => nextItem();

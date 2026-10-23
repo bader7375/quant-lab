@@ -136,11 +136,63 @@ async function techniquesPanel(el, n) {
   for (const b of $$("[data-tech]", el)) b.onclick = () => TechniqueSession($("#v-chapter"), n, list.find((t) => t.id === b.dataset.tech));
 }
 
+/* ---------- advice to get better (method, speed, what you personally missed) ---------- */
+const methodHtml = (T) => (T.best ? `<details class="method" open><summary><b>أفضل طريقة</b> (خطوة بخطوة)</summary><ol>${T.best.map((x) => `<li>${esc(x)}</li>`).join("")}</ol></details><p class="fastway"><b>أسرع طريقة:</b> ${esc(T.fast)}</p>` : "");
+const avgTime = (ts) => { const t = ts.times || []; return t.length ? Math.round(t.reduce((a, b) => a + b, 0) / t.length) : null; };
+function adviceHtml(tips, took, avg, ok, T) {
+  const speed = avg == null ? `استغرقت ${took} ثانية. هذا رقمك الأول، وسأقارن به المرات القادمة.`
+    : took <= avg * 0.8 ? `استغرقت ${took} ثانية، أسرع من معدلك (${avg}).${ok ? " ممتاز: الدقة مع السرعة." : " لكن السرعة بلا دقة لا تفيد: اتبع الخطوات بالترتيب."}`
+    : took >= avg * 1.3 ? `استغرقت ${took} ثانية، أبطأ من معدلك (${avg}). لتسرع: ${T.fast || "اتبع الخطوات بالترتيب نفسه كل مرة حتى تصبح عادة."}`
+    : `استغرقت ${took} ثانية، قريب من معدلك (${avg}).`;
+  return `<div class="advice"><b>نصيحة لتتحسن</b><ul class="facts">${tips.map((x) => `<li>${fmtNote(x)}</li>`).join("")}<li>${esc(speed)}</li></ul></div>`;
+}
+function moveAdvice(T, { ok, used, bestUsed, bestSan, risks }) {
+  const out = [];
+  if (ok && used) out.push(`طبّقت التقنية. ثبّتها: قبل كل نقلة في مباراتك اسأل السؤال الأول من «أفضل طريقة»: ${T.best ? T.best[0] : T.rule}`);
+  else if (ok) out.push(`نقلتك جيدة بقدر الأفضل، لكنها ليست التقنية. في التدريب اختر التقنية: ${T.rule}${bestUsed ? ` (هنا: [${bestSan}]).` : ""}`);
+  else {
+    if (bestUsed) out.push(`الحل كان التقنية نفسها: [${bestSan}]. ارجع إلى الخطوة الأولى في «أفضل طريقة» وطبّقها حرفيًا في الموقف التالي.`);
+    if (risks.some((r) => /بلا حماية|يكسبه/.test(r))) out.push("خطؤك ترك قطعة بلا حماية. قبل أن تلعب: انظر إلى المربع الذي تذهب إليه، ثم إلى القطع التي كانت قطعتك تحميها.");
+    if (T.best && T.best.length > 1) out.push(`الخطوة التي غالبًا تفوت: «${T.best[T.best.length - 1]}»`);
+  }
+  return out;
+}
+/* Vision: why you missed what you missed, and why the extra squares were wrong. */
+function visionAdvice(kind, fen, miss, extra) {
+  const g = new Chess(fen); const me = g.turn(), opp = me === "w" ? "b" : "w"; const G = Facts.grid(g); const N = Facts.NAME_AR; const out = [];
+  const nm = (s) => (G[s] ? `${N[G[s].type]} ${s}` : s);
+  const how = (t) => ({ p: "البيدق يحمي ويهاجم قطريًا للأمام فقط", n: "قفزة الحصان (شكل L) تفوت العين أكثر من غيرها", b: "الفيل على قطر", r: "الرخ على صف أو عمود", q: "الوزير على خط مستقيم أو قطر", k: "الملك يحمي المربعات الثمانية حوله" }[t]);
+  if (kind === "queen") {
+    const q = Object.keys(G).find((s) => G[s].type === "q" && G[s].color === me);
+    const diag = miss.filter((s) => s[0] !== q[0] && s[1] !== q[1]), straight = miss.filter((s) => s[0] === q[0] || s[1] === q[1]);
+    if (diag.length) out.push(`فاتك ما على الأقطار (${diag.map(nm).join("، ")}). الأقطار هي ما تفوّته العين أكثر: ابدأ بها في المرة القادمة.`);
+    if (straight.length) out.push(`فاتك ما على العمود أو الصف (${straight.map(nm).join("، ")}). مرّر عينك على الخط كاملًا حتى أول قطعة.`);
+    for (const s of extra.slice(0, 2)) out.push(G[s] && G[s].color === opp ? `${nm(s)} ليس على خط مفتوح من الوزير: قطعة أخرى تسد الطريق. توقف دائمًا عند أول قطعة.` : `${nm(s)} ليس قطعة للخصم.`);
+  }
+  if (kind === "loose") {
+    for (const s of miss.slice(0, 3)) out.push(`${nm(s)} لا يحميه شيء${(me === "w" ? +s[1] >= 4 : +s[1] <= 5) ? "، وهو متقدم: القطع المتقدمة غالبًا وحيدة" : ""}${G[s].type === "n" ? "، والحصان نادرًا ما يحميه أحد" : ""}.`);
+    for (const s of extra.slice(0, 3)) { const d = Facts.attackers(G, s, me)[0]; if (d) out.push(`${nm(s)} محمي: يحميه ${N[d.type]} على ${d.sq} (${how(d.type)}).`); }
+  }
+  if (kind === "attacked") {
+    for (const s of miss.slice(0, 3)) { const a = Facts.attackers(G, s, opp)[0]; if (a) out.push(`${nm(s)} يهاجمه ${N[a.type]} الخصم على ${a.sq}: ${how(a.type)}.`); }
+    const byKnight = miss.filter((s) => Facts.attackers(G, s, opp).some((a) => a.type === "n")).length;
+    if (byKnight) out.push("أغلب ما فاتك هجوم بالحصان: ابدأ بحصاني الخصم قبل أي قطعة أخرى.");
+    for (const s of extra.slice(0, 2)) out.push(`${nm(s)} ليس مهاجَمًا الآن: تأكد أن خط الهجوم ليس مسدودًا بقطعة.`);
+  }
+  if (kind === "kingbox") {
+    const wg = new Chess(fen.replace(" w ", " b ")); const GB = Facts.grid(wg);
+    for (const s of miss.slice(0, 3)) out.push(G[s] ? `الملك يستطيع أخذ ${nm(s)} لأنه بلا حماية: القطعة بجانب الملك تحتاج حارسًا.` : `${s} حر: لا قطعة لك تهاجمه. افحص كل مربع من الثمانية بالترتيب.`);
+    for (const s of extra.slice(0, 3)) { const a = Facts.attackers(GB, s, "w")[0]; out.push(a ? `${s} ليس متاحًا: يهاجمه ${N[a.type]} على ${a.sq} (${how(a.type)}).` : `${s} ليس متاحًا للملك.`); }
+  }
+  if (!miss.length && !extra.length) out.push("رأيت كل شيء. الخطوة التالية: افعلها أسرع في الموقف القادم، ثم افعلها في مبارياتك قبل كل نقلة.");
+  return out;
+}
+
 function TechniqueSession(root, n, T) {
   const ts = techState(T.id); let token = 0, fen = null, item = null, board, solved = false, picks = new Set(), truth = null;
   root.innerHTML = `
     <div class="whead"><button class="btn quiet" id="t-back">→ الفصل ${n}</button><div class="wtitle"><b>${esc(T.title)}</b><span class="note" id="t-prog"></span></div></div>
-    <div class="panel tlesson"><p><b>القاعدة:</b> ${esc(T.rule)}</p><p><b>لماذا:</b> ${esc(T.why)}</p><p><b>لا تفعل:</b> ${esc(T.dont)}</p><p><b>كيف تراها:</b> ${esc(T.see)}</p></div>
+    <div class="panel tlesson"><p><b>القاعدة:</b> ${esc(T.rule)}</p><p><b>لماذا:</b> ${esc(T.why)}</p><p><b>لا تفعل:</b> ${esc(T.dont)}</p><p><b>كيف تراها:</b> ${esc(T.see)}</p>${methodHtml(T)}</div>
     <div class="watch">
       <div class="wboard"><div class="boardcap"><span class="turn" id="t-turn"></span><span class="note" id="t-status"></span></div><div class="note" id="t-src"></div>
         <div class="board" id="t-board"></div><div class="row" id="t-ctl"></div></div>
@@ -151,7 +203,8 @@ function TechniqueSession(root, n, T) {
   const setStatus = (t) => { $("#t-status", root).textContent = t; };
   $("#t-back", root).onclick = () => { token++; go("chapter", n); };
   const prog = () => { const m = techMastery(ts); $("#t-prog", root).textContent = `${m.mastered ? "متقنة · " : ""}صحيحة ${m.ok} من آخر ${m.of || 0} · المجموع ${ts.n}`; };
-  const record = (ok) => { ts.n++; ts.last.push(ok ? 1 : 0); if (ts.last.length > 20) ts.last.shift(); saveJourney(); prog(); };
+  let t0 = 0; const secs = () => Math.max(1, Math.round((now() - t0) / 1000));
+  const record = (ok, s) => { ts.n++; ts.last.push(ok ? 1 : 0); if (ts.last.length > 20) ts.last.shift(); ts.times = (ts.times || []).concat(s).slice(-10); saveJourney(); prog(); };
 
   async function next() {
     const t = ++token; solved = false; picks = new Set(); truth = null; $("#t-x", root).innerHTML = ""; $("#t-ctl", root).innerHTML = "";
@@ -171,7 +224,7 @@ function TechniqueSession(root, n, T) {
     $("#t-card", root).innerHTML = `<p><b>${esc(T.prompt)}</b></p><p class="note">أنت ${me === "w" ? "بالأبيض" : "بالأسود"}.</p>`;
     if (T.kind === "vision") return visionTask(t, me);
     board.update({ fen, orient: me, last: null, interactive: true, onMove: (m) => answer(m, t) });
-    setStatus("فكّر، ثم العب نقلتك.");
+    setStatus("فكّر، ثم العب نقلتك."); t0 = now();
     const help = document.createElement("button"); help.className = "btn quiet"; help.textContent = "اشرح لي النقلات المتاحة (يُحسب مساعدة)";
     help.onclick = () => { help.remove(); explainTopMoves($("#t-x", root), fen, item.ply, { k: 6 }); ts.help = (ts.help || 0) + 1; }; $("#t-ctl", root).append(help);
   }
@@ -193,13 +246,15 @@ function TechniqueSession(root, n, T) {
       ok = (used && cl.drop <= 5) || cl.drop <= 1; // the technique within tolerance, or a move as good as the best
       verdict = `${CLASS_AR[cl.cls]}: فرصك ${Math.round(esB)}% مع الأفضل، و${Math.round(esA)}% بعد نقلتك.`;
     }
-    record(ok);
+    const took = secs(); const avg = avgTime(ts); record(ok, took);
     const bestSan = sanOf(fen, best.pv[0]);
+    const tips = moveAdvice(T, { ok, used, bestUsed: Tech.tagsOf(fen, best.pv[0]).includes(T.tag), bestSan, risks: !ok && mineL ? moveRisks(fen, m.san, []) : [] });
     const why = bestMoveWhy(fen, bestSan, best.pv[0], null).concat(Tech.tagsOf(fen, best.pv[0]).filter((x) => TAG_AR[x] && x !== "check").map((x) => TAG_AR[x]));
     $("#t-card", root).innerHTML = `<div class="callout ${ok ? "good" : "bad"}"><b>${ok ? "صحيح" : "ليس بعد"}: <bdi class="mv">${esc(moveLabel(fen, m.san))}</bdi></b> ${esc(verdict)}
       <p class="note">${used ? "استخدمت التقنية." : `لم تستخدم التقنية: ${esc(T.rule)}`}</p></div>
       ${m.uci !== best.pv[0] ? `<p>أفضل نقلة: <bdi class="mv">${esc(bestSan)}</bdi>.</p>${why.length ? `<ul class="facts">${[...new Set(why)].map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul>` : ""}` : ""}
       ${!ok && mineL ? `<p class="note warnline">${moveRisks(fen, m.san, pvToSan(fen, mineL.pv, 4).slice(1)).map(fmtNote).join(" ")}</p>` : ""}
+      ${adviceHtml(tips, took, avg, ok, T)}
       <p class="note">اضغط أي قطعة لك على الرقعة لترى كل نقلاتها مع شرح كل واحدة.</p>
       <div class="row"><button class="btn" data-a="next">الموقف التالي</button><button class="btn quiet" data-a="all">اشرح كل النقلات المتاحة</button></div>`;
     $('[data-a="next"]', root).onclick = () => next();
@@ -242,16 +297,16 @@ function TechniqueSession(root, n, T) {
     truth = visionTruth(T.vision, fen); const orient = me;
     const draw = () => board.update({ marks: Object.fromEntries([...picks].map((s) => [s, "focus"])) });
     board.update({ fen, orient, last: null, interactive: false, marks: {}, onSquare: (s) => { if (solved) return; picks.has(s) ? picks.delete(s) : picks.add(s); draw(); } });
-    setStatus(T.vision === "kingbox" ? "الملك الأسود: أين يستطيع الذهاب؟" : "اضغط المربعات، ثم «تحقّق».");
+    setStatus(T.vision === "kingbox" ? "الملك الأسود: أين يستطيع الذهاب؟" : "اضغط المربعات، ثم «تحقّق»."); t0 = now();
     const btn = document.createElement("button"); btn.className = "btn"; btn.textContent = picks.size ? "تحقّق" : "تحقّق (أو لا شيء)";
     btn.onclick = () => {
       if (solved) return; solved = true; btn.remove();
-      const miss = [...truth].filter((s) => !picks.has(s)), extra = [...picks].filter((s) => !truth.has(s)); const ok = !miss.length && !extra.length; record(ok);
+      const miss = [...truth].filter((s) => !picks.has(s)), extra = [...picks].filter((s) => !truth.has(s)); const ok = !miss.length && !extra.length; const took = secs(); const avg = avgTime(ts); record(ok, took);
       const marks = {}; for (const s of truth) marks[s] = "mgood"; for (const s of extra) marks[s] = "mbad"; board.update({ marks, onSquare: null });
       const G = Facts.grid(new Chess(fen)); const nm = (s) => (G[s] ? `${Facts.NAME_AR[G[s].type]} ${s}` : s);
       $("#t-card", root).innerHTML = `<div class="callout ${ok ? "good" : "bad"}"><b>${ok ? "صحيح تمامًا" : "ليس تمامًا"}</b>
         <p>الصحيح: ${truth.size ? [...truth].map(nm).join("، ") : "لا شيء"}.</p>${miss.length ? `<p>فاتك: ${miss.map(nm).join("، ")}.</p>` : ""}${extra.length ? `<p>زيادة: ${extra.map(nm).join("، ")}.</p>` : ""}</div>
-        <p class="note">${esc(T.see)}</p><div class="row"><button class="btn" data-a="next">الموقف التالي</button></div>`;
+        ${adviceHtml(visionAdvice(T.vision, fen, miss, extra), took, avg, ok, T)}<div class="row"><button class="btn" data-a="next">الموقف التالي</button></div>`;
       $('[data-a="next"]', root).onclick = () => next();
       setStatus(ok ? "أحسنت." : "انظر إلى المربعات الخضراء.");
     };

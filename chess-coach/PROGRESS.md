@@ -218,6 +218,20 @@ The user asked to be trained, not only to play. They wanted techniques to master
   - Play with the plan and explorer;
   - 390 px with nothing off-screen.
 
+### Advice to get better, with every training (2026-10-23)
+The user asked for advice with every training: the best way to do it and the fastest way (for example, how to count unprotected pieces).
+- Every technique and every Positions pool now has **أفضل طريقة** (a numbered method, step by step) and **أسرع طريقة** (the shortcut). Examples: for unprotected pieces, start with your advanced pieces and knights; for what the opponent attacks, start with their knights; for queen reach, start with the diagonals; for KQK, move the queen in the same direction the king moved.
+- After every answer there is a **نصيحة لتتحسن** box (`visionAdvice`, `moveAdvice`, `drillAdvice` in `js/coach.js` and `js/drill.js`). It explains what you personally missed and why:
+  - a diagonal versus a straight line;
+  - the defender you overlooked and how it defends (a pawn diagonally forward, a knight's jump);
+  - the attacker of each piece you missed;
+  - free squares versus attacked squares around the king;
+  - a correct move that is not the technique;
+  - a loose piece left behind;
+  - how often the best move was among your candidates.
+- It also gives your time against your own average: per technique the last 10 answers; per pool a running average per move. When you are slower, it gives the shortcut.
+- Tests: headless runs of the technique, vision and Positions drills show the method panels and advice, with no page errors and nothing off-screen at 390 px.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

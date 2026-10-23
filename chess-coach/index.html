@@ -299,7 +299,8 @@ h4 { margin: 0; font-size: .95rem; font-weight: 600; }
 .sq.mgood { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--good) 34%, transparent); } .sq.mok { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--inacc) 34%, transparent); } .sq.mbad { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--blunder) 30%, transparent); }
 .techs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; } .tech { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; align-content: start; } .tech.done { border-color: var(--good); }
 .xmoves { padding-inline-start: 18px; display: grid; gap: 8px; } .xmoves li { border-bottom: 1px solid var(--line); padding-bottom: 6px; } .xmoves .fh { flex-wrap: wrap; }
-.tlesson p { margin: 4px 0; } .warnline { color: var(--mistake); }
+.tlesson p { margin: 4px 0; } .method ol { margin: 4px 0; padding-inline-start: 20px; } .method summary { cursor: pointer; } .fastway { margin: 4px 0; }
+.advice { border: 1px solid var(--line); border-inline-start: 4px solid var(--accent); border-radius: 8px; padding: 6px 10px; margin: 8px 0; background: var(--surface); } .warnline { color: var(--mistake); }
 .dpools { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
 .livecheck .bcheck { display: flex; gap: 6px; align-items: center; } .livecheck .bcheck input { width: 18px; height: 18px; flex: none; }
 .checklist.live li.warn { color: var(--mistake); } .checklist.live li.warn::marker { content: "!  "; }
