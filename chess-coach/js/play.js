@@ -96,8 +96,9 @@ function PlayGame(root, { n, color, rating, resume = null }) {
         <div class="boardcap"><span class="turn" id="p-turn"></span><span class="note" id="p-status"></span></div>
         <div class="openname note" id="p-open"></div>
         <div class="board" id="p-board"></div>
-        <div class="wctrl"><button class="ctl" id="p-hint">تلميح: أفضل نقلة</button><button class="ctl" id="p-end">أنهِ وراجع</button><button class="ctl" id="p-resign">استسلم</button></div>
-        <div id="p-line"></div><div id="p-decide"></div><div id="p-offer"></div>
+        <div class="wctrl"><button class="ctl" id="p-hint">تلميح: أفضل نقلة</button><button class="ctl" id="p-xp" aria-pressed="false">اشرح نقلات قطعة</button><button class="ctl" id="p-end">أنهِ وراجع</button><button class="ctl" id="p-resign">استسلم</button></div>
+        <div id="p-line"></div><div id="p-x" class="panel" hidden></div><div id="p-decide"></div><div id="p-offer"></div>
+        <div class="livecheck" id="p-plan"></div>
         <div id="p-odds"></div>
         ${opening ? `<div class="livecheck" id="p-check"></div>` : ""}${safety ? `<div class="livecheck" id="p-safe"></div>` : ""}
       </div>
@@ -114,6 +115,14 @@ function PlayGame(root, { n, color, rating, resume = null }) {
   $("#p-resign", root).onclick = () => { if (!G.finished && G.sans.length) endGame("loss", "استسلمت."); };
   $("#p-end", root).onclick = () => { if (!G.finished) endGame("abandoned", "أنهيت المباراة قبل نهايتها."); };
   $("#p-hint", root).onclick = showHint;
+  // move explorer: while on, picking up a piece lists every move it can make, scored and explained (counts as a hint)
+  let explore = false;
+  $("#p-xp", root).onclick = (e) => {
+    explore = !explore; e.target.setAttribute("aria-pressed", explore); e.target.classList.toggle("on", explore); $("#p-x", root).hidden = !explore;
+    if (explore) { G.hints = (G.hints || 0) + 1; save(); $("#p-x", root).innerHTML = `<p class="note">اضغط أي قطعة لك لترى كل نقلاتها مع شرح كل واحدة.</p>`; }
+    else board.update({ marks: {} });
+  };
+  board.update({ onSelect: (sq) => { if (explore && sq && game.turn() === me && !busy) explainPiece($("#p-x", root), board, game.fen(), sq, G.sans.length, () => alive() && game.turn() === me); } });
   const setStatus = (t) => { $("#p-status", root).textContent = t; };
   let openShown = null;
   function showOpening() {
@@ -160,6 +169,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     pre.then((r) => { if (game.fen() === fen) preRes = r; }, () => {});
     board.update({ fen, last: lastUci, interactive: true, onMove: onUserMove, arrows: threat && (!safety || G.threatShown) ? [threatArrow(threat)] : [] });
     setStatus("دورك. خذ وقتك."); refreshUi();
+    $("#p-plan", root).innerHTML = planHtml(fen, G.sans.length, { noThreats: safety });
   }
   const threatArrow = (t) => ({ from: t.pv[0].slice(0, 2), to: t.pv[0].slice(2, 4), color: "bad" });
   function onUserMove(m) {

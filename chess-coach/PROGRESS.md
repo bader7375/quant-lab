@@ -194,6 +194,30 @@ The user asked for training beyond whole games and puzzles: endless positions on
   - the Chapter 3 lesson and both demos;
   - all at 390 px with nothing off-screen.
 
+### Techniques per level, the move explorer, the plan box (2026-10-23)
+The user asked to be trained, not only to play. They wanted techniques to master at each level (where to put a piece and why, which square not to leave and why, where not to put the king), situations to practise each one, every available move explained with advice, board vision ("see where the queen goes"), and always a plan. They specifically liked the "queen a knight's jump away" advice. Everything is computed in the page (Stockfish and position facts); there are no Claude calls.
+- **Techniques** (`data/curriculum/techniques.json`, `js/coach.js`): a panel on each chapter page. Each technique has a rule, why, what not to do and how to see it on the board, plus endless positions and a mastery score (mastered at 8 correct out of the last 10).
+  - Chapter 1: knights to f3/c3, a centre pawn, the bishop on an open diagonal, castling and not leaving the king in the centre, and vision: what your queen attacks.
+  - Chapter 2: save an attacked piece or take the attacker; protect without moving (and don't move a defender); take what is loose; checks first; vision: your undefended pieces, and what the opponent attacks.
+  - Chapter 3: the queen a knight's jump away, the rook cuts while the king walks, back-rank mate, mate in one, and vision: the lone king's squares.
+- **Technique tags** (`js/techniques.js`, shared by the browser and Node): `tools/positions/tag_pools.mjs` stores Stockfish's best move at depth 13 and its tags on every pool item. For example, opening knight 405, centre 446, bishop 339, castle 147; safety save 309, cover 67; punish take 492, check 580; mates backrank 617, mate-in-1 266.
+  - A technique drill draws only positions whose best move is that technique.
+  - An answer counts as correct when it uses the technique and loses at most 5 points, or is as good as the best move (within 1).
+  - Basic mates (random KQK/KRK) are judged by mate distance.
+- **Move explorer**:
+  - After each technique answer, tap any of your pieces to see what it attacks and protects (marked on the board) and every move it can make, each scored by Stockfish (`searchmoves`) and coloured on the board (green, yellow, red).
+  - Each move lists what it does (reasons and technique tags) and what it risks: pieces it leaves loose (including "the moving piece was their defender"), the opponent's best reply, stalemate, and the chapter's "don't" rules (knight on the rim, early queen, king walk, f-pawn, rim pawns).
+  - "اشرح كل النقلات المتاحة" lists Stockfish's top 6 moves explained, plus yours.
+  - In Play, the explorer is a toggle that counts as a hint; in Positions it is a "help" checkbox.
+- **Plan box** ("خطتك الآن") in Play, Positions and technique drills, computed from the position: check, loose pieces on either side (hidden in the safety chapter), checks available, the KQK/KRK method, opening development/centre/castling, the worst piece (fewest moves), the enemy king's open files, isolated pawns, and in endings the king and passed pawns.
+- Tests (headless, no page errors):
+  - the technique panel;
+  - a knight drill (a correct and a wrong answer with reasons and risks), the explorer and all-moves list;
+  - vision tasks (queen and king box);
+  - the KQK knight-jump technique;
+  - Play with the plan and explorer;
+  - 390 px with nothing off-screen.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

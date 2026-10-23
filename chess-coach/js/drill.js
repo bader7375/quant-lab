@@ -53,8 +53,9 @@ function DrillSession(root, n, P) {
       <div class="wboard"><div class="boardcap"><span class="turn" id="d-turn"></span><span class="note" id="d-status"></span></div>
         <div class="note" id="d-src"></div><div class="board" id="d-board"></div>
         <div class="cands" id="d-cands"></div>
-        <label class="note bcheck"><input type="checkbox" id="d-fast" ${set.drillFast ? "checked" : ""}> سريع: العب النقلة مباشرة بلا مرشحات</label></div>
-      <div class="wside"><div class="panel coachfeed"><div class="chat-h"><b>تحليل نقلاتك</b><span class="note">الأحدث في الأعلى</span></div><div id="d-feed" aria-live="polite"></div></div>
+        <label class="note bcheck"><input type="checkbox" id="d-fast" ${set.drillFast ? "checked" : ""}> سريع: العب النقلة مباشرة بلا مرشحات</label>
+        <label class="note bcheck"><input type="checkbox" id="d-xp"> مساعدة: عندما ألمس قطعة، اشرح كل نقلاتها</label></div>
+      <div class="wside"><div class="panel livecheck" id="d-plan"></div><div class="panel" id="d-x" hidden></div><div class="panel coachfeed"><div class="chat-h"><b>تحليل نقلاتك</b><span class="note">الأحدث في الأعلى</span></div><div id="d-feed" aria-live="polite"></div></div>
         <div class="panel" id="d-chat"></div></div>
     </div>`;
   const board = Board($("#d-board", root), { interactive: false }); const feed = $("#d-feed", root);
@@ -93,7 +94,7 @@ function DrillSession(root, n, P) {
     const fen = game.fen(); base = null; cands = [];
     basePromise = Engine.analyse(fen, { depth: mateGoal ? 20 : 15, movetime: 1600, multipv: 3 }); basePromise.then((r) => { if (game.fen() === fen) base = r; }, () => {});
     busy = false; drawCands();
-    $("#d-turn", root).innerHTML = `<i class="${me}"></i>دورك`;
+    $("#d-turn", root).innerHTML = `<i class="${me}"></i>دورك`; $("#d-plan", root).innerHTML = planHtml(fen, item && item.ply != null ? item.ply + 2 * own : 40);
     board.update({ fen, orient: me, interactive: true, arrows: [], onMove: (m) => onCandidate(m, t) });
     setStatus(set.drillFast ? "العب نقلتك." : "سجّل مرشحاتك على الرقعة (حتى 3)، ثم اختر واحدة.");
   }
@@ -205,6 +206,8 @@ function DrillSession(root, n, P) {
     $('[data-a="again"]', cd).onclick = () => { const it = item, op = optimal; const t2 = ++token; feed.innerHTML = ""; recs = []; own = 0; item = it; optimal = op; game = new Chess(startFen); card(`<p>${esc(P.task)}</p>`, "hint"); myTurn(t2); };
     setStatus(ok ? "أحسنت. الموقف التالي جاهز." : "انتهى الموقف.");
   }
+  $("#d-xp", root).onchange = (e) => { $("#d-x", root).hidden = !e.target.checked; if (!e.target.checked) board.update({ marks: {} }); else $("#d-x", root).innerHTML = `<p class="note">المس قطعة لك لترى نقلاتها مشروحة.</p>`; };
+  board.update({ onSelect: (sq) => { if ($("#d-xp", root).checked && sq && game && game.turn() === me && !busy) explainPiece($("#d-x", root), board, game.fen(), sq, 40, () => document.body.contains(root)); } });
   window.DRILL_DEBUG = { fen: () => (game ? game.fen() : null) }; // read-only hook for the headless tests
   Chat($("#d-chat", root), { level: c.level, chips: ["ما النقلات القسرية هنا؟", "ما الخطة في هذا الموقف؟"], getContext: () => ({ fen: game ? game.fen() : START_FEN, ply: 30, start: startFen || START_FEN, moves: [], extra: `CONTEXT: A training position (${P.title}). Do not reveal the best move unless the student explicitly asks; teach how to find it.` }) });
   nextItem();

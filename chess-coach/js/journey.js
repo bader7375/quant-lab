@@ -179,9 +179,11 @@ function renderChapter(n) {
         ${s.completedAt ? `<div class="callout good">اكتمل في ${new Date(s.completedAt).toISOString().slice(0, 10)}.</div>` : ""}</div>
     </div>
     <div class="stages">${stageCards}</div>
+    <div id="ch-tech"></div>
     ${s.learn && s.learn.checklist ? `<div class="panel"><h3>بماذا أفكر (من الدرس)</h3><ul class="checklist">${s.learn.checklist.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
     <div id="stage-box"></div>`;
   $("#ch-back", el).onclick = () => go("journey");
+  if (typeof techniquesPanel === "function") techniquesPanel($("#ch-tech", el), n);
   const ul = $("#ch-unlock", el); if (ul) ul.onclick = () => { chState(n).unlocked = now(); saveJourney(); renderChapter(n); };
   for (const b of $$("[data-stage]", el)) b.onclick = () => openStage(n, b.dataset.stage);
 }

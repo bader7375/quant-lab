@@ -250,6 +250,7 @@ function Board(el, init) {
       if (!st.dots && !(p && p.color === lg.turn())) { el.classList.add("shake"); setTimeout(() => el.classList.remove("shake"), 300); }
     }
     sel = p && p.color === lg.turn() && sel !== sq ? sq : null; draw();
+    if (st.onSelect) st.onSelect(sel); // a piece was picked up (or put down): the move explorer listens
   };
   draw();
   return { update(o) { Object.assign(st, o); if (!Object.keys(o).every((k) => k === "arrows" || k === "marks")) sel = null; draw(); }, get state() { return st; } }; // drawing arrows keeps a half-made move

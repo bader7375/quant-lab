@@ -296,6 +296,10 @@ h4 { margin: 0; font-size: .95rem; font-weight: 600; }
 .livecheck .checklist li.warn { background: color-mix(in srgb, var(--inacc) 22%, var(--surface)); color: var(--ink); } .livecheck .checklist li.warn::before { content: "! "; }
 .cands { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 0; } .cands .cand { display: inline-flex; gap: 2px; }
 .wboard > .bcheck { display: flex; gap: 6px; align-items: center; } .wboard > .bcheck input { width: 18px; height: 18px; flex: none; }
+.sq.mgood { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--good) 34%, transparent); } .sq.mok { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--inacc) 34%, transparent); } .sq.mbad { box-shadow: inset 0 0 0 100px color-mix(in srgb, var(--blunder) 30%, transparent); }
+.techs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; } .tech { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; align-content: start; } .tech.done { border-color: var(--good); }
+.xmoves { padding-inline-start: 18px; display: grid; gap: 8px; } .xmoves li { border-bottom: 1px solid var(--line); padding-bottom: 6px; } .xmoves .fh { flex-wrap: wrap; }
+.tlesson p { margin: 4px 0; } .warnline { color: var(--mistake); }
 .dpools { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
 .livecheck .bcheck { display: flex; gap: 6px; align-items: center; } .livecheck .bcheck input { width: 18px; height: 18px; flex: none; }
 .checklist.live li.warn { color: var(--mistake); } .checklist.live li.warn::marker { content: "!  "; }
@@ -347,6 +351,7 @@ svg text.mkt.back { fill: var(--ink); }
 <script src="js/practice/modes.js"></script>
 <script src="js/practice/practice.js"></script>
 <script src="js/facts.js"></script>
+<script src="js/techniques.js"></script>
 <script src="js/prob.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/journey.js"></script>
@@ -358,4 +363,5 @@ svg text.mkt.back { fill: var(--ink); }
 <script src="js/learn.js"></script>
 <script src="js/warmup.js"></script>
 <script src="js/drill.js"></script>
+<script src="js/coach.js"></script>
 <script src="js/app.js"></script>
