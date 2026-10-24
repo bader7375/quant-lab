@@ -23,11 +23,26 @@ for s in [s for s in zcx[zcx].index]:
     if row.empty: continue
     r = row.iloc[0]; zx.append({"sym": s, "zc": round(float(zc[s]), 2), "pct": round(float(r.pct), 3), "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s),
         "ok": bool(r.pct >= .5 and pm > 0 and r.val >= 3e6)})
+# live Z-swing trades (round 28): qualifying first touches in the last 40 sessions, using the walk-forward ML ranks and market model of the signal day
+try:
+    from core import P as PP, PCT as WPCT, pm as WPM
+    Of = PP["Of"]; Cl = PP["C"]; ds = Cl.index; zcF = F["zc"].reindex(index=ds, columns=Cl.columns)
+    liqm = PP["VAL"].rolling(60, min_periods=20).median() >= 3e6
+    fz = (zcF <= -2.62) & ~(zcF <= -2.62).shift(1, fill_value=False)
+    ok_ = fz & (WPCT >= .5) & pd.DataFrame(np.repeat((WPM > 0).values[:, None], Cl.shape[1], 1), index=ds, columns=Cl.columns) & PP["elig"] & liqm
+    zact = []
+    for i in range(len(ds) - 41, len(ds) - 1):   # signals before the last close (today's new ones are in zx)
+        for s_ in Cl.columns[ok_.iloc[i].values]:
+            held = len(ds) - 1 - (i + 1); e_ = float(Of.iloc[i + 1][s_]) if i + 1 < len(ds) else None
+            zact.append({"sym": s_, "signal": str(ds[i].date()), "entry": round(e_, 3) if e_ else None, "ret": round(float(Cl.iloc[-1][s_] / e_ - 1), 4) if e_ else None,
+                         "left": int(40 - max(held, 0)), "ml": round(float(WPCT.iloc[i][s_]), 3)})
+except Exception as ex:
+    print("zactive failed:", ex); zact = []
 old = json.load(open("../ml26/today.json"))
 T = {"date": str(pd.Timestamp(last).date()), "model": PICK, "pm": pm, "pm_hist": {str(k.date()): round(float(v), 5) for k, v in hist.items()}, "universe": int(len(liq)),
      "picks": [{"sym": r.sym, "rank": int(r["rank"]), "score": round(float(r.score), 4), "val_m": round(float(r.val) / 1e6, 1), "div": bool(r["div"]), **{c: round(float(r[c]) + .5, 3) for c in cols}} for _, r in liq.head(30).iterrows()],
      "ranks": {r.sym: round(float(r.pct), 3) for _, r in today.iterrows()}, "ranked": int(len(today)),
-     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62}
+     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62, "zactive": zact, "zhold": 40}
 for k in ("record", "summary", "filter_test"):
     if k in old: T[k] = old[k]
 if os.path.exists("record27.json"): T.update(json.load(open("record27.json")))

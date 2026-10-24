@@ -1,6 +1,15 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
 <h2 style="font-size:18px">How this system was built, and what the evidence says (v15)</h2>
+<h2>v16 (round 28): a high-win-rate Saudi swing signal — Z swing</h2>
+<p>Goal set in advance: <b>more than 60% winners in both 2013–19 and 2020–26</b>, wins larger than losses, holding weeks, at least 20 trades a year. Six entry families × eight exit designs were tested (fixed hold, ATR target/stop, trailing, breakeven); the choice was made on 2013–19 only.</p>
+<table class="t"><tr><th style="text-align:left">signal (best exit)</th><th>2013–19 winners</th><th>2020–26 winners</th><th>2020–26 avg win / loss</th><th>2020–26 per trade</th></tr>
+<tr><td style="text-align:left"><b>Z swing</b>: stretch Z first close ≤ −2.62, ML ≥ 50%, market model positive, hold 40</td><td><b>77%</b></td><td><b>66%</b></td><td>+13.4% / −8.4%</td><td>+6.0%</td></tr>
+<tr><td style="text-align:left">same entry, hold 20 (round-27 rule)</td><td>63%</td><td>73%</td><td>+11.2% / −7.0%</td><td>+6.2%</td></tr>
+<tr><td style="text-align:left">trend breakout, ML ≥ 70%, market positive (hold 20 / trailing)</td><td>56% / 43%</td><td>59% / 50%</td><td>+14.7% / −5.6% (trailing)</td><td>+3.2% / +4.6%</td></tr>
+<tr><td style="text-align:left">squeeze breakout</td><td>36–46%</td><td>46–57%</td><td></td><td>+1.7–4.0%</td></tr>
+<tr><td style="text-align:left">ML top-10% leader after a 3% pullback, hold 40</td><td>61%</td><td>57%</td><td>+14.5% / −8.8%</td><td>+4.4%</td></tr></table>
+<p><b>Robust:</b> line −2.4 to −2.8, ML filter 0.4–0.6, double costs, holding 30–60 sessions all keep 62–78% winners. <b>Not helpful:</b> protective stops of 3–6 ATR (lower win rate and return), and a walk-forward win-probability model (AUC 0.56–0.61) that failed in 2023–26. In 2004–12, without the ML score and market model, the same dip still made +3.7% per trade but only half won: the market model is what lifts the win rate. <b>Risk:</b> the worst 5% of trades lost about 15% and the worst about 35%; signals cluster in sell-offs, so a 5 × 5% sleeve next to Core v2 added +1.3% a year but deepened the worst drawdown by about 4 points (Core v2 re-run to 2026-10-22: −19% → −23%). Run it as a separate small sleeve: 5% per stock, at most 5 at once.</p>
 <h2>v15 (round 27): Saudi deep dive — stretch Z, Saudi features, advanced ML, and a data correction</h2>
 <p>Every idea was written down with its pass/fail rule before testing, chosen on <b>2013–19</b>, then checked on <b>2020–26</b> (both halves) and, where no ML score was needed, on the untouched <b>2004–12</b> Tadawul library. Costs 0.40% round trip, signal at the close, buy at the next open.</p>
 <p><b>Data correction.</b> Yahoo's Saudi files contain zero-volume calendar rows (every weekend before mid-2013, holidays after). Left in, they blanked every stock's next-day return; the trend sleeve was silently switched off for 55 days after each one. Fixed now. Re-run on clean data the earlier Core (Sharpe 1.55, −17%, no losing year) is <b>Sharpe 1.18, −23%</b>; the earlier numbers below are superseded.</p>
