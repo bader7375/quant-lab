@@ -1,6 +1,15 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
 <h2 style="font-size:18px">How this system was built, and what the evidence says (v15)</h2>
+<h2>v17 (round 29): momentum to help the Z swing</h2>
+<p>Three ways momentum could help, written down before testing and chosen on 2013–19: as a <b>filter</b> on Z-swing entries, as an <b>exit</b>, or as a separate <b>sleeve</b> that earns when the Z swing is idle.</p>
+<table class="t"><tr><th style="text-align:left">idea</th><th>2013–19</th><th>2020–26</th><th>verdict</th></tr>
+<tr><td style="text-align:left">filter: only dips in 12-month winners</td><td>77% winners, +15.0%</td><td>59% winners, +4.1%</td><td class="down">hurts</td></tr>
+<tr><td style="text-align:left">filter: dip within 10% of the 52-week high</td><td>45%, +1.6%</td><td>54%, +3.2%</td><td class="down">hurts</td></tr>
+<tr><td style="text-align:left">exit: after 20 sessions, sell on the first close below the 10-day average</td><td>69%, +9.4% (21 days)</td><td>74%, +6.9% (23 days)</td><td>not adopted (worse 2013–19); watch</td></tr>
+<tr><td style="text-align:left">exit: at session 40 hand winners to a 3-ATR trailing stop</td><td>71%, +17.2% (70 days)</td><td>61%, +6.0%</td><td class="down">less profit per day</td></tr>
+<tr><td style="text-align:left"><b>sleeve: trend breakouts at half size next to the Z swing</b></td><td>Sharpe 1.03, DD −12%</td><td>Sharpe 1.24, DD −12%</td><td class="up"><b>adopted</b></td></tr></table>
+<p>Why the trend sleeve: 12-month momentum, 52-week-high and ML portfolios all move with the Z swing (daily correlation +0.51 to +0.65: they are long the same market), while trend breakouts barely do (+0.11). The Z swing buys after sell-offs; trend breakouts buy in uptrends and their trailing stops step aside in sell-offs. Together (Z swing 5 × 5% + trend breakouts 10 × 5%): <b>+8.4% a year, Sharpe 1.14, worst drawdown −12%</b>; the Z swing alone has Sharpe 0.82, and the same money put into more Z swing gives Sharpe 0.54 with a −26% drawdown. Worst years of the pair: 2022 −1%, 2024 −2% (market −22% in 2022 and 2025). Core v2 (ML + trend) still earns more (+15.8%, Sharpe 1.20, −19%).</p>
 <h2>v16 (round 28): a high-win-rate Saudi swing signal — Z swing</h2>
 <p>Goal set in advance: <b>more than 60% winners in both 2013–19 and 2020–26</b>, wins larger than losses, holding weeks, at least 20 trades a year. Six entry families × eight exit designs were tested (fixed hold, ATR target/stop, trailing, breakeven); the choice was made on 2013–19 only.</p>
 <table class="t"><tr><th style="text-align:left">signal (best exit)</th><th>2013–19 winners</th><th>2020–26 winners</th><th>2020–26 avg win / loss</th><th>2020–26 per trade</th></tr>
