@@ -1,0 +1,23 @@
+US 2% quantile of stretch Z (2010-17): -1.68  (Saudi line -2.62)
+Z<=-2.62 none hold20                         | DESIGN 10-17 n 189 (24/y) win 58% +7.9/-5.5 exp +2.28% (random +2.08%) | CONFIRM 18-26 n 314 (35/y) win 61% +9.7/-10.1 exp +2.01% (random +2.49%)
+Z<=-2.62 none hold40                         | DESIGN 10-17 n 183 (23/y) win 62% +9.9/-9.0 exp +2.80% (random +3.27%) | CONFIRM 18-26 n 299 (33/y) win 66% +13.3/-10.4 exp +5.22% (random +3.06%)
+Z<=-2.62 SPY>200d hold20                     | DESIGN 10-17 n  57 (7/y) win 60% +6.4/-5.1 exp +1.79% (random +1.92%) | CONFIRM 18-26 n 111 (12/y) win 58% +6.8/-7.3 exp +0.84% (random +1.99%)
+Z<=-2.62 SPY>200d hold40                     | DESIGN 10-17 n  57 (7/y) win 68% +8.9/-6.4 exp +4.05% (random +4.34%) | CONFIRM 18-26 n 110 (12/y) win 64% +8.2/-9.6 exp +1.68% (random +1.21%)
+Z<=-2.62 stock>200d hold20                   | DESIGN 10-17 n<10 | CONFIRM 18-26 n  13 (1/y) win 54% +14.9/-8.6 exp +4.02% (random -1.37%)
+Z<=-2.62 stock>200d hold40                   | DESIGN 10-17 n<10 | CONFIRM 18-26 n  13 (1/y) win 85% +12.0/-4.3 exp +9.48% (random +3.41%)
+Z<=-2.62 both hold20                         | DESIGN 10-17 n<10 | CONFIRM 18-26 n<10
+Z<=-2.62 both hold40                         | DESIGN 10-17 n<10 | CONFIRM 18-26 n<10
+Z<=-1.68 none hold20                         | DESIGN 10-17 n 629 (79/y) win 61% +7.1/-5.2 exp +2.25% (random +2.46%) | CONFIRM 18-26 n1096 (122/y) win 61% +8.7/-7.7 exp +2.39% (random +1.51%)
+Z<=-1.68 none hold40                         | DESIGN 10-17 n 574 (72/y) win 67% +9.4/-7.5 exp +3.76% (random +3.95%) | CONFIRM 18-26 n 946 (105/y) win 64% +12.0/-8.8 exp +4.60% (random +3.61%)
+Z<=-1.68 SPY>200d hold20                     | DESIGN 10-17 n 343 (43/y) win 61% +5.8/-4.8 exp +1.65% (random +2.05%) | CONFIRM 18-26 n 585 (65/y) win 59% +7.0/-7.2 exp +1.25% (random +0.94%)
+Z<=-1.68 SPY>200d hold40                     | DESIGN 10-17 n 325 (41/y) win 64% +8.5/-6.4 exp +3.22% (random +2.49%) | CONFIRM 18-26 n 531 (59/y) win 59% +10.1/-8.4 exp +2.53% (random +2.34%)
+Z<=-1.68 stock>200d hold20                   | DESIGN 10-17 n  87 (11/y) win 57% +7.6/-3.6 exp +2.87% (random +2.50%) | CONFIRM 18-26 n 178 (20/y) win 53% +8.2/-8.1 exp +0.51% (random +0.07%)
+Z<=-1.68 stock>200d hold40                   | DESIGN 10-17 n  86 (11/y) win 71% +9.0/-5.8 exp +4.71% (random +5.07%) | CONFIRM 18-26 n 178 (20/y) win 60% +10.6/-9.3 exp +2.67% (random +0.70%)
+Z<=-1.68 both hold20                         | DESIGN 10-17 n  58 (7/y) win 52% +7.7/-3.7 exp +2.21% (random +3.48%) | CONFIRM 18-26 n 114 (13/y) win 61% +7.3/-7.6 exp +1.42% (random +2.11%)
+Z<=-1.68 both hold40                         | DESIGN 10-17 n  57 (7/y) win 67% +8.8/-4.1 exp +4.53% (random +5.54%) | CONFIRM 18-26 n 114 (13/y) win 54% +8.7/-9.1 exp +0.57% (random +1.87%)
+
+SELECTED on 2010-17: Z<=-1.68 none hold40
+KDD17 50 stocks: Z<=-1.68 none hold40        | 2007-09 n 121 (40/y) win 51% +12.8/-15.5 exp -1.01% (random -3.23%) | 2010-16 n 304 (43/y) win 63% +7.8/-7.6 exp +2.12% (random +2.14%)
+KDD17 50 stocks: same line, no filter, hold40 | 2007-09 n 121 (40/y) win 51% +12.8/-15.5 exp -1.01% (random -3.23%) | 2010-16 n 304 (43/y) win 63% +7.8/-7.6 exp +2.12% (random +2.14%)
+CMIN-US 110 stocks: Z<=-1.68 none hold40     | 2018-21 n 258 (65/y) win 66% +12.6/-12.1 exp +4.06% (random +3.50%)
+CMIN-US 110 stocks: same line, no filter, hold40 | 2018-21 n 258 (65/y) win 66% +12.6/-12.1 exp +4.06% (random +3.50%)

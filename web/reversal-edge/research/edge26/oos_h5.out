@@ -1,0 +1,4 @@
+stocks: 264
+H5a: 251 stocks | momentum beats reversal on 54% | mean Sharpe mom 0.04 rev 0.04 buy&hold 0.13
+H5b: momentum-entry edge over random days +0.110% per trade (n 45762; t by day +0.50) | halves +0.413/-0.195
+H5 one-sided p (edge): 0.30884 | FAIL
