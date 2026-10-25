@@ -20,3 +20,5 @@ With the market-momentum gate (current rule_stats.json), market-model-positive d
 2020-26 71% +7.6%, since 2024 57% +1.4% (before: 76% +13.6%, 62% +4.8%, 55% -0.9%); all picks 2020-26 53%, +3.4%; since 2024 41%, -0.4%.
 Change 2026-10-25 (round 33): tier 1 also takes weekly Z swings (first weekly close at weekly stretch Z <= -2.08, same filters, hold 40);
 Z-swing picks 2020-26 75% winners +9.1% (was 71% +7.6%). Each pick shows its latest Yahoo annual accounts; loss-makers are flagged, not removed.
+Change 2026-10-25 (round 35): US section (us_signal.py) - SPY/QQQ RSI(2) < 10 above the 200-day average, buy next open, sell next open after
+a close above the 5-day average or 10 sessions; runs on Fridays too (US section only). strip_partial.py drops still-forming daily candles.

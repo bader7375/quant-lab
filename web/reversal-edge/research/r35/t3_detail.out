@@ -1,0 +1,22 @@
+
+=== SPY (rule as accepted: RSI(2) < 10, exit close > 5-day average or 10 days)
+  2000-2026                           7.5 trades/yr, win 73%, avg +0.39% in 2.6 days, worst -9.9% | in market 8% | CAGR +4.7% Sharpe 0.83 DD -14% | buy & hold +8.2% / 0.51 / -55%
+  2000-2009                           5.9 trades/yr, win 78%, avg +0.56% in 2.5 days, worst -3.8% | in market 6% | CAGR +5.9% Sharpe 1.15 DD -6% | buy & hold -1.0% / 0.07 / -55%
+  2010-2019                           8.0 trades/yr, win 70%, avg +0.17% in 2.9 days, worst -9.9% | in market 9% | CAGR +1.8% Sharpe 0.30 DD -14% | buy & hold +13.5% / 0.93 / -19%
+  2020-2026                           9.3 trades/yr, win 73%, avg +0.50% in 2.4 days, worst -2.2% | in market 9% | CAGR +7.4% Sharpe 1.39 DD -6% | buy & hold +15.1% / 0.80 / -34%
+  robustness 2000-2026 (not used to choose):
+  RSI2<5, exit sma5                   3.8 trades/yr, win 75%, avg +0.37% in 2.6 days, worst -9.9% | in market 4% | CAGR +3.3% Sharpe 0.72 DD -14% | buy & hold +8.2% / 0.51 / -55%
+  RSI2<15, exit sma5                 11.3 trades/yr, win 72%, avg +0.30% in 2.7 days, worst -9.9% | in market 12% | CAGR +5.0% Sharpe 0.77 DD -14% | buy & hold +8.2% / 0.51 / -55%
+  RSI2<10, exit rsi70                 7.2 trades/yr, win 80%, avg +0.49% in 3.7 days, worst -9.9% | in market 10% | CAGR +5.3% Sharpe 0.85 DD -14% | buy & hold +8.2% / 0.51 / -55%
+  costs x4 (0.20%)                    7.5 trades/yr, win 67%, avg +0.24% in 2.6 days, worst -10.1% | in market 8% | CAGR +3.5% Sharpe 0.63 DD -14% | buy & hold +8.2% / 0.51 / -55%
+
+=== QQQ (rule as accepted: RSI(2) < 10, exit close > 5-day average or 10 days)
+  2000-2026                           7.9 trades/yr, win 72%, avg +0.48% in 2.9 days, worst -5.7% | in market 9% | CAGR +5.6% Sharpe 0.75 DD -11% | buy & hold +8.6% / 0.44 / -83%
+  2000-2009                           6.3 trades/yr, win 70%, avg +0.67% in 3.1 days, worst -5.2% | in market 8% | CAGR +6.8% Sharpe 0.87 DD -11% | buy & hold -6.4% / -0.02 / -83%
+  2010-2019                           9.0 trades/yr, win 71%, avg +0.33% in 2.9 days, worst -5.7% | in market 10% | CAGR +3.4% Sharpe 0.47 DD -11% | buy & hold +17.9% / 1.04 / -23%
+  2020-2026                           8.7 trades/yr, win 75%, avg +0.52% in 2.7 days, worst -3.5% | in market 9% | CAGR +7.3% Sharpe 1.00 DD -7% | buy & hold +20.0% / 0.86 / -35%
+  robustness 2000-2026 (not used to choose):
+  RSI2<5, exit sma5                   4.1 trades/yr, win 72%, avg +0.62% in 2.6 days, worst -6.6% | in market 4% | CAGR +4.4% Sharpe 0.75 DD -13% | buy & hold +8.6% / 0.44 / -83%
+  RSI2<15, exit sma5                 11.0 trades/yr, win 71%, avg +0.50% in 2.8 days, worst -8.8% | in market 12% | CAGR +7.2% Sharpe 0.82 DD -14% | buy & hold +8.6% / 0.44 / -83%
+  RSI2<10, exit rsi70                 7.7 trades/yr, win 78%, avg +0.57% in 3.8 days, worst -10.3% | in market 12% | CAGR +6.1% Sharpe 0.74 DD -12% | buy & hold +8.6% / 0.44 / -83%
+  costs x4 (0.20%)                    7.9 trades/yr, win 65%, avg +0.33% in 2.9 days, worst -5.8% | in market 9% | CAGR +4.4% Sharpe 0.59 DD -12% | buy & hold +8.6% / 0.44 / -83%

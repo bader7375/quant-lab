@@ -1,6 +1,15 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
 <h2 style="font-size:18px">How this system was built, and what the evidence says (v15)</h2>
+<h2>v20 (round 35): searching for a US edge</h2>
+<p>Two searches, written down before testing. <b>Timing the US market</b> on the S&amp;P 500 from 1950 (rules chosen on 1950–99, checked on 2000–26 and on NASDAQ, Nikkei, DAX, FTSE and Hang Seng), and <b>picking US stocks</b> with a walk-forward ML ranker like the Saudi one.</p>
+<table class="t"><tr><th style="text-align:left">idea</th><th>chosen on 1950–99</th><th>S&amp;P 2000–26</th><th>other markets</th><th>verdict</th></tr>
+<tr><td style="text-align:left"><b>index RSI(2) &lt; 10 above the 200-day average</b>, exit on a close above the 5-day average</td><td>+0.06%/trade over drift</td><td><b>+0.21% (t 2.2)</b>, SPY +0.32, QQQ +0.35</td><td>positive on 4 of 6</td><td class="up"><b>adopted</b></td></tr>
+<tr><td style="text-align:left">turn of the month (last day to day 3)</td><td>very strong (t 6.5)</td><td>weak (t 0.9)</td><td>positive on 6 of 6</td><td class="down">faded in the US</td></tr>
+<tr><td style="text-align:left">index dip with a crash guard / VIX spike / 200-day trend filter</td><td colspan="3">no consistent edge</td><td class="down">rejected</td></tr>
+<tr><td style="text-align:left">US stock ML ranker (us100)</td><td colspan="2">+11% a year over the average stock, but driven by today's winners (survivorship)</td><td>KDD17 and CMIN-US: no edge</td><td class="down">rejected</td></tr>
+<tr><td style="text-align:left">RSI(2) dip on single US stocks</td><td colspan="3">mixed: below the stock's own drift in 2018–26, nothing in KDD17</td><td class="down">rejected</td></tr></table>
+<p><b>The rule:</b> on SPY or QQQ, when RSI(2) closes below 10 while the ETF is above its 200-day average, buy at the next open; sell at the next open after the first close above the 5-day average, or after 10 sessions. 2000–26: SPY 72% winners, +0.41% per trade; QQQ 67%, +0.48%; about 8 trades a year each, 2–3 days per trade. It is a small edge: in the market only about 8% of days, SPY made +4.7% a year (cash otherwise) against +8.2% for buy-and-hold, with a −14% worst drawdown instead of −55%. Weakest decade: the 2010s (+0.17% per trade). The daily list now carries a US section (and runs on Fridays for it); open SPY or QQQ on the chart to see the rule's state.</p>
 <h2>v19 (round 33): weekly and monthly candles, and do financially strong companies swing better?</h2>
 <p><b>Stretch Z on weekly candles works.</b> Same formula on weekly bars (weeks end Thursday); the weekly extreme line is −2.08 (2% of weeks in 2013–19). With the Z-swing filters (ML rank ≥ 50%, market model positive, market momentum ≤ −1.18), buying at the next open and selling 40 sessions later:</p>
 <table class="t"><tr><th style="text-align:left">signal</th><th>2013–19</th><th>2020–26</th><th>2004–12 (price only)</th></tr>
