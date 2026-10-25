@@ -81,11 +81,30 @@ try:   # weekly Z-swing trades still inside their 40 sessions (walk-forward ML r
             zact.append({"sym": s_, "signal": str(ds[i].date()), "entry": round(e_, 3), "ret": round(float(Cl.iloc[-1][s_] / e_ - 1), 4), "left": int(40 - max(held, 0)), "ml": round(float(WPCT.iloc[i][s_]), 3), "tf": "W"})
 except Exception as ex:
     print("weekly zactive failed:", ex)
+# scanner table (v22): the 25 most stretched liquid stocks at this close with what each needs for a Z-swing buy at the next open
+zscan = []
+try:
+    Cl_ = _P["C"]; c1 = Cl_.iloc[-1]; c0 = Cl_.iloc[-2]; zw_last = ZWK.iloc[-1] if pd.Timestamp(ZWK.index[-1]) == pd.Timestamp(last) else pd.Series(dtype=float)
+    wfl = WF.iloc[-1] if pd.Timestamp(WF.index[-1]) == pd.Timestamp(last) else pd.Series(dtype=bool)
+    tv = today.set_index("sym")
+    order = zc.dropna().sort_values()
+    fresh = [s_ for s_, z_ in order.items() if (z_ <= -2.62 and zc0.get(s_, np.nan) > -2.62) or (wk_done and wfl.get(s_, False))]
+    rest = [s_ for s_ in order.index if s_ not in fresh]
+    for s_ in sorted(fresh, key=lambda x: ((x in LOSSY) or float(tv.loc[x, "pct"]) < .5, -float(tv.loc[x, "pct"])) if x in tv.index else (True, 0)) + rest:   # buyable fresh touches first, then skipped ones, then the most stretched
+        z_ = float(order[s_])
+        if s_ not in tv.index or tv.loc[s_, "val"] < 3e6: continue
+        r = tv.loc[s_]; first_d = bool(z_ <= -2.62 and zc0.get(s_, np.nan) > -2.62); first_w = bool(wk_done and wfl.get(s_, False))
+        zscan.append({"sym": s_, "close": round(float(c1.get(s_, np.nan)), 3), "chg": round(float(c1.get(s_, np.nan) / c0.get(s_, np.nan) - 1), 4), "zc": round(float(z_), 2),
+                      "zw": round(float(zw_last.get(s_, np.nan)), 2) if s_ in zw_last.index else None, "fd": first_d, "fw": first_w, "pct": round(float(r.pct), 3),
+                      "loss": s_ in LOSSY, "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s_)})
+        if len(zscan) >= max(25, len(fresh) + 10): break
+except Exception as ex:
+    print("zscan failed:", ex)
 old = json.load(open("../ml26/today.json"))
 T = {"date": str(pd.Timestamp(last).date()), "model": PICK, "pm": pm, "pm_hist": {str(k.date()): round(float(v), 5) for k, v in hist.items()}, "universe": int(len(liq)),
      "picks": [{"sym": r.sym, "rank": int(r["rank"]), "score": round(float(r.score), 4), "val_m": round(float(r.val) / 1e6, 1), "div": bool(r["div"]), **{c: round(float(r[c]) + .5, 3) for c in cols}} for _, r in liq.head(30).iterrows()],
      "ranks": {r.sym: round(float(r.pct), 3) for _, r in today.iterrows()}, "ranked": int(len(today)),
-     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62, "zactive": zact, "zhold": 40, "ms": round(ms_now, 3), "ms_gate": MS_GATE, "ms_deep": -2.53, "zwx": zwx, "wline": WLINE, "wk_done": bool(wk_done), "fin": FIN}
+     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62, "zactive": zact, "zhold": 40, "ms": round(ms_now, 3), "ms_gate": MS_GATE, "ms_deep": -2.53, "zwx": zwx, "wline": WLINE, "wk_done": bool(wk_done), "fin": FIN, "zscan": zscan}
 for k in ("record", "summary", "filter_test"):
     if k in old: T[k] = old[k]
 if os.path.exists("record27.json"): T.update(json.load(open("record27.json")))

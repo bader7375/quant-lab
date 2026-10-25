@@ -47,17 +47,17 @@ def section():
           " a year each, 2-3 days per trade. A small edge: in the market about 8% of days, SPY made +4.7% a year (cash otherwise) vs +8.2% buy-and-hold, worst drawdown -14% vs -55%."
           " The same rule on single US stocks and every other US idea tested in round 35 did not hold up."]
     return "\n".join(L)
-US100 = os.path.join(H, "../edge26/data/us100")
+US100 = os.path.join(H, "../edge26/data/us100"); US_SCAN = None
 def swing_section():
     """US sell-off swing (rounds 34/36): when the equal-weight US large-cap market momentum is <= -1.18, buy large caps whose daily (or weekly)
     stretch Z first reaches its 2% line; hold 40 sessions. High win rate, but random large caps on the same days did almost as well, and it lost in 2008."""
     import glob
-    D = {}
+    D = {}; RAW = {}
     for f in glob.glob(os.path.join(US100, "*.csv")):
         sy = os.path.basename(f)[:-4]
         if sy in ("SPY", "QQQ"): continue
-        d = pd.read_csv(f, index_col=0, parse_dates=True); D[sy] = d.adjclose[d.close > 0]
-    C = pd.DataFrame(D).sort_index(); el = C.notna() & (C.notna().cumsum() >= 250)
+        d = pd.read_csv(f, index_col=0, parse_dates=True); D[sy] = d.adjclose[d.close > 0]; RAW[sy] = float(d.close.iloc[-1])
+    C = pd.DataFrame(D).sort_index(); el = C.notna() & (C.notna().cumsum() >= 250); d_close = RAW
     r = np.log(C).diff().clip(-.25, .25); mr = r.where(el).mean(1); msd = mr.rolling(60, min_periods=40).std(); ms = mr.rolling(60, min_periods=48).sum() / (msd.shift(60) * np.sqrt(60))
     def zc(X, clip):
         rr = np.log(X).diff().clip(-clip, clip); sd = rr.rolling(60, min_periods=40).std(); z = [rr.rolling(k, min_periods=int(.8 * k)).sum() / (sd.shift(k) * np.sqrt(k)) for k in (10, 20, 60)]; return (z[0] + z[1] + z[2]) / 3
@@ -67,6 +67,26 @@ def swing_section():
     last = C.index[-1]; ny = dt.datetime.now(ZoneInfo("America/New_York"))
     wk_done = last.weekday() == 4 or pd.Timestamp(ny.date()).to_period("W-FRI") != last.to_period("W-FRI")
     m = float(ms.iloc[-1]); sig = {}
+    global US_SCAN
+    try:   # scanner table (v22): the 25 most stretched large caps at this close
+        rs = rsi(C.ffill(), 2).iloc[-1]; s200 = C.rolling(200, min_periods=180).mean().iloc[-1]; nm = {}
+        nf = os.path.join(US100, "../us100_names.json")
+        if os.path.exists(nf): nm = __import__("json").load(open(nf))
+        rows = []
+        zl = zd.iloc[-1].dropna().sort_values(); wkf = fw.iloc[-1] if (wk_done and Cw.index[-1] == last) else pd.Series(dtype=bool)
+        fresh = [sy for sy in zl.index if fd.iloc[-1].get(sy, False) or wkf.get(sy, False)]
+        for sy in fresh + [x for x in zl.index if x not in fresh]:   # fresh touches first, then the most stretched
+            z = float(zl[sy])
+            if not el.iloc[-1].get(sy, False): continue
+            c1, c0 = C[sy].iloc[-1], C[sy].iloc[-2]
+            rows.append({"sym": sy, "name": nm.get(sy, ""), "close": round(float(d_close.get(sy, c1)), 2), "chg": round(float(c1 / c0 - 1), 4), "zc": round(float(z), 2),
+                         "zw": round(float(zw.iloc[-1].get(sy, np.nan)), 2) if Cw.index[-1] == last and np.isfinite(zw.iloc[-1].get(sy, np.nan)) else None,
+                         "fd": bool(fd.iloc[-1].get(sy, False)), "fw": bool(wk_done and Cw.index[-1] == last and fw.iloc[-1].get(sy, False)), "rsi2": round(float(rs.get(sy, np.nan)), 1),
+                         "above200": bool(c1 > s200.get(sy, np.inf))})
+            if len(rows) >= max(25, len(fresh) + 10): break
+        US_SCAN = {"date": str(last.date()), "ms": round(m, 2), "gate": -1.18, "dline": -1.67, "wline": -1.13, "wk_done": bool(wk_done), "rows": rows}
+    except Exception as ex:
+        US_SCAN = None; print("(US scan failed:", ex, ")")
     for sy in C.columns[fd.iloc[-1].fillna(False).values & el.iloc[-1].values]: sig[sy] = f"{sy} (stretch Z {zd.iloc[-1][sy]:.2f})"
     if wk_done and Cw.index[-1] == last:
         for sy in Cw.columns[fw.iloc[-1].fillna(False).values]:
@@ -89,7 +109,9 @@ def export():
         out[s["nm"]] = {"close": round(s["close"], 2), "rsi2": round(s["rsi2"], 1), "s200": round(s["s200"], 2), "s5": round(s["s5"], 2), "above": s["above"], "status": st}
     f = os.path.join(H, "../r27/today27.json")
     if os.path.exists(f):
-        T = json.load(open(f)); T["us"] = {"date": str(state("SPY")["last"].date()), "etf": out}; json.dump(T, open(f, "w"), indent=1, allow_nan=False)
+        T = json.load(open(f)); T["us"] = {"date": str(state("SPY")["last"].date()), "etf": out}
+        if globals().get("US_SCAN"): T["us_scan"] = US_SCAN
+        json.dump(T, open(f, "w"), indent=1, allow_nan=False)
 if __name__ == "__main__":
     md = section()
     try: md += "\n" + swing_section()

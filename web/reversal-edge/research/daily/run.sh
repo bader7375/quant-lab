@@ -8,9 +8,12 @@ step() { echo "== $1 $(date -u +%H:%M:%S)" >> $LOG; }
 from yf import daily
 for s in ['SPY', 'QQQ']: print(s, daily(s, 'data/idx'))
 import glob, os, time
+import json
+nm = {}
 for f in sorted(glob.glob('data/us100/*.csv')):
-    try: daily(os.path.basename(f)[:-4], 'data/us100'); time.sleep(0.15)
+    try: x = daily(os.path.basename(f)[:-4], 'data/us100'); nm[os.path.basename(f)[:-4]] = (x or {}).get('name', ''); time.sleep(0.15)
     except Exception as e: print('ERR', f, e)
+json.dump(nm, open('data/us100_names.json', 'w'))
 " >> $LOG 2>&1; python3 $S/daily/strip_partial.py >> $LOG 2>&1)
 if [ "$(TZ=Asia/Riyadh date +%u)" = "5" ]; then   # Friday: Tadawul is closed, only the US section
   echo "**Friday: the Saudi market is closed; Thursday's Saudi list stands.**"; (cd $S/daily && python3 us_signal.py 2>> $LOG) || echo "FAILED at us_signal"; exit 0
