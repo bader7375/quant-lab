@@ -1,6 +1,15 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
 <h2 style="font-size:18px">How this system was built, and what the evidence says (v15)</h2>
+<h2>v18 (round 31): VWAP stretch Z and a momentum gate for dip buys</h2>
+<p>Two ideas, written down before testing: a <b>VWAP version of stretch Z</b>, and a <b>momentum gauge</b> that says when buying dips works and when to avoid it.</p>
+<table class="t"><tr><th style="text-align:left">test</th><th>2013–19</th><th>2020–26</th><th>2004–12</th><th>verdict</th></tr>
+<tr><td style="text-align:left">Z-swing rule with VWAP stretch Z instead of stretch Z</td><td>69% winners, +10.0%</td><td>63%, +5.1%</td><td>−0.4% (price only)</td><td class="down">weaker: chart panel only</td></tr>
+<tr><td style="text-align:left">stock momentum gauges (variance ratio, autocorrelation, efficiency ratio, ADX, 12-month momentum)</td><td colspan="3">no consistent split between good and bad dips</td><td class="down">rejected</td></tr>
+<tr><td style="text-align:left">dips bought while the market is NOT falling (market momentum above −1.18)</td><td>−3.5% per 20-day trade, 35% winners</td><td>−3.4%, 33%</td><td>−3.4%, 41%</td><td>avoid</td></tr>
+<tr><td style="text-align:left">dips bought while the market is deeply oversold (≤ −2.53)</td><td>+3.7%, 60%</td><td>+5.2%, 74%</td><td>−0.6%, 48%</td><td>trade</td></tr>
+<tr><td style="text-align:left"><b>Z swing with market momentum ≤ −1.18</b></td><td><b>86% winners, +19.9%</b> (was 78%, +15.9%)</td><td><b>70%, +6.9%</b> (was 67%, +6.1%)</td><td></td><td class="up"><b>adopted</b></td></tr></table>
+<p><b>Market momentum</b> is the whole Saudi market's 60-day move in units of its own volatility (equal weight). Below −1.18 the market is falling and stock dips tend to snap back with it; above −1.18 (80% of days) a stock falling on its own usually has a reason, and its dip kept falling. The registered test (return above the market) failed; the absolute-return pattern was found afterwards, so it was checked on data never used for this question: <b>US stocks</b>, where dips bought with the market falling made +8% to +11% per trade (76–85% winners) against −4.7% to +1.2% when it was not, in all three US data sets. Gating the Z swing kept the return of the 5 × 5% sleeve (+3.3% a year) with a smaller drawdown (−7% vs −10%); the worst gated trade lost 23% (was 35%). Trend breakouts are not gated: they happen in the momentum zone. Caveat: sell-offs cluster, so the number of independent episodes is far smaller than the trade counts.</p>
 <h2>v17 (round 29): momentum to help the Z swing</h2>
 <p>Three ways momentum could help, written down before testing and chosen on 2013–19: as a <b>filter</b> on Z-swing entries, as an <b>exit</b>, or as a separate <b>sleeve</b> that earns when the Z swing is idle.</p>
 <table class="t"><tr><th style="text-align:left">idea</th><th>2013–19</th><th>2020–26</th><th>verdict</th></tr>

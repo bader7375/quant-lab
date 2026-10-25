@@ -6,6 +6,9 @@ Tier 3 ML leader (Core ML sleeve): highest ML rank -> hold 20 sessions.
 Liquid, eligible stocks only (60-day median traded value >= SAR 3m). Within a tier, higher ML rank first; a stock appears once.
 Market model <= 0: the system would hold cash. Z swing is off (unreliable then, forced.py); breakouts then ML leaders, at half size.
 Signal at the last close, entry at the next open (the list's day), costs 0.40% round trip.
+Change 2026-10-25 (round 31): Z swing also needs market momentum (market stretch, MS) <= -1.18; above it, dips in single stocks
+tended to keep falling (Saudi 2004-26 and an independent US check). MS = equal-weight market 60-day log return / (its daily sd
+measured before those 60 days x sqrt 60).
 Usage: python top3.py --history   (walk-forward track record of the rule -> rule_stats.json)
        python top3.py             (today's list -> out/<date>.md, appended to out/picks_log.csv)"""
 import os, sys, json, glob, numpy as np, pandas as pd
@@ -13,7 +16,7 @@ H = os.path.dirname(os.path.abspath(__file__)); S = os.path.dirname(H); R27 = os
 sys.path.insert(0, R27); sys.path.insert(0, os.path.join(S, "strat")); os.chdir(R27)
 from core import P, C, dates, cols, PCT, pm, ATR, SMA200, START
 from sectors import industry
-COST = 0.004; ZLINE = -2.62
+COST = 0.004; ZLINE = -2.62; MS_GATE, MS_DEEP = -1.18, -2.53
 TIERS = {1: dict(name="Z swing", kind=1, h=40), 2: dict(name="Trend breakout", kind=4, h=60, k=3.0), 3: dict(name="ML leader", kind=1, h=20)}
 F = pd.read_pickle("F27y.pkl"); ZC = F["zc"].reindex(index=dates, columns=cols)
 LIQ = ((P["VAL"].rolling(60, min_periods=20).median() >= 3e6) & P["elig"]).values
@@ -21,11 +24,13 @@ ZFIRST = ((ZC <= ZLINE) & ~(ZC <= ZLINE).shift(1, fill_value=False)).values
 BRK = ((C >= C.rolling(55, min_periods=55).max()) & (C > SMA200)).values
 Of, Cl, A = P["Of"].values.astype(float), C.values.astype(float), ATR.values.astype(float)
 T_ = len(dates)
+_r = np.log(C).diff().clip(-.25, .25); _mr = _r.where(P["elig"]).mean(1); _msd = _mr.rolling(60, min_periods=40).std()
+MS = (_mr.rolling(60, min_periods=48).sum() / (_msd.shift(60) * np.sqrt(60))).values
 
-def ranked(i, pct, pmv):
+def ranked(i, pct, pmv, msv):
     """all candidates at close i in list order: [(column index, tier)]; pct = ML rank per column (array), pmv = market model."""
     ok = LIQ[i] & np.isfinite(pct) & np.isfinite(A[i]) & (A[i] > 0); out, seen = [], set()
-    masks = ([(1, ok & ZFIRST[i] & (pct >= .5))] if pmv > 0 else []) + [(2, ok & BRK[i] & (pct >= .7)), (3, ok)]
+    masks = ([(1, ok & ZFIRST[i] & (pct >= .5))] if pmv > 0 and msv <= MS_GATE else []) + [(2, ok & BRK[i] & (pct >= .7)), (3, ok)]
     for t, m in masks:
         for j in np.where(m)[0][np.argsort(-pct[m], kind="stable")]:
             if j not in seen: seen.add(j); out.append((j, t))
@@ -50,7 +55,7 @@ def history():
     pct_all = PCT.values; pmv = pm.values; rows = []; held = {}
     for i in range(START, T_ - 1):
         if not np.isfinite(pmv[i]): continue
-        for j, t in ranked(i, pct_all[i], pmv[i])[:3]:
+        for j, t in ranked(i, pct_all[i], pmv[i], MS[i])[:3]:
             if held.get(j, -1) > i: continue
             tr = trade(i, j, t)
             if tr is None: continue
@@ -102,11 +107,15 @@ def live():
     pmv = float(T["pm"]); pct = pd.Series(T["ranks"]).reindex(cols).astype(float).values; i = T_ - 1
     now = pd.Timestamp.now(tz="Asia/Riyadh").tz_localize(None).normalize(); day = BD.rollforward(now) if now > last else last + BD
     nm = names(); St = json.load(open(os.path.join(H, "rule_stats.json")))
-    cand = ranked(i, pct, pmv); top = cand[:3]; half = pmv <= 0; size = "2.5%" if half else "5%"
+    msv = float(MS[i]); cand = ranked(i, pct, pmv, msv); top = cand[:3]; half = pmv <= 0; size = "2.5%" if half else "5%"
     L = [f"**Saudi top 3 for {day.strftime('%A %d %b %Y')}** (prices to the {fmt_d(last)} close; buy at the 10:00 open)", ""]
     if last < day - BD: L += [f"Warning: the newest close in the data is {fmt_d(last)}, not {fmt_d(day - BD)} (Yahoo has not published it yet or the market was closed).", ""]
     L.append(f"Market model: {pc(pmv, 2)} expected 20-day market move -> " + ("**positive**, normal size." if not half else
              "**negative**: the system would hold cash today. If you trade anyway, use half size; Z-swing entries are switched off on such days."))
+    L.append("")
+    L.append(f"Market momentum (market stretch): {msv:+.2f} -> " + ("**deep mean-reversion zone** (at or below -2.53): dip buys have worked best here." if msv <= MS_DEEP else
+             "**mean-reversion zone** (-2.53 to -1.18): dip buys allowed." if msv <= MS_GATE else
+             "**momentum zone** (above -1.18): the market is not falling, so single-stock dips tend to keep falling; Z swing is off, breakouts are fine."))
     L += ["", "| # | Stock | Setup | Last close | Plan |", "|---|---|---|---|---|"]
     log_rows = []
     for n, (j, t) in enumerate(top, 1):
@@ -144,7 +153,7 @@ def live():
     if due: L += ["", "Exits due at today's open (earlier picks, if you bought them): " + "; ".join(due) + "."]
     if still: L += ["", f"{still} earlier pick(s) are still inside their holding rule."]
     L += ["", "Research signals, not financial advice. About 4 in 10 picks lose, so keep each position small"
-          + ("; keep at most 5 Z-swing positions open at once (as tested; the worst Z-swing trade lost about 35%)." if any(t == 1 for _, t in top) else ".")]
+          + ("; keep at most 5 Z-swing positions open at once (as tested; with the market-momentum gate the worst Z-swing trade lost about 23%)." if any(t == 1 for _, t in top) else ".")]
     md = "\n".join(L); open(os.path.join(H, f"out/{last.date()}.md"), "w").write(md)
     pd.concat([old, pd.DataFrame(log_rows)]).to_csv(lf, index=False); print(md)
 

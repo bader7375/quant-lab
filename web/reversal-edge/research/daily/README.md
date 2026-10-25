@@ -8,8 +8,13 @@ Rule (fixed 2026-10-24, before the first list; only setups validated in rounds 2
 2. Trend breakout: close at a 55-day high above the 200-day average, ML rank >= 0.7, market model > 0 -> 3-ATR trailing stop, max 60 sessions.
 3. ML leader: highest ML rank -> hold 20 sessions.
 Liquid stocks only (60-day median value >= SAR 3m); higher ML rank first within a tier. Market model <= 0: no Z swing, half size.
+Change 2026-10-25 (round 31): Z swing also needs market momentum <= -1.18 (equal-weight market 60-day move in units of its own
+volatility); above it single-stock dips kept falling. Old record kept in rule_stats_v1.json.
 Later lists flag exits due for earlier picks (same exit rules; a repeat pick while held means keep holding).
 
 Walk-forward track record of the rule (`top3.py --history`, `rule_stats.json`, net of 0.40%), market-model-positive days:
 2013-19 57% winners, +4.8%/trade; 2020-26 53%, +3.2% (random liquid stock, 20 days: +1.3%); since 2024 41%, -0.7% (random about 0%).
 By tier 2020-26: Z swing 62% / +4.8% (since 2024 55% / -0.9%), breakout 50% / +3.1%, ML leader 57% / +2.8%.
+
+With the market-momentum gate (current rule_stats.json), market-model-positive days: Z-swing picks 2013-19 84% winners +18.3%,
+2020-26 71% +7.6%, since 2024 57% +1.4% (before: 76% +13.6%, 62% +4.8%, 55% -0.9%); all picks 2020-26 53%, +3.4%; since 2024 41%, -0.4%.

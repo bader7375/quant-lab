@@ -13,6 +13,31 @@ function zcRareTxt(z){const p=zcCdf(z);if(!isF(p))return "—";if(p<=.5){const n
 function zcOutcome(z){if(!isF(z))return null;let k=0;while(k<ZC_OUT.length-1&&z>ZC_EDGES[k+1])k++;const [xs,beat,net,up]=ZC_OUT[k];return {xs,beat,net,up,lo:ZC_EDGES[k],hi:ZC_EDGES[k+1]}}
 function zcOwnPct(arr,i){const v=arr[i];if(!isF(v))return NaN;let a=0,b=0;for(let k=0;k<=i;k++)if(isF(arr[k])){b++;if(arr[k]<=v)a++}return b>=250?a/b:NaN}
 function zcColor(z){return !isF(z)?"inherit":z<=ZC_LINE?"#4f96f0":z<=-1.5?"#7fb2f0":z>=3?"#e66767":z>=2?"#f0a0a0":"inherit"}
+
+// ------------------------------------------------ v18 (round 31): VWAP stretch Z and market momentum (the dip-buy gate)
+// VWAP stretch Z = mean over 10/20/60 days of ln(close / k-day VWAP) in units of the stock's own daily volatility (measured before the window)
+// x sqrt((k-1)(2k-1)/(6k)). Line -2.67 = 2% of liquid Saudi stock-days 2013-19; scale = liquid Saudi stocks 2004-2026.
+const VZ_LINE=-2.67,VZ_Q=[[-4.24, 0.005], [-3.46, 0.01], [-2.711, 0.02], [-1.865, 0.05], [-1.323, 0.1], [-0.821, 0.2], [-0.521, 0.3], [-0.292, 0.4], [-0.091, 0.5], [0.109, 0.6], [0.331, 0.7], [0.614, 0.8], [1.068, 0.9], [1.514, 0.95], [2.135, 0.98], [2.657, 0.99], [3.216, 0.995]];
+function vwapZ(d){const n=d.c.length,c=d.c,rr=new Array(n).fill(NaN),sd=new Array(n).fill(NaN),out=new Array(n).fill(NaN);
+ for(let i=1;i<n;i++){const a=Math.log(c[i]),b=Math.log(c[i-1]);if(isF(a)&&isF(b))rr[i]=Math.max(-.25,Math.min(.25,a-b))}
+ for(let i=59;i<n;i++){let s1=0,s2=0,m=0;for(let k=i-59;k<=i;k++)if(isF(rr[k])){s1+=rr[k];s2+=rr[k]*rr[k];m++}if(m>=40)sd[i]=Math.sqrt(Math.max(1e-12,(s2-s1*s1/m)/(m-1)))}
+ const pv=new Array(n).fill(0),vv=new Array(n).fill(0);for(let i=0;i<n;i++){const tp=(d.h[i]+d.l[i]+c[i])/3,v=d.v?d.v[i]:NaN;if(isF(tp)&&isF(v)&&v>0){pv[i]=tp*v;vv[i]=v}}
+ const zk=K=>{const z=new Array(n).fill(NaN),sc=Math.sqrt((K-1)*(2*K-1)/(6*K));let a=0,b=0;
+  for(let i=0;i<n;i++){a+=pv[i];b+=vv[i];if(i>=K){a-=pv[i-K];b-=vv[i-K]}if(i>=K&&b>0&&isF(c[i])&&c[i]>0&&isF(sd[i-K])&&sd[i-K]>0)z[i]=Math.log(c[i]/(a/b))/(sd[i-K]*sc)}return z};
+ const x=zk(10),y=zk(20),w=zk(60);for(let i=0;i<n;i++)if(isF(x[i])&&isF(y[i])&&isF(w[i]))out[i]=(x[i]+y[i]+w[i])/3;return out}
+function qCdf(Q,z){if(!isF(z))return NaN;if(z<=Q[0][0])return Q[0][1]/2;if(z>=Q[Q.length-1][0])return 1-(1-Q[Q.length-1][1])/2;
+ for(let k=1;k<Q.length;k++)if(z<=Q[k][0]){const [x0,p0]=Q[k-1],[x1,p1]=Q[k];return p0+(p1-p0)*(z-x0)/(x1-x0)}return NaN}
+function vzRareTxt(z){const p=qCdf(VZ_Q,z);if(!isF(p))return "—";if(p<=.5){const n=Math.round(1/p);return `lower than ${(100*(1-p)).toFixed(p<.02?1:0)}% of days${p<.1?` (about 1 day in ${n})`:""}`}
+ const n=Math.round(1/(1-p));return `higher than ${(100*p).toFixed(p>.98?1:0)}% of days${p>.9?` (about 1 day in ${n})`:""}`}
+function vzColor(z){return !isF(z)?"inherit":z<=VZ_LINE?"#4dd0e1":z<=-1.5?"#8fdde6":z>=2.66?"#ffb74d":z>=2?"#ffd08a":"inherit"}
+// market momentum = equal-weight Saudi market 60-day log return / (its daily sd measured before those 60 days x sqrt 60), from the daily ML export.
+// Round 31: dip buys worked when it was at or below -1.18 (the whole market falling); above it single-stock dips tended to keep falling.
+const MS_GATE=-1.18,MS_DEEP=-2.53;let MS_MAP=null,MS_SRC=null;
+function msMap(){const h=typeof MLPF!=="undefined"&&MLPF&&MLPF.ms_hist;if(!h||!h.d)return null;
+ if(MS_SRC!==h){MS_SRC=h;MS_MAP=new Map();for(let k=0;k<h.d.length;k++){const q=String(h.d[k]);MS_MAP.set(`${q.slice(0,4)}-${q.slice(4,6)}-${q.slice(6,8)}`,h.v[k])}}return MS_MAP}
+function msOn(sym){try{return saudiSym(sym)}catch(e){return false}}   // saudiSym is a const in app6 (not hoisted)
+function msAt(t){const m=msMap();if(!m)return NaN;const v=m.get(t);return isF(v)?v:NaN}
+function msZone(v){return !isF(v)?null:v<=MS_DEEP?{k:"deep",txt:"deep mean-reversion zone (dip buys worked best)",col:"#4fd1a5"}:v<=MS_GATE?{k:"mr",txt:"mean-reversion zone (dip buys allowed)",col:"#8fd19e"}:{k:"mom",txt:"momentum zone: the market is not falling, avoid dip buys",col:"#e6a667"}}
 // ------------------------------------------------ chart (TradingView Lightweight Charts)
 // Adaptive z-zones: shaded bands between this stock's own z-score percentiles, drawn by a custom series.
 class ZoneView{
@@ -93,7 +118,12 @@ class PriceDivView{
 }
 const PULSE_STATE={1:"TREND UP",[-1]:"TREND DOWN",2:"EXHAUSTION UP",[-2]:"EXHAUSTION DOWN",0:"NO TREND"};
 function pulseAdvice(s,i){const P=s.pulse,st0=P.state[i],momMkt=s.mode[i]===-1,div=recentDiv(P,i);let a,tone;
- if(momMkt){
+ const mv=msOn(st.sym)&&s.d?msAt(s.d[i]):NaN;
+ if(isF(mv)){const okz=mv<=MS_GATE;   // v18 (round 31): Saudi stocks use the market momentum gate
+  a=okz?`Market momentum ${mv.toFixed(2)}: the whole market is falling, the zone where deep dips rebounded. Short dips (RSI(2)) still don't pay on Saudi stocks: buy only a Z-swing signal (stretch Z first close ≤ −2.62).`
+       :`Market momentum ${mv.toFixed(2)}: the market is not falling, so a stock dropping on its own has tended to keep falling. Avoid buying dips; trend breakouts are the trade here.`;tone=okz?"good":"bad";
+  if(st0===2)a+=" Up-move at a 2-year momentum extreme and turning: a warning, no proven edge on its own."}
+ else if(momMkt){
   if(st0===1){a="Momentum market in an up-trend: favour momentum entries, don't fade strength.";tone="good"}
   else if(st0===-1){a="Momentum market falling: avoid buying dips here; they tend to keep falling.";tone="bad"}
   else if(st0===2){a="Up-move at a 2-year momentum extreme and turning: a warning to tighten, not a proven sell signal.";tone="mid"}
@@ -121,12 +151,13 @@ function renderPulseHud(i){const hud=$("pulse-hud"),s=S();if(!s||!s.pulse||!UI.p
  hud.innerHTML=`<b>MOMENTUM PULSE</b> <span style="color:${M>=0?"#26a69a":"#ef5350"}">${isF(M)?(M>=0?"+":"")+M.toFixed(2)+"σ":"—"} ${isF(acc)?(acc>0?"▲ accelerating":"▼ decelerating"):""}</span>
   <span class="pk">horizons</span> ${P.mh.map(a=>isF(a[i])?`<i style="background:${a[i]>=0?"#26a69a":"#ef5350"};opacity:${Math.min(1,.35+Math.abs(a[i])/3)}"></i>`:"<i></i>").join("")} ${Math.abs(al)}/4
   <span class="pk">path</span> ${isF(P.er[i])?Math.round(100*P.er[i])+"%":"—"} <span class="pk">rank</span> ${isF(P.pct[i])?Math.round(100*P.pct[i])+"%":"—"}
-  <span class="st" style="color:${col};border-color:${col}">${PULSE_STATE[st0]}</span>${s.mode[i]===-1?'<span class="st" style="color:#a77bea;border-color:#a77bea">AVOID MEAN REVERSION</span>':""}`}
+  <span class="st" style="color:${col};border-color:${col}">${PULSE_STATE[st0]}</span>${(()=>{const mv=msOn(st.sym)&&s.d?msAt(s.d[i]):NaN;if(isF(mv))return mv<=MS_GATE?`<span class="st" style="color:#4fd1a5;border-color:#4fd1a5">DIP BUYS OK · MKT MOM ${mv.toFixed(2)}</span>`:`<span class="st" style="color:#e6a667;border-color:#e6a667">AVOID DIP BUYS · MKT MOM ${mv.toFixed(2)}</span>`;
+   return s.mode[i]===-1?'<span class="st" style="color:#a77bea;border-color:#a77bea">AVOID MEAN REVERSION</span>':""})()}`}
 
 let chart=null,SER={},MK=null,PLINES=[],ARR=null,hoverIdx=null;
 const OVL=[["sect","Sector index (scaled to the stock)","#8fd19e"],["vwy","VWAP yearly ±1σ/±2σ","#ffb74d"],["vwm","VWAP monthly ±1σ/±2σ","#4dd0e1"],["zb","Long-term Z bands (250d: mean, −1, ±2.5σ)","#b39dff"],["bb","Bollinger Bands (20, 2)","#7aa7e0"],["zones","Stock-specific zones","#3987e5"],["mean","20-day mean","#ffffff"],["exit","5-day average (exit line)","#fab219"],["kalman","Kalman",C.mean.kalman],["trend","Trend",C.mean.trend],["ou","OU (price)",C.mean.ou],["ema20","EMA 20",C.mean.ema20],["factor","Market residual",C.mean.factor],
  ["vol","Volume","#5d6b78"],["setups","Setups","#8a8a85"],["sys","System trades","#4fd1a5"],["signs","Reversal signs","#fab219"],["pdiv","Divergence lines","#a77bea"],["mine","My trades",TV.you]];
-const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones (20d)"],["zs","Stretch Z (10/20/60d)"],["zl","Long-term Z (250d)"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
+const PNS=[["pulse","Momentum Pulse"],["edge","Reversal edge"],["rsi","RSI(2)"],["z","Z-zones (20d)"],["zs","Stretch Z (10/20/60d)"],["vz","VWAP stretch Z"],["ms","Market momentum (dip-buy gate)"],["zl","Long-term Z (250d)"],["vol","Volatility"],["reg","Regime"],["fear","Fear (VIX)"]];
 $("ov").innerHTML=`<span class="lab">on price</span>`+OVL.map(([k,n,c])=>`<label><input type="checkbox" data-ov="${k}" ${UI.ov[k]?"checked":""}><span style="color:${c}">■</span>${n}</label>`).join("");
 $("pn").innerHTML=`<span class="lab">panels</span>`+PNS.map(([k,n])=>`<label><input type="checkbox" data-pn="${k}" ${UI.pn[k]?"checked":""}>${n}</label>`).join("");
 $("ov").addEventListener("change",e=>{const k=e.target.dataset.ov;if(!k)return;UI.ov[k]=e.target.checked;saveUI();applyVisibility();annotate()});
@@ -161,7 +192,7 @@ function buildArrays(){
  A.edgeH=d.d.map((t,i)=>s&&s.setup[i]&&isF(s.score[i])?{time:t,value:s.score[i],color:THIRD_COL[thirdOf(s.score[i])]}:{time:t});
  A.edgeL=L(s&&s.score);
  A.rsi=L(s?s.rsi2:null);
- A.z=L(A.zArr);A.zl=L(s&&s.z250?s.z250:A.zlArr);A.zs=L(A.zsArr);for(let k=0;k<6;k++)A["zq"+k]=L(s&&s.zq[k]);
+ A.z=L(A.zArr);A.zl=L(s&&s.z250?s.z250:A.zlArr);A.zs=L(A.zsArr);A.vzArr=vwapZ(d);A.vz=L(A.vzArr);A.msArr=msOn(st.sym)?d.d.map(msAt):d.d.map(()=>NaN);A.ms=L(A.msArr);for(let k=0;k<6;k++)A["zq"+k]=L(s&&s.zq[k]);
  if(s&&s.pulse){const P=s.pulse;A.pulse=d.d.map((t,i)=>{if(!isF(P.M[i]))return {time:t};const mh=P.mh.map(a=>a[i]),ok=mh.every(isF);
    const o={time:t,M:P.M[i],lo:ok?Math.min(...mh,P.M[i]):P.M[i],hi:ok?Math.max(...mh,P.M[i]):P.M[i],al:P.align[i]*(P.M[i]>=0?1:-1),er:P.er[i],acc:P.acc[i],st:P.state[i],th:P.thrust[i],q95:P.q95[i],q05:P.q05[i]};
    if(P.div[i])o.dv={type:P.div[i],b0:i-P.dp0[i],b1:i-P.dp1[i],M0:P.M[P.dp0[i]],M1:P.M[P.dp1[i]]};return o});
@@ -174,7 +205,7 @@ var CHART_TRM=null;
 function buildChart(keep){
  const range=keep&&chart?chart.timeScale().getVisibleLogicalRange():null;
  if(chart){chart.remove();chart=null}
- const TRM0=!!(S()&&S().trendMode),np=Object.entries(UI.pn).filter(([k,v])=>v&&!(TRM0&&(k==="edge"||k==="rsi"||k==="z"))).length;$("lwc-wrap").style.height=(470+np*105+(UI.pn.pulse?60:0))+"px";
+ const TRM0=!!(S()&&S().trendMode),np=Object.entries(UI.pn).filter(([k,v])=>v&&!(TRM0&&(k==="edge"||k==="rsi"||k==="z"))&&!(k==="ms"&&!msOn(st.sym))).length;$("lwc-wrap").style.height=(470+np*105+(UI.pn.pulse?60:0))+"px";
  chart=LW.createChart($("lwc"),{autoSize:true,
   layout:{background:{type:"solid",color:C.surface},textColor:C.muted,fontFamily:"'JetBrains Mono',ui-monospace,monospace",fontSize:11,attributionLogo:true,panes:{separatorColor:C.axis,separatorHoverColor:"rgba(57,135,229,.3)",enableResize:true}},
   grid:{vertLines:{color:"#222220"},horzLines:{color:"#222220"}},
@@ -206,6 +237,10 @@ function buildChart(keep){
   SER.z=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"z20",topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.18)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.18)",priceFormat:{type:"price",precision:2,minMove:.01}},P.z)}
  if(UI.pn.zs){P.zs=pane++;SER.zs=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"Stretch Z",topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.12)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.18)",priceFormat:{type:"price",precision:2,minMove:.01}},P.zs);
   for(const [p,c,t] of [[3,"rgba(230,103,103,.7)","+3 top 1%"],[ZC_LINE,"rgba(79,150,240,.9)","−2.6 extreme"],[-3.5,"rgba(79,150,240,.5)","−3.5"]])SER.zs.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:t})}
+ if(UI.pn.vz){P.vz=pane++;SER.vz=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"VWAP Z",topLineColor:"#ffb74d",topFillColor1:"rgba(255,183,77,.12)",topFillColor2:"rgba(255,183,77,0)",bottomLineColor:"#4dd0e1",bottomFillColor1:"rgba(77,208,225,0)",bottomFillColor2:"rgba(77,208,225,.18)",priceFormat:{type:"price",precision:2,minMove:.01}},P.vz);
+  for(const [p,c,t] of [[2.66,"rgba(255,183,77,.7)","+2.7 top 1%"],[VZ_LINE,"rgba(77,208,225,.9)","−2.7 (2%)"]])SER.vz.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:t})}
+ if(UI.pn.ms&&msOn(st.sym)){P.ms=pane++;SER.ms=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:MS_GATE},lineWidth:2,priceLineVisible:false,title:"Market momentum",topLineColor:"#e6a667",topFillColor1:"rgba(230,166,103,.10)",topFillColor2:"rgba(230,166,103,0)",bottomLineColor:"#4fd1a5",bottomFillColor1:"rgba(79,209,165,0)",bottomFillColor2:"rgba(79,209,165,.25)",priceFormat:{type:"price",precision:2,minMove:.01}},P.ms);
+  for(const [p,c,t] of [[MS_GATE,"rgba(230,166,103,.9)","−1.18 dip buys below"],[MS_DEEP,"rgba(79,209,165,.9)","−2.53 deep"]])SER.ms.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:t})}
  if(UI.pn.zl){P.zl=pane++;SER.zl=chart.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:"Z 250d",topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.15)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.15)",priceFormat:{type:"price",precision:2,minMove:.01}},P.zl);
   for(const [p,c,t] of [[2.5,"rgba(230,103,103,.8)","+2.5"],[2,"rgba(230,103,103,.4)",""],[-1,"rgba(195,194,183,.45)","exit −1"],[-2,"rgba(79,150,240,.4)",""],[-2.5,"rgba(79,150,240,.8)","−2.5"]])SER.zl.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:!!t,title:t})}
  if(UI.pn.vol){P.vol=pane++;SER.cc=line("rgba(137,135,129,.6)",{},P.vol);SER.yz=line("#3987e5",{lineWidth:1.5,title:"YZ20",lastValueVisible:true},P.vol);SER.garch=line("#fab219",{lineWidth:1.5,title:"GARCH",lastValueVisible:true},P.vol);SER.har=line("#c08cff",{title:"HAR 5d",lastValueVisible:true},P.vol)}
@@ -216,7 +251,7 @@ function buildChart(keep){
  MK=LW.createSeriesMarkers(SER.candle,[]);PLINES=[];
  chart.subscribeCrosshairMove(onCross);chart.subscribeClick(onChartClick);
  refreshOverlays(range);if(!range)showRange()}
-const DKEYS=["zs","sect","vwyM","vwyU1","vwyL1","vwyU2","vwyL2","vwmM","vwmU1","vwmL1","vwmU2","vwmL2","zl","zbu","zbm","zbx","zbl","bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
+const DKEYS=["zs","vz","ms","sect","vwyM","vwyU1","vwyL1","vwyU2","vwyL2","vwmM","vwmU1","vwmL1","vwmU2","vwmL2","zl","zbu","zbm","zbx","zbl","bbu","bbm","bbl","pdiv","pulse","zones","candle","vol","mean","exit","kalman","trend","ou","ema20","factor","edgeH","edgeL","rsi","z","zq0","zq1","zq2","zq3","zq4","zq5","yz","garch","har","cc","hurst","adf","vr4","vix"];
 function setAllData(upto){if(!ARR)return;for(const k of DKEYS)if(SER[k]&&ARR[k])SER[k].setData(upto>=ARR.n-1?ARR[k]:ARR[k].slice(0,upto+1))}
 function stepData(i){for(const k of DKEYS)if(SER[k]&&ARR[k]&&ARR[k][i])SER[k].update(ARR[k][i])}
 function applyVisibility(){const v=UI.ov,set=(k,on)=>SER[k]&&SER[k].applyOptions({visible:!!on});
@@ -261,9 +296,9 @@ function renderLegend(){try{const c0=cur(),i0=hoverIdx!=null?Math.max(0,Math.min
 
  const d=D(),el=$("legend");if(!d){el.innerHTML="";return}
  const c=cur(),i=hoverIdx!=null?Math.max(0,Math.min(c,hoverIdx)):(st.pinned&&st.cursor!=null?Math.min(st.cursor,c):c),s=S(),ch=i>0?d.c[i]/d.c[i-1]-1:NaN;
- const z=ARR?ARR.zArr[i]:NaN,mu=ARR?ARR.meanArr[i]:NaN,zl=ARR&&ARR.zlArr?ARR.zlArr[i]:NaN,zs=ARR&&ARR.zsArr?ARR.zsArr[i]:NaN;
+ const z=ARR?ARR.zArr[i]:NaN,mu=ARR?ARR.meanArr[i]:NaN,zl=ARR&&ARR.zlArr?ARR.zlArr[i]:NaN,zs=ARR&&ARR.zsArr?ARR.zsArr[i]:NaN,vz=ARR&&ARR.vzArr?ARR.vzArr[i]:NaN,mm=ARR&&ARR.msArr?ARR.msArr[i]:NaN,mz=msZone(mm);
  el.innerHTML=`<div class="l1"><b>${esc(st.sym)}</b><span class="lk">1D</span><span class="lk">${d.d[i]}</span><span><span class="lk">O</span> ${fp(d.o[i])}</span><span><span class="lk">H</span> ${fp(d.h[i])}</span><span><span class="lk">L</span> ${fp(d.l[i])}</span><span><span class="lk">C</span> ${fp(d.c[i])}</span><span class="${cl(ch)}">${spct(ch,2)}</span></div>
-  <div class="l2"><span>mean ${fp(mu)}</span><span>z20 <span style="color:${isF(z)?(z<0?"#4f96f0":"#f08c8c"):"inherit"}">${fmt(z,2)}</span></span><span title="10/20/60-day move in units of its own volatility; ${esc(zcRareTxt(zs))}"><b>Stretch Z</b> <span style="color:${zcColor(zs)};font-weight:600">${fmt(zs,2)}</span></span><span class="lk">Z250 ${fmt(zl,2)}</span>${s?`<span>RSI2 <span class="${s.setup[i]?"up":""}">${fmt(s.rsi2[i],0)}</span></span><span>edge <span style="color:${THIRD_COL[thirdOf(s.score[i])]||"inherit"}">${fmt(s.score[i],1)}</span></span><span>P ${isF(s.P[i])?pct(s.P[i],0):"—"}</span>`:""}${isF(d.v[i])?`<span class="lk">vol ${d.v[i]>=1e6?(d.v[i]/1e6).toFixed(1)+"M":Math.round(d.v[i]).toLocaleString()}${s&&isF(s.volz[i])?` (${s.volz[i]>=0?"+":""}${s.volz[i].toFixed(1)}σ)`:""}</span>`:""}</div>`}
+  <div class="l2"><span>mean ${fp(mu)}</span><span>z20 <span style="color:${isF(z)?(z<0?"#4f96f0":"#f08c8c"):"inherit"}">${fmt(z,2)}</span></span><span title="10/20/60-day move in units of its own volatility; ${esc(zcRareTxt(zs))}"><b>Stretch Z</b> <span style="color:${zcColor(zs)};font-weight:600">${fmt(zs,2)}</span></span><span title="price vs its 10/20/60-day VWAP in volatility units; ${esc(vzRareTxt(vz))}"><b>VWAP Z</b> <span style="color:${vzColor(vz)};font-weight:600">${fmt(vz,2)}</span></span>${mz?`<span title="market momentum: ${esc(mz.txt)}">mkt mom <span style="color:${mz.col};font-weight:600">${fmt(mm,2)}</span></span>`:""}<span class="lk">Z250 ${fmt(zl,2)}</span>${s?`<span>RSI2 <span class="${s.setup[i]?"up":""}">${fmt(s.rsi2[i],0)}</span></span><span>edge <span style="color:${THIRD_COL[thirdOf(s.score[i])]||"inherit"}">${fmt(s.score[i],1)}</span></span><span>P ${isF(s.P[i])?pct(s.P[i],0):"—"}</span>`:""}${isF(d.v[i])?`<span class="lk">vol ${d.v[i]>=1e6?(d.v[i]/1e6).toFixed(1)+"M":Math.round(d.v[i]).toLocaleString()}${s&&isF(s.volz[i])?` (${s.volz[i]>=0?"+":""}${s.volz[i].toFixed(1)}σ)`:""}</span>`:""}</div>`}
 let raf=0;
 function onCross(p){hoverIdx=p&&p.point&&p.logical!=null?Math.round(p.logical):null;
  if(raf)return;raf=requestAnimationFrame(()=>{raf=0;renderLegend();if(!st.pinned&&hoverIdx!=null&&hoverIdx>=0&&hoverIdx<=cur()&&hoverIdx!==st.cursor){st.cursor=hoverIdx;syncScrub();inspector(hoverIdx)}})}

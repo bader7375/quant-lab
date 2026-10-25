@@ -13,6 +13,11 @@ pm = float(mkt.predict(M.loc[[last], FE["market"]])[0]); hist = pd.Series(mkt.pr
 F = pd.read_pickle("F27y.pkl"); fl = F["zc"].index[-1]; assert pd.Timestamp(fl) == pd.Timestamp(last), (fl, last)
 dm = F["divmonth"].loc[fl]; zc = F["zc"].loc[fl]; zc0 = F["zc"].iloc[-2]; zcx = (zc <= -2.62) & (zc0 > -2.62)
 sys.path.insert(0, "../strat"); from sectors import industry
+# round 31: market momentum (market stretch) = equal-weight market 60-day log return / (its daily sd before those 60 days x sqrt 60); Z swing only at or below -1.18
+from base import yahoo as _yahoo
+_P = _yahoo(); _r = np.log(_P["C"]).diff().clip(-.25, .25); _mr = _r.where(_P["elig"]).mean(1); _msd = _mr.rolling(60, min_periods=40).std()
+MSER = _mr.rolling(60, min_periods=48).sum() / (_msd.shift(60) * np.sqrt(60)); MS_GATE = -1.18
+ms_now = float(MSER.loc[pd.Timestamp(last)]); assert pd.Timestamp(MSER.index[-1]) == pd.Timestamp(last)
 today = D[D.date == last].copy(); today["score"] = pick.predict(today[FEATS]); today["pct"] = today.score.rank(pct=True)
 today["div"] = today.sym.map(lambda s: bool(dm.get(s, 0) == 1))   # info only: the dividend-month tilt was rejected on clean data
 liq = today[today.val >= 3e6].sort_values("score", ascending=False); liq["rank"] = np.arange(1, len(liq) + 1)
@@ -22,14 +27,14 @@ for s in [s for s in zcx[zcx].index]:
     row = today[today.sym == s]
     if row.empty: continue
     r = row.iloc[0]; zx.append({"sym": s, "zc": round(float(zc[s]), 2), "pct": round(float(r.pct), 3), "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s),
-        "ok": bool(r.pct >= .5 and pm > 0 and r.val >= 3e6)})
+        "ok": bool(r.pct >= .5 and pm > 0 and r.val >= 3e6 and ms_now <= MS_GATE)})
 # live Z-swing trades (round 28): qualifying first touches in the last 40 sessions, using the walk-forward ML ranks and market model of the signal day
 try:
     from core import P as PP, PCT as WPCT, pm as WPM
     Of = PP["Of"]; Cl = PP["C"]; ds = Cl.index; zcF = F["zc"].reindex(index=ds, columns=Cl.columns)
     liqm = PP["VAL"].rolling(60, min_periods=20).median() >= 3e6
     fz = (zcF <= -2.62) & ~(zcF <= -2.62).shift(1, fill_value=False)
-    ok_ = fz & (WPCT >= .5) & pd.DataFrame(np.repeat((WPM > 0).values[:, None], Cl.shape[1], 1), index=ds, columns=Cl.columns) & PP["elig"] & liqm
+    ok_ = fz & (WPCT >= .5) & pd.DataFrame(np.repeat((WPM > 0).values[:, None], Cl.shape[1], 1), index=ds, columns=Cl.columns) & PP["elig"] & liqm & pd.DataFrame(np.repeat((MSER.reindex(ds) <= MS_GATE).values[:, None], Cl.shape[1], 1), index=ds, columns=Cl.columns)
     zact = []
     for i in range(len(ds) - 41, len(ds) - 1):   # signals before the last close (today's new ones are in zx)
         for s_ in Cl.columns[ok_.iloc[i].values]:
@@ -42,7 +47,7 @@ old = json.load(open("../ml26/today.json"))
 T = {"date": str(pd.Timestamp(last).date()), "model": PICK, "pm": pm, "pm_hist": {str(k.date()): round(float(v), 5) for k, v in hist.items()}, "universe": int(len(liq)),
      "picks": [{"sym": r.sym, "rank": int(r["rank"]), "score": round(float(r.score), 4), "val_m": round(float(r.val) / 1e6, 1), "div": bool(r["div"]), **{c: round(float(r[c]) + .5, 3) for c in cols}} for _, r in liq.head(30).iterrows()],
      "ranks": {r.sym: round(float(r.pct), 3) for _, r in today.iterrows()}, "ranked": int(len(today)),
-     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62, "zactive": zact, "zhold": 40}
+     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62, "zactive": zact, "zhold": 40, "ms": round(ms_now, 3), "ms_gate": MS_GATE, "ms_deep": -2.53}
 for k in ("record", "summary", "filter_test"):
     if k in old: T[k] = old[k]
 if os.path.exists("record27.json"): T.update(json.load(open("record27.json")))
@@ -51,6 +56,8 @@ def _clean(x):
     if isinstance(x, list): return [_clean(v) for v in x]
     if isinstance(x, float) and not np.isfinite(x): return None
     return x
+_mh = json.load(open("../r31/ms_hist.json")); _cut = 20130000; _y = MSER.loc["2013":].dropna()
+T["ms_hist"] = {"d": [d for d in _mh["d"] if d < _cut] + [int(x.strftime("%Y%m%d")) for x in _y.index], "v": [v for d, v in zip(_mh["d"], _mh["v"]) if d < _cut] + [round(float(x), 2) for x in _y.values]}
 T = _clean(T); json.dump(T, open("today27.json", "w"), indent=1, allow_nan=False)
 print("date", T["date"], "| model", PICK, "| market model", f"{100*pm:+.2f}%", "INVESTED" if pm > 0 else "CASH", "| dividend-month stocks", len(T["div"]), "| Z extremes today", zx)
 print("top 10:", [(p["sym"], p["div"]) for p in T["picks"][:10]])

@@ -1,0 +1,31 @@
+US check (independent; EB = first stretch Z <= -2.0, hold 20, cost 0.1%)
+  us100 2010-26                      | MR n  135 net +10.44% win 85% | middle n  269 net +2.70% win 61% | avoid n  738 net +0.49% win 56%
+    pass: True (days in zones: MR 2%, avoid 87%)
+  KDD17 2007-16                      | MR n   42 net +8.05% win 76% | middle n  128 net +0.50% win 57% | avoid n  156 net +1.15% win 60%
+    pass: True (days in zones: MR 1%, avoid 80%)
+  CMIN-US 2018-21                    | MR n   84 net +11.42% win 85% | middle n   10 net +8.55% win 90% | avoid n  141 net -4.70% win 38%
+    pass: True (days in zones: MR 5%, avoid 60%)
+US CHECK PASSED
+
+Saudi Z swing (EA, hold 40) by zone:
+  DESIGN                             | MR n  160 net +19.84% win 83% | middle n   86 net +20.35% win 91% | avoid n   40 net -9.30% win 28%
+    all win 78% exp +15.92% -> without avoid zone win 86% exp +20.02% (246/286 kept) ok
+  CONFIRM                            | MR n  114 net +6.43% win 66% | middle n   58 net +7.42% win 76% | avoid n   17 net -0.82% win 41%
+    all win 67% exp +6.08% -> without avoid zone win 69% exp +6.76% (172/189 kept) ok
+  C1                                 | MR n   79 net +8.40% win 71% | middle n   41 net +7.56% win 71% | avoid n   10 net +2.29% win 40%
+    all win 68% exp +7.67% -> without avoid zone win 71% exp +8.11% (120/130 kept) ok
+  C2                                 | MR n   35 net +1.97% win 54% | middle n   17 net +7.08% win 88% | avoid n    7 net -5.26% win 43%
+    all win 63% exp +2.59% -> without avoid zone win 65% exp +3.64% (52/59 kept) ok
+EA GATE CHECK PASSED
+
+Descriptive: daily-list trades (walk-forward rule) and trend breakouts by zone
+  list tier 1 Z swing 13-19          | MR n   54 net +19.73% win 85% | middle n   34 net +16.44% win 82% | avoid n   20 net -7.56% win 40%
+  list tier 1 Z swing 20-26          | MR n   34 net +5.99% win 65% | middle n   34 net +6.81% win 71% | avoid n   18 net -1.21% win 39%
+  list tier 2 breakout 13-19         | MR n    2 net +25.08% win 50% | middle n   17 net +4.65% win 53% | avoid n  494 net +1.05% win 42%
+  list tier 2 breakout 20-26         | MR n   16 net +1.65% win 56% | middle n   42 net -0.45% win 40% | avoid n  689 net +3.73% win 49%
+  list tier 3 ML leader 13-19        | MR n   50 net +5.26% win 64% | middle n   95 net +6.11% win 72% | avoid n  403 net +0.13% win 49%
+  list tier 3 ML leader 20-26        | MR n   79 net +5.03% win 71% | middle n   76 net +1.21% win 58% | avoid n  263 net +0.95% win 49%
+  trend breakout (all) 13-19         | MR n    3 net +31.79% win 67% | middle n   12 net +3.51% win 58% | avoid n  321 net +0.70% win 41%
+  trend breakout (all) 20-26         | MR n   19 net +2.26% win 63% | middle n   49 net +1.54% win 43% | avoid n  903 net +4.67% win 50%
+
+Saudi days in zones 2013-26: MR 9%, middle 12%, avoid 80%; today 2026-10-22 MS -3.66
