@@ -1,6 +1,14 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
 <h2 style="font-size:18px">How this system was built, and what the evidence says (v15)</h2>
+<h2>v19 (round 33): weekly and monthly candles, and do financially strong companies swing better?</h2>
+<p><b>Stretch Z on weekly candles works.</b> Same formula on weekly bars (weeks end Thursday); the weekly extreme line is −2.08 (2% of weeks in 2013–19). With the Z-swing filters (ML rank ≥ 50%, market model positive, market momentum ≤ −1.18), buying at the next open and selling 40 sessions later:</p>
+<table class="t"><tr><th style="text-align:left">signal</th><th>2013–19</th><th>2020–26</th><th>2004–12 (price only)</th></tr>
+<tr><td style="text-align:left">daily Z swing (round 31)</td><td>86% winners, +19.9%</td><td>70%, +6.9%</td><td>+3.7%</td></tr>
+<tr><td style="text-align:left"><b>weekly Z swing</b></td><td><b>85%, +19.1%</b> (25 a year)</td><td><b>86%, +11.2%</b> (10 a year)</td><td><b>+18.4%</b></td></tr>
+<tr><td style="text-align:left">monthly (line −1.62)</td><td colspan="3">about 3 qualifying signals a year: too rare to trade, context only</td></tr></table>
+<p>About 6 in 10 weekly trades coincide with a daily Z swing on the same stock; the rest (2013–19 72% winners, 2020–26 87%) are new. Added to the 5 × 5% Z-swing sleeve: +3.3% → +3.6% a year, Sharpe 0.91 → 0.97, worst drawdown −7% → −5%. The weekly signal is now part of the daily list and the plan. Use the <b>Daily / Weekly / Monthly</b> buttons above the chart.</p>
+<p><b>Financially strong companies?</b> Full financial statements are not reachable from this environment; Yahoo serves only FY2022–25. Over the full history the test used dividends: <b>steady dividend payers did not give better swings</b> (Z swing 2013–19: 78% winners vs 91% for non-payers; 2020–26: 73% vs 69%; plain dips flipped between periods). With the four years of accounts (2023–26 entries only): dips in <b>loss-making</b> companies won 35–50% of the time against 51–72% for profitable ones, and highly indebted companies were weaker. One period cannot confirm a rule, so the terminal and the daily list show each pick's latest accounts and flag loss-makers, without filtering them out.</p>
 <h2>v18 (round 31): VWAP stretch Z and a momentum gate for dip buys</h2>
 <p>Two ideas, written down before testing: a <b>VWAP version of stretch Z</b>, and a <b>momentum gauge</b> that says when buying dips works and when to avoid it.</p>
 <table class="t"><tr><th style="text-align:left">test</th><th>2013–19</th><th>2020–26</th><th>2004–12</th><th>verdict</th></tr>

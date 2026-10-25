@@ -1,8 +1,8 @@
 // ------------------------------------------------ v15 stretch Z: the 10/20/60-day move in units of the stock's own volatility, with an intuitive scale
 // scale = all liquid Saudi stocks 2004-2026 (Tadawul library 2004-12 + Yahoo 2013-26), round-27 research
 const ZC_LINE=-2.62,ZC_EDGES=[null, -3.5, -3.0, -2.7, -2.4, -2.0, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.4, 2.7, 3.0, null],ZC_OUT=[[0.0235, 0.5632, 0.0514, 0.6598], [0.0173, 0.5082, 0.0244, 0.5728], [0.0132, 0.4993, 0.0142, 0.546], [0.0053, 0.4806, 0.002, 0.5039], [0.0039, 0.4629, 0.0029, 0.4928], [0.0017, 0.4562, 0.0025, 0.4935], [-0.0014, 0.438, -0.0027, 0.4679], [-0.0035, 0.4269, -0.0061, 0.4494], [-0.0019, 0.4276, 0.0003, 0.4595], [0.0035, 0.4558, 0.0125, 0.5033], [0.0046, 0.4584, 0.016, 0.5062], [0.0054, 0.4664, 0.0212, 0.5276], [0.0061, 0.4708, 0.0206, 0.5094], [0.0027, 0.4492, 0.016, 0.5034], [-0.0016, 0.4289, 0.0138, 0.4973], [-0.0048, 0.4189, 0.0088, 0.4841]],ZC_Q=[[-3.596, 0.005], [-3.018, 0.01], [-2.421, 0.02], [-1.682, 0.05], [-1.172, 0.1], [-0.538, 0.25], [0.023, 0.5], [0.595, 0.75], [1.236, 0.9], [1.721, 0.95], [2.421, 0.98], [2.971, 0.99], [3.563, 0.995]];
-function stretchZ(c){const n=c.length,rr=new Array(n).fill(NaN),sd=new Array(n).fill(NaN),out=new Array(n).fill(NaN);
- for(let i=1;i<n;i++){const a=Math.log(c[i]),b=Math.log(c[i-1]);if(isF(a)&&isF(b))rr[i]=Math.max(-.25,Math.min(.25,a-b))}
+function stretchZ(c,clip=.25){const n=c.length,rr=new Array(n).fill(NaN),sd=new Array(n).fill(NaN),out=new Array(n).fill(NaN);
+ for(let i=1;i<n;i++){const a=Math.log(c[i]),b=Math.log(c[i-1]);if(isF(a)&&isF(b))rr[i]=Math.max(-clip,Math.min(clip,a-b))}
  for(let i=59;i<n;i++){let s1=0,s2=0,m=0;for(let k=i-59;k<=i;k++)if(isF(rr[k])){s1+=rr[k];s2+=rr[k]*rr[k];m++}if(m>=40)sd[i]=Math.sqrt(Math.max(1e-12,(s2-s1*s1/m)/(m-1)))}
  const zk=K=>{const z=new Array(n).fill(NaN);for(let i=K;i<n;i++){let s1=0,m=0;for(let k=i-K+1;k<=i;k++)if(isF(rr[k])){s1+=rr[k];m++}if(m>=.8*K&&isF(sd[i-K])&&sd[i-K]>0)z[i]=s1/(sd[i-K]*Math.sqrt(K))}return z};
  const a=zk(10),b=zk(20),e=zk(60);for(let i=0;i<n;i++)if(isF(a[i])&&isF(b[i])&&isF(e[i]))out[i]=(a[i]+b[i]+e[i])/3;return out}
@@ -18,8 +18,8 @@ function zcColor(z){return !isF(z)?"inherit":z<=ZC_LINE?"#4f96f0":z<=-1.5?"#7fb2
 // VWAP stretch Z = mean over 10/20/60 days of ln(close / k-day VWAP) in units of the stock's own daily volatility (measured before the window)
 // x sqrt((k-1)(2k-1)/(6k)). Line -2.67 = 2% of liquid Saudi stock-days 2013-19; scale = liquid Saudi stocks 2004-2026.
 const VZ_LINE=-2.67,VZ_Q=[[-4.24, 0.005], [-3.46, 0.01], [-2.711, 0.02], [-1.865, 0.05], [-1.323, 0.1], [-0.821, 0.2], [-0.521, 0.3], [-0.292, 0.4], [-0.091, 0.5], [0.109, 0.6], [0.331, 0.7], [0.614, 0.8], [1.068, 0.9], [1.514, 0.95], [2.135, 0.98], [2.657, 0.99], [3.216, 0.995]];
-function vwapZ(d){const n=d.c.length,c=d.c,rr=new Array(n).fill(NaN),sd=new Array(n).fill(NaN),out=new Array(n).fill(NaN);
- for(let i=1;i<n;i++){const a=Math.log(c[i]),b=Math.log(c[i-1]);if(isF(a)&&isF(b))rr[i]=Math.max(-.25,Math.min(.25,a-b))}
+function vwapZ(d,clip=.25){const n=d.c.length,c=d.c,rr=new Array(n).fill(NaN),sd=new Array(n).fill(NaN),out=new Array(n).fill(NaN);
+ for(let i=1;i<n;i++){const a=Math.log(c[i]),b=Math.log(c[i-1]);if(isF(a)&&isF(b))rr[i]=Math.max(-clip,Math.min(clip,a-b))}
  for(let i=59;i<n;i++){let s1=0,s2=0,m=0;for(let k=i-59;k<=i;k++)if(isF(rr[k])){s1+=rr[k];s2+=rr[k]*rr[k];m++}if(m>=40)sd[i]=Math.sqrt(Math.max(1e-12,(s2-s1*s1/m)/(m-1)))}
  const pv=new Array(n).fill(0),vv=new Array(n).fill(0);for(let i=0;i<n;i++){const tp=(d.h[i]+d.l[i]+c[i])/3,v=d.v?d.v[i]:NaN;if(isF(tp)&&isF(v)&&v>0){pv[i]=tp*v;vv[i]=v}}
  const zk=K=>{const z=new Array(n).fill(NaN),sc=Math.sqrt((K-1)*(2*K-1)/(6*K));let a=0,b=0;
@@ -88,7 +88,7 @@ class PulseView{
    // 6 thrusts (triangles) and exhaustion (glowing amber dots)
    for(let i=from;i<to;i++){const o=od(i);if(!o)continue;const y=isF(o.M)?Y(o.M):null;if(y==null)continue;const x=X(i),r=Math.max(4*hr,hw*.9);
     if(o.th){ctx.fillStyle=rgba(o.th>0?PC.up:PC.dn,1);ctx.strokeStyle="#1a1a19";ctx.lineWidth=1.5*hr;ctx.beginPath();const yy=o.th>0?y+r*2.2:y-r*2.2;ctx.moveTo(x,o.th>0?yy-r:yy+r);ctx.lineTo(x-r,o.th>0?yy+r*.7:yy-r*.7);ctx.lineTo(x+r,o.th>0?yy+r*.7:yy-r*.7);ctx.closePath();ctx.fill();ctx.stroke()}
-    if(Math.abs(o.st)===2){const g=ctx.createRadialGradient(x,y,0,x,y,r*3);g.addColorStop(0,prgb(PC.ex,.95));g.addColorStop(.35,prgb(PC.ex,.55));g.addColorStop(1,prgb(PC.ex,0));ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*3,0,Math.PI*2);ctx.fill();
+    if(Math.abs(o.st)===2&&isF(x)&&isF(y)&&isF(r)){const g=ctx.createRadialGradient(x,y,0,x,y,r*3);g.addColorStop(0,prgb(PC.ex,.95));g.addColorStop(.35,prgb(PC.ex,.55));g.addColorStop(1,prgb(PC.ex,0));ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*3,0,Math.PI*2);ctx.fill();
      ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(x,y,r*.45,0,Math.PI*2);ctx.fill()}}
    // 7 divergences: dashed violet line between the two momentum pivots, labelled
    ctx.font=`${11*hr}px "JetBrains Mono",monospace`;
@@ -257,6 +257,7 @@ function stepData(i){for(const k of DKEYS)if(SER[k]&&ARR[k]&&ARR[k][i])SER[k].up
 function applyVisibility(){const v=UI.ov,set=(k,on)=>SER[k]&&SER[k].applyOptions({visible:!!on});
  for(const k of ["zbu","zbm","zbx","zbl"])set(k,v.zb);set("sect",v.sect);for(const p of ["vwy","vwm"])for(const k of ["M","U1","L1","U2","L2"])set(p+k,v[p]);set("bbu",v.bb);set("bbm",v.bb);set("bbl",v.bb);set("zones",v.zones);set("pdiv",v.pdiv);set("mean",v.mean);set("exit",v.exit);set("vol",v.vol);for(const k of ["kalman","trend","ou","ema20","factor"])set(k,v[k])}
 function refreshOverlays(range){
+ if(UI.tf&&UI.tf!=="D"){try{drawHTF()}catch(e){console.error(e)}}
  if(!chart)return;const d=D();
  if(!d){ARR=null;for(const k of DKEYS)SER[k]&&SER[k].setData([]);annotate();renderLegend();return}
  ARR=buildArrays();const dg=pdig(d.c[d.c.length-1]),pf={type:"price",precision:dg,minMove:Math.pow(10,-dg)};
@@ -366,3 +367,60 @@ function syncMode(){const r=!!REPLAY;$("m-live").classList.toggle("on",!r);$("m-
 document.addEventListener("keydown",e=>{if(e.target.closest("input,select,textarea"))return;if(e.key===" "&&e.target.closest("button"))return;
  if(e.key==="Escape"){setClickMode(null);return}if(!REPLAY||st.tab!=="chart")return;
  if(e.key==="ArrowRight"){e.preventDefault();stopPlay();replayStep(e.shiftKey?5:1)}else if(e.key==="ArrowLeft"){e.preventDefault();stopPlay();replayStep(e.shiftKey?-5:-1)}else if(e.key===" "){e.preventDefault();togglePlay()}});
+
+// ------------------------------------------------ v19 (round 33): weekly and monthly candles, stretch Z on that timeframe
+// Weekly bars end on Thursday (the old Sat-Wed week falls in the same buckets); monthly = calendar months; each bar is drawn at its last session.
+// Weekly stretch Z = the same formula on weekly bars (bar returns clipped at +-60%). Weekly Z swing: first weekly close <= -2.08 with ML rank >= 50%,
+// market model positive and market momentum <= -1.18 -> 2013-19 85% winners +19.1% per trade, 2020-26 86% +11.2% (hold 40 sessions).
+// Monthly (line -1.62) fires about 3 times a year: context only. Scales = liquid Saudi stocks 2013-2026.
+UI.tf=["D","W","M"].includes(UI.tf)?UI.tf:"D";
+const TF_LINE={W:-2.08,M:-1.62},TF_TOP={W:2.86,M:2.45},TF_NAME={W:"weekly",M:"monthly"},TF_Q={"W": [[-2.704, 0.005], [-2.3, 0.01], [-1.967, 0.02], [-1.512, 0.05], [-1.118, 0.1], [-0.681, 0.2], [-0.399, 0.3], [-0.162, 0.4], [0.06, 0.5], [0.293, 0.6], [0.551, 0.7], [0.877, 0.8], [1.375, 0.9], [1.836, 0.95], [2.405, 0.98], [2.863, 0.99], [3.299, 0.995]], "M": [[-1.915, 0.005], [-1.718, 0.01], [-1.456, 0.02], [-1.085, 0.05], [-0.812, 0.1], [-0.451, 0.2], [-0.212, 0.3], [-0.004, 0.4], [0.194, 0.5], [0.397, 0.6], [0.627, 0.7], [0.921, 0.8], [1.307, 0.9], [1.646, 0.95], [2.139, 0.98], [2.454, 0.99], [2.695, 0.995]]};
+let htf=null,HTF={};
+function weekKey(t){const dt=new Date(t+"T00:00:00Z");dt.setUTCDate(dt.getUTCDate()+((4-dt.getUTCDay()+7)%7));return dt.toISOString().slice(0,10)}
+function riyadhToday(){return new Date(Date.now()+3*36e5).toISOString().slice(0,10)}
+function aggBars(d,tf,upto){const key=tf==="M"?(t=>t.slice(0,7)):weekKey,b={d:[],o:[],h:[],l:[],c:[],v:[],k:[]};let k0=null;const n=upto==null?d.d.length:upto+1;
+ for(let i=0;i<n;i++){const c=d.c[i];if(!isF(c))continue;const k=key(d.d[i]),o=isF(d.o[i])?d.o[i]:c,h=isF(d.h[i])?d.h[i]:c,l=isF(d.l[i])?d.l[i]:c,v=d.v&&isF(d.v[i])?d.v[i]:0;
+  if(k!==k0){k0=k;b.k.push(k);b.d.push(d.d[i]);b.o.push(o);b.h.push(h);b.l.push(l);b.c.push(c);b.v.push(v)}
+  else{const j=b.d.length-1;b.d[j]=d.d[i];b.h[j]=Math.max(b.h[j],h);b.l[j]=Math.min(b.l[j],l);b.c[j]=c;b.v[j]+=v}}
+ return b}
+function barDone(b,tf){const j=b.d.length-1;if(j<0)return false;const t=riyadhToday();return tf==="W"?(b.d[j]===b.k[j]||t>b.k[j]):t.slice(0,7)>b.k[j]}
+function weeklyZ(s,i){if(!s||!s.d||!s.c)return null;const b=aggBars(s,"W",i),n=b.d.length;if(n<125)return null;const z=stretchZ(b.c,.6),j=n-1;
+ const done=i<s.d.length-1?weekKey(s.d[i+1])!==b.k[j]:barDone(b,"W");
+ return {z:z[j],prev:z[j-1],done,end:b.d[j],first:done&&isF(z[j])&&isF(z[j-1])&&z[j]<=TF_LINE.W&&z[j-1]>TF_LINE.W}}
+function drawHTF(){if(htf){htf.remove();htf=null}if(UI.tf==="D")return;const d=D(),lg=$("htf-legend");if(!d){if(lg)lg.innerHTML="";return}
+ const tf=UI.tf,b=aggBars(d,tf),n=b.d.length,sa=msOn(st.sym);if(n<3){lg.innerHTML="";return}
+ const zs=stretchZ(b.c,.6),vz=vwapZ(b,.6),ms=sa?b.d.map(msAt):b.d.map(()=>NaN),sma=new Array(n).fill(NaN),done=barDone(b,tf),line=TF_LINE[tf];
+ for(let i=19;i<n;i++){let m=0;for(let k=i-19;k<=i;k++)m+=b.c[k];sma[i]=m/20}
+ $("htf-wrap").style.height=(470+(sa?3:2)*115)+"px";
+ htf=LW.createChart($("htf"),{autoSize:true,layout:{background:{type:"solid",color:C.surface},textColor:C.muted,fontFamily:"'JetBrains Mono',ui-monospace,monospace",fontSize:11,attributionLogo:true,panes:{separatorColor:C.axis,separatorHoverColor:"rgba(57,135,229,.3)",enableResize:true}},
+  grid:{vertLines:{color:"#222220"},horzLines:{color:"#222220"}},crosshair:{mode:LW.CrosshairMode.Normal,vertLine:{labelBackgroundColor:"#2a2a28"},horzLine:{labelBackgroundColor:"#2a2a28"}},
+  rightPriceScale:{borderColor:C.axis},timeScale:{borderColor:C.axis,rightOffset:4,barSpacing:tf==="M"?10:7,minBarSpacing:.4}});
+ const L=a=>b.d.map((t,i)=>isF(a[i])?{time:t,value:a[i]}:{time:t}),dg=pdig(b.c[n-1]);
+ const cs=htf.addSeries(LW.CandlestickSeries,{upColor:TV.up,downColor:TV.down,borderUpColor:TV.up,borderDownColor:TV.down,wickUpColor:TV.up,wickDownColor:TV.down,priceFormat:{type:"price",precision:dg,minMove:Math.pow(10,-dg)}},0);
+ cs.setData(b.d.map((t,i)=>({time:t,open:b.o[i],high:b.h[i],low:b.l[i],close:b.c[i]})));
+ const vs=htf.addSeries(LW.HistogramSeries,{priceScaleId:"vol",priceFormat:{type:"volume"},lastValueVisible:false,priceLineVisible:false},0);vs.priceScale().applyOptions({scaleMargins:{top:.84,bottom:0}});
+ vs.setData(b.d.map((t,i)=>({time:t,value:b.v[i],color:b.c[i]>=b.o[i]?TV.upV:TV.downV})));
+ htf.addSeries(LW.LineSeries,{color:"#ffffff",lineWidth:1.5,lastValueVisible:true,priceLineVisible:false,crosshairMarkerVisible:false,title:"20-bar mean"},0).setData(L(sma));
+ const zS=htf.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:`Stretch Z (${TF_NAME[tf]})`,topLineColor:"#e66767",topFillColor1:"rgba(230,103,103,.12)",topFillColor2:"rgba(230,103,103,0)",bottomLineColor:"#4f96f0",bottomFillColor1:"rgba(57,135,229,0)",bottomFillColor2:"rgba(57,135,229,.18)",priceFormat:{type:"price",precision:2,minMove:.01}},1);zS.setData(L(zs));
+ for(const [p,c,t] of [[TF_TOP[tf],"rgba(230,103,103,.7)",`+${TF_TOP[tf].toFixed(1)} top 1%`],[line,"rgba(79,150,240,.9)",`${line.toFixed(2)} extreme`]])zS.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:t});
+ htf.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:0},lineWidth:2,priceLineVisible:false,title:`VWAP Z (${TF_NAME[tf]}, untested)`,topLineColor:"#ffb74d",topFillColor1:"rgba(255,183,77,.12)",topFillColor2:"rgba(255,183,77,0)",bottomLineColor:"#4dd0e1",bottomFillColor1:"rgba(77,208,225,0)",bottomFillColor2:"rgba(77,208,225,.18)",priceFormat:{type:"price",precision:2,minMove:.01}},2).setData(L(vz));
+ if(sa){const mS=htf.addSeries(LW.BaselineSeries,{baseValue:{type:"price",price:MS_GATE},lineWidth:2,priceLineVisible:false,title:"Market momentum (bar end)",topLineColor:"#e6a667",topFillColor1:"rgba(230,166,103,.10)",topFillColor2:"rgba(230,166,103,0)",bottomLineColor:"#4fd1a5",bottomFillColor1:"rgba(79,209,165,0)",bottomFillColor2:"rgba(79,209,165,.25)",priceFormat:{type:"price",precision:2,minMove:.01}},3);mS.setData(L(ms));
+  for(const [p,c,t] of [[MS_GATE,"rgba(230,166,103,.9)","−1.18 dip buys below"],[MS_DEEP,"rgba(79,209,165,.9)","−2.53 deep"]])mS.createPriceLine({price:p,color:c,lineWidth:1,lineStyle:LW.LineStyle.Dashed,axisLabelVisible:true,title:t})}
+ const panes=htf.panes();if(panes.length>1){panes[0].setStretchFactor(3.4);for(let i=1;i<panes.length;i++)panes[i].setStretchFactor(1)}
+ const mk=[];for(let i=1;i<n;i++)if(isF(zs[i])&&isF(zs[i-1])&&zs[i]<=line&&zs[i-1]>line)mk.push({time:b.d[i],position:"belowBar",shape:"arrowUp",color:"#4f96f0",text:i===n-1&&!done?"forming":tf==="W"?"W-Z":"M-Z"});
+ LW.createSeriesMarkers(cs,mk);HTF={b,zs,vz,ms,done,tf};
+ htf.timeScale().setVisibleLogicalRange({from:Math.max(0,n-(tf==="W"?260:n)),to:n+3});
+ htf.subscribeCrosshairMove(p=>htfLegend(p&&p.point&&p.logical!=null?Math.round(p.logical):null));htfLegend(null);htfNote()}
+function htfLegend(i0){const H=HTF,el=$("htf-legend");if(!H.b||!el)return;const b=H.b,n=b.d.length,i=i0==null||i0<0||i0>=n?n-1:i0,ch=i>0?b.c[i]/b.c[i-1]-1:NaN;
+ const zs=H.zs[i],vz=H.vz[i],mm=H.ms[i],mz=msZone(mm),p=qCdf(TF_Q[H.tf],zs),part=i===n-1&&!H.done,nm=TF_NAME[H.tf];
+ const rare=!isF(p)?"":p<=.5?`lower than ${(100*(1-p)).toFixed(p<.02?1:0)}% of ${nm} bars`:`higher than ${(100*p).toFixed(p>.98?1:0)}% of ${nm} bars`;
+ el.innerHTML=`<div class="l1"><b>${esc(st.sym)}</b><span class="lk">${H.tf==="W"?"1W":"1M"}</span><span class="lk">${H.tf==="W"?"week to":"month to"} ${b.d[i]}${part?" (still forming)":""}</span><span><span class="lk">O</span> ${fp(b.o[i])}</span><span><span class="lk">H</span> ${fp(b.h[i])}</span><span><span class="lk">L</span> ${fp(b.l[i])}</span><span><span class="lk">C</span> ${fp(b.c[i])}</span><span class="${cl(ch)}">${spct(ch,2)}</span></div>
+  <div class="l2"><span title="${esc(rare)}"><b>Stretch Z (${nm})</b> <span style="color:${!isF(zs)?"inherit":zs<=TF_LINE[H.tf]?"#4f96f0":zs<=-1?"#7fb2f0":zs>=2?"#e66767":"inherit"};font-weight:600">${fmt(zs,2)}</span></span><span class="lk">${esc(rare)}</span><span><b>VWAP Z</b> ${fmt(vz,2)}</span>${mz?`<span>mkt mom <span style="color:${mz.col};font-weight:600">${fmt(mm,2)}</span></span>`:""}</div>`}
+function htfNote(){const el=$("htf-note");if(!el)return;
+ el.innerHTML=UI.tf==="W"?`<b>Weekly candles</b> (weeks end on Thursday; the last candle is still forming until the week's final session). Blue arrows: first weekly close at or below the weekly extreme line (−2.08, 2% of weeks in 2013–19). <b>Weekly Z swing</b> (round 33): with the ML rank ≥ 50%, the market model positive and market momentum ≤ −1.18 on that Thursday, buying at the next open and selling 40 sessions later won 85% of trades in 2013–19 (+19.1% per trade) and 86% in 2020–26 (+11.2%); price only in 2004–12, +18.4%. About 6 in 10 of these trades coincide with a daily Z swing on the same stock; they share the 5 Z-swing slots. VWAP Z on this view uses 10/20/60 weekly bars and has no tested line.`
+  :`<b>Monthly candles</b>. Blue arrows: first monthly close at or below −1.62 (2% of months in 2013–19). Too rare to trade (about 3 qualifying signals a year), so read it as context: where the stock stands against its own long history. VWAP Z on this view uses 10/20/60 monthly bars and has no tested line.`}
+function setTF(tf){UI.tf=tf;saveUI();["D","W","M"].forEach(k=>{const e=$("tf-"+k);if(e)e.classList.toggle("on",k===tf)});const hd=tf!=="D";
+ for(const id of ["lwc-wrap","ov","pn"]){const e=$(id);if(e)e.style.display=hd?"none":""}const sc=document.querySelector(".scrub");if(sc)sc.style.display=hd?"none":"";
+ $("htf-wrap").style.display=hd?"":"none";$("htf-note").style.display=hd?"":"none";if(hd)drawHTF();else{if(htf){htf.remove();htf=null}if(chart)refreshOverlays()}}
+["D","W","M"].forEach(k=>{const e=$("tf-"+k);if(e)e.addEventListener("click",()=>setTF(k))});
+setTF(UI.tf);

@@ -19,6 +19,8 @@ P = yahoo(); F = build(P); pd.to_pickle(F, 'F27y.pkl'); print('panel to', P['C']
 step dataset; python3 ds27.py >> $LOG 2>&1 || { echo "FAILED at ds27"; tail -5 $LOG; exit 1; }
 step ranker; python3 wf27.py M0 > wf_daily.log 2>&1 || { echo "FAILED at wf27"; tail -5 wf_daily.log; exit 1; }
 step market; python3 mkt27.py >> $LOG 2>&1 || { echo "FAILED at mkt27"; tail -5 $LOG; exit 1; }
+step accounts; find $S/r33/fund -name "*.json" -mtime +30 -delete 2>/dev/null; (cd $S/r33 && python3 fetch_fund.py >> $LOG 2>&1)   # Yahoo annual accounts, refreshed monthly
+cd $S/r27
 step export; PICK=M0 python3 final27.py >> $LOG 2>&1 || { echo "FAILED at final27"; tail -5 $LOG; exit 1; }
 cp today27.json ../ml26/today.json
 step list; cd $S/daily && python3 top3.py 2>> $LOG || { echo "FAILED at top3"; tail -5 $LOG; exit 1; }

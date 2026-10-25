@@ -18,3 +18,5 @@ By tier 2020-26: Z swing 62% / +4.8% (since 2024 55% / -0.9%), breakout 50% / +3
 
 With the market-momentum gate (current rule_stats.json), market-model-positive days: Z-swing picks 2013-19 84% winners +18.3%,
 2020-26 71% +7.6%, since 2024 57% +1.4% (before: 76% +13.6%, 62% +4.8%, 55% -0.9%); all picks 2020-26 53%, +3.4%; since 2024 41%, -0.4%.
+Change 2026-10-25 (round 33): tier 1 also takes weekly Z swings (first weekly close at weekly stretch Z <= -2.08, same filters, hold 40);
+Z-swing picks 2020-26 75% winners +9.1% (was 71% +7.6%). Each pick shows its latest Yahoo annual accounts; loss-makers are flagged, not removed.
