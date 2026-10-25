@@ -11,7 +11,9 @@ tended to keep falling (Saudi 2004-26 and an independent US check). MS = equal-w
 measured before those 60 days x sqrt 60).
 Change 2026-10-25 (round 33): tier 1 also takes WEEKLY Z swings - first weekly close (weeks ending Thursday) at weekly stretch Z <= -2.08
 (same formula on weekly bars), same filters, hold 40 sessions (2013-19 85% winners +19.1%, 2020-26 86% +11.2%, 2004-12 price-only +18.4%).
-Each pick also shows its latest annual accounts (Yahoo, FY usable 91 days after year end); loss-makers are flagged (2023-26 only, not a rule).
+Each pick also shows its latest annual accounts (Yahoo, FY usable 91 days after year end).
+Change 2026-10-25 (round 36, the user's choice): companies whose latest usable annual result is a LOSS are skipped (next candidate moves up).
+Accounts exist only from FY2022 (usable from April 2023), so the filter acts from then on; earlier history is unchanged.
 Usage: python top3.py --history   (walk-forward track record of the rule -> rule_stats.json)
        python top3.py             (today's list -> out/<date>.md, appended to out/picks_log.csv)"""
 import os, sys, json, glob, numpy as np, pandas as pd
@@ -38,10 +40,21 @@ _wk = dates.to_period("W-THU"); _wend = pd.Series(dates, index=dates).groupby(_w
 ZW = _zc_bars(_Cw); _wf = (ZW <= WLINE) & ~(ZW <= WLINE).shift(1, fill_value=False)
 WFIRST = np.zeros(C.shape, dtype=bool); _ix = np.searchsorted(dates.values, _wf.index.values); WFIRST[_ix] = _wf.values
 ZWV = np.full(C.shape, np.nan); ZWV[_ix] = ZW.values
+def _loss_mask():
+    """True where the latest annual accounts usable at that date show a loss (Yahoo FY2022+; usable 91 days after the fiscal year end)."""
+    M = np.zeros(C.shape, dtype=bool); cix = {c: j for j, c in enumerate(cols)}
+    for f in glob.glob(os.path.join(S, "r33/fund/*.json")):
+        sy = os.path.basename(f)[:-5]
+        if sy not in cix: continue
+        ni = json.load(open(f)).get("annualNetIncome", {}); j = cix[sy]
+        for k in sorted(ni):
+            a = np.searchsorted(dates.values, np.datetime64(pd.Timestamp(k) + pd.Timedelta(days=91))); M[a:, j] = ni[k] <= 0
+    return M
+LOSS = _loss_mask()
 
 def ranked(i, pct, pmv, msv, wk_ok=True):
     """all candidates at close i in list order: [(column index, tier)]; pct = ML rank per column (array), pmv = market model."""
-    ok = LIQ[i] & np.isfinite(pct) & np.isfinite(A[i]) & (A[i] > 0); out, seen = [], set()
+    ok = LIQ[i] & np.isfinite(pct) & np.isfinite(A[i]) & (A[i] > 0) & ~LOSS[i]; out, seen = [], set()
     masks = ([(1, ok & (ZFIRST[i] | (WFIRST[i] & wk_ok)) & (pct >= .5))] if pmv > 0 and msv <= MS_GATE else []) + [(2, ok & BRK[i] & (pct >= .7)), (3, ok)]
     for t, m in masks:
         for j in np.where(m)[0][np.argsort(-pct[m], kind="stable")]:

@@ -22,3 +22,5 @@ Change 2026-10-25 (round 33): tier 1 also takes weekly Z swings (first weekly cl
 Z-swing picks 2020-26 75% winners +9.1% (was 71% +7.6%). Each pick shows its latest Yahoo annual accounts; loss-makers are flagged, not removed.
 Change 2026-10-25 (round 35): US section (us_signal.py) - SPY/QQQ RSI(2) < 10 above the 200-day average, buy next open, sell next open after
 a close above the 5-day average or 10 sessions; runs on Fridays too (US section only). strip_partial.py drops still-forming daily candles.
+Change 2026-10-25 (round 36, the user's rule): loss-making companies (latest usable annual result) are skipped; 2023-26 Z-swing picks 83% winners
++6.7% vs 64% +3.3%. The US section adds the US sell-off window (115 large caps, market momentum <= -1.18; timing edge, labelled as such).

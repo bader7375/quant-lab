@@ -18,6 +18,7 @@ def load_set(name):
             s = os.path.basename(f)[:-4]; d = pd.read_csv(f, index_col=0, parse_dates=True).sort_index(); k = d["Adj Close"] / d["Close"]
             D[s] = pd.DataFrame({"o": d.Open * k, "h": d.High * k, "l": d.Low * k, "c": d["Adj Close"], "v": d.Volume}).dropna()
     idx = sorted(set().union(*[x.index for x in D.values()])); P = {k: pd.DataFrame({s: D[s][k] for s in D}).reindex(idx) for k in ("o", "h", "l", "c", "v")}
+    P["o"] = P["o"].where((P["o"] / P["c"] - 1).abs() <= .25, P["c"])   # data fix (round 36): bad open prints (>25% from the same day's close) -> close
     P["Of"] = P["o"].ffill(); P["elig"] = P["c"].notna() & (P["c"].notna().cumsum() >= 250); return P
 def rsi(c, n):
     d = c.diff(); up = d.clip(lower=0).ewm(alpha=1 / n, adjust=False).mean(); dn = (-d.clip(upper=0)).ewm(alpha=1 / n, adjust=False).mean(); return 100 - 100 / (1 + up / dn)

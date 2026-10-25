@@ -23,7 +23,7 @@ def load_cmin():
     return D
 def panel(D):
     idx = sorted(set().union(*[x.index for x in D.values()])); P = {k: pd.DataFrame({s: D[s][k] for s in D}).reindex(idx) for k in ("o", "h", "l", "c")}
-    C = P["c"]; P["C"] = C; P["Of"] = P["o"].ffill(); P["elig"] = C.notna() & (C.notna().cumsum() >= 250); P["liq"] = C.notna()
+    C = P["c"]; P["C"] = C; P["o"] = P["o"].where((P["o"] / C - 1).abs() <= .25, C); P["Of"] = P["o"].ffill(); P["elig"] = C.notna() & (C.notna().cumsum() >= 250); P["liq"] = C.notna()   # data fix (round 36): bad open prints -> close
     tr = pd.concat([P["h"] - P["l"], (P["h"] - C.shift()).abs(), (P["l"] - C.shift()).abs()]).groupby(level=0).max().reindex(C.index); P["ATR"] = tr.rolling(20, min_periods=15).mean()
     r = np.log(C).diff().clip(-.25, .25); sd = r.rolling(60, min_periods=40).std()
     z = [r.rolling(k, min_periods=int(.8 * k)).sum() / (sd.shift(k) * np.sqrt(k)) for k in (10, 20, 60)]; P["zc"] = (z[0] + z[1] + z[2]) / 3

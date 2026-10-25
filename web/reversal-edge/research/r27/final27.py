@@ -31,13 +31,23 @@ wk_done = pd.Timestamp(last).weekday() == 3 or _now.to_period("W-THU") != pd.Tim
 today = D[D.date == last].copy(); today["score"] = pick.predict(today[FEATS]); today["pct"] = today.score.rank(pct=True)
 today["div"] = today.sym.map(lambda s: bool(dm.get(s, 0) == 1))   # info only: the dividend-month tilt was rejected on clean data
 liq = today[today.val >= 3e6].sort_values("score", ascending=False); liq["rank"] = np.arange(1, len(liq) + 1)
+FIN = {}   # latest annual accounts usable at this date (Yahoo; fiscal year usable 91 days after its end)
+import glob as _g
+for f_ in _g.glob("../r33/fund/*.json"):
+    s_ = os.path.basename(f_)[:-5]; d_ = json.load(open(f_)); ni_ = d_.get("annualNetIncome", {}); eq_ = d_.get("annualStockholdersEquity", {}); db_ = d_.get("annualTotalDebt", {})
+    ks_ = [k for k in sorted(ni_) if pd.Timestamp(k) + pd.Timedelta(days=91) <= pd.Timestamp(last)]
+    if not ks_: continue
+    k = ks_[-1]; e_ = eq_.get(k); prev = ni_.get(ks_[-2]) if len(ks_) > 1 else None
+    FIN[s_] = {"fy": k, "ni": ni_[k], "roe": round(ni_[k] / e_, 4) if e_ and e_ > 0 else None, "de": round(db_[k] / e_, 3) if e_ and e_ > 0 and db_.get(k) is not None else None,
+               "grew": (ni_[k] > prev) if prev is not None else None}
 cols = ["hi52", "mom12_1", "vol60", "r5", "dma200", "max20"]
+LOSSY = {k for k, v in FIN.items() if v["ni"] <= 0}   # user rule (round 36): no Z-swing buys in companies whose latest annual result is a loss
 zx = []
 for s in [s for s in zcx[zcx].index]:
     row = today[today.sym == s]
     if row.empty: continue
     r = row.iloc[0]; zx.append({"sym": s, "zc": round(float(zc[s]), 2), "pct": round(float(r.pct), 3), "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s),
-        "ok": bool(r.pct >= .5 and pm > 0 and r.val >= 3e6 and ms_now <= MS_GATE)})
+        "ok": bool(r.pct >= .5 and pm > 0 and r.val >= 3e6 and ms_now <= MS_GATE and s not in LOSSY), "loss": s in LOSSY})
 # live Z-swing trades (round 28): qualifying first touches in the last 40 sessions, using the walk-forward ML ranks and market model of the signal day
 try:
     from core import P as PP, PCT as WPCT, pm as WPM
@@ -59,7 +69,7 @@ if wk_done and pd.Timestamp(ZWK.index[-1]) == pd.Timestamp(last):
         row = today[today.sym == s_]
         if row.empty: continue
         r = row.iloc[0]; zwx.append({"sym": s_, "zw": round(float(ZWK.iloc[-1][s_]), 2), "pct": round(float(r.pct), 3), "val_m": round(float(r.val) / 1e6, 1),
-                                      "sector": industry(s_), "ok": bool(r.pct >= .5 and pm > 0 and r.val >= 3e6 and ms_now <= MS_GATE)})
+                                      "sector": industry(s_), "ok": bool(r.pct >= .5 and pm > 0 and r.val >= 3e6 and ms_now <= MS_GATE and s_ not in LOSSY), "loss": s_ in LOSSY})
 try:   # weekly Z-swing trades still inside their 40 sessions (walk-forward ML rank / market model on the signal day)
     WFd = WF.reindex(index=ds, columns=Cl.columns).fillna(False)
     okw = WFd & (WPCT >= .5) & pd.DataFrame(np.repeat(((WPM > 0) & (MSER.reindex(ds) <= MS_GATE)).values[:, None], Cl.shape[1], 1), index=ds, columns=Cl.columns) & PP["elig"] & liqm
@@ -71,15 +81,6 @@ try:   # weekly Z-swing trades still inside their 40 sessions (walk-forward ML r
             zact.append({"sym": s_, "signal": str(ds[i].date()), "entry": round(e_, 3), "ret": round(float(Cl.iloc[-1][s_] / e_ - 1), 4), "left": int(40 - max(held, 0)), "ml": round(float(WPCT.iloc[i][s_]), 3), "tf": "W"})
 except Exception as ex:
     print("weekly zactive failed:", ex)
-FIN = {}   # latest annual accounts usable at this date (Yahoo; fiscal year usable 91 days after its end)
-import glob as _g
-for f_ in _g.glob("../r33/fund/*.json"):
-    s_ = os.path.basename(f_)[:-5]; d_ = json.load(open(f_)); ni_ = d_.get("annualNetIncome", {}); eq_ = d_.get("annualStockholdersEquity", {}); db_ = d_.get("annualTotalDebt", {})
-    ks_ = [k for k in sorted(ni_) if pd.Timestamp(k) + pd.Timedelta(days=91) <= pd.Timestamp(last)]
-    if not ks_: continue
-    k = ks_[-1]; e_ = eq_.get(k); prev = ni_.get(ks_[-2]) if len(ks_) > 1 else None
-    FIN[s_] = {"fy": k, "ni": ni_[k], "roe": round(ni_[k] / e_, 4) if e_ and e_ > 0 else None, "de": round(db_[k] / e_, 3) if e_ and e_ > 0 and db_.get(k) is not None else None,
-               "grew": (ni_[k] > prev) if prev is not None else None}
 old = json.load(open("../ml26/today.json"))
 T = {"date": str(pd.Timestamp(last).date()), "model": PICK, "pm": pm, "pm_hist": {str(k.date()): round(float(v), 5) for k, v in hist.items()}, "universe": int(len(liq)),
      "picks": [{"sym": r.sym, "rank": int(r["rank"]), "score": round(float(r.score), 4), "val_m": round(float(r.val) / 1e6, 1), "div": bool(r["div"]), **{c: round(float(r[c]) + .5, 3) for c in cols}} for _, r in liq.head(30).iterrows()],

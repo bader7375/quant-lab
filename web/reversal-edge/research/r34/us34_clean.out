@@ -1,0 +1,17 @@
+=== us100 (market momentum <= -1.18 on 7% of days)
+  C daily or weekly + gate   2010-17 n 206 win 69% avg +3.6% | random +3.5% (68% win) edge +0.1 | SPY +2.4% (68%) edge +1.2
+  C daily or weekly + gate   2018-26 n 389 win 76% avg +11.8% | random +9.9% (72% win) edge +1.9 | SPY +10.0% (78%) edge +1.8
+  C daily or weekly + gate   2023-26 n  88 win 93% avg +21.1% | random +16.8% (89% win) edge +4.2 | SPY +18.7% (100%) edge +2.3
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2010-17: n 20 win 95% avg +5.0%
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2018-26: n 20 win 70% avg +3.7%
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2023-26: n 5 win 100% avg +14.2%
+=== KDD17 (market momentum <= -1.18 on 6% of days)
+  C daily or weekly + gate   2007-09 n  78 win 50% avg -2.4% | random -4.3% (39% win) edge +1.9 | SPY -8.0% (31%) edge +5.6
+  C daily or weekly + gate   2010-16 n 103 win 67% avg +2.8% | random +2.7% (66% win) edge +0.1 | SPY +2.7% (67%) edge +0.1
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2007-09: n 7 win 0% avg -18.5%
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2010-16: n 11 win 91% avg +4.6%
+=== CMIN-US (market momentum <= -1.18 on 5% of days)
+  C daily or weekly + gate   2018-21 n 120 win 80% avg +13.4% | random +13.5% (81% win) edge -0.1 | SPY +14.1% (100%) edge -0.6
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2018-21: n 1 win 100% avg +1.7%
+VERDICT: us100 rule C passes (win >= 60%, edge vs random >= +1 pt, edge vs SPY >= 0, both eras): False; other sets edge vs random >= 0: False
+STRATEGY WORKS ON US STOCKS: False

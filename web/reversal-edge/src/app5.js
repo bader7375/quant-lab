@@ -1,6 +1,15 @@
 // ------------------------------------------------ Research tab
 $("research").innerHTML=`
 <h2 style="font-size:18px">How this system was built, and what the evidence says (v15)</h2>
+<h2>v21 (round 36): US stock swings, and swinging only profitable Saudi companies</h2>
+<p><b>US stocks.</b> Four US-style swing setups were tested against random stocks bought and sold on the same days (the honest yardstick, because every US stock list we have is made of survivors): earnings-style gaps of 5%+ on triple volume, 52-week-high breakouts on double volume, pullbacks in the strongest stocks, and +4% days on triple volume.</p>
+<table class="t"><tr><th style="text-align:left">setup</th><th>us100 2010–17</th><th>us100 2018–26</th><th>KDD17 2007–16</th><th>CMIN-US 2018–21</th></tr>
+<tr><td style="text-align:left">earnings-style gap (trailing stop)</td><td>+1.8 pts vs random</td><td>+0.3</td><td>+4.9</td><td>+0.4</td></tr>
+<tr><td style="text-align:left">leader pullback (hold 20)</td><td>+0.7</td><td>+0.3</td><td>+0.3</td><td>+0.2</td></tr>
+<tr><td style="text-align:left">52-week-high breakout</td><td>+0.4</td><td>0.0</td><td>+0.4</td><td>+0.1</td></tr>
+<tr><td style="text-align:left">+4% day on volume</td><td>+0.4</td><td>+0.8</td><td>−0.2</td><td>+0.9</td></tr></table>
+<p>None reached the required +1 point per trade with statistical confidence in 2018–26. Buying after US market sell-offs still wins often (76% of trades in 2018–26), but random large caps on the same days did almost as well, and a walk-forward US market model did not stop the 2008 losses. The daily message therefore shows the US sell-off window (open when US large-cap market momentum is −1.18 or lower) and the SPY/QQQ dip rule, labelled as timing edges. (Data note: bad opening prints in the US files were corrected; conclusions unchanged.)</p>
+<p><b>Saudi: profitable companies only.</b> Your rule now applies in the daily list, the plan and the signal card: no Z-swing buy in a company whose latest annual result is a loss. Accounts exist only from FY2022 (Yahoo), so the check covers April 2023 onward: the daily list's Z-swing picks won <b>83% (+6.7% per trade)</b> without loss-makers vs 64% (+3.3%) with them; about 23 trades, so a short record. saudiexchange.sa refuses this cloud server ("Access Denied" from its Akamai edge), so the full accounts history is not reachable yet.</p>
 <h2>v20 (round 35): searching for a US edge</h2>
 <p>Two searches, written down before testing. <b>Timing the US market</b> on the S&amp;P 500 from 1950 (rules chosen on 1950–99, checked on 2000–26 and on NASDAQ, Nikkei, DAX, FTSE and Hang Seng), and <b>picking US stocks</b> with a walk-forward ML ranker like the Saudi one.</p>
 <table class="t"><tr><th style="text-align:left">idea</th><th>chosen on 1950–99</th><th>S&amp;P 2000–26</th><th>other markets</th><th>verdict</th></tr>
