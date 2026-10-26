@@ -26,8 +26,13 @@ def daily(sym, out_dir, div_dir=None, period1=0):
     for i, t in enumerate(ts):
         if q["close"][i] is None: continue
         rows.append([dt.datetime.utcfromtimestamp(t + off).strftime("%Y-%m-%d"), q["open"][i], q["high"][i], q["low"][i], q["close"][i], ac[i], q["volume"][i]])
-    fn = sym.replace("^", "").replace("=", "_")
-    with open(os.path.join(out_dir, fn + ".csv"), "w", newline="") as f:
+    fn = sym.replace("^", "").replace("=", "_"); path = os.path.join(out_dir, fn + ".csv")
+    if rows and os.path.exists(path):   # never move backwards: keep the stored file if Yahoo's newest bar is older than ours
+        try:
+            with open(path) as f0: prev_last = f0.read().rstrip().rsplit("\n", 1)[-1].split(",")[0]
+            if prev_last > rows[-1][0]: return {"name": name, "rows": len(rows), "first": rows[0][0], "last": prev_last, "kept": "Yahoo returned an older last bar (" + rows[-1][0] + "); stored file kept"}
+        except Exception: pass
+    with open(path, "w", newline="") as f:
         w = csv.writer(f); w.writerow(["date", "open", "high", "low", "close", "adjclose", "volume"]); w.writerows(rows)
     if div_dir:
         ev = r.get("events") or {}

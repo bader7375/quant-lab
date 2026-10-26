@@ -27,6 +27,20 @@ for s in ['BZ=F','CL=F','^GSPC','KSA','^VIX','^IRX','^TNX','DX-Y.NYB','GC=F','EE
 " >> daily_fetch.log 2>&1
 python3 $S/daily/strip_partial.py >> $LOG 2>&1
 echo "fetch errors: $(grep -c '^ERR' daily_fetch.log); last dates: $(grep -o "'last': '[0-9-]*'" daily_fetch.log | sort | uniq -c | sort -rn | head -3 | tr '\n' ' ')" >> $LOG
+# After-close mode: the evening run (after 15:45 Riyadh) computes tomorrow's list from today's close; the morning run then reuses it.
+LASTD=$(for f in data/d/*.SR.csv; do tail -1 "$f" | cut -d, -f1; done | sort | uniq -c | sort -rn | head -1 | awk '{print $2}')
+NLAST=$(for f in data/d/*.SR.csv; do tail -1 "$f" | cut -d, -f1; done | grep -c "^$LASTD$")
+TODAY=$(TZ=Asia/Riyadh date +%F); HR=$(TZ=Asia/Riyadh date +%H); DOW=$(TZ=Asia/Riyadh date +%u)
+if [ "$HR" -ge 15 ] && [ "$DOW" != "5" ] && [ "$DOW" != "6" ] && [ "$LASTD" != "$TODAY" ] && [ "${FULL:-0}" != "1" ]; then
+  echo "NOT UPDATED: Yahoo has not published today's ($TODAY) Saudi close yet, or Tadawul was closed today; the newest bar is $LASTD. The scanner keeps the previous close; the 06:42 run will try again."; step notyet; exit 3
+fi
+EXPD=$(python3 -c "import json; print(json.load(open('$S/r27/today27.json'))['date'])" 2>/dev/null)
+PD=""; PN=0; [ -f $S/daily/last_full.txt ] && read PD PN < $S/daily/last_full.txt
+if [ "${FULL:-0}" != "1" ] && [ "$LASTD" = "$EXPD" ] && [ "$PD" = "$LASTD" ] && [ "$NLAST" -le "${PN:-0}" ] && [ -f "$S/daily/out/$LASTD.md" ]; then
+  step reuse   # no new Saudi close since the last full run: same list and export (no refit), fresh US part only
+  cat $S/daily/out/$LASTD.md; echo; echo "_(Saudi list computed after the $(date -d $LASTD '+%a %d %b') close; no new Saudi close since.)_"
+  cd $S/daily && { python3 us_signal.py 2>> $LOG || echo "FAILED at us_signal"; }; step done; exit 0
+fi
 step features; cd $S/r27 || exit 1; rm -f py.pkl W_core.pkl F27y.pkl
 python3 -c "
 from feats27 import *
@@ -40,5 +54,6 @@ cd $S/r27
 step export; PICK=M0 python3 final27.py >> $LOG 2>&1 || { echo "FAILED at final27"; tail -5 $LOG; exit 1; }
 cp today27.json ../ml26/today.json
 step list; cd $S/daily && python3 top3.py 2>> $LOG || { echo "FAILED at top3"; tail -5 $LOG; exit 1; }
+echo "$LASTD $NLAST" > $S/daily/last_full.txt
 step us; python3 us_signal.py 2>> $LOG || echo "FAILED at us_signal"
 step done
