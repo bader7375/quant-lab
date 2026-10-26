@@ -78,6 +78,7 @@ function PlayGame(root, { n, color, rating, resume = null }) {
   const c = chapter(n); const set = J.state.settings; const opening = (c.rule || {}).kind === "opening_checklist";
   // chapter 2 (safety): the opponent's threats are not announced (finding them is the skill); a hint reveals them, and
   // an optional check step asks the safety questions before each move is played
+  const planCh = (c.rule || {}).kind === "middlegame_quality";
   const safety = (c.rule || {}).kind === "safety"; const blunderCheck = () => safety && set.blunderCheck !== false;
   const G = resume || { id: "g" + uid(), chapter: n, t: now(), color, opp: { kind: OPP.kind, rating, fallbacks: 0 }, start: START_FEN, sans: [], ucis: [], recs: [], takebacks: 0, hints: 0, threats: 0, finished: false };
   if (!J.games.includes(G)) J.games.push(G);
@@ -250,6 +251,10 @@ function PlayGame(root, { n, color, rating, resume = null }) {
     if (!notes.length && cl.drop > 5 && rec.refut.length) notes.push(`بعد نقلتك، أقوى رد للخصم: [${numberedLine(fenNow, rec.refut.slice(0, 4))}].`);
     notes.push(...moveFacts(fenBefore, m.san, "me"));
     if (opening && rec.own <= 12) notes.push(...openingNotes(fenBefore, m.san, "me", { warningsOnly: cl.drop > 5, justified: cl.drop <= 2 }));
+    if (planCh && rec.own >= 11 && rec.own <= 30 && base.best && cl.drop >= 2) { // chapter 6: name the plan behind Stockfish's move
+      const bt = Tech.tagsOf(fenBefore, base.best).filter((t) => PLAN_AR[t]); const mine = Tech.tagsOf(fenBefore, m.uci);
+      if (bt.length && !bt.some((t) => mine.includes(t))) notes.push(`خطة Stockfish هنا: ${PLAN_AR[bt[0]]} [${rec.best}].`);
+    }
     rec.notes = notes; rec.habit = habitFor(rec);
     return rec;
   }
@@ -568,6 +573,7 @@ function humanLineHtml(rec) {
   if (rec.drop > 10 && H.p >= 0.15) t += " خطأ شائع عند هذا المستوى، فاحفظ الموقف جيدًا.";
   return `<p class="humanline">${t}</p>`;
 }
+const PLAN_AR = { openfile: "الرخ إلى العمود المفتوح", worst: "تحسين أسوأ قطعة", break: "دفعة بيدق تفتح اللعب", outpost: "حصان أو فيل إلى مربع قوي" };
 function habitFor(r) {
   if (r.hung) return "عادة: بعد أن تختار نقلتك وقبل أن تلعبها، افحص كل قطعة: هل ما زالت محمية؟";
   if (r.missed) return "عادة: أول سؤال بعد كل نقلة للخصم: ماذا يهدد الآن؟";
@@ -588,6 +594,7 @@ function computeMetrics(G) {
     openingScore: ck ? ck.score : null, openingItems: ck ? ck.items : null,
     openingBlunder: all.some((r) => r.own <= 10 && r.cls === "blunder"),
     hanging: all.filter((r) => r.hung).length, missedThreats: all.filter((r) => r.missed).length, rechecks: G.rechecks || 0,
+    ...(() => { const mg = fin.filter((r) => r.own >= 11 && r.own <= 30); return { mgN: mg.length, mgDrop: mg.length ? +(mg.reduce((s, r) => s + r.drop, 0) / mg.length).toFixed(1) : null }; })(), // moves 11-30 (chapter 6)
     gifts: fin.filter((r) => r.gift >= 10).length, punished: fin.filter((r) => r.gift >= 10 && r.drop <= 5).length,
   };
 }

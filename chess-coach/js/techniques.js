@@ -39,6 +39,35 @@
     if (lone && m.piece === "r" && ek && !/[+#]/.test(m.san)) { const [x, y] = kd(m.to, ek); if ((x === 1 || y === 1) && Math.max(x, y) >= 2) t.push("rcut"); }
     if (g.in_stalemate()) t.push("stalemate");
     t.push(...motifs(G0, G1, m, me, opp));
+    t.push(...plans(fen, g, G0, G1, m, me, opp));
+    return t;
+  }
+
+  /* Middlegame plan moves: a rook to an open or half-open file, improving the worst piece, a pawn break, an outpost. */
+  const pawnsOn = (G, file, color) => Object.entries(G).filter(([s, p]) => s[0] === file && p.type === "p" && p.color === color).length;
+  function mobility(fen, sq) { // moves of the piece on sq as if it were its side's turn
+    const p = fen.split(" "); const g = new ChessLib(fen); const c = g.get(sq); if (!c) return 0;
+    p[1] = c.color; p[3] = "-"; const h = new ChessLib(p.join(" ")); return h.moves({ square: sq }).length;
+  }
+  function plans(fen, g, G0, G1, m, me, opp) {
+    const t = [];
+    if (m.piece === "r" && m.from[0] !== m.to[0] && !pawnsOn(G1, m.to[0], me) && pawnsOn(G0, m.from[0], me)) t.push("openfile");
+    if ("nbrq".includes(m.piece) && !m.captured) {
+      let worst = null; for (const [s, p] of Object.entries(G0)) { if (p.color !== me || !"nbr".includes(p.type)) continue; const k = mobility(fen, s); if (!worst || k < worst.k) worst = { s, k }; }
+      if (worst && worst.s === m.from && worst.k <= 3 && mobility(g.fen(), m.to) >= worst.k + 3) t.push("worst");
+    }
+    if (m.piece === "p") {
+      const dir = me === "w" ? 1 : -1; const f = m.to.charCodeAt(0);
+      const hits = [-1, 1].map((d) => String.fromCharCode(f + d) + (+m.to[1] + dir)).filter((s) => G1[s] && G1[s].type === "p" && G1[s].color === opp);
+      if (hits.length || (m.captured === "p")) t.push("break");
+    }
+    if ((m.piece === "n" || m.piece === "b") && (me === "w" ? +m.to[1] >= 5 : +m.to[1] <= 4)) {
+      const dir = me === "w" ? -1 : 1; const f = m.to.charCodeAt(0);
+      const guarded = [-1, 1].some((d) => { const s = String.fromCharCode(f + d) + (+m.to[1] + dir); return G1[s] && G1[s].type === "p" && G1[s].color === me; });
+      const ahead = (r) => (me === "w" ? r > +m.to[1] : r < +m.to[1]);
+      const chased = Object.entries(G1).some(([s, p]) => p.type === "p" && p.color === opp && Math.abs(s.charCodeAt(0) - f) === 1 && ahead(+s[1]));
+      if (guarded && !chased) t.push("outpost");
+    }
     return t;
   }
 

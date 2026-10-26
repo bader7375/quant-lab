@@ -32,6 +32,15 @@ function planFor(fen, ply, { noThreats = false } = {}) {
     if (his.king && (his.king.attackers >= 2 || his.king.openFiles.length)) out.push(`ملك الخصم على ${his.king.sq}${his.king.openFiles.length ? ` وأمامه عمود مفتوح (${his.king.openFiles.join("، ")})` : ""}: وجّه قطعك نحوه.`);
     if (mine.king && mine.king.attackers >= 2) out.push(`انتبه لملكك: ${mine.king.attackers} قطع للخصم تهاجم المربعات حوله.`);
     if (his.pawns.isolated.length) out.push(`هدف: بيدق الخصم المعزول على ${his.pawns.isolated[0]}. هاجمه بقطعك.`);
+    // open files without a rook of yours, pawn breaks, outposts a knight can reach now
+    const files = "abcdefgh".split("").filter((fl) => !Object.entries(G).some(([s, p]) => s[0] === fl && p.type === "p" && p.color === me));
+    const rookOn = new Set(Object.entries(G).filter(([, p]) => p.type === "r" && p.color === me).map(([s]) => s[0]));
+    const free = files.filter((fl) => !rookOn.has(fl)); if (free.length && rookOn.size) out.push(`عمود مفتوح أو نصف مفتوح بلا رخ لك: ${free.slice(0, 2).join("، ")}. هل يذهب رخ إليه؟`);
+    const tg = (u) => Tech.tagsOf(fen, u); const legal = g.moves({ verbose: true }).filter((x) => !x.captured || x.piece === "p");
+    const breaks = legal.filter((x) => x.piece === "p" && tg(x.from + x.to).includes("break")).map((x) => x.san);
+    if (breaks.length) out.push(`دفعات بيدق ممكنة: ${breaks.slice(0, 3).join("، ")}. أيها يفتح اللعب في الجهة التي تريدها؟`);
+    const posts = legal.filter((x) => x.piece === "n" && tg(x.from + x.to).includes("outpost")).map((x) => x.to);
+    if (posts.length) out.push(`مربع قوي لحصانك: ${[...new Set(posts)].slice(0, 2).join("، ")} (يحميه بيدق ولا يطرده بيدق).`);
     if (!out.length || out.length < 2) out.push("لا شيء عاجل: حسّن قطعة، أو ضع رخًا على عمود مفتوح، أو هاجم نقطة ضعف.");
   } else {
     out.push("النهاية: الملك قطعة مقاتلة. أحضره نحو المركز أو نحو البيادق.");
@@ -214,10 +223,10 @@ function TechniqueSession(root, n, T) {
     const t = ++token; solved = false; picks = new Set(); truth = null; $("#t-x", root).innerHTML = ""; $("#t-ctl", root).innerHTML = "";
     setStatus("أجهّز الموقف..."); board.update({ interactive: false, arrows: [], marks: {}, onSquare: null, onSelect: null });
     if (T.kind === "pool") {
-      let items = []; for (const id of T.pools) items = items.concat((await drillPool(id + ".json")).filter((x) => x.t && x.t.includes(T.tag)));
+      let items = []; for (const id of T.pools) items = items.concat((await drillPool(id + ".json")).filter((x) => (x.mt || x.t || []).includes(T.tag))); // master positions (mt): the tag of the move the master played
       if (!alive(t)) return; if (!items.length) { setStatus("لا مواقف لهذه التقنية بعد."); return; }
       item = items[Math.floor(Math.random() * items.length)]; fen = item.fen;
-      $("#t-src", root).textContent = `من مباراة حقيقية على Lichess (متوسط التقييم ${item.r})، النقلة ${Math.floor(item.ply / 2) + 1}.`;
+      $("#t-src", root).textContent = (item.w ? `من مباراة أساتذة: ${item.w} ضد ${item.bl} (${item.y})، النقلة ${Math.floor(item.ply / 2) + 1}.` : `من مباراة حقيقية على Lichess (متوسط التقييم ${item.r})، النقلة ${Math.floor(item.ply / 2) + 1}.`);
     } else if (T.kind === "basic") {
       const r = await randomBasicMate(T.basic); if (!alive(t)) return; if (!r) { setStatus("تعذّر توليد موقف."); return; }
       item = r; fen = r.fen; $("#t-src", root).textContent = `موقف عشوائي: ${T.basic === "kqk" ? "ملك ووزير" : "ملك ورخ"} ضد ملك.`;
@@ -255,7 +264,7 @@ function TechniqueSession(root, n, T) {
     const tips = moveAdvice(T, { ok, used, bestUsed: Tech.tagsOf(fen, best.pv[0]).includes(T.tag), bestSan, risks: !ok && mineL ? moveRisks(fen, m.san, []) : [] });
     const why = bestMoveWhy(fen, bestSan, best.pv[0], null).concat(Tech.tagsOf(fen, best.pv[0]).filter((x) => TAG_AR[x] && x !== "check").map((x) => TAG_AR[x]));
     $("#t-card", root).innerHTML = `<div class="callout ${ok ? "good" : "bad"}"><b>${ok ? "صحيح" : "ليس بعد"}: <bdi class="mv">${esc(moveLabel(fen, m.san))}</bdi></b> ${esc(verdict)}
-      <p class="note">${used ? "استخدمت التقنية." : `لم تستخدم التقنية: ${esc(T.rule)}`}</p></div>
+      <p class="note">${used ? "استخدمت التقنية." : `لم تستخدم التقنية: ${esc(T.rule)}`}</p>${item.san ? `<p class="note">لعب الأستاذ هنا: <bdi class="mv">${esc(item.san)}</bdi>.</p>` : ""}</div>
       ${m.uci !== best.pv[0] ? `<p>أفضل نقلة: <bdi class="mv">${esc(bestSan)}</bdi>.</p>${why.length ? `<ul class="facts">${[...new Set(why)].map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul>` : ""}` : ""}
       ${!ok && mineL ? `<p class="note warnline">${moveRisks(fen, m.san, pvToSan(fen, mineL.pv, 4).slice(1)).map(fmtNote).join(" ")}</p>` : ""}
       ${adviceHtml(tips, took, avg, ok, T)}

@@ -82,6 +82,11 @@ function ruleProgress(c) {
     const q = Math.min(2, ms.filter((x) => x.kind === "kqk" && x.ok && x.moves <= 10).length), rk = Math.min(2, ms.filter((x) => x.kind === "krk" && x.ok && x.moves <= 20).length);
     return { met: q + rk >= 4, have: q + rk, need: 4, unit: `كش ناجح (وزير ${q}/2، رخ ${rk}/2)` };
   }
+  if (r.kind === "middlegame_quality") { // moves 11-30: average drop at most 3 points in each of the last 3 judged games, and safe
+    const judged = games.filter((g) => g.metrics && g.metrics.mgN >= 10); const last = judged.slice(-r.window);
+    const ok = last.filter((g) => g.metrics.mgDrop <= 3 && safetyOk(g.metrics)).length;
+    return { met: last.length >= r.window && ok >= r.need, have: ok, need: r.need, unit: `مباريات مؤهلة من آخر ${r.window} (متوسط الخسارة في النقلات 11 إلى 30 ≤ 3 نقاط${last.length ? `؛ آخرها ${last[last.length - 1].metrics.mgDrop}` : ""})` };
+  }
   if (r.kind === "tactics") { // tactical chances = opponent errors that gave you 10+ points; used = you kept them
     const ms = games.map((g) => g.metrics || {}); const chances = ms.reduce((a, m) => a + (m.gifts || 0), 0), used = ms.reduce((a, m) => a + (m.punished || 0), 0);
     const last = games[games.length - 1]; const safe = !!last && safetyOk(last.metrics);

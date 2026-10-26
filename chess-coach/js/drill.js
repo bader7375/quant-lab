@@ -83,7 +83,7 @@ function DrillSession(root, n, P) {
       if (due.length && Math.random() < 0.4) { idx = due[0].i; ps.retry = ps.retry.filter((x) => x !== due[0]); }
       else { const seen = new Set(ps.seen); for (let k = 0; k < 50; k++) { idx = Math.floor(Math.random() * items.length); if (!seen.has(idx)) break; } }
       item = { ...items[idx], i: idx }; optimal = item.m || null;
-      $("#d-src", root).textContent = `من مباراة حقيقية على Lichess (متوسط تقييم اللاعبين ${item.r})، النقلة ${Math.floor(item.ply / 2) + 1}.${P.srcNote ? " " + P.srcNote : ""}`;
+      $("#d-src", root).textContent = (item.w ? `من مباراة أساتذة: ${item.w} ضد ${item.bl} (${item.y})، النقلة ${Math.floor(item.ply / 2) + 1}.` : `من مباراة حقيقية على Lichess (متوسط تقييم اللاعبين ${item.r})، النقلة ${Math.floor(item.ply / 2) + 1}.${P.srcNote ? " " + P.srcNote : ""}`);
     }
     startFen = item.fen; game = new Chess(item.fen); me = game.turn(); prog();
     card(`<p>${esc(P.task)}</p><p class="note">أنت ${me === "w" ? "بالأبيض" : "بالأسود"}. ${mateGoal ? "الهدف: كش مات بأقصر طريق، بلا stalemate." : `تلعب ${P.own} نقلات من هنا.`}</p>${methodHtml(P).replace("<details class=\"method\" open>", ps.done >= 3 ? "<details class=\"method\">" : "<details class=\"method\" open>")}`, "hint");
@@ -204,7 +204,7 @@ function DrillSession(root, n, P) {
       ok = why === "mate";
       head = why === "mate" ? `كش مات في ${movesAr(own)}${optimal ? ` (تقدير Stockfish عند البداية: ${movesAr(optimal)})` : ""}.` : why === "draw" ? "انتهى الموقف بالتعادل (stalemate أو تكرار): ضاع الفوز." : why === "lost" ? "ضاع الكش القسري." : `وصلت إلى الحد (${own} نقلة) بلا كش مات.`;
       if (P.kind === "kqk" || P.kind === "krk") drillState(n).mates.push({ kind: P.kind, moves: own, optimal, ok, stalemate: why === "draw", t: now() });
-    } else head = `${okMoves} من ${recs.length} نقلات بمستوى المحرك (الأفضل أو قريبة منها جدًا).${item.x ? ` في المباراة الحقيقية لُعب هنا ${item.x}، وخسر صاحبه مادة أو موقفًا.` : ""}`;
+    } else head = `${okMoves} من ${recs.length} نقلات بمستوى المحرك (الأفضل أو قريبة منها جدًا).${item.san ? ` الأستاذ لعب هنا أولًا ${item.san}.` : ""}${item.x ? ` في المباراة الحقيقية لُعب هنا ${item.x}، وخسر صاحبه مادة أو موقفًا.` : ""}`;
     ps.done++; drillState(n).count = (drillState(n).count || 0) + 1;
     if (item.i != null) { ps.seen.push(item.i); if (ps.seen.length > 600) ps.seen.splice(0, ps.seen.length - 600); if (!ok) ps.retry.push({ i: item.i, due: now() + 10 * 60000 }); }
     const candB = recs.filter((r) => r.candBest).length;

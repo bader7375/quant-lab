@@ -255,6 +255,36 @@ The user asked for advice with every training: the best way to do it and the fas
   - lesson, both demos, the Positions drill, three technique drills and the vision task;
   - 390 px with nothing off-screen.
 
+### Chapter 6 (done): من الافتتاح إلى وسط اللعب: صنع خطة, 2026-10-26
+The user skipped Chapter 5 ("I have all basics"); it can still be opened with the button.
+- **Plan tags** (`js/techniques.js`):
+  - `openfile`: a rook moves to a file without your pawns;
+  - `worst`: your least mobile minor piece or rook gains 3 or more moves;
+  - `break`: a pawn move that touches or takes an enemy pawn;
+  - `outpost`: a knight or bishop in the enemy half, guarded by a pawn and safe from enemy pawns.
+- **Pool** `data/positions/ch06-plans.json`:
+  - built by `tools/positions/build_plans.py` and `tag_plans.mjs`;
+  - 21,600 positions from moves 11–25 of 5,400 KingBase games between players rated 2300+, in six opening groups;
+  - 3,732 where the master's move is a plan move, and 3,298 kept where Stockfish (depth 13) puts that move within 40 cp of best in a balanced position: break 1867, openfile 1071, worst 286, outpost 190.
+  - Technique drills filter on the master's own move tags (`mt`) and show "the master played …" after each answer.
+- **Learn**: five slides (PASS at depth 20; texts aligned with the scores):
+  - end of the opening, in the Giuoco Pianissimo;
+  - worst piece: Nf1 in the same position, on its way to g3;
+  - open file: Rfd1 from Ehlvest–Huebner 2016;
+  - outpost: Nd5 from Adams–Van der Sterren 1996;
+  - the QGD Tartakower break c5.
+- **Watch**: Lu Shanglei–Ganguly 2016 (Italian), narrated move by move: Re1 frees f1, then Nbd2-f1-g3, Bxe6 to leave a weak e6, the d4 break, e5 for space, then f4-f5-f6 where the pawns point. The plan line changes when the centre closes.
+- **Techniques**: worst piece, open file, pawn break, outpost, each with best and fastest ways. **Positions**: the master plans pool.
+- **Plan box**, for every chapter in the middlegame: open or half-open files without your rook, available pawn breaks, and outposts your knight can reach.
+- **Play (Chapter 6)**: on moves 11–30, if Stockfish's move is a plan move and yours is not, the card says "خطة Stockfish هنا: …".
+- **Rule `middlegame_quality`**: `computeMetrics` adds `mgN`/`mgDrop` (moves 11–30). The rule needs the last 3 games with 10+ such moves each at an average drop of 3 or less, and within the safety limits.
+- Tests (headless, no page errors):
+  - rule cases;
+  - lesson, demo, Positions with the master source shown;
+  - all four technique drills;
+  - Play with the plan box;
+  - 390 px with nothing off-screen.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:
