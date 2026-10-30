@@ -13,6 +13,8 @@ const techMastery = (s) => { const l = s.last.slice(-10); return { ok: l.filter(
 function planFor(fen, ply, { noThreats = false } = {}) {
   const g = new Chess(fen); const me = g.turn(), opp = me === "w" ? "b" : "w"; const f = Facts.positionFacts(fen, ply ?? 30); const N = Facts.NAME_AR;
   const G = Facts.grid(g); const mine = f[me], his = f[opp]; const out = [];
+  const st = Tech.structure(fen);
+  if (st && typeof STRUCTS !== "undefined") out.push(`البنية: ${STRUCTS[st.id].name}. ${st.side == null || st.side === me ? STRUCTS[st.id].own : STRUCTS[st.id].vs}`);
   if (f.inCheck) out.push("أنت في كش: عالجه أولًا (حرّك الملك، أو سد الخط، أو خذ القطعة المهاجِمة).");
   if (mine.hanging.length && !noThreats) out.push(`أولًا الأمان: ${mine.hanging.slice(0, 2).map((h) => `${N[h.type]} على ${h.sq}`).join(" و")} ${mine.hanging.length > 1 ? "معرّضان" : "معرّض"} للكسب. أنقذ، أو احمِ، أو خذ المهاجم.`);
   if (his.hanging.length && !noThreats) out.push(`فرصة: ${N[his.hanging[0].type]} الخصم على ${his.hanging[0].sq} لا يحميه ما يكفي. هل تستطيع أخذه بأمان؟`);
@@ -223,7 +225,7 @@ function TechniqueSession(root, n, T) {
     const t = ++token; solved = false; picks = new Set(); truth = null; $("#t-x", root).innerHTML = ""; $("#t-ctl", root).innerHTML = "";
     setStatus("أجهّز الموقف..."); board.update({ interactive: false, arrows: [], marks: {}, onSquare: null, onSelect: null });
     if (T.kind === "pool") {
-      let items = []; for (const id of T.pools) items = items.concat((await drillPool(id + ".json")).filter((x) => (x.mt || x.t || []).includes(T.tag))); // master positions (mt): the tag of the move the master played
+      let items = []; for (const id of T.pools) items = items.concat((await drillPool(id + ".json")).filter((x) => (T.struct ? x.s && x.s.id === T.struct && (!T.rel || (T.rel === "own") === (x.s.side === x.fen.split(" ")[1])) : (x.mt || x.t || []).includes(T.tag)))); // master positions (mt): the tag of the move the master played; chapter 7: the structure
       if (!alive(t)) return; if (!items.length) { setStatus("لا مواقف لهذه التقنية بعد."); return; }
       item = items[Math.floor(Math.random() * items.length)]; fen = item.fen;
       $("#t-src", root).textContent = (item.w ? `من مباراة أساتذة: ${item.w} ضد ${item.bl} (${item.y})، النقلة ${Math.floor(item.ply / 2) + 1}.` : `من مباراة حقيقية على Lichess (متوسط التقييم ${item.r})، النقلة ${Math.floor(item.ply / 2) + 1}.`);
@@ -248,7 +250,7 @@ function TechniqueSession(root, n, T) {
     const b = await Engine.analyse(fen, { depth: T.kind === "basic" ? 18 : 14, movetime: 1500, multipv: 3 }); if (!alive(t)) return;
     const mineL = b.lines.find((l) => l.pv[0] === m.uci) || (await Engine.analyse(fen, { depth: 13, movetime: 900, searchmoves: [m.uci] })).lines[0];
     if (!alive(t)) return;
-    const best = b.lines[0]; const tags = Tech.tagsOf(fen, m.uci); const used = tags.includes(T.tag);
+    const best = b.lines[0]; const tags = Tech.tagsOf(fen, m.uci); const usesT = (u) => (T.struct ? !!Tech.structPlan(fen, u) : Tech.tagsOf(fen, u).includes(T.tag)); const used = usesT(m.uci);
     let ok, verdict;
     if (best.mate && best.mate > 0) { // mates: judged by mate distance
       const mm = new Chess(m.fenAfter).in_checkmate() ? 1 : mineL && mineL.mate > 0 ? mineL.mate : null;
@@ -261,7 +263,7 @@ function TechniqueSession(root, n, T) {
     }
     const took = secs(); const avg = avgTime(ts); record(ok, took);
     const bestSan = sanOf(fen, best.pv[0]);
-    const tips = moveAdvice(T, { ok, used, bestUsed: Tech.tagsOf(fen, best.pv[0]).includes(T.tag), bestSan, risks: !ok && mineL ? moveRisks(fen, m.san, []) : [] });
+    const tips = moveAdvice(T, { ok, used, bestUsed: usesT(best.pv[0]), bestSan, risks: !ok && mineL ? moveRisks(fen, m.san, []) : [] });
     const why = bestMoveWhy(fen, bestSan, best.pv[0], null).concat(Tech.tagsOf(fen, best.pv[0]).filter((x) => TAG_AR[x] && x !== "check").map((x) => TAG_AR[x]));
     $("#t-card", root).innerHTML = `<div class="callout ${ok ? "good" : "bad"}"><b>${ok ? "صحيح" : "ليس بعد"}: <bdi class="mv">${esc(moveLabel(fen, m.san))}</bdi></b> ${esc(verdict)}
       <p class="note">${used ? "استخدمت التقنية." : `لم تستخدم التقنية: ${esc(T.rule)}`}</p>${item.san ? `<p class="note">لعب الأستاذ هنا: <bdi class="mv">${esc(item.san)}</bdi>.</p>` : ""}</div>

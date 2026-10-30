@@ -121,6 +121,54 @@
     }
     return [...new Set(t)];
   }
-  const T = { tagsOf, knightJump };
+  /* The pawn structure of a position (chapter 7), from the pawns only:
+     iqp: an isolated d-pawn (no c- or e-pawn of its colour); side = its owner.
+     hanging: c- and d-pawns side by side on the 4th/5th rank with no b- or e-pawns; side = their owner.
+     carlsbad: d4+e3 without a c-pawn against c6+d5 without an e-pawn (or the colours reversed); side = the minority attacker.
+     chain: e5+d4 against e6+d5 (French) or d5+e4 against d6+e5 (King's Indian); side = White.
+     open: at most one pawn left on the d- and e-files together. */
+  function structure(fen) {
+    const G = Facts.grid(new ChessLib(fen)); const P = { w: {}, b: {} };
+    for (const [s, p] of Object.entries(G)) if (p.type === "p") (P[p.color][s[0]] = P[p.color][s[0]] || []).push(+s[1]);
+    const has = (c, f, r) => (P[c][f] || []).includes(r); const any = (c, f) => (P[c][f] || []).length > 0;
+    for (const c of ["w", "b"]) if ((P[c].d || []).length === 1 && !any(c, "c") && !any(c, "e")) return { id: "iqp", side: c, sq: "d" + P[c].d[0] };
+    for (const c of ["w", "b"]) { const r = c === "w" ? [4] : [5]; if (r.some((x) => has(c, "c", x) && has(c, "d", x)) && !any(c, "b") && !any(c, "e")) return { id: "hanging", side: c }; }
+    if (has("w", "d", 4) && has("w", "e", 3) && !any("w", "c") && has("b", "c", 6) && has("b", "d", 5) && !any("b", "e")) return { id: "carlsbad", side: "w" };
+    if (has("b", "d", 5) && has("b", "e", 6) && !any("b", "c") && has("w", "c", 3) && has("w", "d", 4) && !any("w", "e")) return { id: "carlsbad", side: "b" };
+    if ((has("w", "e", 5) && has("w", "d", 4) && has("b", "e", 6) && has("b", "d", 5)) || (has("w", "d", 5) && has("w", "e", 4) && has("b", "d", 6) && has("b", "e", 5))) return { id: "chain", side: "w" };
+    const centre = ["d", "e"].reduce((n, f) => n + (P.w[f] || []).length + (P.b[f] || []).length, 0);
+    if (centre <= 1) return { id: "open", side: null };
+    return null;
+  }
+  /* Does a move follow the classic plan of the structure for the side that plays it? Returns the plan key or null. */
+  function structPlan(fen, uci, st) {
+    st = st || structure(fen); if (!st) return null;
+    const g = new ChessLib(fen); const me = g.turn(); const m = g.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] || "q" }); if (!m) return null;
+    const G0 = Facts.grid(new ChessLib(fen)), G1 = Facts.grid(g); const tags = tagsOf(fen, uci); const opp = me === "w" ? "b" : "w";
+    const ek = Object.keys(G1).find((s) => G1[s].type === "k" && G1[s].color === opp);
+    const nearKing = ek && Math.abs(m.to.charCodeAt(0) - ek.charCodeAt(0)) <= 2 && (me === "w" ? +m.to[1] >= 5 : +m.to[1] <= 4);
+    if (st.id === "iqp") {
+      const front = st.sq[0] + (+st.sq[1] + (st.side === "w" ? 1 : -1));
+      if (me === st.side) { if (m.piece === "p" && m.from === st.sq) return "iqp-push"; if ((m.piece === "n" && ["e5", "c5", "e4", "c4"].includes(m.to)) || (nearKing && m.piece !== "p")) return "iqp-attack"; return null; }
+      if (m.to === front && "nbq".includes(m.piece)) return "iqp-blockade";
+      if (m.captured && m.captured !== "p" && Facts.VAL[m.captured] === Facts.VAL[m.piece]) return "iqp-trade";
+      if (Facts.attackers(G1, st.sq, me).length > Facts.attackers(G0, st.sq, me).length) return "iqp-pressure";
+      return null;
+    }
+    if (st.id === "hanging") {
+      if (me === st.side) return m.piece === "p" && "cd".includes(m.from[0]) ? "hang-push" : null;
+      const tgt = Object.keys(G1).filter((s) => "cd".includes(s[0]) && G1[s].type === "p" && G1[s].color === opp);
+      return tgt.some((s) => Facts.attackers(G1, s, me).length > Facts.attackers(G0, s, me).length) ? "hang-pressure" : null;
+    }
+    if (st.id === "carlsbad") {
+      if (me === st.side) { if (m.piece === "p" && "ab".includes(m.from[0])) return "minority"; if (m.piece === "r" && "bc".includes(m.to[0]) && m.from[0] !== m.to[0]) return "minority"; return null; }
+      if (nearKing || (m.piece === "n" && ["e4", "e5"].includes(m.to)) || (m.piece === "p" && "fg".includes(m.from[0]))) return "carlsbad-kingside";
+      return null;
+    }
+    if (st.id === "chain") return tags.includes("break") ? "chain-break" : null;
+    if (st.id === "open") return tags.some((x) => ["openfile", "outpost", "worst"].includes(x)) ? "open-activity" : null;
+    return null;
+  }
+  const T = { tagsOf, knightJump, structure, structPlan };
   if (isNode) module.exports = T; else root.Tech = T;
 })(typeof self !== "undefined" ? self : this);

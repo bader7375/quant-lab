@@ -82,6 +82,11 @@ function ruleProgress(c) {
     const q = Math.min(2, ms.filter((x) => x.kind === "kqk" && x.ok && x.moves <= 10).length), rk = Math.min(2, ms.filter((x) => x.kind === "krk" && x.ok && x.moves <= 20).length);
     return { met: q + rk >= 4, have: q + rk, need: 4, unit: `كش ناجح (وزير ${q}/2، رخ ${rk}/2)` };
   }
+  if (r.kind === "structure_quality") { // 30+ of your moves in recognised structures across the chapter's games, average drop 3 or less
+    const ms = games.map((g) => g.metrics || {}).filter((m) => m.stN); const n = ms.reduce((a, m) => a + m.stN, 0);
+    const avg = n ? ms.reduce((a, m) => a + m.stN * m.stDrop, 0) / n : null;
+    return { met: n >= r.need && avg <= 3, have: Math.min(n, r.need), need: r.need, unit: `نقلة في بنى معروفة${avg != null ? ` · متوسط خسارتك ${avg.toFixed(1)} (الحد 3)` : ""}` };
+  }
   if (r.kind === "middlegame_quality") { // moves 11-30: average drop at most 3 points in each of the last 3 judged games, and safe
     const judged = games.filter((g) => g.metrics && g.metrics.mgN >= 10); const last = judged.slice(-r.window);
     const ok = last.filter((g) => g.metrics.mgDrop <= 3 && safetyOk(g.metrics)).length;

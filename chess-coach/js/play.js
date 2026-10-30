@@ -46,6 +46,7 @@ const unverifiedHtml = (bad) => (bad.length ? `<br><span class="note warnline">�
 
 STAGE_RUNNERS.play = (n) => {
   const c = chapter(n); const box = $("#stage-box"); const set = J.state.settings; const opening = (c.rule || {}).kind === "opening_checklist"; const safety = (c.rule || {}).kind === "safety";
+  const structs = (c.rule || {}).kind === "structure_quality";
   const games = chapterGames(n).slice().reverse();
   const open = J.games.filter((g) => g.chapter === n && !g.finished && g.sans.length).sort((a, b) => b.t - a.t);
   box.innerHTML = `<div class="panel"><h3>العب مع المدرّب</h3>
@@ -62,11 +63,19 @@ STAGE_RUNNERS.play = (n) => {
     <div class="row"><b>تلعب بـ</b><div class="seg" role="radiogroup" aria-label="اللون">${[["w", "الأبيض"], ["b", "الأسود"], ["r", "عشوائي"]].map(([v, t], k) => `<label><input type="radio" name="p-color" value="${v}" ${k === 0 ? "checked" : ""}><span>${t}</span></label>`).join("")}</div></div>
     <p class="note">${esc(OPP.label(set.oppRating))}. يرتفع المستوى 100 بعد الفوز وينخفض 100 بعد الخسارة. التعليق: ${set.commentary === "every" ? "على كل نقلة" : "على النقلات المهمة فقط"} (يتغيّر من «التقدم»).</p>
     <div class="row"><button class="btn big" id="p-start">${open.length ? "ابدأ مباراة جديدة" : "ابدأ المباراة"}</button></div>
+    ${structs ? `<h4>أو ابدأ من موقف أساتذة في بنية محددة</h4><p class="note">موقف حقيقي من مباراة أساتذة، وأنت الطرف الذي عليه الدور. تلعب حتى النهاية ضد الخصم نفسه.</p>
+      <div class="row">${Object.entries(STRUCTS).map(([k, v]) => `<button class="btn quiet" data-struct="${k}">${esc(v.name)}</button>`).join("")}</div>` : ""}
     ${games.length ? `<h4>مبارياتك في هذا الفصل</h4><div class="tbl"><table><thead><tr><th>التاريخ</th><th>اللون</th><th>النتيجة</th><th>نقلاتك</th><th>أخطاء وأخطاء فادحة</th>${opening ? "<th>قائمة الافتتاح</th>" : ""}${safety ? "<th>معلّقة / تهديدات فائتة</th>" : ""}<th>تُحسب للفصل</th><th></th></tr></thead><tbody>${games.map((g) => { const m = g.metrics || {}; return `<tr><td class="num">${new Date(g.t).toISOString().slice(0, 10)}</td><td>${g.color === "w" ? "أبيض" : "أسود"}</td><td>${RESULT_AR[g.result] || "–"}</td><td class="num">${m.moves ?? "–"}</td><td class="num">${(m.mistakes ?? 0) + (m.blunders ?? 0)}</td>${opening ? `<td class="num">${m.openingScore == null ? "–" : m.openingScore + "/5"}</td>` : ""}${safety ? `<td class="num">${m.hanging ?? "–"} / ${m.missedThreats ?? "–"}</td>` : ""}<td>${countsForChapter(g) ? "نعم" : "لا"}</td><td><button class="btn quiet" data-rev="${g.id}">راجع</button></td></tr>`; }).join("")}</tbody></table></div>` : ""}</div>`;
   $("#p-start", box).onclick = () => {
     for (const g of open) abandonGame(g, "بدأت مباراة جديدة قبل أن تنتهي هذه.");
     let col = ($('input[name="p-color"]:checked', box) || {}).value || "w"; if (col === "r") col = Math.random() < 0.5 ? "w" : "b";
     PlayGame($("#v-chapter"), { n, color: col, rating: set.oppRating });
+  };
+  for (const bt of $$("[data-struct]", box)) bt.onclick = async () => {
+    for (const g of open) abandonGame(g, "بدأت مباراة جديدة قبل أن تنتهي هذه.");
+    const items = (await drillPool("ch07-structures.json")).filter((x) => x.s.id === bt.dataset.struct && x.ply <= 40);
+    const it = items[Math.floor(Math.random() * items.length)]; const col = it.fen.split(" ")[1];
+    PlayGame($("#v-chapter"), { n, color: col, rating: set.oppRating, start: it.fen, startNote: `${STRUCTS[it.s.id].name}: موقف من ${it.w} ضد ${it.bl} (${it.y})، بعد النقلة ${Math.floor(it.ply / 2)}.` });
   };
   const rs = $("#p-resume", box); if (rs) rs.onclick = () => PlayGame($("#v-chapter"), { n, resume: open[0] });
   for (const b of $$("[data-rev]", box)) b.onclick = () => openReview(n, J.games.find((g) => g.id === b.dataset.rev));
@@ -74,13 +83,13 @@ STAGE_RUNNERS.play = (n) => {
 };
 
 let PLAY_TOKEN = 0;
-function PlayGame(root, { n, color, rating, resume = null }) {
+function PlayGame(root, { n, color, rating, resume = null, start = null, startNote = null }) {
   const c = chapter(n); const set = J.state.settings; const opening = (c.rule || {}).kind === "opening_checklist";
   // chapter 2 (safety): the opponent's threats are not announced (finding them is the skill); a hint reveals them, and
   // an optional check step asks the safety questions before each move is played
   const planCh = (c.rule || {}).kind === "middlegame_quality";
   const safety = (c.rule || {}).kind === "safety"; const blunderCheck = () => safety && set.blunderCheck !== false;
-  const G = resume || { id: "g" + uid(), chapter: n, t: now(), color, opp: { kind: OPP.kind, rating, fallbacks: 0 }, start: START_FEN, sans: [], ucis: [], recs: [], takebacks: 0, hints: 0, threats: 0, finished: false };
+  const G = resume || { id: "g" + uid(), chapter: n, t: now(), color, opp: { kind: OPP.kind, rating, fallbacks: 0 }, start: start || START_FEN, startNote, sans: [], ucis: [], recs: [], takebacks: 0, hints: 0, threats: 0, finished: false };
   if (!J.games.includes(G)) J.games.push(G);
   const me = G.color, opp = me === "w" ? "b" : "w", oppRating = G.opp.rating;
   const game = new Chess(G.start); let ownMoves = 0;
@@ -481,7 +490,7 @@ CHAPTER FOCUS: ${c.title}`;
 
   /* ---- start or resume ---- */
   if (resume) card(`<p class="note">استأنفت المباراة من النقلة ${Math.floor(G.sans.length / 2) + 1}.</p>`, "hint");
-  else card(`<p>بدأت المباراة. أنت ${me === "w" ? "بالأبيض، فابدأ أنت" : "بالأسود، والخصم يبدأ"}.${opening ? " راقب قائمة الافتتاح تحت الرقعة." : ""}${safety ? " راقب عدّاد الأمان تحت الرقعة. لن أعلن تهديدات الخصم: ابحث عنها بنفسك." : ""}</p>`, "hint");
+  else card(`<p>${G.startNote ? esc(G.startNote) + " " : ""}بدأت المباراة. أنت ${me === "w" ? "بالأبيض" : "بالأسود"}${G.start === START_FEN ? (me === "w" ? "، فابدأ أنت" : "، والخصم يبدأ") : ""}.${opening ? " راقب قائمة الافتتاح تحت الرقعة." : ""}${safety ? " راقب عدّاد الأمان تحت الرقعة. لن أعلن تهديدات الخصم: ابحث عنها بنفسك." : ""}</p>`, "hint");
   odds(lastCp, null);
   refreshUi();
   if (game.game_over()) checkEnd(); else if (game.turn() === me) userTurn(); else opponentTurn();
@@ -573,6 +582,14 @@ function humanLineHtml(rec) {
   if (rec.drop > 10 && H.p >= 0.15) t += " خطأ شائع عند هذا المستوى، فاحفظ الموقف جيدًا.";
   return `<p class="humanline">${t}</p>`;
 }
+/* Pawn structures (chapter 7): names, and the plan for each side. */
+const STRUCTS = {
+  iqp: { name: "البيدق المعزول (IQP)", own: "لك بيدق معزول: نشاط القطع والهجوم (مربعا e5 وc5، والدفعة d5 في الوقت المناسب). لا تبادل القطع.", vs: "للخصم بيدق معزول: احصره بقطعة على المربع أمامه، وبادل القطع، وهاجمه في النهاية." },
+  hanging: { name: "البيادق المعلّقة", own: "لك بيدقان معلّقان: أبقهما متحركين وادفع أحدهما في الوقت المناسب، والقطع خلفهما.", vs: "للخصم بيدقان معلّقان: هاجمهما بالقطع على العمودين c وd لتجبره على دفع أحدهما، ثم احصر الآخر." },
+  carlsbad: { name: "بنية Carlsbad", own: "هجوم الأقلية: b4 ثم b5 لتصنع بيدقًا ضعيفًا في c6، والرخ على العمود b أو c.", vs: "خصمك يلعب هجوم الأقلية: العب على الجناح الملكي (Ne4، f5، القطع نحو الملك)." },
+  chain: { name: "سلسلة البيادق (مركز مغلق)", own: "مركز مغلق: هاجم قاعدة سلسلة الخصم بدفعة بيدق، والعب في الجهة التي تشير إليها بيادقك.", vs: "مركز مغلق: هاجم قاعدة سلسلة الخصم بدفعة بيدق، والعب في الجهة التي تشير إليها بيادقك." },
+  open: { name: "المركز المفتوح", own: "مركز مفتوح: نشاط القطع أهم من البيادق. أعمدة مفتوحة للرخ، ومربعات قوية، وحسّن أسوأ قطعة.", vs: "مركز مفتوح: نشاط القطع أهم من البيادق. أعمدة مفتوحة للرخ، ومربعات قوية، وحسّن أسوأ قطعة." },
+};
 const PLAN_AR = { openfile: "الرخ إلى العمود المفتوح", worst: "تحسين أسوأ قطعة", break: "دفعة بيدق تفتح اللعب", outpost: "حصان أو فيل إلى مربع قوي" };
 function habitFor(r) {
   if (r.hung) return "عادة: بعد أن تختار نقلتك وقبل أن تلعبها، افحص كل قطعة: هل ما زالت محمية؟";
@@ -594,6 +611,7 @@ function computeMetrics(G) {
     openingScore: ck ? ck.score : null, openingItems: ck ? ck.items : null,
     openingBlunder: all.some((r) => r.own <= 10 && r.cls === "blunder"),
     hanging: all.filter((r) => r.hung).length, missedThreats: all.filter((r) => r.missed).length, rechecks: G.rechecks || 0,
+    ...(() => { const st = fin.filter((r) => Tech.structure(r.fenBefore)); return { stN: st.length, stDrop: st.length ? +(st.reduce((s, r) => s + r.drop, 0) / st.length).toFixed(1) : null }; })(), // moves in known structures (chapter 7)
     ...(() => { const mg = fin.filter((r) => r.own >= 11 && r.own <= 30); return { mgN: mg.length, mgDrop: mg.length ? +(mg.reduce((s, r) => s + r.drop, 0) / mg.length).toFixed(1) : null }; })(), // moves 11-30 (chapter 6)
     gifts: fin.filter((r) => r.gift >= 10).length, punished: fin.filter((r) => r.gift >= 10 && r.drop <= 5).length,
   };

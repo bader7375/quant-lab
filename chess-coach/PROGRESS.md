@@ -285,6 +285,38 @@ The user skipped Chapter 5 ("I have all basics"); it can still be opened with th
   - Play with the plan box;
   - 390 px with nothing off-screen.
 
+### Chapter 7 (done): بنى البيادق وخططها, 2026-10-30
+- **Structure detector** `Tech.structure(fen)`, from the pawns only: IQP, hanging pawns, Carlsbad (in both colours), chain (French e5/d4 or King's Indian d5/e4) and open centre. `Tech.structPlan(fen, uci)` says whether a move follows the classic plan for the side that plays it:
+  - IQP, its owner: push, e5/c5, or a piece toward the king; the other side: blockade the square in front, trade equal pieces, or add pressure;
+  - hanging pawns: their owner pushes one; the other side adds pressure;
+  - Carlsbad: the minority attack (a- or b-pawn, rook to the b- or c-file); the other side plays on the kingside;
+  - chain: a pawn break;
+  - open centre: piece activity.
+- **Pool** `data/positions/ch07-structures.json`:
+  - built by `tools/positions/build_structures.py` and `tag_structures.mjs`;
+  - 122,295 KingBase positions (moves 12–30, players 2300+, 10,500 games in seven opening groups), classified into structures;
+  - up to 900 per structure checked with Stockfish (master move within 40 cp, balanced);
+  - 700 kept per structure, 3,500 in all.
+- **Learn**: five master positions (PASS):
+  - IQP d5 (Blauert–Holmsten 2001);
+  - blockade Nd5 against the IQP (Babula–Klenburg 2001);
+  - minority attack b5 (Riazantsev–Magalashvili 2005);
+  - French chain h5, playing where the pawns point (Rodriguez–Almeida 2004);
+  - hanging pawns d5 (Brunner–Bailet 2016).
+- **Watch**: Volkov–Blagojevic 2005, QGD Exchange (which the user meets as Black). The plan follows Rab1, b4, b5; then the plan changes when d5 becomes isolated: Nd4 blockade, the c-file, Rc7.
+- **Techniques**: IQP (own), IQP (against), Carlsbad minority, chain, hanging pawns, filtered by structure and by whose structure it is. "Used the technique" means `structPlan` recognises the move.
+- **Play**: besides a full game, a button per structure starts the game from a random master position in that structure, with you on the side to move, against the usual opponent. Games accept a start FEN (`start`, `startNote`).
+- **Plan box**: its first line names the structure and the plan for your side, in every chapter.
+- **Rule `structure_quality`**: `computeMetrics` adds `stN`/`stDrop` (your moves played in a recognised structure). The rule needs 30 or more such moves across the chapter's games with an average drop of 3 or less.
+- Caught in testing: a global `STRUCT_AR` collided with one in `practice/modes.js` and would have stopped `play.js` from loading. It was renamed `STRUCTS` before publishing. The Chapter 1 regression run (Play, explorer, plan box) passes.
+- Tests (headless, no page errors):
+  - rule cases;
+  - lesson and demo;
+  - Positions with the master source shown;
+  - five technique drills;
+  - Play from a Carlsbad master position (`stN` counted);
+  - 390 px with nothing off-screen.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:
