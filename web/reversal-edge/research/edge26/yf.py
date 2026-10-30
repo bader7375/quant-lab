@@ -14,6 +14,20 @@ def chart(sym, q, tries=4):
         except Exception as e:
             err = e; time.sleep(3 * (a + 1))
     raise RuntimeError(f"{sym}: {err}")
+def _fill_last(sym, r, rows):
+    """Yahoo sometimes serves a finished Saudi session's daily bar with empty prices (seen overnight after the session) while the quote
+    fields already hold it: rebuild that one bar from the quote (high, low, close, volume) and the day's first hourly bar (open)."""
+    m = r.get("meta") or {}; off = m.get("gmtoffset", 0); t = m.get("regularMarketTime"); c = m.get("regularMarketPrice")
+    if not t or c is None: return rows
+    day = dt.datetime.utcfromtimestamp(t + off).strftime("%Y-%m-%d")
+    if not rows or day <= rows[-1][0]: return rows
+    h = (chart(sym, "range=5d&interval=60m").get("chart") or {}).get("result")
+    if not h: return rows
+    q = h[0]["indicators"]["quote"][0]; o = next((q["open"][i] for i, ts in enumerate(h[0].get("timestamp") or [])
+                                                if dt.datetime.utcfromtimestamp(ts + off).strftime("%Y-%m-%d") == day and q["open"][i] is not None), None)
+    hi, lo, v = m.get("regularMarketDayHigh"), m.get("regularMarketDayLow"), m.get("regularMarketVolume")
+    if o is None or hi is None or lo is None: return rows
+    return rows + [[day, o, max(hi, o, c), min(lo, o, c), c, c, v]]
 def daily(sym, out_dir, div_dir=None, period1=0):
     j = chart(sym, f"period1={period1}&period2={int(time.time())+86400}&interval=1d&events=div%2Csplit&includeAdjustedClose=true")
     res = (j.get("chart") or {}).get("result")
@@ -26,6 +40,9 @@ def daily(sym, out_dir, div_dir=None, period1=0):
     for i, t in enumerate(ts):
         if q["close"][i] is None: continue
         rows.append([dt.datetime.utcfromtimestamp(t + off).strftime("%Y-%m-%d"), q["open"][i], q["high"][i], q["low"][i], q["close"][i], ac[i], q["volume"][i]])
+    if sym.endswith(".SR"):
+        try: rows = _fill_last(sym, r, rows)
+        except Exception: pass
     fn = sym.replace("^", "").replace("=", "_"); path = os.path.join(out_dir, fn + ".csv")
     if rows and os.path.exists(path):   # never move backwards: keep the stored file if Yahoo's newest bar is older than ours
         try:

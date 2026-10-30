@@ -10,16 +10,22 @@ for s in ['SPY', 'QQQ']: print(s, daily(s, 'data/idx'))
 import glob, os, time
 import json
 nm = {}
-for f in sorted(glob.glob('data/us100/*.csv')):
-    try: x = daily(os.path.basename(f)[:-4], 'data/us100'); nm[os.path.basename(f)[:-4]] = (x or {}).get('name', ''); time.sleep(0.15)
-    except Exception as e: print('ERR', f, e)
+syms = set(os.path.basename(f)[:-4] for f in glob.glob('data/us100/*.csv')) | {'SPY', 'QQQ'}
+if os.path.exists('us100_list.json'): syms |= set(json.load(open('us100_list.json')))   # the 115 large caps (the list is in the repo)
+for s in sorted(syms):
+    try: x = daily(s, 'data/us100'); nm[s] = (x or {}).get('name', ''); time.sleep(0.15)
+    except Exception as e: print('ERR', s, e)
 json.dump(nm, open('data/us100_names.json', 'w'))
 " >> $LOG 2>&1; python3 $S/daily/strip_partial.py >> $LOG 2>&1)
-if [ "$(TZ=Asia/Riyadh date +%u)" = "5" ]; then   # Friday: Tadawul is closed, only the US section
+if [ "$(TZ=Asia/Riyadh date +%u)" = "5" ] && [ "${FULL:-0}" != "1" ]; then   # Friday: Tadawul is closed, only the US section (FULL=1 forces the Saudi part)
   echo "**Friday: the Saudi market is closed; Thursday's Saudi list stands.**"; (cd $S/daily && python3 us_signal.py 2>> $LOG) || echo "FAILED at us_signal"; exit 0
 fi
 step fetch; cd $S/edge26 || exit 1
-CODES=$(ls data/d/*.SR.csv | xargs -n1 basename | sed 's/.SR.csv//' | paste -sd,)
+CODES=$(python3 -c "
+import json, glob, os   # stored files plus the full Tadawul list (2001-2020 library, Aramco, later listings), so an empty folder fills itself
+c = set(os.path.basename(f)[:-7] for f in glob.glob('data/d/*.SR.csv')) | set(json.load(open('../tadawul/meta.json'))) | {'2222'}
+if os.path.exists('data/new_codes.json'): c |= set(json.load(open('data/new_codes.json')))
+print(','.join(sorted(c)))")
 python3 fetch_all.py "$CODES" > daily_fetch.log 2>&1
 python3 -c "
 from yf import daily
@@ -31,7 +37,7 @@ echo "fetch errors: $(grep -c '^ERR' daily_fetch.log); last dates: $(grep -o "'l
 LASTD=$(for f in data/d/*.SR.csv; do tail -1 "$f" | cut -d, -f1; done | sort | uniq -c | sort -rn | head -1 | awk '{print $2}')
 NLAST=$(for f in data/d/*.SR.csv; do tail -1 "$f" | cut -d, -f1; done | grep -c "^$LASTD$")
 TODAY=$(TZ=Asia/Riyadh date +%F); HR=$(TZ=Asia/Riyadh date +%H); DOW=$(TZ=Asia/Riyadh date +%u)
-if [ "$HR" -ge 15 ] && [ "$DOW" != "5" ] && [ "$DOW" != "6" ] && [ "$LASTD" != "$TODAY" ] && [ "${FULL:-0}" != "1" ]; then
+if [ "$HR" -ge 15 ] && [ "$DOW" != "5" ] && [ "$DOW" != "6" ] && [ "$LASTD" != "$TODAY" ]; then
   echo "NOT UPDATED: Yahoo has not published today's ($TODAY) Saudi close yet, or Tadawul was closed today; the newest bar is $LASTD. The scanner keeps the previous close; the 06:42 run will try again."; step notyet; exit 3
 fi
 EXPD=$(python3 -c "import json; print(json.load(open('$S/r27/today27.json'))['date'])" 2>/dev/null)

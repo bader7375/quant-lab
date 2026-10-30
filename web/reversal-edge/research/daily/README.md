@@ -24,3 +24,15 @@ Change 2026-10-25 (round 35): US section (us_signal.py) - SPY/QQQ RSI(2) < 10 ab
 a close above the 5-day average or 10 sessions; runs on Fridays too (US section only). strip_partial.py drops still-forming daily candles.
 Change 2026-10-25 (round 36, the user's rule): loss-making companies (latest usable annual result) are skipped; 2023-26 Z-swing picks 83% winners
 +6.7% vs 64% +3.3%. The US section adds the US sell-off window (115 large caps, market momentum <= -1.18; timing edge, labelled as such).
+Change 2026-10-26: after-close mode. A 16:41 Riyadh run (Sun-Thu) computes the next session's list from the day's close and updates the
+terminal's scanner; the 06:42 run reuses that list and export and refreshes only the US part. yf.daily never replaces a stored file with an
+older last bar.
+Change 2026-10-30: rebuild after a machine reset. The work folder lives in a temporary scratchpad and was wiped on 2026-10-27.
+`sh bootstrap.sh <work folder>` rebuilds it from this repo: Python packages, the code folders, then a full `run.sh`, which now fills an empty
+data folder by itself (Tadawul codes from tadawul/meta.json + restore/new_codes.json, US symbols from restore/us100_list.json).
+`restore/` holds the small non-code files that were lost: new_codes.json and extra_names.json (Yahoo probe of every Tadawul code range,
+`edge26/probe_par.py`), ms_hist_pre2013.json (market momentum 2003-2012 from the 2001-2020 library, which is not in the repo) and
+us100_list.json. The original us100 list was never saved; this one (S&P 100 names plus large Nasdaq names, 115 stocks, including all
+25 names of the last US scan) is a reconstruction, so the US sell-off window can differ slightly from the round 34-36 tests.
+yf.daily also repairs a Saudi daily bar that Yahoo serves with empty prices after the session (seen overnight): it takes high, low,
+close and volume from the quote fields and the open from the day's first hourly bar.
