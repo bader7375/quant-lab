@@ -13,3 +13,8 @@ Related findings: further falls after the buy are not predictable from volume / 
 drawdowns but lowers returns (round 41); recently (2023-26) the edge is mostly timing (buying in sell-offs), not stock choice.
 Also tested afterwards (round 42, r42/RESULTS.md): buying on the first green candle (big volume / strong close) with the stop under it -
 not adopted; the stop is hit in about half the trades and the wait for the candle lowers returns in 2020-26.
+4. Split exit (round 43 context, r43/RESULTS.md): half of each position held 40 sessions, half sold when stretch Z is back at 0.
+   Return about +2.3% of the account a year in 2013-19, 2020-26 and 2023-26 alike; ratio return / drawdown 0.45 / 0.51 / 0.85 vs
+   0.55 / 0.31 / 0.26 for the live rule. The robust choice (best worst period); a mix of two tested exits, not a new discovery.
+Round 43 (book rules: Connors close entry, RSI(2) entry and exits, 200-day filter; Turtle Soup; Bulkowski dead-cat; Nagel volatility;
+George-Hwang 52-week low): nothing beats the live rule in both periods.
