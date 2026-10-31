@@ -18,3 +18,8 @@ not adopted; the stop is hit in about half the trades and the wait for the candl
    0.55 / 0.31 / 0.26 for the live rule. The robust choice (best worst period); a mix of two tested exits, not a new discovery.
 Round 43 (book rules: Connors close entry, RSI(2) entry and exits, 200-day filter; Turtle Soup; Bulkowski dead-cat; Nagel volatility;
 George-Hwang 52-week low): nothing beats the live rule in both periods.
+5. Position size (round 45, r45/RESULTS.md): Kelly says 5% per Z-swing position is too small. 10% positions (still at most 5):
+   about double the Z swing's contribution (+5.9% / +3.6% a year in 2013-19 / 2020-26) with a worst drawdown of about -10%.
+6. Idle money (round 45): the Z swing is invested only ~5% of the time. Core v2 (ML ranking + trend breakouts, in the terminal's
+   Core panel) made +11% / +20% a year (2013-19 / 2020-26, Sharpe 0.91 / 1.39, worst drawdown -23% / -19%); with the Z swing on top
+   +12.5% / +20.2%. A bigger decision (much more market exposure), so not switched on.

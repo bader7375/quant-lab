@@ -1,0 +1,17 @@
+(a) live Z sleeve 2013-26: 3342 days, annual Sharpe 0.67, skew -0.85, kurtosis 39.4
+    probability the true Sharpe > 0 ignoring the search (PSR): 99.1%
+    after 200 trials (variance of trial Sharpes from 40 variants; best-of-200 expected annual Sharpe under no skill 0.40): deflated Sharpe probability 82.6%
+
+(b) 66 variants (rounds 39, 41, 42, 43): rank correlation of 2013-19 vs 2020-26 ratio +0.33 (p 0.01)
+    round 39: 29 variants, rank correlation +0.35
+    round 41: 14 variants, rank correlation -0.33
+    round 42: 15 variants, rank correlation +0.27
+    round 43: 8 variants, rank correlation +0.24
+(c) families whose 2013-19 best fell below the 2020-26 median: 1 of 7 (PBO-style estimate 14%; chance level 50%)
+    r39:all  pick '12% stop order': above the 2020-26 median
+    r41:A    pick 'A3 scale in, 2nd half -12%': above the 2020-26 median
+    r41:B    pick 'B4 hold 60': below the 2020-26 median
+    r41:D    pick 'D2 washout >= 10%': above the 2020-26 median
+    r42:all  pick 'green + big vol AND strong close | no stop': above the 2020-26 median
+    r43:F    pick 'F4 George-Hwang: not at 52-week low': above the 2020-26 median
+    r43:K    pick 'K2 Turtle Soup (+ its stop)': above the 2020-26 median
