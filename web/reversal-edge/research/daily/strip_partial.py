@@ -14,4 +14,4 @@ if r.weekday() in (6, 0, 1, 2, 3) and r.time() < dt.time(15, 45):
     print("Saudi partial candles removed:", strip(glob.glob(f"{E}/d/*.SR.csv"), r.date().isoformat()))
 ny = dt.datetime.now(ZoneInfo("America/New_York"))
 if ny.weekday() < 5 and dt.time(4, 0) <= ny.time() < dt.time(16, 30):   # pre-market through the close (the evening Saudi run lands in it)
-    print("US partial candles removed:", strip([f"{E}/idx/SPY.csv", f"{E}/idx/QQQ.csv"] + glob.glob(f"{E}/ext/*.csv") + glob.glob(f"{E}/us100/*.csv"), ny.date().isoformat()))
+    print("US partial candles removed:", strip([f"{E}/idx/SPY.csv", f"{E}/idx/QQQ.csv"] + glob.glob(f"{E}/ext/*.csv") + glob.glob(f"{E}/us100/*.csv") + glob.glob(f"{E}/us30/*.csv"), ny.date().isoformat()))

@@ -36,3 +36,6 @@ us100_list.json. The original us100 list was never saved; this one (S&P 100 name
 25 names of the last US scan) is a reconstruction, so the US sell-off window can differ slightly from the round 34-36 tests.
 yf.daily also repairs a Saudi daily bar that Yahoo serves with empty prices after the session (seen overnight): it takes high, low,
 close and volume from the quote fields and the open from the day's first hourly bar.
+Change 2026-10-31 (round 44): US most-traded 30 (edge26/us30.py: F, GM, TSLA, AAPL, MSFT + the 25 largest 20-day dollar volumes among
+Yahoo's most-active large caps, rebuilt each run) with calibrated 84% / 95% ranges for 2 / 5 / 10 sessions (us30_signal.py ->
+out/us30_latest.md and ml/latest -> us30; terminal v23 table). No call / put direction signal: the walk-forward model did not beat a coin flip.

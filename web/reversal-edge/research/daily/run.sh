@@ -16,9 +16,9 @@ for s in sorted(syms):
     try: x = daily(s, 'data/us100'); nm[s] = (x or {}).get('name', ''); time.sleep(0.15)
     except Exception as e: print('ERR', s, e)
 json.dump(nm, open('data/us100_names.json', 'w'))
-" >> $LOG 2>&1; python3 $S/daily/strip_partial.py >> $LOG 2>&1)
+" >> $LOG 2>&1; python3 us30.py >> $LOG 2>&1; python3 $S/daily/strip_partial.py >> $LOG 2>&1)   # us30: most-traded 30 (round 44)
 if [ "$(TZ=Asia/Riyadh date +%u)" = "5" ] && [ "${FULL:-0}" != "1" ]; then   # Friday: Tadawul is closed, only the US section (FULL=1 forces the Saudi part)
-  echo "**Friday: the Saudi market is closed; Thursday's Saudi list stands.**"; (cd $S/daily && python3 us_signal.py 2>> $LOG) || echo "FAILED at us_signal"; exit 0
+  echo "**Friday: the Saudi market is closed; Thursday's Saudi list stands.**"; (cd $S/daily && python3 us_signal.py 2>> $LOG) || echo "FAILED at us_signal"; (cd $S/daily && python3 us30_signal.py 2>> $LOG) || echo "FAILED at us30"; exit 0
 fi
 step fetch; cd $S/edge26 || exit 1
 CODES=$(python3 -c "
@@ -45,7 +45,7 @@ PD=""; PN=0; [ -f $S/daily/last_full.txt ] && read PD PN < $S/daily/last_full.tx
 if [ "${FULL:-0}" != "1" ] && [ "$LASTD" = "$EXPD" ] && [ "$PD" = "$LASTD" ] && [ "$NLAST" -le "${PN:-0}" ] && [ -f "$S/daily/out/$LASTD.md" ]; then
   step reuse   # no new Saudi close since the last full run: same list and export (no refit), fresh US part only
   cat $S/daily/out/$LASTD.md; echo; echo "_(Saudi list computed after the $(date -d $LASTD '+%a %d %b') close; no new Saudi close since.)_"
-  cd $S/daily && { python3 us_signal.py 2>> $LOG || echo "FAILED at us_signal"; }; step done; exit 0
+  cd $S/daily && { python3 us_signal.py 2>> $LOG || echo "FAILED at us_signal"; python3 us30_signal.py 2>> $LOG || echo "FAILED at us30"; }; step done; exit 0
 fi
 step features; cd $S/r27 || exit 1; rm -f py.pkl W_core.pkl F27y.pkl
 python3 -c "
@@ -62,4 +62,5 @@ cp today27.json ../ml26/today.json
 step list; cd $S/daily && python3 top3.py 2>> $LOG || { echo "FAILED at top3"; tail -5 $LOG; exit 1; }
 echo "$LASTD $NLAST" > $S/daily/last_full.txt
 step us; python3 us_signal.py 2>> $LOG || echo "FAILED at us_signal"
+python3 us30_signal.py 2>> $LOG || echo "FAILED at us30"
 step done

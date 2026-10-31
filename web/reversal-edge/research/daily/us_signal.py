@@ -111,7 +111,7 @@ def export():
     if os.path.exists(f):
         T = json.load(open(f)); T["us"] = {"date": str(state("SPY")["last"].date()), "etf": out}
         if globals().get("US_SCAN"): T["us_scan"] = US_SCAN
-        json.dump(T, open(f, "w"), indent=1, allow_nan=False)
+        json.dump(T, open(f + ".tmp", "w"), indent=1, allow_nan=False); os.replace(f + ".tmp", f)   # never leave a half-written file
 if __name__ == "__main__":
     md = section()
     try: md += "\n" + swing_section()

@@ -64,7 +64,7 @@
 </style>
 
 <div class="hdr">
-  <div class="brand"><b>QUANTLAB</b><span>reversal edge v22 · Saudi + US stretch-Z scanner</span></div>
+  <div class="brand"><b>QUANTLAB</b><span>reversal edge v23 · Saudi + US scanner · US most traded 30</span></div>
   <div class="f"><label for="sym">symbol</label><select id="sym"></select></div>
   <div class="f"><label>range</label><div class="rng" id="rng"><button data-n="126">6M</button><button data-n="252" class="on">1Y</button><button data-n="504">2Y</button><button data-n="1260">5Y</button><button data-n="0">All</button></div></div>
   <div class="live">LIVE · RUNS IN YOUR BROWSER</div>
@@ -231,6 +231,7 @@
 <div hidden><div id="ml-box"></div><div id="ml-note"></div><table id="ml-t"></table><table id="ml-rec"></table></div>
     <div class="planbox" id="zsa-box" hidden><div class="ai-head"><b>Saudi stretch-Z scan · next session</b><span class="note">the 25 most stretched liquid stocks at the last close and what each needs for a Z-swing buy</span></div><div class="note" id="zsa-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="zsa-t"></table></div></div>
 <div class="planbox" id="zus-box" hidden><div class="ai-head"><b>US stretch-Z scan · next US session</b><span class="note">115 US large caps, the same stretch Z with US lines; buys only while the US sell-off window is open</span></div><div class="note" id="zus-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="zus-t"></table></div></div>
+<div class="planbox" id="u30-box" hidden><div class="ai-head"><b>US most traded 30 · option ranges</b><span class="note">calibrated expected ranges for call / put strikes, rebuilt daily</span><label class="note" for="u30-h">horizon</label><select id="u30-h"><option value="2">2 sessions</option><option value="5" selected>5 sessions</option><option value="10">10 sessions</option></select></div><div class="note" id="u30-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="u30-t"></table></div></div>
 <h3 style="font-size:13px;margin:16px 0 6px;color:var(--muted,#8a8a85);letter-spacing:.06em">ALL SYMBOLS · LATEST BAR</h3>
     <div class="ban mid" id="scan-note" style="margin-bottom:10px">Every uploaded symbol on its latest bar, best setups first. Click a row to open it on the chart.</div>
     <div class="tw"><table class="bl" id="scan-t"></table></div>
