@@ -1,0 +1,100 @@
+us100: 115 stocks, 2000-01-03..2026-10-29, eligible on 2026-10-29: 115
+
+== US 2005-09: sell-off swing, hold 40 + stop
+no stop                  n 196 win 51% avg -0.2% (win +13.4 / loss -14.1) worst5 -35.2% worst -57% stopped 0% | sleeve 27 tr -1.0%/y maxDD 11.3% ratio -0.09
+8% on close              n 285 win 38% avg -0.5% (win +16.7 / loss -11.1) worst5 -17.8% worst -48% stopped 56% | sleeve 44 tr +0.8%/y maxDD 9.6% ratio 0.09
+10% on close             n 273 win 42% avg -0.2% (win +16.2 / loss -12.0) worst5 -18.8% worst -48% stopped 49% | sleeve 37 tr +1.4%/y maxDD 7.5% ratio 0.19
+12% on close             n 263 win 45% avg -0.1% (win +16.1 / loss -13.2) worst5 -20.2% worst -48% stopped 43% | sleeve 39 tr -0.4%/y maxDD 10.6% ratio -0.04
+15% on close             n 247 win 48% avg +0.1% (win +16.0 / loss -14.7) worst5 -21.9% worst -48% stopped 36% | sleeve 38 tr +0.1%/y maxDD 13.1% ratio 0.01
+20% on close             n 233 win 51% avg +0.0% (win +15.8 / loss -16.4) worst5 -27.7% worst -48% stopped 28% | sleeve 36 tr +0.8%/y maxDD 11.1% ratio 0.07
+25% on close             n 219 win 52% avg -0.0% (win +15.4 / loss -16.5) worst5 -30.3% worst -50% stopped 21% | sleeve 32 tr -0.1%/y maxDD 11.5% ratio -0.01
+8% stop order            n 345 win 30% avg -0.7% (win +17.0 / loss -8.2) worst5 -9.3% worst -19% stopped 67% | sleeve 55 tr +0.2%/y maxDD 10.7% ratio 0.02
+10% stop order           n 318 win 36% avg -0.2% (win +17.0 / loss -9.8) worst5 -10.9% worst -19% stopped 59% | sleeve 47 tr +1.1%/y maxDD 10.4% ratio 0.11
+12% stop order           n 301 win 40% avg -0.3% (win +16.3 / loss -11.5) worst5 -13.9% worst -29% stopped 51% | sleeve 41 tr +0.4%/y maxDD 9.7% ratio 0.04
+15% stop order           n 278 win 42% avg -1.4% (win +15.6 / loss -13.7) worst5 -17.1% worst -29% stopped 47% | sleeve 38 tr -0.2%/y maxDD 9.1% ratio -0.02
+20% stop order           n 250 win 48% avg -0.4% (win +16.2 / loss -15.7) worst5 -20.7% worst -36% stopped 35% | sleeve 40 tr -0.7%/y maxDD 15.7% ratio -0.05
+25% stop order           n 232 win 51% avg +0.8% (win +16.9 / loss -16.2) worst5 -25.1% worst -43% stopped 24% | sleeve 34 tr +1.2%/y maxDD 12.5% ratio 0.10
+2 ATR on close           n 243 win 47% avg -0.9% (win +15.6 / loss -15.7) worst5 -32.7% worst -57% stopped 42% | sleeve 39 tr +1.2%/y maxDD 8.2% ratio 0.15
+3 ATR on close           n 219 win 50% avg -0.6% (win +14.5 / loss -15.7) worst5 -30.9% worst -58% stopped 25% | sleeve 37 tr +0.0%/y maxDD 10.8% ratio 0.00
+4 ATR on close           n 204 win 50% avg -0.0% (win +14.4 / loss -14.4) worst5 -29.4% worst -57% stopped 14% | sleeve 33 tr -1.1%/y maxDD 12.0% ratio -0.09
+5 ATR on close           n 199 win 50% avg -0.2% (win +13.5 / loss -14.0) worst5 -31.4% worst -57% stopped 6% | sleeve 30 tr -1.3%/y maxDD 13.6% ratio -0.10
+6 ATR on close           n 197 win 50% avg -0.1% (win +13.4 / loss -13.8) worst5 -31.6% worst -57% stopped 3% | sleeve 28 tr -0.7%/y maxDD 11.8% ratio -0.06
+2 ATR stop order         n 270 win 44% avg -0.4% (win +17.0 / loss -14.0) worst5 -28.3% worst -57% stopped 49% | sleeve 44 tr +0.7%/y maxDD 9.0% ratio 0.08
+3 ATR stop order         n 232 win 50% avg -0.3% (win +15.3 / loss -16.2) worst5 -35.1% worst -58% stopped 30% | sleeve 39 tr -0.1%/y maxDD 9.6% ratio -0.01
+4 ATR stop order         n 214 win 51% avg +0.4% (win +15.1 / loss -14.8) worst5 -28.1% worst -58% stopped 16% | sleeve 35 tr +0.3%/y maxDD 12.6% ratio 0.03
+5 ATR stop order         n 205 win 51% avg -0.6% (win +13.6 / loss -15.2) worst5 -34.9% worst -71% stopped 10% | sleeve 31 tr -0.8%/y maxDD 11.8% ratio -0.07
+6 ATR stop order         n 200 win 50% avg -0.1% (win +13.6 / loss -14.2) worst5 -31.3% worst -57% stopped 4% | sleeve 31 tr -1.5%/y maxDD 13.5% ratio -0.11
+trailing 3 ATR           n 244 win 48% avg -0.7% (win +12.4 / loss -12.8) worst5 -24.6% worst -58% stopped 52% | sleeve 42 tr -0.3%/y maxDD 10.3% ratio -0.03
+trailing 4 ATR           n 223 win 50% avg -0.0% (win +14.5 / loss -14.5) worst5 -27.7% worst -57% stopped 33% | sleeve 37 tr +0.3%/y maxDD 10.9% ratio 0.03
+trailing 5 ATR           n 209 win 51% avg +0.1% (win +14.1 / loss -14.4) worst5 -28.0% worst -57% stopped 18% | sleeve 33 tr -0.9%/y maxDD 13.1% ratio -0.07
+breakeven + trail 3 ATR  n 236 win 48% avg -0.6% (win +12.8 / loss -13.0) worst5 -28.7% worst -58% stopped 48% | sleeve 41 tr +0.5%/y maxDD 10.3% ratio 0.05
+time stop day 10         n 251 win 41% avg +0.8% (win +16.1 / loss -9.8) worst5 -22.1% worst -47% stopped 42% | sleeve 33 tr -0.1%/y maxDD 8.9% ratio -0.01
+time stop day 20         n 226 win 50% avg +2.2% (win +15.1 / loss -10.4) worst5 -21.8% worst -47% stopped 33% | sleeve 34 tr +0.2%/y maxDD 11.0% ratio 0.02
+Z-crash -4.0             n 202 win 50% avg +0.4% (win +13.8 / loss -13.3) worst5 -27.2% worst -57% stopped 5% | sleeve 31 tr -1.1%/y maxDD 10.9% ratio -0.10
+
+== US DESIGN: sell-off swing, hold 40 + stop
+no stop                  n 220 win 65% avg +3.0% (win +9.5 / loss -9.4) worst5 -17.3% worst -49% stopped 0% | sleeve 31 tr +0.7%/y maxDD 5.7% ratio 0.12
+8% on close              n 268 win 57% avg +1.9% (win +10.2 / loss -9.0) worst5 -12.3% worst -19% stopped 35% | sleeve 37 tr +0.5%/y maxDD 6.1% ratio 0.08
+10% on close             n 252 win 60% avg +2.0% (win +9.7 / loss -9.5) worst5 -14.0% worst -22% stopped 28% | sleeve 37 tr +0.6%/y maxDD 6.8% ratio 0.09
+12% on close             n 242 win 63% avg +2.5% (win +9.4 / loss -9.5) worst5 -14.6% worst -26% stopped 20% | sleeve 35 tr +0.7%/y maxDD 6.6% ratio 0.11
+15% on close             n 234 win 65% avg +2.8% (win +9.3 / loss -9.4) worst5 -17.1% worst -26% stopped 12% | sleeve 33 tr +0.6%/y maxDD 6.3% ratio 0.10
+20% on close             n 227 win 65% avg +2.9% (win +9.5 / loss -9.1) worst5 -19.9% worst -27% stopped 6% | sleeve 31 tr +0.5%/y maxDD 7.0% ratio 0.07
+25% on close             n 222 win 65% avg +3.0% (win +9.5 / loss -9.1) worst5 -17.2% worst -34% stopped 3% | sleeve 31 tr +0.6%/y maxDD 6.4% ratio 0.09
+8% stop order            n 283 win 52% avg +1.9% (win +11.0 / loss -7.7) worst5 -8.6% worst -17% stopped 43% | sleeve 40 tr +0.8%/y maxDD 6.1% ratio 0.13
+10% stop order           n 264 win 57% avg +2.0% (win +10.2 / loss -8.9) worst5 -10.1% worst -13% stopped 35% | sleeve 37 tr +0.7%/y maxDD 5.3% ratio 0.14
+12% stop order           n 253 win 60% avg +2.3% (win +10.0 / loss -9.5) worst5 -12.1% worst -18% stopped 26% | sleeve 36 tr +0.7%/y maxDD 5.9% ratio 0.11
+15% stop order           n 238 win 63% avg +2.4% (win +9.4 / loss -9.5) worst5 -15.1% worst -22% stopped 15% | sleeve 36 tr +0.5%/y maxDD 7.1% ratio 0.07
+20% stop order           n 229 win 65% avg +2.8% (win +9.5 / loss -9.3) worst5 -20.1% worst -22% stopped 8% | sleeve 32 tr +0.5%/y maxDD 6.6% ratio 0.07
+25% stop order           n 224 win 66% avg +3.1% (win +9.6 / loss -9.1) worst5 -19.8% worst -25% stopped 4% | sleeve 31 tr +0.6%/y maxDD 5.9% ratio 0.09
+2 ATR on close           n 286 win 50% avg +2.0% (win +11.2 / loss -7.3) worst5 -12.0% worst -26% stopped 45% | sleeve 44 tr +0.6%/y maxDD 6.9% ratio 0.08
+3 ATR on close           n 257 win 60% avg +2.3% (win +9.9 / loss -9.2) worst5 -14.3% worst -27% stopped 30% | sleeve 35 tr +0.8%/y maxDD 5.5% ratio 0.15
+4 ATR on close           n 240 win 64% avg +2.5% (win +9.4 / loss -9.6) worst5 -15.5% worst -26% stopped 19% | sleeve 34 tr +0.7%/y maxDD 5.5% ratio 0.13
+5 ATR on close           n 232 win 66% avg +2.9% (win +9.5 / loss -9.7) worst5 -15.5% worst -31% stopped 12% | sleeve 33 tr +0.6%/y maxDD 5.5% ratio 0.11
+6 ATR on close           n 228 win 65% avg +2.9% (win +9.5 / loss -9.4) worst5 -18.9% worst -34% stopped 7% | sleeve 33 tr +0.5%/y maxDD 6.3% ratio 0.08
+2 ATR stop order         n 309 win 47% avg +1.9% (win +11.5 / loss -6.7) worst5 -11.4% worst -17% stopped 50% | sleeve 50 tr +0.3%/y maxDD 6.0% ratio 0.05
+3 ATR stop order         n 271 win 56% avg +2.2% (win +10.7 / loss -8.8) worst5 -14.8% worst -24% stopped 37% | sleeve 36 tr +0.5%/y maxDD 5.9% ratio 0.08
+4 ATR stop order         n 253 win 64% avg +2.7% (win +9.7 / loss -9.6) worst5 -14.5% worst -27% stopped 24% | sleeve 33 tr +0.7%/y maxDD 5.2% ratio 0.13
+5 ATR stop order         n 237 win 65% avg +2.7% (win +9.4 / loss -10.0) worst5 -15.8% worst -26% stopped 16% | sleeve 33 tr +0.7%/y maxDD 5.4% ratio 0.12
+6 ATR stop order         n 230 win 65% avg +2.8% (win +9.4 / loss -9.5) worst5 -18.3% worst -31% stopped 9% | sleeve 33 tr +0.6%/y maxDD 5.7% ratio 0.11
+trailing 3 ATR           n 270 win 51% avg +1.5% (win +10.3 / loss -7.6) worst5 -13.9% worst -23% stopped 60% | sleeve 39 tr +0.8%/y maxDD 5.6% ratio 0.14
+trailing 4 ATR           n 247 win 60% avg +2.1% (win +9.6 / loss -9.1) worst5 -14.9% worst -26% stopped 36% | sleeve 33 tr +0.8%/y maxDD 5.5% ratio 0.14
+trailing 5 ATR           n 235 win 64% avg +2.7% (win +9.5 / loss -9.5) worst5 -15.5% worst -26% stopped 20% | sleeve 33 tr +0.8%/y maxDD 5.5% ratio 0.14
+breakeven + trail 3 ATR  n 265 win 56% avg +1.8% (win +9.2 / loss -7.7) worst5 -14.1% worst -26% stopped 51% | sleeve 37 tr +0.8%/y maxDD 5.5% ratio 0.14
+time stop day 10         n 273 win 51% avg +2.6% (win +10.2 / loss -5.2) worst5 -9.8% worst -24% stopped 45% | sleeve 37 tr +1.0%/y maxDD 5.2% ratio 0.19
+time stop day 20         n 243 win 52% avg +3.3% (win +11.3 / loss -5.5) worst5 -10.6% worst -24% stopped 39% | sleeve 36 tr +0.3%/y maxDD 6.4% ratio 0.05
+Z-crash -4.0             n 228 win 65% avg +2.7% (win +9.1 / loss -9.3) worst5 -16.1% worst -43% stopped 7% | sleeve 33 tr +0.5%/y maxDD 6.8% ratio 0.07
+
+== US CONFIRM: sell-off swing, hold 40 + stop
+no stop                  n 407 win 77% avg +12.1% (win +17.9 / loss -7.2) worst5 -12.4% worst -38% stopped 0% | sleeve 50 tr +2.7%/y maxDD 5.6% ratio 0.48
+8% on close              n 484 win 62% avg +9.4% (win +20.4 / loss -8.4) worst5 -12.1% worst -38% stopped 32% | sleeve 63 tr +2.9%/y maxDD 4.7% ratio 0.61
+10% on close             n 460 win 65% avg +9.8% (win +19.9 / loss -9.1) worst5 -13.2% worst -38% stopped 26% | sleeve 60 tr +2.8%/y maxDD 5.1% ratio 0.55
+12% on close             n 441 win 68% avg +10.2% (win +19.7 / loss -10.2) worst5 -15.1% worst -38% stopped 21% | sleeve 54 tr +2.9%/y maxDD 4.3% ratio 0.68
+15% on close             n 428 win 71% avg +10.5% (win +19.0 / loss -10.6) worst5 -17.7% worst -38% stopped 14% | sleeve 51 tr +3.1%/y maxDD 4.3% ratio 0.72
+20% on close             n 418 win 75% avg +11.5% (win +18.4 / loss -9.7) worst5 -18.2% worst -38% stopped 6% | sleeve 50 tr +2.9%/y maxDD 5.7% ratio 0.50
+25% on close             n 410 win 77% avg +11.8% (win +18.0 / loss -8.5) worst5 -14.0% worst -38% stopped 2% | sleeve 50 tr +2.6%/y maxDD 6.6% ratio 0.39
+8% stop order            n 535 win 55% avg +7.6% (win +20.6 / loss -8.0) worst5 -8.9% worst -31% stopped 42% | sleeve 69 tr +2.4%/y maxDD 5.5% ratio 0.43
+10% stop order           n 500 win 60% avg +8.7% (win +20.6 / loss -9.2) worst5 -10.2% worst -31% stopped 33% | sleeve 65 tr +2.5%/y maxDD 6.3% ratio 0.39
+12% stop order           n 479 win 64% avg +9.3% (win +20.2 / loss -10.0) worst5 -12.1% worst -31% stopped 27% | sleeve 58 tr +2.3%/y maxDD 5.3% ratio 0.44
+15% stop order           n 442 win 68% avg +9.9% (win +19.7 / loss -10.8) worst5 -15.1% worst -31% stopped 19% | sleeve 54 tr +2.7%/y maxDD 5.4% ratio 0.50
+20% stop order           n 426 win 72% avg +10.4% (win +18.8 / loss -11.2) worst5 -20.1% worst -31% stopped 11% | sleeve 52 tr +2.9%/y maxDD 5.2% ratio 0.56
+25% stop order           n 414 win 76% avg +11.7% (win +18.2 / loss -9.3) worst5 -15.4% worst -31% stopped 4% | sleeve 50 tr +2.6%/y maxDD 5.9% ratio 0.44
+2 ATR on close           n 476 win 64% avg +10.4% (win +20.9 / loss -8.1) worst5 -12.8% worst -38% stopped 30% | sleeve 64 tr +3.1%/y maxDD 5.1% ratio 0.61
+3 ATR on close           n 445 win 69% avg +10.8% (win +19.8 / loss -9.6) worst5 -14.5% worst -38% stopped 20% | sleeve 54 tr +2.4%/y maxDD 5.8% ratio 0.41
+4 ATR on close           n 424 win 73% avg +11.3% (win +19.0 / loss -9.2) worst5 -16.1% worst -38% stopped 12% | sleeve 52 tr +3.0%/y maxDD 4.6% ratio 0.65
+5 ATR on close           n 417 win 76% avg +11.8% (win +18.5 / loss -9.0) worst5 -15.1% worst -38% stopped 7% | sleeve 51 tr +3.0%/y maxDD 4.3% ratio 0.68
+6 ATR on close           n 413 win 76% avg +11.9% (win +18.3 / loss -8.5) worst5 -14.2% worst -38% stopped 5% | sleeve 50 tr +2.9%/y maxDD 4.3% ratio 0.67
+2 ATR stop order         n 523 win 57% avg +8.8% (win +21.7 / loss -8.2) worst5 -12.4% worst -31% stopped 40% | sleeve 72 tr +2.4%/y maxDD 6.0% ratio 0.41
+3 ATR stop order         n 473 win 67% avg +10.2% (win +20.2 / loss -9.6) worst5 -14.4% worst -31% stopped 25% | sleeve 59 tr +2.8%/y maxDD 5.3% ratio 0.53
+4 ATR stop order         n 442 win 71% avg +11.0% (win +19.6 / loss -10.0) worst5 -17.1% worst -33% stopped 14% | sleeve 55 tr +2.9%/y maxDD 5.5% ratio 0.53
+5 ATR stop order         n 422 win 75% avg +11.7% (win +18.5 / loss -8.8) worst5 -15.1% worst -31% stopped 9% | sleeve 53 tr +3.2%/y maxDD 5.0% ratio 0.64
+6 ATR stop order         n 417 win 76% avg +11.8% (win +18.4 / loss -8.9) worst5 -16.2% worst -39% stopped 6% | sleeve 50 tr +2.9%/y maxDD 4.3% ratio 0.69
+trailing 3 ATR           n 482 win 66% avg +9.8% (win +19.2 / loss -8.2) worst5 -13.4% worst -38% stopped 45% | sleeve 62 tr +2.4%/y maxDD 5.5% ratio 0.43
+trailing 4 ATR           n 450 win 70% avg +10.9% (win +19.3 / loss -8.9) worst5 -14.3% worst -38% stopped 29% | sleeve 55 tr +2.4%/y maxDD 5.0% ratio 0.48
+trailing 5 ATR           n 426 win 73% avg +11.4% (win +18.8 / loss -9.0) worst5 -15.7% worst -38% stopped 17% | sleeve 52 tr +3.0%/y maxDD 4.6% ratio 0.66
+breakeven + trail 3 ATR  n 470 win 69% avg +10.2% (win +18.4 / loss -8.3) worst5 -14.7% worst -38% stopped 43% | sleeve 59 tr +2.3%/y maxDD 5.2% ratio 0.44
+time stop day 10         n 444 win 60% avg +8.9% (win +19.4 / loss -7.0) worst5 -14.2% worst -38% stopped 29% | sleeve 54 tr +2.4%/y maxDD 4.6% ratio 0.52
+time stop day 20         n 424 win 67% avg +10.8% (win +19.0 / loss -5.6) worst5 -10.0% worst -38% stopped 23% | sleeve 52 tr +2.7%/y maxDD 6.4% ratio 0.43
+Z-crash -4.0             n 462 win 74% avg +9.9% (win +16.3 / loss -8.3) worst5 -14.1% worst -38% stopped 18% | sleeve 58 tr +2.8%/y maxDD 5.5% ratio 0.51
+
+DESIGN ranking (eligible, ratio): [('time stop day 10', 0.19), ('3 ATR on close', 0.15), ('trailing 5 ATR', 0.14), ('10% stop order', 0.14), ('trailing 3 ATR', 0.14)]
+US CHOICE: time stop day 10 | confirmed in 2018-26: False

@@ -1,0 +1,40 @@
+us100: 115 stocks, 2000-01-03..2026-10-29, eligible on 2026-10-29: 115
+U0 ranker IC (20-day): {'2005-09': 0.016, '2010-17': 0.021, '2018-26': 0.025} | positive years 17 of 22
+
+U1: first close at stretch Z <= -1.67 (daily) or <= -1.13 (weekly), hold 40, 0.10% costs; edge = vs random large caps on the same days
+any market: no ML filter                 | STRESS n 572 win 56% avg +1.6% edge +1.2 (SPY -1.1%) | DESIGN n 726 win 66% avg +3.7% edge -0.1 (SPY +2.9%) | CONFIRM n1102 win 64% avg +4.8% edge +0.5 (SPY +3.5%)
+any market: ML >= 0.3                    | STRESS n 512 win 56% avg +0.6% edge -0.0 (SPY -1.1%) | DESIGN n 621 win 66% avg +3.6% edge -0.3 (SPY +3.1%) | CONFIRM n 964 win 65% avg +4.9% edge +0.8 (SPY +3.5%)
+any market: ML >= 0.5                    | STRESS n 453 win 55% avg +0.7% edge +0.1 (SPY -1.0%) | DESIGN n 525 win 65% avg +3.6% edge -0.5 (SPY +3.2%) | CONFIRM n 837 win 64% avg +5.0% edge +1.0 (SPY +3.6%)
+any market: ML >= 0.7                    | STRESS n 367 win 53% avg +0.4% edge -0.8 (SPY -0.7%) | DESIGN n 378 win 65% avg +3.4% edge -1.0 (SPY +3.4%) | CONFIRM n 641 win 64% avg +5.2% edge +1.0 (SPY +3.7%)
+any market: ML >= 0.85                   | STRESS n 236 win 53% avg +0.4% edge -1.4 (SPY -0.2%) | DESIGN n 224 win 67% avg +3.7% edge -0.8 (SPY +3.6%) | CONFIRM n 397 win 65% avg +5.5% edge +1.4 (SPY +3.7%)
+sell-off window: no ML filter            | STRESS n 196 win 51% avg -0.2% edge +0.9 (SPY -2.2%) | DESIGN n 220 win 65% avg +3.0% edge +0.2 (SPY +1.7%) | CONFIRM n 407 win 77% avg +12.1% edge +1.4 (SPY +10.0%)
+sell-off window: ML >= 0.3               | STRESS n 165 win 53% avg +0.2% edge +0.7 (SPY -1.4%) | DESIGN n 187 win 64% avg +2.9% edge -0.4 (SPY +2.2%) | CONFIRM n 366 win 78% avg +13.0% edge +2.1 (SPY +10.2%)
+sell-off window: ML >= 0.5               | STRESS n 141 win 54% avg +0.6% edge +0.9 (SPY -1.4%) | DESIGN n 143 win 61% avg +2.7% edge -0.7 (SPY +2.2%) | CONFIRM n 303 win 78% avg +14.1% edge +3.4 (SPY +10.1%)
+sell-off window: ML >= 0.7               | STRESS n 102 win 47% avg -1.5% edge -1.2 (SPY -1.4%) | DESIGN n  94 win 60% avg +2.6% edge -1.0 (SPY +2.8%) | CONFIRM n 224 win 77% avg +14.2% edge +3.6 (SPY +10.1%)
+sell-off window: ML >= 0.85              | STRESS n  54 win 39% avg -2.4% edge -2.0 (SPY -2.1%) | DESIGN n  53 win 58% avg +1.6% edge -2.4 (SPY +3.2%) | CONFIRM n 124 win 77% avg +14.8% edge +4.7 (SPY +9.2%)
+
+U2 dip model: 4670 candidates 2001-26 (base win 62%)
+  out-of-sample AUC on all candidates: {'STRESS': 0.471, 'DESIGN': 0.498, 'CONFIRM': 0.502}
+any market: dip model LightGBM kept      | STRESS n 348 win 55% avg -1.4% edge +0.4 (SPY -2.8%) | DESIGN n 210 win 71% avg +4.1% edge +0.0 (SPY +3.0%) | CONFIRM n 476 win 65% avg +5.2% edge +0.2 (SPY +4.0%)
+any market: dip model LightGBM dropped   | STRESS n 224 win 58% avg +6.4% edge +2.4 (SPY +1.6%) | DESIGN n 516 win 64% avg +3.5% edge -0.2 (SPY +2.8%) | CONFIRM n 626 win 62% avg +4.4% edge +0.8 (SPY +3.1%)
+any market: dip model logistic kept      | STRESS n 317 win 56% avg -0.2% edge +0.6 (SPY -1.8%) | DESIGN n 338 win 69% avg +3.8% edge +0.3 (SPY +2.4%) | CONFIRM n 633 win 66% avg +5.7% edge +0.6 (SPY +4.4%)
+any market: dip model logistic dropped   | STRESS n 255 win 57% avg +3.8% edge +2.0 (SPY -0.1%) | DESIGN n 388 win 64% avg +3.6% edge -0.5 (SPY +3.3%) | CONFIRM n 469 win 61% avg +3.5% edge +0.5 (SPY +2.2%)
+sell-off window: dip model LightGBM kept | STRESS n 145 win 57% avg +1.5% edge +3.0 (SPY -2.2%) | DESIGN n  40 win 85% avg +5.1% edge +1.9 (SPY +2.0%) | CONFIRM n 182 win 81% avg +14.4% edge +1.6 (SPY +11.8%)
+sell-off window: dip model LightGBM dropped | STRESS n  51 win 33% avg -5.0% edge -4.8 (SPY -2.0%) | DESIGN n 180 win 61% avg +2.5% edge -0.2 (SPY +1.6%) | CONFIRM n 225 win 74% avg +10.3% edge +1.2 (SPY +8.5%)
+sell-off window: dip model logistic kept | STRESS n 153 win 49% avg -1.3% edge +0.8 (SPY -2.7%) | DESIGN n  78 win 77% avg +4.8% edge +2.3 (SPY +1.5%) | CONFIRM n 239 win 82% avg +14.1% edge +0.4 (SPY +13.0%)
+sell-off window: dip model logistic dropped | STRESS n  43 win 56% avg +3.7% edge +1.6 (SPY -0.2%) | DESIGN n 142 win 59% avg +2.0% edge -1.0 (SPY +1.8%) | CONFIRM n 168 win 69% avg +9.3% edge +2.8 (SPY +5.7%)
+
+DECISION US stock-level rule 'any market: no ML filter': False
+DECISION US stock-level rule 'any market: ML >= 0.3': False
+DECISION US stock-level rule 'any market: ML >= 0.5': False
+DECISION US stock-level rule 'any market: ML >= 0.7': False
+DECISION US stock-level rule 'any market: ML >= 0.85': False
+DECISION US stock-level rule 'sell-off window: no ML filter': False
+DECISION US stock-level rule 'sell-off window: ML >= 0.3': False
+DECISION US stock-level rule 'sell-off window: ML >= 0.5': False
+DECISION US stock-level rule 'sell-off window: ML >= 0.7': False
+DECISION US stock-level rule 'sell-off window: ML >= 0.85': False
+DECISION US stock-level rule 'any market: dip model LightGBM kept': False
+DECISION US stock-level rule 'any market: dip model logistic kept': False
+DECISION US stock-level rule 'sell-off window: dip model LightGBM kept': True
+DECISION US stock-level rule 'sell-off window: dip model logistic kept': False

@@ -1,0 +1,22 @@
+universe: 270 stocks; days 1644
+
+H1 gap-down rebound portfolio (gap <= -3%, top-2/3 liquidity, 5 deepest, buy open sell close, 0.40% cost)
+  fresh 2020-03..2026-10                   CAGR  +52.1% | Sharpe 1.64 | maxDD -24.3% | NW t +4.1 | trade days 24%
+  mean daily net +0.183% (NW t +4.06) | half A +0.183% half B +0.184% | trades 715
+  all qualifying trades (not capped at 5): n 443880, mean open->close +1.287% gross, win rate net 0%
+  by year (mean net per trade day): 2020:+1.87 2021:+0.96 2022:+0.15 2023:+0.82 2024:+0.94 2025:+0.67 2026:+0.22
+  up = oc.where(co >= .03).loc[OOS:].mean(1).dropna(); print(f"\nI1 gap-up >= +3% -> open-to-close {100*up.mean():+.3f}% (t {tstat(up):+.1f}, days {len(up)})")
+
+I1 gap-up >= +3% -> open-to-close -1.269% (t -12.9, days 1023)
+  EW = cc.mean(1); EWoc = oc.mean(1); EWco = co.mean(1)
+  EW = cc.mean(1); EWoc = oc.mean(1); EWco = co.mean(1)
+  EW = cc.mean(1); EWoc = oc.mean(1); EWco = co.mean(1)
+I3 after EW > +2%: next open->close -0.206% (t -0.9, n 36), next gap +0.471%
+I3 after EW < -2%: next open->close +0.405% (t +1.9, n 57), next gap -0.151%
+I2 KSA ETF overnight <= -0.925%: next Saudi EW open->close -0.074% vs avg -0.065% (t -0.1, n 206) | >= +0.946%: +0.097% (t +2.7, n 228)
+
+H4 pre-holiday open->close (EW): +0.121% (t +0.91, n 28) dates: 2020-05-21, 2020-07-28, 2020-08-12, 2021-05-10, 2021-07-15, 2022-01-26, 2022-04-28, 2022-07-06, 2023-04-17, 2023-06-22, 2023-09-28, 2024-04-04, 2024-04-25, 2024-05-16, 2024-05-30, 2024-06-13, 2024-06-27, 2024-11-14, 2025-01-08, 2025-02-18, 2025-03-27, 2025-04-16, 2025-06-04, 2025-09-24, 2026-03-16, 2026-05-21, 2026-08-13, 2026-09-22
+
+H3 illiquidity (most illiquid fifth, monthly, 0.50%/side): net excess -0.420%/month (NW t -1.52) | gross -0.178% | halves -0.434/-0.405 | names 38 | months 66
+
+ONE-SIDED p: {'H1': np.float64(3e-05), 'H4': np.float64(0.18024), 'H3': np.float64(0.93628)}

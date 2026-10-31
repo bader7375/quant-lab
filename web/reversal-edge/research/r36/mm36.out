@@ -1,0 +1,16 @@
+S&P with US market model 2000-2026: invested 74% | Sharpe 0.38 vs B&H 0.42 | CAGR +5.1% vs +6.3%
+S&P with US market model 2007-2009: invested 54% | Sharpe -0.23 vs B&H -0.12 | CAGR -8.8% vs -7.7%
+S&P with US market model 2010-2019: invested 79% | Sharpe 0.55 vs B&H 0.80 | CAGR +6.7% vs +11.2%
+S&P with US market model 2020-2026: invested 85% | Sharpe 0.98 vs B&H 0.73 | CAGR +16.9% vs +13.5%
+  us100 rule C                 2010-17: n  206 win 69% avg +3.6% | random +3.5% | SPY +2.4%
+  us100 rule C                 2018-26: n  389 win 76% avg +11.8% | random +10.0% | SPY +10.0%
+  us100 rule C + market model  2010-17: n  203 win 69% avg +3.4% | random +3.4% | SPY +2.3%
+  us100 rule C + market model  2018-26: n  343 win 77% avg +11.8% | random +10.0% | SPY +10.0%
+  KDD17 rule C                 2007-09: n   78 win 50% avg -2.4% | random -5.2% | SPY -8.0%
+  KDD17 rule C                 2010-16: n  103 win 67% avg +2.8% | random +2.9% | SPY +2.7%
+  KDD17 rule C + market model  2007-09: n   78 win 50% avg -2.7% | random -5.2% | SPY -8.2%
+  KDD17 rule C + market model  2010-16: n  103 win 67% avg +2.8% | random +2.7% | SPY +2.8%
+  CMIN-US rule C                 2018-21: n  120 win 80% avg +13.4% | random +13.6% | SPY +14.1%
+  CMIN-US rule C + market model  2018-21: n   77 win 92% avg +17.5% | random +16.6% | SPY +17.6%
+
+GUARD ACCEPTED: False | 2007-09 with guard: {'n': 78, 'win': 0.5, 'mean': -0.027143526370075683, 'rand': -0.05201433303133399, 'spy': -0.0818166575583062}

@@ -1,0 +1,58 @@
+{
+ "cols": [
+  "rel_volume",
+  "range_expansion",
+  "vol_rank",
+  "vol_term",
+  "fear_rank",
+  "down_streak",
+  "drop1_atr",
+  "gap_size",
+  "lower_wick",
+  "weak_close",
+  "pulse_depth"
+ ],
+ "w": {
+  "rel_volume": 1.6507,
+  "range_expansion": 0.768,
+  "vol_rank": 0.1847,
+  "vol_term": 1.1217,
+  "fear_rank": 3.5977,
+  "down_streak": 0.9225,
+  "drop1_atr": 0.0,
+  "gap_size": 1.1992,
+  "lower_wick": 1.2545,
+  "weak_close": 0.0,
+  "pulse_depth": 0.301
+ },
+ "med": {
+  "rel_volume": 0.446,
+  "range_expansion": 1.149,
+  "vol_rank": 0.492,
+  "vol_term": -0.1076,
+  "fear_rank": 0.62,
+  "down_streak": 3.0,
+  "drop1_atr": 0.6713,
+  "gap_size": -0.2519,
+  "lower_wick": -0.2054,
+  "weak_close": 0.5294,
+  "pulse_depth": 0.3841
+ },
+ "iqr": {
+  "rel_volume": 1.4803,
+  "range_expansion": 0.7346,
+  "vol_rank": 0.572,
+  "vol_term": 0.4368,
+  "fear_rank": 0.657,
+  "down_streak": 2.0,
+  "drop1_atr": 0.8232,
+  "gap_size": 0.4268,
+  "lower_wick": 0.295,
+  "weak_close": 0.7062,
+  "pulse_depth": 0.8114
+ },
+ "thirds": [
+  -1.8756,
+  0.8107
+ ]
+}
