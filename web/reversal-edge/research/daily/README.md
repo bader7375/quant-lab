@@ -39,3 +39,7 @@ close and volume from the quote fields and the open from the day's first hourly 
 Change 2026-10-31 (round 44): US most-traded 30 (edge26/us30.py: F, GM, TSLA, AAPL, MSFT + the 25 largest 20-day dollar volumes among
 Yahoo's most-active large caps, rebuilt each run) with calibrated 84% / 95% ranges for 2 / 5 / 10 sessions (us30_signal.py ->
 out/us30_latest.md and ml/latest -> us30; terminal v23 table). No call / put direction signal: the walk-forward model did not beat a coin flip.
+Change 2026-10-31 (user): the option ranges and the dollar-volume list were removed. The US table now lists the market leaders - the
+30 largest US companies by market value (Yahoo 'largest market cap' list, US companies only, one share class each; edge26/us30.py,
+rebuilt each run) - with price, 1-month move, distance from the 52-week high, stretch Z (daily / weekly), RSI(2), 200-day average and
+the tested US rule for each (sell-off swing: a fresh touch while the US window is open). Terminal v24.
