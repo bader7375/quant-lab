@@ -1,0 +1,410 @@
+[
+{
+"item": "Actarapid HM 10 Ml Vial",
+"vendor": "Dawaa Al Gharbia",
+"code": "Med-91",
+"highAlert": true,
+"lasa": false,
+"light": false
+},
+{
+"item": "Magnesium Sulfate 10 Mg Ampoule",
+"vendor": "PSI Pharmaceutical Solution Industry",
+"code": "Med-78",
+"highAlert": true,
+"lasa": false,
+"light": false
+},
+{
+"item": "Adenosine 6MG/ML Syringe",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-81",
+"highAlert": true,
+"lasa": false,
+"light": false
+},
+{
+"item": "Labetalol 20MG (5MG/ML)4ML",
+"vendor": "Dawaa Al Gharbia",
+"code": "Med-92",
+"highAlert": true,
+"lasa": false,
+"light": false
+},
+{
+"item": "Alteplase Vial 2 MG (BX/5 Amp)",
+"vendor": "Doom Alseha Company",
+"code": "Med-29",
+"highAlert": true,
+"lasa": false,
+"light": false
+},
+{
+"item": "Alteplase 50 Mg Vial",
+"vendor": "Dawaa Al Gharbia",
+"code": "Med-30",
+"highAlert": true,
+"lasa": false,
+"light": false
+},
+{
+"item": "Dextrose 50% 50 Ml Vial",
+"vendor": "PSI Pharmaceutical Solution Industry",
+"code": "Med-66",
+"highAlert": true,
+"lasa": false,
+"light": false
+},
+{
+"item": "Trisodium Citrate 4% Pre-Filled Syringe(Duralock)",
+"vendor": "FARABI Trading Est",
+"code": "Med-99",
+"highAlert": true,
+"lasa": false,
+"light": false
+},
+{
+"item": "Trisodium Citrate 4% _Pack of 2 Pre-Filled\nSyringes(CitraFolw)",
+"vendor": "Alwan Al Noor Medical Co Ltd",
+"code": "005-1213",
+"highAlert": true,
+"lasa": false,
+"light": false
+},
+{
+"item": "Alfacalcidol 2MCG/ML AMP",
+"vendor": "AbdulRahman AlGosaibi",
+"code": "005-433",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Alfacalcidol 1 Mcg Tab",
+"vendor": "AbdulRahman AlGosaibi",
+"code": "005-434",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Alfacalcidol 0.25 Mcg Tab",
+"vendor": "AbdulRahman AlGosaibi",
+"code": "005-435",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Alfacalcidol 1 Mcg Tab",
+"vendor": "Naghi Brothers Co.",
+"code": "Med-36",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Alfacalcidol 0.25 Mcg Tab",
+"vendor": "Naghi Brothers Co.",
+"code": "Med-37",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Alfacalcidol 2MCG/ML AMP",
+"vendor": "Naghi Brothers Co.",
+"code": "Med-45",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Amlodipine 5 Mg Tab",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-67",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Amlodipine 10 Mg Tab",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-68",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Bisoprolol 2.5 MG",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-69",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Bisoprolol Tab -10 MG",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-70",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Bisoprolol Tab -5 MG",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-71",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Cinacalcet 30 Mg Tab (Cinac)",
+"vendor": "Dawaa Al Gharbia",
+"code": "005-1001",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Cinacalcet 60 Mg Tab (Cinac)",
+"vendor": "Dawaa Al Gharbia",
+"code": "005-1002",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Darbepoetin Alfa 80 MCG Syringe (Aranesp)",
+"vendor": "Salehiya Trading Establishment",
+"code": "005-576",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Darbepoetin Alfa 60 MCG Syringe (Aranesp)",
+"vendor": "Salehiya Trading Establishment",
+"code": "005-577",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Darbepoetin Alfa 40 MCG Syringe (Aranesp)",
+"vendor": "Salehiya Trading Establishment",
+"code": "005-578",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Epoetin Alfa 2000 UI Syringe (Eprex)",
+"vendor": "Cigalah Group",
+"code": "Med-12",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Epoetin Alfa 4000 UI Syringe (Eprex)",
+"vendor": "Cigalah Group",
+"code": "Med-13",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Cinacalcet 60 Mg Tab (Glandy)",
+"vendor": "SPIMACO (ROCHE)",
+"code": "Med-34",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Cinacalcet 30 Mg Tab (Glandy)",
+"vendor": "SPIMACO (ROCHE)",
+"code": "Med-35",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Carvidol 6.25 Mg Tab.",
+"vendor": "Dawaa Al Gharbia",
+"code": "Med-38",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Carvidol 25 Mg Tab.",
+"vendor": "Dawaa Al Gharbia",
+"code": "Med-39",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Ceftazidime 1 G Vial",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-57",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Epoetin Beta 4000 IU Pre-filled Syringes\n(Neorecormon)",
+"vendor": "SPIMACO (ROCHE)",
+"code": "Med-6",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Cefazolin 1 G Vial",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-63",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Epoetin Beta 2000 IU Pre- Filled Syringe\n(Neorecormon)",
+"vendor": "SPIMACO (ROCHE)",
+"code": "Med-7",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "Epoetin Beta 3000 IU Pre-filled Syringe",
+"vendor": "SPIMACO (ROCHE)",
+"code": "Med-8",
+"highAlert": false,
+"lasa": true,
+"light": true
+},
+{
+"item": "LOSARTAN POTASSIUM 100 mg Tab",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "005-567",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "LOSARTAN POTASSIUM 50 mg Tab",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "005-568",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Mupirocin 2% Nasal (Ointment)",
+"vendor": "Dawaa Al Gharbia",
+"code": "Med-50",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Nifidipine 60 Mg Tablet",
+"vendor": "Dawaa Al Gharbia",
+"code": "Med-59",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Nifidipine 30 Mg Tablet",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-60",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Hydralazine 20 MG / 1 ML (AMP)",
+"vendor": "Dawaa Al Gharbia",
+"code": "Med-61",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Lidocaine 10mg spray( xylocaine)",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-64",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Hydralazine 25 Mg Tab",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Oth-372",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Mupirocin 2% Ointment (Bacitracin)",
+"vendor": "Dawaa Al Gharbia",
+"code": "Supp-362",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "RENOMER- Sevelamero Carbonate 800 Mg Tab",
+"vendor": "SPIMACO (ROCHE)",
+"code": "005-019999",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Vancomycin 500 Mg Vial",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-53",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Vancomycin 1 G Vial",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-54",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Sevelamer Carbonate 2.4g/sachets",
+"vendor": "Tamer Group",
+"code": "Med-62",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Captopril 25MG TABLET",
+"vendor": "ROKN ALHAKEM MEDICAL STORE",
+"code": "Med-83",
+"highAlert": false,
+"lasa": true,
+"light": false
+},
+{
+"item": "Hydrocortisone 100 Mg Vial (Solu-Cortef)",
+"vendor": "Dawaa Al Gharbia",
+"code": "Med-84",
+"highAlert": false,
+"lasa": true,
+"light": false
+}
+]
