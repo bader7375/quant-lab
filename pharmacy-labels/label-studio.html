@@ -39,7 +39,9 @@ body.web [data-print]{display:none!important}
 .brand{font-weight:700;font-size:16px;margin-right:auto;display:flex;align-items:center;gap:8px}
 .brand .dot{width:10px;height:10px;border-radius:3px;background:var(--ha);box-shadow:12px 0 0 var(--lasa)}
 .brand span.sub{font-weight:400;color:var(--muted);font-size:13px;margin-left:14px}
-.group{display:flex;gap:6px;flex-wrap:wrap}
+.group{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.lay{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:0 4px 0 10px;background:var(--panel);font-size:13px;color:var(--muted)}
+.lay select{border:0;background:transparent;padding:7px 4px;color:var(--ink);font-weight:600;cursor:pointer}
 
 /* ---------- layout ---------- */
 .layout{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:16px;padding:16px;max-width:1500px;margin:0 auto}
@@ -79,6 +81,7 @@ body.web [data-print]{display:none!important}
 .f input[type=text],.f input[type=number],.f textarea,.f select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--field);width:100%}
 .f textarea{resize:vertical;min-height:44px}
 .f .hint{font-size:11.5px;color:var(--muted)}
+.f .seg{align-self:flex-start}
 .toggles{display:flex;gap:8px;flex-wrap:wrap}
 .tog{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:7px 10px;cursor:pointer;user-select:none}
 .tog input{margin:0}
@@ -148,6 +151,15 @@ dialog::backdrop{background:var(--shade)}
     <button class="btn" id="bSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Print settings</button>
   </div>
   <div class="group">
+    <label class="lay" for="qMode" title="How many labels go on each printed page">
+      <span>Layout</span>
+      <select id="qMode">
+        <option value="a4x6">6 per A4 page</option>
+        <option value="a4">8 per A4 page</option>
+        <option value="letter">6 per Letter page</option>
+        <option value="label">1 per page (label printer)</option>
+      </select>
+    </label>
     <button class="btn" id="bPrintSel" data-print><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/></svg><span>Print selected</span></button>
     <button class="btn primary" id="bPdfSel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H6v18h12V7z M14 3v4h4M9 13h6M9 17h6"/></svg><span>PDF of selected</span></button>
   </div>
@@ -195,9 +207,20 @@ dialog::backdrop{background:var(--shade)}
             <label class="tog"><input type="checkbox" id="fLight"><i class="sw" style="background:var(--light);border:1px solid #cc0"></i>Light sensitive</label>
           </div>
         </div>
-        <div class="f third"><label for="fBatch">Batch No. <span style="font-weight:400">(optional)</span></label><input type="text" id="fBatch" placeholder="leave blank to write by hand"></div>
+        <div class="f half">
+          <span class="lbl">Batch numbers on this label</span>
+          <div class="seg" id="fBatches"><button data-v="1" aria-pressed="true">1 batch</button><button data-v="2">2 batches</button></div>
+        </div>
+        <div class="f half" id="wrapFirst" hidden>
+          <span class="lbl">Tick “use first”</span>
+          <div class="seg" id="fFirst"><button data-v="0" aria-pressed="true">Leave blank</button><button data-v="1">Batch 1</button><button data-v="2">Batch 2</button></div>
+        </div>
+        <div class="f third"><label for="fBatch"><span id="lbB1">Batch No.</span> <span style="font-weight:400">(optional)</span></label><input type="text" id="fBatch" placeholder="leave blank to write by hand"></div>
         <div class="f third"><label for="fExp">Expiry date <span style="font-weight:400">(optional)</span></label><input type="text" id="fExp" placeholder="e.g. 03/2027"></div>
         <div class="f third"><label for="fQty">QTY <span style="font-weight:400">(optional)</span></label><input type="text" id="fQty"></div>
+        <div class="f third b2" hidden><label for="fBatch2">Batch 2 No. <span style="font-weight:400">(optional)</span></label><input type="text" id="fBatch2" placeholder="leave blank to write by hand"></div>
+        <div class="f third b2" hidden><label for="fExp2">Batch 2 expiry <span style="font-weight:400">(optional)</span></label><input type="text" id="fExp2" placeholder="e.g. 08/2027"></div>
+        <div class="f third b2" hidden><label for="fQty2">Batch 2 QTY <span style="font-weight:400">(optional)</span></label><input type="text" id="fQty2"></div>
         <div class="f third"><label for="fCopies">Copies to print</label><input type="number" id="fCopies" min="1" max="500" value="1"></div>
         <div class="actions">
           <button class="btn" id="bPrintOne" data-print>Print this label</button>
@@ -217,6 +240,7 @@ dialog::backdrop{background:var(--shade)}
     <div class="opt">
       <span class="lbl">Paper</span>
       <label class="radio"><input type="radio" name="mode" value="label"><span><b>Label printer — one label per page</b><small>102 × 72 mm pages, same size as the original Publisher file.</small></span></label>
+      <label class="radio"><input type="radio" name="mode" value="a4x6"><span><b>A4 sheet — 6 labels per page (2 × 3)</b><small>Full size (102 × 72 mm) with space between labels for easy cutting. Print at 100% / “Actual size”.</small></span></label>
       <label class="radio"><input type="radio" name="mode" value="a4"><span><b>A4 sheet — 8 labels per page (2 × 4)</b><small>For a regular office printer. Cut along the dashed lines.</small></span></label>
       <label class="radio"><input type="radio" name="mode" value="letter"><span><b>US Letter — 6 labels per page (2 × 3)</b></span></label>
     </div>
@@ -2970,20 +2994,22 @@ const L = {                        // layout, mm
   badge:{h:7.6,r:2,area:66.1,max:34},
   item:{cx:W/2,cy:15.0,w:76,h:8.6}, vendor:{cx:W/2,cy:20.9,w:74},
   fields:[{k:"batch",t:"Batch No.:",y:35.6},{k:"expiry",t:"Expiry Date:",y:42.4},{k:"qty",t:"QTY:",y:49.2}],
+  tbl:{x:[3.2,17.6,54.0,79.8,98.9], top:24.6, head:30.0, rows:[39.2,48.4]},
   fieldX:3.2, fieldEnd:98.6, fieldSize:14,
   qr:{s:12.6,y:54.0}, code:{cy:68.6,size:8}
 };
 const STORE = "medLabelStudio.v1";
 const PAPER = {
-  a4:{w:210,h:297,cols:2,rows:4},
-  letter:{w:215.9,h:279.4,cols:2,rows:3}
+  a4x6:{w:210,h:297,cols:2,rows:3,gx:3,gy:8},
+  a4:{w:210,h:297,cols:2,rows:4,gx:0,gy:0},
+  letter:{w:215.9,h:279.4,cols:2,rows:3,gx:4,gy:6}
 };
 
 /* ================= state ================= */
 let uid = 1;
 const mk = (o) => ({ id: uid++, item:"", vendor:"", code:"", highAlert:false, lasa:false, light:false,
-  batch:"", expiry:"", qty:"", mark:0, copies:1, ...o });
-const DEFAULT_SETTINGS = { mode:"label", cut:false, boxes:true, logos:true, fixSpell:true, qr:"auto", logoL:null, logoR:null };
+  batch:"", expiry:"", qty:"", batches:1, batch2:"", expiry2:"", qty2:"", useFirst:0, copies:1, ...o });
+const DEFAULT_SETTINGS = { mode:"a4x6", cut:true, boxes:true, logos:true, fixSpell:true, qr:"auto", logoL:null, logoR:null };
 let state = { labels: SEED.map(mk), settings: {...DEFAULT_SETTINGS}, current: null, checked: new Set(), filter:"all", q:"" };
 
 function load(){
@@ -3061,7 +3087,8 @@ function labelHTML(l){
   h += `<div class="abs ctr" style="left:${mm(L.item.cx-L.item.w/2-1)};width:${mm(L.item.w+2)};top:${mm(itemCy(it)-L.item.h/2)};height:${mm(L.item.h)};font-size:${it.size}pt;color:${C.navy}">${it.lines.map(esc).join("<br>")}</div>`;
   const vs = fitOne(l.vendor||"", 9, 5.5, L.vendor.w);
   h += `<div class="abs ctr" style="left:${mm(L.vendor.cx-L.vendor.w/2-1)};width:${mm(L.vendor.w+2)};top:${mm(L.vendor.cy-2)};height:4mm;font-size:${vs}pt;color:${C.vendor};white-space:nowrap">${esc(l.vendor)}</div>`;
-  for(const f of L.fields){
+  if(+l.batches===2) h += tableHTML(l);
+  else for(const f of L.fields){
     const fs = L.fieldSize, top = f.y - 0.85*fs*PT;
     const v = l[f.k] || "";
     h += `<div class="field" style="top:${mm(top)};width:${mm(L.fieldEnd-L.fieldX)};font-size:${fs}pt">${f.t}<span class="ul" style="font-size:${fitOne(v,12,6,L.fieldEnd-L.fieldX-measureMM(f.t,fs)-3)}pt">${esc(v)}</span></div>`;
@@ -3074,6 +3101,44 @@ function labelHTML(l){
   h += `<div class="abs ctr" style="left:20mm;width:${mm(W-40)};top:${mm(L.code.cy-2)};height:4mm;font-size:${L.code.size}pt;color:${C.navy}">${esc(l.code)}</div>`;
   if(S.cut) h += `<div class="cut"></div>`;
   return `<div class="label">${h}</div>`;
+}
+
+/* ---- two-batch table (shared geometry for screen/print and PDF) ---- */
+const TBL_HEAD = [["USE FIRST",6.2],["Batch No.",10],["Expiry Date",10],["QTY",10]];
+const tblRows = (l)=>[[l.batch,l.expiry,l.qty],[l.batch2,l.expiry2,l.qty2]];
+function tableHTML(l){
+  const T=L.tbl, x=T.x; let h="";
+  TBL_HEAD.forEach(([t,s],i)=> h += `<div class="abs" style="left:${mm(x[i]+1.2)};top:${mm(T.head-1.3-s*PT*0.85)};font:700 ${s}pt/1 Arial,Helvetica,sans-serif;white-space:nowrap">${t}</div>`);
+  const hl=(y,w,c)=>`<div class="abs" style="left:${mm(x[0])};width:${mm(x[4]-x[0])};top:${mm(y-w/2)};height:${mm(w)};background:${c}"></div>`;
+  h += hl(T.head,0.4,"#000");
+  let top=T.head;
+  T.rows.forEach((yb,r)=>{
+    const mid=(top+yb)/2, on=+l.useFirst===r+1;
+    h += `<div class="abs" style="left:${mm(x[0]+1.2)};top:${mm(mid-1.4)};width:2.8mm;height:2.8mm;border:0.3mm solid #000;box-sizing:border-box;background:${on?"#000":"transparent"}"></div>`;
+    h += `<div class="abs" style="left:${mm(x[0]+5.4)};top:${mm(mid-1.9)};font:700 11pt/1 Arial,Helvetica,sans-serif">${r+1}</div>`;
+    tblRows(l)[r].forEach((v,c)=>{ if(!v) return; const w=x[c+2]-x[c+1]-2.4;
+      h += `<div class="abs" style="left:${mm(x[c+1]+1.4)};top:${mm(mid-1.8)};width:${mm(w)};font:400 ${fitOne(v,11,6,w)}pt/1 Arial,Helvetica,sans-serif;white-space:nowrap;overflow:hidden">${esc(v)}</div>`; });
+    h += hl(yb,0.3,"#000"); top=yb;
+  });
+  [1,2,3].forEach(i=> h += `<div class="abs" style="left:${mm(x[i]-0.1)};width:0.2mm;top:${mm(T.head)};height:${mm(T.rows[1]-T.head)};background:#a7adb4"></div>`);
+  return h;
+}
+function tablePDF(doc, l, X, Y){
+  const T=L.tbl, x=T.x;
+  doc.setTextColor("#000000");
+  TBL_HEAD.forEach(([t,s],i)=>{ doc.setFont("helvetica","bold"); doc.setFontSize(s); doc.text(t, X(x[i]+1.2), Y(T.head-1.3)); });
+  doc.setDrawColor("#000000"); doc.setLineWidth(0.4); doc.line(X(x[0]),Y(T.head),X(x[4]),Y(T.head));
+  let top=T.head;
+  T.rows.forEach((yb,r)=>{
+    const mid=(top+yb)/2, on=+l.useFirst===r+1;
+    doc.setLineWidth(0.3); doc.setDrawColor("#000000"); doc.setFillColor("#000000");
+    doc.rect(X(x[0]+1.35),Y(mid-1.25),2.5,2.5, on?"FD":"S");
+    doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.text(String(r+1), X(x[0]+5.4), Y(mid), {baseline:"middle"});
+    doc.setFont("helvetica","normal");
+    tblRows(l)[r].forEach((v,c)=>{ if(!v) return; const w=x[c+2]-x[c+1]-2.4; let s=11; doc.setFontSize(s); while(s>6 && doc.getTextWidth(v)>w){ s-=0.5; doc.setFontSize(s);} doc.text(v, X(x[c+1]+1.4), Y(mid), {baseline:"middle"}); });
+    doc.setLineWidth(0.3); doc.line(X(x[0]),Y(yb),X(x[4]),Y(yb)); top=yb;
+  });
+  doc.setDrawColor("#a7adb4"); doc.setLineWidth(0.2); [1,2,3].forEach(i=>doc.line(X(x[i]),Y(T.head),X(x[i]),Y(T.rows[1])));
 }
 
 /* ================= PDF renderer (vector, via jsPDF) ================= */
@@ -3093,7 +3158,8 @@ function drawPDF(doc, l, ox, oy){
   const lh = it.size*PT*1.12, y0 = itemCy(it) - lh*(it.lines.length-1)/2;
   it.lines.forEach((t,i)=> doc.text(t, X(L.item.cx), Y(y0+i*lh), {align:"center", baseline:"middle"}));
   if(l.vendor){ doc.setFontSize(fitOne(l.vendor,9,5.5,L.vendor.w,meas)); doc.setTextColor(C.vendor); doc.text(l.vendor, X(L.vendor.cx), Y(L.vendor.cy), {align:"center", baseline:"middle"}); }
-  for(const f of L.fields){
+  if(+l.batches===2) tablePDF(doc, l, X, Y);
+  else for(const f of L.fields){
     doc.setFont("helvetica","bold"); doc.setFontSize(L.fieldSize); doc.setTextColor("#000000");
     doc.text(f.t, X(L.fieldX), Y(f.y)); const tw = doc.getTextWidth(f.t);
     doc.setLineWidth(0.3); doc.line(X(L.fieldX+tw+0.6), Y(f.y+0.35), X(L.fieldEnd), Y(f.y+0.35));
@@ -3107,7 +3173,9 @@ function drawPDF(doc, l, ox, oy){
 
 /* ================= print / pdf jobs ================= */
 function expand(list){ const out=[]; for(const l of list) for(let i=0;i<Math.max(1,Math.min(500,+l.copies||1));i++) out.push(l); return out; }
-function sheetGeom(){ const p = PAPER[state.settings.mode]; return {...p, ox:(p.w-p.cols*W)/2, oy:(p.h-p.rows*H)/2, per:p.cols*p.rows}; }
+function sheetGeom(){ const p = PAPER[state.settings.mode] || PAPER.a4x6;
+  const ox=(p.w-p.cols*W-(p.cols-1)*p.gx)/2, oy=(p.h-p.rows*H-(p.rows-1)*p.gy)/2;
+  return {...p, ox, oy, per:p.cols*p.rows, x:(k)=>ox+(k%p.cols)*(W+p.gx), y:(k)=>oy+Math.floor(k/p.cols)*(H+p.gy)}; }
 
 function printLabels(list){
   if(!list.length) return toast("Select at least one label first.");
@@ -3120,7 +3188,7 @@ function printLabels(list){
     const g = sheetGeom();
     document.getElementById("pageStyle").textContent = `@page{size:${g.w}mm ${g.h}mm;margin:0}@media print{.sheet{width:${g.w}mm;height:${g.h}mm}}`;
     for(let i=0;i<items.length;i+=g.per){
-      html += `<div class="sheet">` + items.slice(i,i+g.per).map((l,k)=>`<div style="position:absolute;left:${mm(g.ox+(k%g.cols)*W)};top:${mm(g.oy+Math.floor(k/g.cols)*H)}">${labelHTML(l)}</div>`).join("") + `</div>`;
+      html += `<div class="sheet">` + items.slice(i,i+g.per).map((l,k)=>`<div style="position:absolute;left:${mm(g.x(k))};top:${mm(g.y(k))}">${labelHTML(l)}</div>`).join("") + `</div>`;
     }
   }
   area.innerHTML = html;
@@ -3137,14 +3205,14 @@ function pdfLabels(list, name){
   } else {
     const g = sheetGeom();
     doc = new jsPDF({orientation:"portrait", unit:"mm", format:[g.w, g.h], compress:true});
-    items.forEach((l,i)=>{ const k=i%g.per; if(i && !k) doc.addPage([g.w,g.h],"portrait"); drawPDF(doc, l, g.ox+(k%g.cols)*W, g.oy+Math.floor(k/g.cols)*H); });
+    items.forEach((l,i)=>{ const k=i%g.per; if(i && !k) doc.addPage([g.w,g.h],"portrait"); drawPDF(doc, l, g.x(k), g.y(k)); });
   }
   doc.setProperties({title: name, creator:"Medication Label Studio"});
   saveFile(name.replace(/[^\w\- .]+/g,"_") + ".pdf", doc.output("blob"), `PDF ready — ${items.length} label${items.length>1?"s":""}.`);
 }
 
 /* ================= CSV ================= */
-const COLS = [["item","Item"],["vendor","Vendor"],["code","Code"],["highAlert","High Alert"],["lasa","LASA"],["light","Light Sensitive"],["batch","Batch No"],["expiry","Expiry Date"],["qty","QTY"],["copies","Copies"]];
+const COLS = [["item","Item"],["vendor","Vendor"],["code","Code"],["highAlert","High Alert"],["lasa","LASA"],["light","Light Sensitive"],["batch","Batch No"],["expiry","Expiry Date"],["qty","QTY"],["batches","Batches"],["batch2","Batch No 2"],["expiry2","Expiry Date 2"],["qty2","QTY 2"],["copies","Copies"]];
 function toCSV(list){
   const q = (v)=>{ v = typeof v==="boolean" ? (v?"Yes":"No") : String(v ?? ""); return /[",\n\r]/.test(v) ? `"${v.replace(/"/g,'""')}"` : v; };
   return "﻿" + [COLS.map(c=>c[1]).join(","), ...list.map(l=>COLS.map(([k])=>q(l[k])).join(","))].join("\r\n");
@@ -3165,15 +3233,15 @@ function parseCSV(text){
 }
 function importCSV(text){
   const rows = parseCSV(text); if(rows.length<2) return toast("That file has no label rows.");
-  const norm = (s)=>s.toLowerCase().replace(/[^a-z]/g,"");
+  const norm = (s)=>s.toLowerCase().replace(/[^a-z0-9]/g,"");
   const alias = {item:["item","itemname","name","drug","medication","description"],vendor:["vendor","supplier"],code:["code","newcode","itemcode","qr"],
-    highAlert:["highalert","ha"],lasa:["lasa"],light:["lightsensitive","lightsensetive","light"],batch:["batchno","batch","batchnumber"],expiry:["expirydate","expiry","exp"],qty:["qty","quantity"],copies:["copies"]};
+    highAlert:["highalert","ha"],lasa:["lasa"],light:["lightsensitive","lightsensetive","light"],batch:["batchno","batch","batchnumber"],expiry:["expirydate","expiry","exp"],qty:["qty","quantity"],batches:["batches","numberofbatches"],batch2:["batchno2","batch2","batchnumber2"],expiry2:["expirydate2","expiry2"],qty2:["qty2","quantity2"],copies:["copies"]};
   const head = rows[0].map(norm), idx = {};
   for(const k in alias){ const j = head.findIndex(h=>alias[k].includes(h)); if(j>=0) idx[k]=j; }
   if(idx.item===undefined) return toast("Couldn’t find an “Item” column in that file.");
   const yes = (v)=>/^(y|yes|true|1|x|✓)$/i.test(String(v||"").trim());
   const added = rows.slice(1).map(r=>{ const g=(k)=>idx[k]===undefined?"":(r[idx[k]]||"").trim();
-    return mk({item:g("item"),vendor:g("vendor"),code:g("code"),highAlert:yes(g("highAlert")),lasa:yes(g("lasa")),light:yes(g("light")),batch:g("batch"),expiry:g("expiry"),qty:g("qty"),copies:Math.max(1,parseInt(g("copies"))||1)}); })
+    return mk({item:g("item"),vendor:g("vendor"),code:g("code"),highAlert:yes(g("highAlert")),lasa:yes(g("lasa")),light:yes(g("light")),batch:g("batch"),expiry:g("expiry"),qty:g("qty"),batches:(parseInt(g("batches"))===2||g("batch2"))?2:1,batch2:g("batch2"),expiry2:g("expiry2"),qty2:g("qty2"),copies:Math.max(1,parseInt(g("copies"))||1)}); })
     .filter(l=>l.item);
   state.labels.push(...added); added.forEach(l=>state.checked.add(l.id));
   state.current = added[0]?.id ?? state.current; save(); renderAll();
@@ -3214,7 +3282,7 @@ function renderList(){
   box.innerHTML = v.length ? v.map(l=>`<div class="row${l.id===state.current?" active":""}" data-id="${l.id}">
       <input type="checkbox" data-chk="${l.id}" ${state.checked.has(l.id)?"checked":""} aria-label="Select for printing">
       <div><div class="t">${esc(l.item.replace(/\n/g," ")||"(untitled)")}</div>
-      <div class="m">${l.highAlert?'<span class="tag ha">HIGH ALERT</span>':""}${l.lasa?'<span class="tag lasa">LASA</span>':""}${l.light?'<span class="tag light">LIGHT</span>':""}<span>${esc(l.code)}</span>${l.vendor?`<span>· ${esc(l.vendor)}</span>`:""}${(+l.copies||1)>1?`<span>· ×${+l.copies}</span>`:""}</div></div></div>`).join("")
+      <div class="m">${l.highAlert?'<span class="tag ha">HIGH ALERT</span>':""}${l.lasa?'<span class="tag lasa">LASA</span>':""}${l.light?'<span class="tag light">LIGHT</span>':""}<span>${esc(l.code)}</span>${l.vendor?`<span>· ${esc(l.vendor)}</span>`:""}${+l.batches===2?'<span>· 2 batches</span>':""}${(+l.copies||1)>1?`<span>· ×${+l.copies}</span>`:""}</div></div></div>`).join("")
     : `<div class="empty">No labels match.</div>`;
   const n = state.checked.size;
   $("selCount").textContent = `${n} selected`;
@@ -3238,6 +3306,15 @@ function fillForm(){
   $("fItem").value=l.item; $("fVendor").value=l.vendor; $("fCode").value=l.code;
   $("fHA").checked=l.highAlert; $("fLASA").checked=l.lasa; $("fLight").checked=l.light;
   $("fBatch").value=l.batch; $("fExp").value=l.expiry; $("fQty").value=l.qty; $("fCopies").value=l.copies||1;
+  $("fBatch2").value=l.batch2||""; $("fExp2").value=l.expiry2||""; $("fQty2").value=l.qty2||"";
+  setSeg($("fBatches"), String(+l.batches===2?2:1)); setSeg($("fFirst"), String(+l.useFirst||0)); showBatchFields(l);
+}
+function showBatchFields(l){
+  const two = +l.batches===2;
+  document.querySelectorAll(".b2").forEach(e=>e.hidden=!two); $("wrapFirst").hidden=!two;
+  $("lbB1").textContent = two ? "Batch 1 No." : "Batch No.";
+  $("fExp").previousElementSibling.firstChild.textContent = two ? "Batch 1 expiry " : "Expiry date ";
+  $("fQty").previousElementSibling.firstChild.textContent = two ? "Batch 1 QTY " : "QTY ";
 }
 function setSeg(el, v){ el.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===v))); }
 function renderAll(){ renderList(); fillForm(); renderPreview(); }
@@ -3254,6 +3331,11 @@ function bind(){
   $("fBatch").addEventListener("input", upd("batch", ()=>$("fBatch").value));
   $("fExp").addEventListener("input", upd("expiry", ()=>$("fExp").value));
   $("fQty").addEventListener("input", upd("qty", ()=>$("fQty").value));
+  $("fBatch2").addEventListener("input", upd("batch2", ()=>$("fBatch2").value));
+  $("fExp2").addEventListener("input", upd("expiry2", ()=>$("fExp2").value));
+  $("fQty2").addEventListener("input", upd("qty2", ()=>$("fQty2").value));
+  $("fBatches").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b) return; setSeg($("fBatches"), b.dataset.v); upd("batches", ()=>+b.dataset.v)(); showBatchFields(cur()); });
+  $("fFirst").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b) return; setSeg($("fFirst"), b.dataset.v); upd("useFirst", ()=>+b.dataset.v)(); });
   $("fCopies").addEventListener("input", upd("copies", ()=>Math.max(1,Math.min(500,parseInt($("fCopies").value)||1))));
 
   $("rows").addEventListener("click", e=>{
@@ -3294,12 +3376,14 @@ function bind(){
     r.readAsDataURL(f); e.target.value=""; });
   $("bReset").addEventListener("click", async ()=>{ dlg.close(); if(!await ask("Replace ALL current labels with the original 51 labels from the Publisher files? Your edits will be lost. Export a CSV first if you want to keep them.", "Restore originals")) return; uid=1; state.labels=SEED.map(mk); state.checked.clear(); state.current=state.labels[0].id; save(); renderAll(); dlg.close(); toast("Original labels restored."); });
 
+  $("qMode").addEventListener("change", e=>{ state.settings.mode=e.target.value; if(e.target.value!=="label") state.settings.cut=true; afterSettings(); toast(e.target.value==="label" ? "Layout: one label per page." : `Layout: ${PAPER[e.target.value].cols*PAPER[e.target.value].rows} labels per page.`); });
   window.addEventListener("resize", fitStage);
   window.addEventListener("afterprint", ()=>{ $("printArea").innerHTML=""; });
 }
 function syncSettings(){
   const S = state.settings;
   document.querySelectorAll("input[name=mode]").forEach(r=>r.checked = r.value===S.mode);
+  $("qMode").value = PAPER[S.mode] || S.mode==="label" ? S.mode : "a4x6";
   $("sCut").checked=S.cut; $("sLogos").checked=S.logos; $("sFixSpell").checked=S.fixSpell;
   setSeg($("sQr"), S.qr); $("imgL").src=logo("L"); $("imgR").src=logo("R");
 }
@@ -3308,7 +3392,7 @@ function afterSettings(){ save(); syncSettings(); renderPreview(); }
 if(IS_WEB) document.body.classList.add("web");
 load();
 state.current = state.labels[0]?.id ?? null;
-bind(); renderAll();
+bind(); syncSettings(); renderAll();
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(renderPreview);
 </script>
 </body>
