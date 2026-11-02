@@ -116,8 +116,6 @@ dialog::backdrop{background:var(--shade)}
 .label .ctr{display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;line-height:1.12}
 .label .field{position:absolute;left:3.2mm;display:flex;align-items:flex-end;font-weight:700;line-height:1;white-space:nowrap}
 .label .field .ul{flex:1;border-bottom:0.3mm solid #000;margin-left:0.6mm;font-weight:400;padding-left:1.5mm;overflow:hidden;font-family:Arial,Helvetica,sans-serif}
-.label .box{position:absolute;width:2.6mm;height:2.6mm;border:0.25mm solid #000}
-.label .box.on{background:#000}
 .label svg{display:block}
 
 #printArea{display:none}
@@ -200,13 +198,7 @@ dialog::backdrop{background:var(--shade)}
         <div class="f third"><label for="fBatch">Batch No. <span style="font-weight:400">(optional)</span></label><input type="text" id="fBatch" placeholder="leave blank to write by hand"></div>
         <div class="f third"><label for="fExp">Expiry date <span style="font-weight:400">(optional)</span></label><input type="text" id="fExp" placeholder="e.g. 03/2027"></div>
         <div class="f third"><label for="fQty">QTY <span style="font-weight:400">(optional)</span></label><input type="text" id="fQty"></div>
-        <div class="f half">
-          <span class="lbl">“Expires within” mark</span>
-          <div class="seg" id="fMark">
-            <button data-v="0" aria-pressed="true">None</button><button data-v="1">1 MTH</button><button data-v="2">2 MTHS</button><button data-v="3">3 MTHS</button>
-          </div>
-        </div>
-        <div class="f half"><label for="fCopies">Copies to print</label><input type="number" id="fCopies" min="1" max="500" value="1"></div>
+        <div class="f third"><label for="fCopies">Copies to print</label><input type="number" id="fCopies" min="1" max="500" value="1"></div>
         <div class="actions">
           <button class="btn" id="bPrintOne" data-print>Print this label</button>
           <button class="btn" id="bPdfOne">PDF of this label</button>
@@ -231,7 +223,6 @@ dialog::backdrop{background:var(--shade)}
     <div class="opt">
       <span class="lbl">Options</span>
       <label class="tog"><input type="checkbox" id="sCut"> Dashed cut line around each label</label>
-      <label class="tog"><input type="checkbox" id="sBoxes"> Tick boxes next to 1 / 2 / 3 months</label>
       <label class="tog"><input type="checkbox" id="sLogos"> Show logos</label>
       <label class="tog"><input type="checkbox" id="sFixSpell"> Spell banner “LIGHT SENSITIVE” (original said “SENSETIVE”)</label>
     </div>
@@ -283,9 +274,8 @@ const L = {                        // layout, mm
   logoL:{x:1.4,y:1.4,w:12.7,h:10.6}, logoR:{x:89.2,y:2.1,w:10.6,h:10.6},
   badge:{h:7.6,r:2,area:66.1,max:34},
   item:{cx:W/2,cy:15.0,w:76,h:8.6}, vendor:{cx:W/2,cy:20.9,w:74},
-  exp:{x:87.4,y:25.4,size:6.5}, opts:[40.2,47.2,54.2], boxX:97.7,
   fields:[{k:"batch",t:"Batch No.:",y:35.6},{k:"expiry",t:"Expiry Date:",y:42.4},{k:"qty",t:"QTY:",y:49.2}],
-  fieldX:3.2, fieldEnd:85.4, fieldSize:14,
+  fieldX:3.2, fieldEnd:98.6, fieldSize:14,
   qr:{s:12.6,y:54.0}, code:{cy:68.6,size:8}
 };
 const STORE = "medLabelStudio.v1";
@@ -376,13 +366,6 @@ function labelHTML(l){
   h += `<div class="abs ctr" style="left:${mm(L.item.cx-L.item.w/2-1)};width:${mm(L.item.w+2)};top:${mm(itemCy(it)-L.item.h/2)};height:${mm(L.item.h)};font-size:${it.size}pt;color:${C.navy}">${it.lines.map(esc).join("<br>")}</div>`;
   const vs = fitOne(l.vendor||"", 9, 5.5, L.vendor.w);
   h += `<div class="abs ctr" style="left:${mm(L.vendor.cx-L.vendor.w/2-1)};width:${mm(L.vendor.w+2)};top:${mm(L.vendor.cy-2)};height:4mm;font-size:${vs}pt;color:${C.vendor};white-space:nowrap">${esc(l.vendor)}</div>`;
-  const es = L.exp.size;
-  h += `<div class="abs" style="right:1.2mm;top:${mm(L.exp.y-1.4)};font:700 ${es}pt/1 Arial,sans-serif;white-space:nowrap;text-align:right">Expires within</div>`;
-  ["1 MTH","2 MTHS","3 MTHS"].forEach((t,i)=>{
-    const y = L.opts[i];
-    h += `<div class="abs" style="left:${mm(L.exp.x+0.6)};top:${mm(y-1.3)};font:700 ${es}pt/1 Arial,sans-serif;white-space:nowrap">${t}</div>`;
-    if(S.boxes || l.mark===i+1) h += `<div class="box${l.mark===i+1?" on":""}" style="left:${mm(L.boxX)};top:${mm(y-1.55)}"></div>`;
-  });
   for(const f of L.fields){
     const fs = L.fieldSize, top = f.y - 0.85*fs*PT;
     const v = l[f.k] || "";
@@ -415,13 +398,6 @@ function drawPDF(doc, l, ox, oy){
   const lh = it.size*PT*1.12, y0 = itemCy(it) - lh*(it.lines.length-1)/2;
   it.lines.forEach((t,i)=> doc.text(t, X(L.item.cx), Y(y0+i*lh), {align:"center", baseline:"middle"}));
   if(l.vendor){ doc.setFontSize(fitOne(l.vendor,9,5.5,L.vendor.w,meas)); doc.setTextColor(C.vendor); doc.text(l.vendor, X(L.vendor.cx), Y(L.vendor.cy), {align:"center", baseline:"middle"}); }
-  doc.setTextColor("#000000"); doc.setFontSize(L.exp.size);
-  doc.text("Expires within", X(W-1.2), Y(L.exp.y), {align:"right", baseline:"middle"});
-  doc.setLineWidth(0.25); doc.setDrawColor("#000000"); doc.setFillColor("#000000");
-  ["1 MTH","2 MTHS","3 MTHS"].forEach((t,i)=>{
-    const y=L.opts[i]; doc.text(t, X(L.exp.x+0.6), Y(y), {baseline:"middle"});
-    if(S.boxes || l.mark===i+1) doc.rect(X(L.boxX), Y(y-1.3), 2.6, 2.6, l.mark===i+1 ? "FD" : "S");
-  });
   for(const f of L.fields){
     doc.setFont("helvetica","bold"); doc.setFontSize(L.fieldSize); doc.setTextColor("#000000");
     doc.text(f.t, X(L.fieldX), Y(f.y)); const tw = doc.getTextWidth(f.t);
@@ -567,7 +543,6 @@ function fillForm(){
   $("fItem").value=l.item; $("fVendor").value=l.vendor; $("fCode").value=l.code;
   $("fHA").checked=l.highAlert; $("fLASA").checked=l.lasa; $("fLight").checked=l.light;
   $("fBatch").value=l.batch; $("fExp").value=l.expiry; $("fQty").value=l.qty; $("fCopies").value=l.copies||1;
-  setSeg($("fMark"), String(l.mark||0));
 }
 function setSeg(el, v){ el.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===v))); }
 function renderAll(){ renderList(); fillForm(); renderPreview(); }
@@ -585,7 +560,6 @@ function bind(){
   $("fExp").addEventListener("input", upd("expiry", ()=>$("fExp").value));
   $("fQty").addEventListener("input", upd("qty", ()=>$("fQty").value));
   $("fCopies").addEventListener("input", upd("copies", ()=>Math.max(1,Math.min(500,parseInt($("fCopies").value)||1))));
-  $("fMark").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b) return; setSeg($("fMark"), b.dataset.v); upd("mark", ()=>+b.dataset.v)(); });
 
   $("rows").addEventListener("click", e=>{
     const chk = e.target.closest("[data-chk]");
@@ -615,7 +589,7 @@ function bind(){
   $("bSettings").addEventListener("click", ()=>{ syncSettings(); dlg.showModal(); });
   dlg.addEventListener("click", e=>{ if(e.target.closest("[data-close]") || e.target===dlg) dlg.close(); });
   dlg.querySelectorAll("input[name=mode]").forEach(r=>r.addEventListener("change", ()=>{ state.settings.mode=r.value; if(r.value!=="label") state.settings.cut=true; afterSettings(); }));
-  [["sCut","cut"],["sBoxes","boxes"],["sLogos","logos"],["sFixSpell","fixSpell"]].forEach(([id,k])=>$(id).addEventListener("change", e=>{ state.settings[k]=e.target.checked; afterSettings(); }));
+  [["sCut","cut"],["sLogos","logos"],["sFixSpell","fixSpell"]].forEach(([id,k])=>$(id).addEventListener("change", e=>{ state.settings[k]=e.target.checked; afterSettings(); }));
   $("sQr").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b) return; state.settings.qr=b.dataset.v; afterSettings(); });
   let logoSide = "L";
   dlg.querySelectorAll("[data-logo]").forEach(b=>b.addEventListener("click", ()=>{ logoSide=b.dataset.logo; $("fileLogo").click(); }));
@@ -631,7 +605,7 @@ function bind(){
 function syncSettings(){
   const S = state.settings;
   document.querySelectorAll("input[name=mode]").forEach(r=>r.checked = r.value===S.mode);
-  $("sCut").checked=S.cut; $("sBoxes").checked=S.boxes; $("sLogos").checked=S.logos; $("sFixSpell").checked=S.fixSpell;
+  $("sCut").checked=S.cut; $("sLogos").checked=S.logos; $("sFixSpell").checked=S.fixSpell;
   setSeg($("sQr"), S.qr); $("imgL").src=logo("L"); $("imgR").src=logo("R");
 }
 function afterSettings(){ save(); syncSettings(); renderPreview(); }
