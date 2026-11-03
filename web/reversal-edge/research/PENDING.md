@@ -39,3 +39,6 @@ washouts, VIX, oil) beats simply being in the live sell-off window as a market t
    2020-26 +1.5% vs +1.5%, drawdown 3.0% vs 4.4%, 89% vs 63% winners; 2023-26 ratio 0.70 vs 0.33. The gain is mostly lower risk
    (worst sell-off -0.07% vs -2.87% of the account in 2020-26), not more return. Saudi-only: the turn gate failed the US 2018-26 check.
    Round 48: 5 x 10% (instead of 5 x 5%) is the largest size with drawdown <= 15% in both periods; more, smaller slots did not help.
+Overnight conclusion (rounds 48-53): the split exit (option 4) is the one Z-swing change that holds across markets (better in 7 of
+10 market-eras: Saudi, US, India, GCC). v2's turn gate is strong in Saudi (both periods, stress-tested) but helps in only 5 of 10
+market-eras elsewhere, so treat it as a Saudi-specific choice for lower risk. Size: 5 x 10% keeps drawdown under 15%.
