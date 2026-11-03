@@ -40,6 +40,7 @@ def daily(sym, out_dir, div_dir=None, period1=0):
     for i, t in enumerate(ts):
         if q["close"][i] is None: continue
         rows.append([dt.datetime.utcfromtimestamp(t + off).strftime("%Y-%m-%d"), q["open"][i], q["high"][i], q["low"][i], q["close"][i], ac[i], q["volume"][i]])
+    rows = list({row[0]: row for row in rows}.values())   # Yahoo sometimes repeats a date (seen 2025-07-03 in futures): keep the last row per date
     if sym.endswith(".SR"):
         try: rows = _fill_last(sym, r, rows)
         except Exception: pass
