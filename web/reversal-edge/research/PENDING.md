@@ -30,3 +30,12 @@ George-Hwang 52-week low): nothing beats the live rule in both periods.
    trades favour it; failed in the 2005-09 US bear market (4% bounces were bear rallies). On 2026-11-02 it is ON (bounce on 10-26).
 Round 47 also found: none of 14 classic TASI bottom signals (Lowry, Zweig, Desmond, Connors RSI(2), Williams VIX Fix, breadth
 washouts, VIX, oil) beats simply being in the live sell-off window as a market timer.
+   Note (round 49): option 7 works only as a "shadow book" - run the live rule on paper and actually buy only its trades that start
+   after the turn (a stock the paper book bought before the turn stays blocked for its 40 sessions). Gating the signals instead
+   (letting pre-turn signalers be bought on a later signal) is much weaker (2020-26 ratio 0.37 vs 0.34, 2023-26 worse).
+8. Z swing v2 (rounds 48-50, overnight 2026-11-03): option 7 (shadow turn gate) + option 1 (ML bar 0.7) + option 4 (split exit:
+   half held 40 sessions, half sold when stretch Z is back at 0), 5 slots. Passed the combination test and 10 of 12 stress variants
+   (costs, slippage, a day late, nearby settings). Same size as live: 2013-19 +2.4% vs +1.8% a year, max drawdown 5.4% vs 6.4%;
+   2020-26 +1.5% vs +1.5%, drawdown 3.0% vs 4.4%, 89% vs 63% winners; 2023-26 ratio 0.70 vs 0.33. The gain is mostly lower risk
+   (worst sell-off -0.07% vs -2.87% of the account in 2020-26), not more return. Saudi-only: the turn gate failed the US 2018-26 check.
+   Round 48: 5 x 10% (instead of 5 x 5%) is the largest size with drawdown <= 15% in both periods; more, smaller slots did not help.

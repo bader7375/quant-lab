@@ -1,0 +1,133 @@
+
+base: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +7.1% | +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+           v2   taken  57 win  75% avg +11.6% | +2.4%/y DD  5.4% ratio 0.44 Sh 0.88
+  CONFIRM  live taken  41 win  63% avg  +5.0% | +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+           v2   taken  46 win  89% avg  +8.9% | +1.5%/y DD  3.0% ratio 0.50 Sh 0.63
+  2023-26  live taken  21 win  76% avg  +5.3% | +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+           v2   taken  18 win  94% avg  +9.0% | +1.1%/y DD  1.5% ratio 0.70 Sh 0.74
+
+cost 0.60%: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +6.9% | +1.7%/y DD  6.5% ratio 0.26 Sh 0.52
+           v2   taken  57 win  75% avg +11.4% | +2.3%/y DD  5.5% ratio 0.42 Sh 0.86
+  CONFIRM  live taken  41 win  61% avg  +4.8% | +1.4%/y DD  4.5% ratio 0.32 Sh 0.45
+           v2   taken  46 win  87% avg  +8.7% | +1.5%/y DD  3.0% ratio 0.49 Sh 0.62
+  2023-26  live taken  21 win  71% avg  +5.1% | +1.4%/y DD  4.5% ratio 0.31 Sh 0.51
+           v2   taken  18 win  89% avg  +8.8% | +1.0%/y DD  1.5% ratio 0.68 Sh 0.72
+
+cost 0.80%: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +6.7% | +1.7%/y DD  6.6% ratio 0.25 Sh 0.50
+           v2   taken  57 win  75% avg +11.2% | +2.3%/y DD  5.5% ratio 0.41 Sh 0.85
+  CONFIRM  live taken  41 win  61% avg  +4.6% | +1.4%/y DD  4.6% ratio 0.30 Sh 0.43
+           v2   taken  46 win  87% avg  +8.5% | +1.4%/y DD  3.0% ratio 0.48 Sh 0.61
+  2023-26  live taken  21 win  71% avg  +4.9% | +1.3%/y DD  4.6% ratio 0.29 Sh 0.48
+           v2   taken  18 win  89% avg  +8.6% | +1.0%/y DD  1.5% ratio 0.66 Sh 0.70
+
+slippage 0.5% each way: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +6.0% | +1.5%/y DD  6.9% ratio 0.22 Sh 0.45
+           v2   taken  57 win  75% avg +10.5% | +2.1%/y DD  5.7% ratio 0.38 Sh 0.79
+  CONFIRM  live taken  41 win  59% avg  +4.0% | +1.2%/y DD  5.0% ratio 0.24 Sh 0.37
+           v2   taken  46 win  87% avg  +7.8% | +1.3%/y DD  3.0% ratio 0.44 Sh 0.56
+  2023-26  live taken  21 win  67% avg  +4.2% | +1.2%/y DD  5.0% ratio 0.23 Sh 0.41
+           v2   taken  18 win  89% avg  +7.9% | +0.9%/y DD  1.6% ratio 0.58 Sh 0.64
+
+one day late: v2 keeps its lead in both eras: True
+  DESIGN   live taken  34 win  74% avg  +8.0% | +1.9%/y DD  5.4% ratio 0.36 Sh 0.63
+           v2   taken  57 win  77% avg +11.4% | +2.3%/y DD  6.2% ratio 0.37 Sh 0.88
+  CONFIRM  live taken  41 win  59% avg  +4.5% | +1.3%/y DD  5.0% ratio 0.27 Sh 0.44
+           v2   taken  46 win  87% avg +10.4% | +1.8%/y DD  3.2% ratio 0.56 Sh 0.76
+  2023-26  live taken  21 win  62% avg  +2.8% | +0.8%/y DD  5.0% ratio 0.16 Sh 0.30
+           v2   taken  18 win  89% avg  +9.1% | +1.1%/y DD  1.5% ratio 0.71 Sh 0.74
+
+ML bar 0.65: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +7.1% | +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+           v2   taken  55 win  76% avg +12.6% | +2.5%/y DD  5.4% ratio 0.46 Sh 0.90
+  CONFIRM  live taken  41 win  63% avg  +5.0% | +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+           v2   taken  46 win  89% avg  +8.6% | +1.4%/y DD  3.0% ratio 0.48 Sh 0.62
+  2023-26  live taken  21 win  76% avg  +5.3% | +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+           v2   taken  18 win  94% avg  +9.0% | +1.1%/y DD  1.5% ratio 0.70 Sh 0.74
+
+ML bar 0.75: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +7.1% | +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+           v2   taken  56 win  77% avg +12.3% | +2.5%/y DD  5.3% ratio 0.46 Sh 0.92
+  CONFIRM  live taken  41 win  63% avg  +5.0% | +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+           v2   taken  44 win  86% avg  +8.6% | +1.4%/y DD  3.8% ratio 0.37 Sh 0.62
+  2023-26  live taken  21 win  76% avg  +5.3% | +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+           v2   taken  16 win 100% avg +10.0% | +1.0%/y DD  1.5% ratio 0.69 Sh 0.75
+
+turn lookback 10: v2 keeps its lead in both eras: False
+  DESIGN   live taken  35 win  69% avg  +7.1% | +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+           v2   taken  58 win  81% avg +13.2% | +2.7%/y DD  5.4% ratio 0.50 Sh 0.97
+  CONFIRM  live taken  41 win  63% avg  +5.0% | +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+           v2   taken  26 win  92% avg  +9.6% | +0.9%/y DD  3.0% ratio 0.30 Sh 0.44
+  2023-26  live taken  21 win  76% avg  +5.3% | +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+           v2   taken   0 win nan% avg  +nan% | +0.0%/y DD  0.0% ratio nan Sh nan
+
+turn lookback 30: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +7.1% | +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+           v2   taken  57 win  75% avg +11.6% | +2.4%/y DD  5.4% ratio 0.44 Sh 0.88
+  CONFIRM  live taken  41 win  63% avg  +5.0% | +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+           v2   taken  50 win  90% avg  +8.7% | +1.6%/y DD  3.0% ratio 0.53 Sh 0.67
+  2023-26  live taken  21 win  76% avg  +5.3% | +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+           v2   taken  22 win  95% avg  +8.5% | +1.2%/y DD  1.5% ratio 0.81 Sh 0.80
+
+bounce 3%: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +7.1% | +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+           v2   taken  61 win  74% avg  +7.6% | +1.7%/y DD  5.7% ratio 0.29 Sh 0.53
+  CONFIRM  live taken  41 win  63% avg  +5.0% | +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+           v2   taken  47 win  91% avg +11.2% | +1.9%/y DD  3.3% ratio 0.58 Sh 0.84
+  2023-26  live taken  21 win  76% avg  +5.3% | +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+           v2   taken  19 win  95% avg +10.0% | +1.2%/y DD  1.3% ratio 0.97 Sh 0.90
+
+bounce 5%: v2 keeps its lead in both eras: False
+  DESIGN   live taken  35 win  69% avg  +7.1% | +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+           v2   taken  46 win  70% avg +12.2% | +2.0%/y DD  5.4% ratio 0.37 Sh 0.77
+  CONFIRM  live taken  41 win  63% avg  +5.0% | +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+           v2   taken  30 win  83% avg  +8.6% | +0.9%/y DD  3.0% ratio 0.32 Sh 0.46
+  2023-26  live taken  21 win  76% avg  +5.3% | +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+           v2   taken  12 win  92% avg  +9.4% | +0.7%/y DD  1.5% ratio 0.49 Sh 0.57
+
+Z exit at -0.25: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +7.1% | +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+           v2   taken  61 win  74% avg +10.2% | +2.2%/y DD  5.9% ratio 0.38 Sh 0.85
+  CONFIRM  live taken  41 win  63% avg  +5.0% | +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+           v2   taken  50 win  86% avg  +8.0% | +1.5%/y DD  3.0% ratio 0.49 Sh 0.65
+  2023-26  live taken  21 win  76% avg  +5.3% | +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+           v2   taken  18 win  94% avg  +7.9% | +0.9%/y DD  1.6% ratio 0.59 Sh 0.66
+
+Z exit at +0.25: v2 keeps its lead in both eras: True
+  DESIGN   live taken  35 win  69% avg  +7.1% | +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+           v2   taken  56 win  77% avg +11.7% | +2.3%/y DD  6.2% ratio 0.38 Sh 0.83
+  CONFIRM  live taken  41 win  63% avg  +5.0% | +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+           v2   taken  46 win  91% avg  +9.7% | +1.6%/y DD  3.0% ratio 0.55 Sh 0.68
+  2023-26  live taken  21 win  76% avg  +5.3% | +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+           v2   taken  18 win  94% avg  +9.2% | +1.1%/y DD  1.5% ratio 0.71 Sh 0.74
+
+Stress variants where v2 keeps its lead: 10 of 12 -> ROBUST
+
+Account P&L by signal year (sum of position weight x trade return):
+      live 5 x 5%  v2 5 x 2 x 2.5%
+date                              
+2014        -0.51             2.04
+2015        -2.14            -0.52
+2016         8.35            11.68
+2017         0.84             0.00
+2018         3.16             3.36
+2019         2.65             0.00
+2020         6.16             3.71
+2021         0.50             0.00
+2022        -1.91             2.47
+2023         0.14             0.00
+2024         0.40             1.22
+2025         1.69             0.03
+2026         3.30             2.80
+DESIGN: 7 sell-off spells with trades; v2 made more in 5, less in 2; bootstrap P(v2 total > live total) = 0.82; worst spell live -2.14% vs v2 -0.70% of the account
+CONFIRM: 10 sell-off spells with trades; v2 made more in 4, less in 6; bootstrap P(v2 total > live total) = 0.48; worst spell live -2.87% vs v2 -0.07% of the account
+
+v2 worst 5 positions (half-positions of 2.5%):
+  2310 signal 2015-08-27 exit 2015-11-01 hold-40 half -14.5%
+  8311 signal 2015-08-27 exit 2015-11-01 hold-40 half -11.6%
+  2040 signal 2014-11-30 exit 2015-01-27 hold-40 half -9.9%
+  4003 signal 2015-08-27 exit 2015-11-29 Z-exit half -9.7%
+  4020 signal 2015-08-27 exit 2015-11-01 hold-40 half -9.0%
+longest run of losing half-positions (by exit date): 5; worst drawdown 5.4% of the account from 2015-10-11 to 2016-01-17
