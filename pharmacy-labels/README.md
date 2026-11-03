@@ -12,7 +12,11 @@ Open it in Chrome or Edge (double-click it). It needs no internet and no install
 - **Two batches**: set **Batch numbers on this label** to *2 batches*. The label then prints a two-row
   table (Batch No. / Expiry Date / QTY) with a *use first* tick box for each batch.
 - **PDF**: click **PDF of selected**, or **PDF of this label**, to download a vector PDF directly.
-- **Excel**: **Export CSV** saves the list. Edit it in Excel, save it as CSV, then use **Import CSV**.
+- **Excel**: **Export CSV** saves the list. Edit it in Excel, save it as CSV, then use **Import .pub / CSV**.
+- **Publisher files**: **Import .pub / CSV** also reads `.pub` label files directly, in the browser.
+  It takes each label's item name, vendor and code. Labels already in the list (same code and name)
+  are skipped. Publisher doesn't store banners in page order, so only a banner found on every label
+  (all LASA, or all HIGH ALERT) is applied. For the others, the import says how many labels need it ticked.
 - Changes are saved automatically in the browser. Use Export CSV as a backup.
 
 Rebuild after editing `src/`: `python3 build.py`.

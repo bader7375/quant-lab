@@ -20,6 +20,7 @@
   --accent:#4f9be8; --accent-ink:#0b1220; --danger:#ff6b6b; --field:#14181e; --active:#1f2f45; --on-ink:#13161b;
   --check1:#1d2128; --check2:#232831; --shade:rgba(0,0,0,.6); color-scheme:dark }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -146,7 +147,7 @@ dialog::backdrop{background:var(--shade)}
   <div class="brand"><i class="dot"></i>&nbsp;&nbsp;&nbsp;Medication Label Studio<span class="sub">High Alert · LASA · Light sensitive</span></div>
   <div class="group">
     <button class="btn" id="bNew" title="Add a new label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New label</button>
-    <button class="btn" id="bImport" title="Import labels from a CSV / Excel-saved file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/></svg>Import CSV</button>
+    <button class="btn" id="bImport" title="Import labels from a Publisher (.pub) file or a CSV / Excel-saved file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v3h16v-3"/></svg>Import .pub / CSV</button>
     <button class="btn" id="bExport" title="Save all labels as CSV (opens in Excel)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 0L8 7m4-4l4 4M4 17v3h16v-3"/></svg>Export CSV</button>
     <button class="btn" id="bSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>Print settings</button>
   </div>
@@ -273,11 +274,11 @@ dialog::backdrop{background:var(--shade)}
 </dialog>
 
 <dialog id="dlgConfirm">
-  <div class="dlg-b" id="cfMsg" style="padding-top:20px"></div>
+  <div class="dlg-b" id="cfMsg" style="padding-top:20px;white-space:pre-line"></div>
   <div class="dlg-f"><button class="btn" id="cfNo">Cancel</button><button class="btn primary" id="cfYes">OK</button></div>
 </dialog>
 
-<input type="file" id="fileCsv" accept=".csv,text/csv" hidden>
+<input type="file" id="fileCsv" accept=".pub,.csv,text/csv,application/x-mspublisher,application/vnd.ms-publisher" multiple hidden>
 <input type="file" id="fileLogo" accept="image/*" hidden>
 <div id="printArea"></div>
 <style id="pageStyle"></style>
@@ -3247,6 +3248,92 @@ function importCSV(text){
   state.current = added[0]?.id ?? state.current; save(); renderAll();
   toast(`Imported ${added.length} label${added.length===1?"":"s"} (selected for printing).`);
 }
+/* ================= Publisher (.pub) import =================
+   A .pub file is an OLE compound file. The label text lives in the stream
+   Quill/QuillSub/CONTENTS, inside a chunk named "TEXT" (UTF-16LE, one paragraph per \r).
+   Each label is: [code] [vendor] [item] Batch No.:… Expiry Date:… QTY:…  (in page order).
+   Banner words (LASA / HIGH ALERT / LIGHT SENSETIVE) are stored together after the
+   labels and NOT in page order, so only a banner found on every label can be applied. */
+function readOle(u8){
+  const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+  if(dv.getUint32(0,true)!==0xE011CFD0) throw new Error("not an OLE file");
+  const ssz = 1<<dv.getUint16(0x1E,true), msz = 1<<dv.getUint16(0x20,true);
+  const sec = (n)=> u8.subarray((n+1)*ssz, (n+2)*ssz);
+  const u32 = (a,o)=> (a[o]|(a[o+1]<<8)|(a[o+2]<<16)|(a[o+3]<<24))>>>0;
+  // FAT sector list from the header DIFAT and DIFAT sectors
+  const fatSecs=[]; for(let i=0;i<109;i++){ const v=dv.getUint32(0x4C+i*4,true); if(v<0xFFFFFFFA) fatSecs.push(v); }
+  let dif=dv.getUint32(0x44,true), guard=0;
+  while(dif<0xFFFFFFFA && guard++<10000){ const s=sec(dif); for(let i=0;i<ssz/4-1;i++){ const v=u32(s,i*4)>>>0; if(v<0xFFFFFFFA) fatSecs.push(v); } dif=u32(s,ssz-4)>>>0; }
+  const fat=[]; for(const f of fatSecs){ const s=sec(f); for(let i=0;i<ssz/4;i++) fat.push(u32(s,i*4)>>>0); }
+  const chain=(start, table)=>{ const out=[]; let n=start, g=0; while(n<0xFFFFFFFA && g++<1e6){ out.push(n); n=table[n]; } return out; };
+  const readBig=(start,size)=>{ const out=new Uint8Array(size); let o=0; for(const n of chain(start,fat)){ if(o>=size) break; const s=sec(n); out.set(s.subarray(0,Math.min(ssz,size-o)),o); o+=ssz; } return out; };
+  const dirBytes = readBig(dv.getUint32(0x30,true), chain(dv.getUint32(0x30,true),fat).length*ssz);
+  const dirs=[]; for(let o=0;o+128<=dirBytes.length;o+=128){ const e=dirBytes.subarray(o,o+128), nl=e[64]|(e[65]<<8);
+    let name=""; for(let i=0;i+1<nl-2;i+=2) name+=String.fromCharCode(e[i]|(e[i+1]<<8));
+    dirs.push({name, type:e[66], left:u32(e,68)>>>0, right:u32(e,72)>>>0, child:u32(e,76)>>>0, start:u32(e,116)>>>0, size:u32(e,120)>>>0}); }
+  const root=dirs[0], cutoff=dv.getUint32(0x38,true);
+  const miniStream = readBig(root.start, root.size);
+  const miniFat=[]; { let n=dv.getUint32(0x3C,true), g=0; while(n<0xFFFFFFFA && g++<1e6){ const s=sec(n); for(let i=0;i<ssz/4;i++) miniFat.push(u32(s,i*4)>>>0); n=fat[n]; } }
+  const readSmall=(start,size)=>{ const out=new Uint8Array(size); let o=0; for(const n of chain(start,miniFat)){ if(o>=size) break; out.set(miniStream.subarray(n*msz, n*msz+Math.min(msz,size-o)),o); o+=msz; } return out; };
+  const kids=(i)=>{ const out=[], st=[dirs[i].child]; while(st.length){ const k=st.pop(); if(k>=0xFFFFFFFA||!dirs[k]) continue; out.push(k); st.push(dirs[k].left, dirs[k].right); } return out; };
+  return (path)=>{ let cur=0; for(const part of path.split("/")){ const k=kids(cur).find(j=>dirs[j].name.toLowerCase()===part.toLowerCase()); if(k===undefined) return null; cur=k; }
+    const d=dirs[cur]; return d.size<cutoff ? readSmall(d.start,d.size) : readBig(d.start,d.size); };
+}
+function pubText(u8){
+  const open = readOle(u8), c = open("Quill/QuillSub/CONTENTS");
+  if(!c) throw new Error("no text stream");
+  const tag=(o)=>String.fromCharCode(c[o],c[o+1],c[o+2],c[o+3]);
+  if(tag(0)!=="CHNK") throw new Error("unexpected text format");
+  const dv=new DataView(c.buffer,c.byteOffset,c.byteLength);
+  for(let i=0x20;i+0x18<=Math.min(c.length,0x2000);i+=0x18){
+    if(tag(i+2)==="TEXT"){ const off=dv.getUint32(i+16,true), len=dv.getUint32(i+20,true); return new TextDecoder("utf-16le").decode(c.subarray(off,off+len)); }
+  }
+  throw new Error("no TEXT chunk");
+}
+function parsePubLabels(text){
+  const paras = text.split(/[\r\n\u000b]+/).map(t=>t.replace(/\s+/g," ").trim());
+  const banner = (t)=> /^LIGHT SENS[EI]TIVE$/i.test(t) ? "light" : /^HIGH ALERT$/i.test(t) ? "highAlert" : /^LASA$/i.test(t) ? "lasa" : null;
+  const boiler = (t)=> !t || /^expires within$/i.test(t) || /^\d\s*MTHS?$/i.test(t) || /^(batch no|expiry date|qty)\s*[.:]/i.test(t) || /^[«<]?(item|vendor|new code)[»>]?$/i.test(t) || /^_+$/.test(t);
+  const isCode = (t)=> /^[A-Za-z]{0,6}-?\d[\w\-\/]*$/.test(t) && t.length<=16;
+  const labels=[], counts={light:0,highAlert:0,lasa:0}; let buf=[];
+  for(const t of paras){
+    const b=banner(t); if(b){ counts[b]++; continue; }
+    if(/^qty\s*[.:]/i.test(t)){
+      const vals=buf.filter(x=>!boiler(x)); buf=[];
+      if(!vals.length) continue;
+      const ci=vals.findIndex(isCode), code=ci>=0?vals.splice(ci,1)[0]:"";
+      const item=vals.pop()||"", vendor=vals.pop()||"";
+      if(item) labels.push({item, vendor, code});
+      continue;
+    }
+    buf.push(t);
+  }
+  return {labels, counts};
+}
+async function importPub(u8, fileName){
+  let res;
+  try{ res = parsePubLabels(pubText(u8)); }
+  catch(e){ return ask(`“${fileName}” couldn’t be read as a Publisher label file.\n\nOpen it in Publisher and save the labels to Excel/CSV, then import that instead.`, "OK", false); }
+  const {labels, counts} = res, n = labels.length;
+  if(!n) return ask(`“${fileName}” has no filled-in labels. It looks like a blank template (only «Item», «Vendor», «New Code» fields).\n\nUse “New label” to make labels from it.`, "OK", false);
+  const all = (k)=> counts[k] >= n, notes=[];
+  const nameOf = {light:"Light sensitive", highAlert:"High Alert", lasa:"LASA"};
+  for(const k of ["light","highAlert","lasa"]) if(counts[k] && !all(k)) notes.push(`${counts[k]} of the ${n} labels have a “${nameOf[k]}” banner, but the file doesn’t say which ones. Tick “${nameOf[k]}” on those labels.`);
+  const key = (l)=> (l.code+"|"+l.item).toLowerCase().replace(/\s+/g,"");
+  const have = new Set(state.labels.map(key));
+  const fresh = labels.filter(l=>!have.has(key(l)));
+  const added = fresh.map(l=>mk({...l, highAlert:all("highAlert"), lasa:all("lasa"), light:all("light")}));
+  state.labels.push(...added); added.forEach(l=>state.checked.add(l.id));
+  if(added.length){ state.current = added[0].id; state.filter="all"; state.q=""; $("q").value=""; $("chips").querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", String(c.dataset.f==="all"))); }
+  save(); renderAll();
+  const banners = ["highAlert","lasa","light"].filter(all).map(k=>nameOf[k]);
+  let msg = `“${fileName}”: found ${n} label${n===1?"":"s"}.\n`;
+  msg += added.length ? `Added ${added.length} (selected for printing)${banners.length?`, with the ${banners.join(" + ")} banner${banners.length>1?"s":""}`:""}.` : "Nothing new to add.";
+  if(n-added.length) msg += `\nSkipped ${n-added.length} already in your list (same code and name).`;
+  if(notes.length && added.length) msg += "\n\n" + notes.join("\n");
+  return ask(msg, "OK", false);
+}
+
 let dlCap;  // claude.ai "downloads" capability, when running as a web link
 async function saveFile(name, data, okMsg){
   if(IS_WEB){
@@ -3258,8 +3345,8 @@ async function saveFile(name, data, okMsg){
   }
   const a=document.createElement("a"); a.href=URL.createObjectURL(data instanceof Blob ? data : new Blob([data],{type:"text/plain"})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500); toast(okMsg);
 }
-function ask(msg, okLabel="OK"){
-  return new Promise(res=>{ const d=$("dlgConfirm"); $("cfMsg").textContent=msg; $("cfYes").textContent=okLabel;
+function ask(msg, okLabel="OK", cancel=true){
+  return new Promise(res=>{ const d=$("dlgConfirm"); $("cfMsg").textContent=msg; $("cfYes").textContent=okLabel; $("cfNo").hidden=!cancel;
     const done=(v)=>{ d.close(); $("cfYes").onclick=$("cfNo").onclick=null; res(v); };
     $("cfYes").onclick=()=>done(true); $("cfNo").onclick=()=>done(false); d.oncancel=()=>done(false); d.showModal(); });
 }
@@ -3357,9 +3444,17 @@ function bind(){
   $("bPrintSel").addEventListener("click", ()=>printLabels(checkedList()));
   $("bPdfSel").addEventListener("click", ()=>pdfLabels(checkedList(), `Medication labels (${state.checked.size})`));
 
-  $("bExport").addEventListener("click", ()=>saveFile("medication-labels.csv", new Blob([toCSV(state.labels)],{type:"text/csv"}), "CSV saved. Open it in Excel, edit, then use Import CSV."));
+  $("bExport").addEventListener("click", ()=>saveFile("medication-labels.csv", new Blob([toCSV(state.labels)],{type:"text/csv"}), "CSV saved. Open it in Excel, edit, then use Import .pub / CSV."));
   $("bImport").addEventListener("click", ()=>$("fileCsv").click());
-  $("fileCsv").addEventListener("change", e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>importCSV(String(r.result)); r.readAsText(f); e.target.value=""; });
+  $("fileCsv").addEventListener("change", async e=>{
+    const files=[...e.target.files]; e.target.value="";
+    for(const f of files){
+      const buf = new Uint8Array(await f.arrayBuffer());
+      const isOle = buf.length>8 && buf[0]===0xD0 && buf[1]===0xCF && buf[2]===0x11 && buf[3]===0xE0;
+      if(isOle || /\.pub$/i.test(f.name)) await importPub(buf, f.name);
+      else importCSV(new TextDecoder("utf-8").decode(buf));
+    }
+  });
 
   // settings
   const dlg = $("dlgSettings");
