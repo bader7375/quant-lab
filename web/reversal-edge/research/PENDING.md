@@ -23,3 +23,10 @@ George-Hwang 52-week low): nothing beats the live rule in both periods.
 6. Idle money (round 45): the Z swing is invested only ~5% of the time. Core v2 (ML ranking + trend breakouts, in the terminal's
    Core panel) made +11% / +20% a year (2013-19 / 2020-26, Sharpe 0.91 / 1.39, worst drawdown -23% / -19%); with the Z swing on top
    +12.5% / +20.2%. A bigger decision (much more market exposure), so not switched on.
+7. Buy only after TASI turns (round 47, r47/RESULTS.md): take a Z-swing signal only if the TASI proxy (equal-weight liquid stocks) has
+   bounced at least 4% off its 20-day low in the last 20 sessions (after being 10%+ below its 1-year high). Passed the pre-registered
+   rule and its robustness checks. Per trade 2020-26: 86% win, +11.8%, worst-5% -5.6% vs 72%, +7.7%, -11.9%; account ratio
+   0.55 vs 0.25 (2013-19: 0.39 vs 0.23). Caveats: designed after seeing the first test; only 3 of 5 sell-offs with both kinds of
+   trades favour it; failed in the 2005-09 US bear market (4% bounces were bear rallies). On 2026-11-02 it is ON (bounce on 10-26).
+Round 47 also found: none of 14 classic TASI bottom signals (Lowry, Zweig, Desmond, Connors RSI(2), Williams VIX Fix, breadth
+washouts, VIX, oil) beats simply being in the live sell-off window as a market timer.
