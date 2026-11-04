@@ -317,6 +317,32 @@ The user skipped Chapter 5 ("I have all basics"); it can still be opened with th
   - Play from a Carlsbad master position (`stN` counted);
   - 390 px with nothing off-screen.
 
+### Chapter 8 (done): ذخيرتي الافتتاحية, 2026-11-04
+- **Repertoire tree** `data/curriculum/ch08/repertoire.json` (`tools/repertoire/build_rep.mjs`):
+  - built from the masters tree (KingBase, positions with 75+ games) and checked with Stockfish 17.1 at depth 14;
+  - for "my" moves: the first move of a preference list that masters play (5%+) and that Stockfish puts within 35 cp of best; otherwise the most-played master move within 35 cp; otherwise Stockfish's best (80 such fallbacks);
+  - opponent replies with 8%+ of master games are followed (up to 4), up to my 8th move;
+  - the Italian move list applies only after 1.e4 e5; against other defences, classical moves;
+  - 504 positions: White 211; Black 129 against 1.e4, 82 against 1.d4 (QGD), 82 against 1.c4 and 1.Nf3. Each stores its group, the path that reaches it, master share and score, and the alternatives.
+  - Main lines: Italian 3...Bc5 4.c3 Nf6 5.d3 d6 6.O-O; Black 3.Bc4 Bc5 4.c3 Nf6 5.d3 d6; QGD 3.Nc3 Nf6 4.cxd5 exd5, or Bg5 Be7.
+- **Trainer** (`js/repertoire.js`, technique kind `rep`): asks for your repertoire move in random positions from the tree, shallower ones a little more often, with misses coming back after 10 minutes. The feedback shows:
+  - master share and score for your move and for the repertoire move;
+  - the idea, from `bestMoveWhy` and the move's tags;
+  - the usual continuation (the masters' reply, then your next repertoire move) and the other master moves;
+  - whether your move was "good but not your repertoire" or weaker, and your time.
+- **Learn**: six slides (PASS): 4.c3 in the Italian; 4.d3 against the Two Knights; 3...Bc5 as Black; 2...e6 in the QGD; 4...Be7 against Bg5; principles when the opponent leaves the book (2.Qh5 Nc6).
+- **Watch**: Karpov–Gelfand 2009 (QGD; Black takes on c4 after the bishop has moved, frees with c5, wins after Ba6+), plus the Chapter 6 Italian master game.
+- **Positions**: real Lichess openings: play your repertoire, or the principles once out of book.
+- **Play**: each of your moves gets "inside your repertoire" or "you left your repertoire: the repertoire move here is …", and a card appears when the opponent leaves the book. `computeMetrics` adds `repOwn`, `repLeftMe` (you left the book before your 6th move) and `openLoss` (average drop over your first 10 moves).
+- **Rule `repertoire`**: 4 of the last 5 games of 10+ moves in which you did not leave the book before your 6th move and your opening loss was 2 or less.
+- Tests (headless, no page errors):
+  - rule cases;
+  - lesson, both demos;
+  - the trainer for White (right), against 1.e4 (wrong, with feedback) and against 1.d4/others (right);
+  - Play with repertoire notes and metrics;
+  - 390 px with nothing off-screen.
+  - New globals were checked against all scripts for name clashes.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

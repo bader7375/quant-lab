@@ -82,6 +82,11 @@ function ruleProgress(c) {
     const q = Math.min(2, ms.filter((x) => x.kind === "kqk" && x.ok && x.moves <= 10).length), rk = Math.min(2, ms.filter((x) => x.kind === "krk" && x.ok && x.moves <= 20).length);
     return { met: q + rk >= 4, have: q + rk, need: 4, unit: `كش ناجح (وزير ${q}/2، رخ ${rk}/2)` };
   }
+  if (r.kind === "repertoire") { // last 5 games of 10+ moves: you did not leave the repertoire before your 6th move, and opening loss <= 2
+    const judged = games.filter((g) => g.metrics && g.metrics.moves >= 10 && g.metrics.repOwn != null); const last = judged.slice(-r.window);
+    const ok = last.filter((g) => !g.metrics.repLeftMe && g.metrics.openLoss != null && g.metrics.openLoss <= 2).length;
+    return { met: last.length >= r.window && ok >= r.need, have: ok, need: r.need, unit: `مباريات مؤهلة من آخر ${r.window} (لم تخرج عن الذخيرة قبل نقلتك السادسة، وخسارة الافتتاح ≤ 2)` };
+  }
   if (r.kind === "structure_quality") { // 30+ of your moves in recognised structures across the chapter's games, average drop 3 or less
     const ms = games.map((g) => g.metrics || {}).filter((m) => m.stN); const n = ms.reduce((a, m) => a + m.stN, 0);
     const avg = n ? ms.reduce((a, m) => a + m.stN * m.stDrop, 0) / n : null;

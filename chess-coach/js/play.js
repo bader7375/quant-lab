@@ -66,6 +66,7 @@ STAGE_RUNNERS.play = (n) => {
     ${structs ? `<h4>أو ابدأ من موقف أساتذة في بنية محددة</h4><p class="note">موقف حقيقي من مباراة أساتذة، وأنت الطرف الذي عليه الدور. تلعب حتى النهاية ضد الخصم نفسه.</p>
       <div class="row">${Object.entries(STRUCTS).map(([k, v]) => `<button class="btn quiet" data-struct="${k}">${esc(v.name)}</button>`).join("")}</div>` : ""}
     ${games.length ? `<h4>مبارياتك في هذا الفصل</h4><div class="tbl"><table><thead><tr><th>التاريخ</th><th>اللون</th><th>النتيجة</th><th>نقلاتك</th><th>أخطاء وأخطاء فادحة</th>${opening ? "<th>قائمة الافتتاح</th>" : ""}${safety ? "<th>معلّقة / تهديدات فائتة</th>" : ""}<th>تُحسب للفصل</th><th></th></tr></thead><tbody>${games.map((g) => { const m = g.metrics || {}; return `<tr><td class="num">${new Date(g.t).toISOString().slice(0, 10)}</td><td>${g.color === "w" ? "أبيض" : "أسود"}</td><td>${RESULT_AR[g.result] || "–"}</td><td class="num">${m.moves ?? "–"}</td><td class="num">${(m.mistakes ?? 0) + (m.blunders ?? 0)}</td>${opening ? `<td class="num">${m.openingScore == null ? "–" : m.openingScore + "/5"}</td>` : ""}${safety ? `<td class="num">${m.hanging ?? "–"} / ${m.missedThreats ?? "–"}</td>` : ""}<td>${countsForChapter(g) ? "نعم" : "لا"}</td><td><button class="btn quiet" data-rev="${g.id}">راجع</button></td></tr>`; }).join("")}</tbody></table></div>` : ""}</div>`;
+  if ((c.rule || {}).kind === "repertoire") loadRep().catch(() => {}); // the repertoire is needed for notes and metrics
   $("#p-start", box).onclick = () => {
     for (const g of open) abandonGame(g, "بدأت مباراة جديدة قبل أن تنتهي هذه.");
     let col = ($('input[name="p-color"]:checked', box) || {}).value || "w"; if (col === "r") col = Math.random() < 0.5 ? "w" : "b";
@@ -87,7 +88,7 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
   const c = chapter(n); const set = J.state.settings; const opening = (c.rule || {}).kind === "opening_checklist";
   // chapter 2 (safety): the opponent's threats are not announced (finding them is the skill); a hint reveals them, and
   // an optional check step asks the safety questions before each move is played
-  const planCh = (c.rule || {}).kind === "middlegame_quality";
+  const planCh = (c.rule || {}).kind === "middlegame_quality"; const repCh = (c.rule || {}).kind === "repertoire";
   const safety = (c.rule || {}).kind === "safety"; const blunderCheck = () => safety && set.blunderCheck !== false;
   const G = resume || { id: "g" + uid(), chapter: n, t: now(), color, opp: { kind: OPP.kind, rating, fallbacks: 0 }, start: start || START_FEN, startNote, sans: [], ucis: [], recs: [], takebacks: 0, hints: 0, threats: 0, finished: false };
   if (!J.games.includes(G)) J.games.push(G);
@@ -260,6 +261,10 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
     if (!notes.length && cl.drop > 5 && rec.refut.length) notes.push(`بعد نقلتك، أقوى رد للخصم: [${numberedLine(fenNow, rec.refut.slice(0, 4))}].`);
     notes.push(...moveFacts(fenBefore, m.san, "me"));
     if (opening && rec.own <= 12) notes.push(...openingNotes(fenBefore, m.san, "me", { warningsOnly: cl.drop > 5, justified: cl.drop <= 2 }));
+    if (repCh && REP) { // chapter 8: inside or outside your repertoire
+      const r = repAt(fenBefore);
+      if (r) notes.unshift(m.san.replace(/[+#]/g, "") === r.m.replace(/[+#]/g, "") ? `ضمن ذخيرتك: [${r.m}].` : `خرجت عن ذخيرتك: نقلة ذخيرتك هنا [${r.m}].`);
+    }
     if (planCh && rec.own >= 11 && rec.own <= 30 && base.best && cl.drop >= 2) { // chapter 6: name the plan behind Stockfish's move
       const bt = Tech.tagsOf(fenBefore, base.best).filter((t) => PLAN_AR[t]); const mine = Tech.tagsOf(fenBefore, m.uci);
       if (bt.length && !bt.some((t) => mine.includes(t))) notes.push(`خطة Stockfish هنا: ${PLAN_AR[bt[0]]} [${rec.best}].`);
@@ -339,6 +344,10 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
   async function commentOpp(cd, rec) {
     const fenNow = rec.fen; const ul = $(".facts", cd); threatReady = false; G.threatShown = false; const add = (t) => ul.insertAdjacentHTML("beforeend", `<li>${fmtNote(t)}</li>`);
     for (const t of moveFacts(rec.fenBefore, rec.san, "opp")) add(t);
+    if (repCh && REP && rec.ply >= 1 && rec.ply <= 30) { // the opponent's move left your repertoire
+      const before = new Chess(G.start); for (const s of G.sans.slice(0, rec.ply - 1)) before.move(s, { sloppy: true });
+      if (repAt(before.fen()) && !repAt(rec.fen)) add("الخصم خرج عن ذخيرتك. الآن المبادئ: المركز، التطوير، التبييت، وانظر ماذا لعب الأساتذة هنا (تحت كل نقلة).");
+    }
     mastersSummary(rec.fenBefore, rec.san).then((ms) => { if (ms) ul.insertAdjacentHTML("beforeend", `<li class="mastersli">${mastersText(ms, rec.san, "opp")}</li>`); });
     if (game.in_check()) add("عالج الكش أولًا: حرّك الملك، أو ضع قطعة في طريق الكش، أو أسر القطعة التي تعطيه.");
     if (opening && ownMoves < 12) for (const t of openingNotes(rec.fenBefore, rec.san, "opp")) add(t);
@@ -611,6 +620,8 @@ function computeMetrics(G) {
     openingScore: ck ? ck.score : null, openingItems: ck ? ck.items : null,
     openingBlunder: all.some((r) => r.own <= 10 && r.cls === "blunder"),
     hanging: all.filter((r) => r.hung).length, missedThreats: all.filter((r) => r.missed).length, rechecks: G.rechecks || 0,
+    ...(() => { const w = typeof repWalk === "function" ? repWalk(G) : null; const first = fin.filter((r) => r.own <= 10); // chapter 8
+      return w ? { repOwn: w.own, repLeftMe: !!(w.left && w.own < 6), openLoss: first.length ? +(first.reduce((s, r) => s + r.drop, 0) / first.length).toFixed(1) : null } : {}; })(),
     ...(() => { const st = fin.filter((r) => Tech.structure(r.fenBefore)); return { stN: st.length, stDrop: st.length ? +(st.reduce((s, r) => s + r.drop, 0) / st.length).toFixed(1) : null }; })(), // moves in known structures (chapter 7)
     ...(() => { const mg = fin.filter((r) => r.own >= 11 && r.own <= 30); return { mgN: mg.length, mgDrop: mg.length ? +(mg.reduce((s, r) => s + r.drop, 0) / mg.length).toFixed(1) : null }; })(), // moves 11-30 (chapter 6)
     gifts: fin.filter((r) => r.gift >= 10).length, punished: fin.filter((r) => r.gift >= 10 && r.drop <= 5).length,

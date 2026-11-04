@@ -144,7 +144,7 @@ async function techniquesPanel(el, n) {
       return `<div class="tech ${m.mastered ? "done" : ""}"><div class="fh"><b>${esc(t.title)}</b><span class="state ${m.mastered ? "on" : "part"}">${m.mastered ? "متقنة" : m.of ? `${m.ok}/${m.of}` : "جديدة"}</span></div>
         <p>${esc(t.rule)}</p><div class="progress"><i style="width:${m.of ? Math.round(100 * m.ok / 10) : 0}%"></i></div>
         <button class="btn" data-tech="${t.id}">تدرّب</button></div>`; }).join("")}</div></div>`;
-  for (const b of $$("[data-tech]", el)) b.onclick = () => TechniqueSession($("#v-chapter"), n, list.find((t) => t.id === b.dataset.tech));
+  for (const b of $$("[data-tech]", el)) b.onclick = () => { const T = list.find((t) => t.id === b.dataset.tech); (T.kind === "rep" ? RepSession : TechniqueSession)($("#v-chapter"), n, T); };
 }
 
 /* ---------- advice to get better (method, speed, what you personally missed) ---------- */
