@@ -67,6 +67,7 @@ function reviewSummary(G, c, m) {
   if (onlyFound) well.push(`وجدت النقلة الجيدة الوحيدة ${timesAr(onlyFound)}.`);
   if (m.gifts) (m.punished * 2 >= m.gifts ? well : work).push(`أخطأ الخصم خطأ واضحًا ${timesAr(m.gifts)}، واستغليت ${m.punished}.`);
   if (m.hanging) work.push(`تركت قطعة بلا حماية كافية ${timesAr(m.hanging)}.`);
+  if (m.lensMoves) work.push(`لعبت ${arCount(m.lensMoves, "نقلة واحدة", "نقلتين", "نقلات", "نقلة")} وعدسة الرؤية مفتوحة. الهدف أن ترى بلا عدسة: جرّب المباراة القادمة بدونها، ودرّب عينك في «تدريب العين».`);
   if (m.missedThreats) work.push(`فاتك تهديد للخصم ${timesAr(m.missedThreats)}.`);
   const back = own.filter((r) => r.takenBack && r.drop > 10).length;
   if (m.blunders + m.mistakes) work.push(`أخطاء فادحة: ${m.blunders}، أخطاء: ${m.mistakes}${back ? ` (منها ${back} تراجعت عنها، وتبقى محسوبة)` : ""}.`);

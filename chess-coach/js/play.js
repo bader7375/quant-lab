@@ -107,8 +107,9 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
         <div class="boardcap"><span class="turn" id="p-turn"></span><span class="note" id="p-status"></span></div>
         <div class="openname note" id="p-open"></div>
         <div class="board" id="p-board"></div>
-        <div class="wctrl"><button class="ctl" id="p-hint">تلميح: أفضل نقلة</button><button class="ctl" id="p-xp" aria-pressed="false">اشرح نقلات قطعة</button><button class="ctl" id="p-end">أنهِ وراجع</button><button class="ctl" id="p-resign">استسلم</button></div>
+        <div class="wctrl"><button class="ctl" id="p-hint">تلميح: أفضل نقلة</button><button class="ctl" id="p-xp" aria-pressed="false">اشرح نقلات قطعة</button><button class="ctl" id="p-lens" aria-pressed="false">عدسة الرؤية</button><button class="ctl" id="p-end">أنهِ وراجع</button><button class="ctl" id="p-resign">استسلم</button></div>
         <div id="p-line"></div><div id="p-x" class="panel" hidden></div><div id="p-decide"></div><div id="p-offer"></div>
+        <div id="p-lensbox"></div>
         <div class="livecheck" id="p-plan"></div>
         <div id="p-odds"></div>
         ${opening ? `<div class="livecheck" id="p-check"></div>` : ""}${safety ? `<div class="livecheck" id="p-safe"></div>` : ""}
@@ -126,6 +127,10 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
   $("#p-resign", root).onclick = () => { if (!G.finished && G.sans.length) endGame("loss", "استسلمت."); };
   $("#p-end", root).onclick = () => { if (!G.finished) endGame("abandoned", "أنهيت المباراة قبل نهايتها."); };
   $("#p-hint", root).onclick = showHint;
+  // vision lens: colours what you protect, what you attack and what threatens you (threats stay hidden in the safety chapter)
+  const lensOn = () => !!G.lens;
+  const applyLens = () => { const on = lensOn() && game.turn() === me && !G.finished; board.update({ marks: on ? lensMarks(game.fen(), me, { threats: !safety }) : {} }); $("#p-lensbox", root).innerHTML = lensOn() ? LENS_LEGEND(!safety) + (safety ? `<p class="note">في فصل الأمان لا تُظهر العدسة تهديدات الخصم: هذا ما تتدرب عليه.</p>` : "") : ""; };
+  $("#p-lens", root).onclick = (e) => { G.lens = !G.lens; e.target.setAttribute("aria-pressed", G.lens); e.target.classList.toggle("on", G.lens); save(); applyLens(); };
   // move explorer: while on, picking up a piece lists every move it can make, scored and explained (counts as a hint)
   let explore = false;
   $("#p-xp", root).onclick = (e) => {
@@ -179,7 +184,7 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
     pre = Engine.analyse(fen, { depth: 16, movetime: 1500, multipv: 3, low: true });
     pre.then((r) => { if (game.fen() === fen) preRes = r; }, () => {});
     board.update({ fen, last: lastUci, interactive: true, onMove: onUserMove, arrows: threat && (!safety || G.threatShown) ? [threatArrow(threat)] : [] });
-    setStatus("دورك. خذ وقتك."); refreshUi();
+    setStatus("دورك. خذ وقتك."); refreshUi(); applyLens();
     $("#p-plan", root).innerHTML = planHtml(fen, G.sans.length, { noThreats: safety });
   }
   const threatArrow = (t) => ({ from: t.pv[0].slice(0, 2), to: t.pv[0].slice(2, 4), color: "bad" });
@@ -201,7 +206,7 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
   }
   async function playMove(m) {
     if (busy || G.finished || game.turn() !== me) return;
-    busy = true; decide.innerHTML = ""; offerEl.innerHTML = ""; lineEl.innerHTML = "";
+    busy = true; if (G.lens) G.lensMoves = (G.lensMoves || 0) + 1; decide.innerHTML = ""; offerEl.innerHTML = ""; lineEl.innerHTML = "";
     const fenBefore = game.fen(), ply = G.sans.length, basePromise = pre, threatBefore = threat; threat = null;
     const humanP = Human.predict(G.start, G.ucis.slice(), oppRating).catch(() => null);
     board.update({ interactive: false, fen: m.fenAfter, last: m.uci, arrows: [] });
@@ -628,7 +633,7 @@ function computeMetrics(G) {
     avgDrop: fin.length ? +(fin.reduce((s, r) => s + r.drop, 0) / fin.length).toFixed(1) : null,
     openingScore: ck ? ck.score : null, openingItems: ck ? ck.items : null,
     openingBlunder: all.some((r) => r.own <= 10 && r.cls === "blunder"),
-    hanging: all.filter((r) => r.hung).length, missedThreats: all.filter((r) => r.missed).length, rechecks: G.rechecks || 0,
+    hanging: all.filter((r) => r.hung).length, missedThreats: all.filter((r) => r.missed).length, rechecks: G.rechecks || 0, lensMoves: G.lensMoves || 0,
     ...(() => { const w = typeof repWalk === "function" ? repWalk(G) : null; const first = fin.filter((r) => r.own <= 10); // chapter 8
       return w ? { repOwn: w.own, repLeftMe: !!(w.left && w.own < 6), openLoss: first.length ? +(first.reduce((s, r) => s + r.drop, 0) / first.length).toFixed(1) : null } : {}; })(),
     ...(() => { const st = fin.filter((r) => Tech.structure(r.fenBefore)); return { stN: st.length, stDrop: st.length ? +(st.reduce((s, r) => s + r.drop, 0) / st.length).toFixed(1) : null }; })(), // moves in known structures (chapter 7)

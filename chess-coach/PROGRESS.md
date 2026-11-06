@@ -359,6 +359,29 @@ The user skipped Chapter 5 ("I have all basics"); it can still be opened with th
   - the technique drill and the explained lists open the panel;
   - at 390 px nothing is off-screen; this caught SVG labels whose font came from the page, now fixed with an explicit size.
 
+### تدريب العين: board vision (2026-11-06, by request)
+- **The gym** (`js/vision.js`, a panel on the journey page): seven strategies (a fixed scan order, lines not squares, knights first, loose pieces drop off, what changed, easy to hard, the lens as training wheels) and nine tap-only drills on real-game positions:
+  - **مدى القطعة**: every square one framed piece reaches;
+  - **ماذا أحمي؟**: your defended pieces;
+  - **ماذا أهاجم؟**: enemy pieces you attack;
+  - **ماذا يهاجمني؟**: your pieces under attack;
+  - **القطع غير المحمية**: your loose pieces;
+  - **من يحمي هذه القطعة؟**: the defenders of one framed piece;
+  - **عُدّ**: number chips for attackers and defenders, with whether the piece is in danger;
+  - **ماذا تغيّر؟**: a master's real move (from the Chapter 6 pool); tap what it newly attacks, discovered attacks included;
+  - **ومضة**: look 8/6/4 seconds, the pieces vanish, tap from memory (unlocks at level 2).
+  - Attacks are lines of sight (`Facts.attackers`); pins are ignored.
+- **Levels**:
+  - level 1 uses positions with at most 16 pieces, level 2 at most 24, level 3 any, and pawns count at level 3;
+  - you move up at 9 of the last 10 correct with an average time of 25 seconds or less (20 at level 2), and drop a level at 1 or fewer of the last 5.
+- **Each question** has a live clock, the method and shortcut, and marks: hit green, missed yellow, extra red. Advice per square names the piece and how it reaches (knight's jump, pawn diagonally forward, on the file, rank or diagonal), discovered attacks included. You also get your time against your average.
+- **Daily set**: 10 questions weighted toward your weakest drills; sessions are logged with right answers and average time.
+- **Vision lens in Play** ("عدسة الرؤية"):
+  - your pieces: under threat and winnable (red), attacked but defended (orange), loose (yellow dot), defended (green dot);
+  - enemy pieces: you attack them (blue), you can win them (green).
+  - In the safety chapter the threat layers are off. Moves played with the lens on are counted and mentioned in the review.
+- Tests (headless, no page errors): every drill answered right and wrong (with advice); level-up 1→2 unlocks the flash drill; a daily 10 (6/10 logged); the lens in Play (after 1.e4 d5, e4 is shown threatened and d5 attacked); 390 px with nothing off-screen.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

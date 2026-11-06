@@ -134,9 +134,11 @@ function renderJourney() {
       <div class="where-stat"><span class="mono">${done}/${CUR.chapters.length}</span><span class="note">فصول مكتملة</span></div>
     </div>
     ${typeof warmPanelHtml === "function" ? warmPanelHtml() : ""}
+    ${typeof visionPanelHtml === "function" ? visionPanelHtml() : ""}
     <div class="map" id="map"></div>`;
   for (const b of $$("[data-open]", el)) b.onclick = () => go("chapter", +b.dataset.open);
   const wg = $("#warm-go", el); if (wg) wg.onclick = startWarmup;
+  const vg = $("#vg-go", el); if (vg) vg.onclick = () => VisionGym(el);
   layoutMap($("#map", el), cur);
 }
 function layoutMap(box, cur) {
