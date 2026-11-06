@@ -95,6 +95,12 @@ def _ztm(Zdf, L=250):   # round 60: stretch-Z level touches in the last L sessio
     Z = Zdf.iloc[-(L + 1):]; Zp = Z.shift(1).iloc[1:]; Z = Z.iloc[1:]; ok = Z.notna().sum() >= .8 * L
     U = {k: ((Z >= k) & (Zp < k)).sum() for k in (1, 2, 3)}; Dn = {k: ((Z <= -k) & (Zp > -k)).sum() for k in (1, 2, 3)}
     return U, Dn, ok
+try:   # round 61 tool: Z bands - the close at the next session (daily) or at the next weekly close that puts the stretch Z on a line
+    from zbands import band_next
+    _Cd = _P["C"]; BD = band_next(_Cd, -2.62).iloc[-1]; B0 = band_next(_Cd, 0.0).iloc[-1]
+    _Cwb = _Cw if wk_done else _Cw.iloc[:-1]; BW = band_next(_Cwb, WLINE, clip=.6).iloc[-1]; ZWprev = ZWK.loc[_Cwb.index[-1]]
+except Exception as ex:
+    print("z bands failed:", ex); BD = B0 = BW = ZWprev = None
 try:
     TU, TD, TOK = _ztm(F["zc"])
 except Exception as ex:
@@ -116,6 +122,10 @@ try:
         if TU is not None and bool(TOK.get(s_, False)):
             tu = [int(TU[k].get(s_, 0)) for k in (1, 2, 3)]; td = [int(TD[k].get(s_, 0)) for k in (1, 2, 3)]
             zscan[-1].update(tm=tu[0] + 2 * tu[1] + 3 * tu[2] - td[0] - 2 * td[1] - 3 * td[2], tu=tu, td=td)
+        if BD is not None:
+            cl_ = float(c1.get(s_, np.nan)); f_ = lambda x: round(float(x), 3) if np.isfinite(x) else None
+            zscan[-1].update(bd=f_(BD.get(s_, np.nan)) if z_ > -2.62 else None, b0=f_(B0.get(s_, np.nan)),
+                             bw=f_(BW.get(s_, np.nan)) if float(ZWprev.get(s_, np.nan)) > WLINE else None, bw_week=str(pd.Timestamp(_Cwb.index[-1]).date()), wk_next=bool(wk_done))
         if len(zscan) >= max(25, len(fresh) + 10): break
 except Exception as ex:
     print("zscan failed:", ex)
