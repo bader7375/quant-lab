@@ -46,7 +46,14 @@ firstTouch(float z, float lvl) => z <= lvl and not (z[1] <= lvl)
 
 momentum(float src) =>
     float r = clip(math.log(src / src[1]), 0.25)
-    math.sum(r, 60) / (ta.stdev(r, 60, false)[60] * math.sqrt(60))
+    float sd = ta.stdev(r, 60, false)
+    math.sum(r, 60) / (sd[60] * math.sqrt(60))
+
+// value and first-touch flag of the last completed bar (called inside request.security)
+zState(float c, float lvl) =>
+    float z  = stretchZ(close, c)
+    bool  tt = firstTouch(z, lvl)
+    [z[1], tt[1]]
 
 // ---------------------------------------------------------------- daily and weekly stretch Z
 bool chartDaily  = timeframe.isdaily and timeframe.multiplier == 1
@@ -64,8 +71,8 @@ bool  tDc = firstTouch(zDc, lineD)
 float zWc = stretchZ(close, clipW)
 bool  tWc = firstTouch(zWc, lineW)
 // from other timeframes: the last completed bar only (no repainting)
-[zDs, tDs] = request.security(syminfo.tickerid, "D", [stretchZ(close, clipD)[1], firstTouch(stretchZ(close, clipD), lineD)[1]], lookahead = barmerge.lookahead_on)
-[zWs, tWs] = request.security(syminfo.tickerid, "W", [stretchZ(close, clipW)[1], firstTouch(stretchZ(close, clipW), lineW)[1]], lookahead = barmerge.lookahead_on)
+[zDs, tDs] = request.security(syminfo.tickerid, "D", zState(clipD, lineD), lookahead = barmerge.lookahead_on)
+[zWs, tWs] = request.security(syminfo.tickerid, "W", zState(clipW, lineW), lookahead = barmerge.lookahead_on)
 
 float zD = chartDaily ? zDc : chartIntra ? zDs : na
 float zW = chartWeekly ? zWc : (chartDaily or chartIntra) ? zWs : na
@@ -106,8 +113,10 @@ bgcolor(showM and win ? color.new(color.red, 88) : na, title = "Sell-off window"
 plot(showD ? zD : na, "Daily stretch Z", color = color.blue, linewidth = 2)
 plot(showW ? zW : na, "Weekly stretch Z", color = color.orange, linewidth = 2, style = plot.style_stepline)
 plot(showV ? zV : na, "VWAP stretch", color = color.new(color.purple, 20), linewidth = 1)
-plotshape(showD and buyD ? zD : na, "Daily first touch (buy at this open)", shape.triangleup, location.absolute, win ? color.green : color.gray, size = size.small, text = "D")
-plotshape(showW and buyW ? zW : na, "Weekly first touch (buy at this open)", shape.triangleup, location.absolute, win ? color.green : color.gray, size = size.small, text = "W")
+bool markD = showD and buyD
+bool markW = showW and buyW
+plotshape(markD, "Daily first touch (buy at this open)", shape.triangleup, location.bottom, win ? color.green : color.gray, size = size.small, text = "D")
+plotshape(markW, "Weekly first touch (buy at this open)", shape.triangleup, location.bottom, win ? color.green : color.gray, size = size.small, text = "W")
 
 // ---------------------------------------------------------------- status table
 var table t = table.new(position.top_right, 2, 5, bgcolor = color.new(color.black, 85), border_width = 1)

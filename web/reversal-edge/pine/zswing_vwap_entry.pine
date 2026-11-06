@@ -25,7 +25,7 @@ startM = input.int(30, "... and minute", minval = 0, maxval = 59, group = grpE)
 showVW = input.bool(true, "Show session VWAP", group = grpE)
 testMode = input.bool(false, "Test mode: treat every day as a setup day", group = grpE, tooltip = "To see how the VWAP-reclaim entry would have bought on any day.")
 useDate  = input.bool(false, "Use the scanner's setup date", group = grpE, tooltip = "TradingView has no bars on market holidays, so its stretch Z can differ slightly from the scanner's and about 1 first-touch day in 6 differs. Tick this and enter the session the daily list says to buy (the day after the signal) to force that day to be a setup day.")
-setDate  = input.time(timestamp(2026, 11, 8, 0, 0), "Scanner setup date (the buy session)", group = grpE)
+setDate  = input.time(timestamp("08 Nov 2026 00:00 +0300"), "Scanner setup date (the buy session)", group = grpE)
 
 // ---------------------------------------------------------------- functions (same formulas as the daily scanner)
 clip(float x, float c) => math.max(math.min(x, c), -c)
@@ -42,12 +42,23 @@ firstTouch(float z, float lvl) => z <= lvl and not (z[1] <= lvl)
 
 momentum(float src) =>
     float r = clip(math.log(src / src[1]), 0.25)
-    math.sum(r, 60) / (ta.stdev(r, 60, false)[60] * math.sqrt(60))
+    float sd = ta.stdev(r, 60, false)
+    math.sum(r, 60) / (sd[60] * math.sqrt(60))
+
+// value and first-touch flag of the last completed bar (called inside request.security)
+zState(float c, float lvl) =>
+    float z  = stretchZ(close, c)
+    bool  tt = firstTouch(z, lvl)
+    [z[1], tt[1]]
+
+mPrev() =>
+    float m = momentum(close)
+    m[1]
 
 // ---------------------------------------------------------------- yesterday's daily and last week's weekly state (completed bars only)
-[zD, tD] = request.security(syminfo.tickerid, "D", [stretchZ(close, clipD)[1], firstTouch(stretchZ(close, clipD), lineD)[1]], lookahead = barmerge.lookahead_on)
-[zW, tW] = request.security(syminfo.tickerid, "W", [stretchZ(close, clipW)[1], firstTouch(stretchZ(close, clipW), lineW)[1]], lookahead = barmerge.lookahead_on)
-float mm  = request.security(mktSym, "D", momentum(close)[1], lookahead = barmerge.lookahead_on, ignore_invalid_symbol = true)
+[zD, tD] = request.security(syminfo.tickerid, "D", zState(clipD, lineD), lookahead = barmerge.lookahead_on)
+[zW, tW] = request.security(syminfo.tickerid, "W", zState(clipW, lineW), lookahead = barmerge.lookahead_on)
+float mm  = request.security(mktSym, "D", mPrev(), lookahead = barmerge.lookahead_on, ignore_invalid_symbol = true)
 bool  win = not na(mm) and mm <= lineM
 
 // ---------------------------------------------------------------- intraday state
@@ -103,8 +114,8 @@ bgcolor(setup ? color.new(color.green, 92) : na, title = "Setup day")
 plotshape(trig, "Close above VWAP (buy at the next open)", shape.circle, location.belowbar, color.new(color.green, 0), size = size.tiny)
 if buyNow
     float d = (entry / dayOpen - 1) * 100
-    label.new(bar_index, entry, "BUY " + how + "\n" + str.tostring(entry, format.mintick) + " (" + (d >= 0 ? "+" : "") + str.tostring(d, "#.##") + "% vs open)",
-              style = label.style_label_up, color = color.new(color.green, 0), textcolor = color.white, size = size.small, yloc = yloc.belowbar)
+    string txt = "BUY " + how + "\n" + str.tostring(entry, format.mintick) + " (" + (d >= 0 ? "+" : "") + str.tostring(d, "#.##") + "% vs open)"
+    label.new(bar_index, entry, txt, yloc = yloc.belowbar, style = label.style_label_up, color = color.green, textcolor = color.white, size = size.small)
 
 // ---------------------------------------------------------------- status table
 var table t = table.new(position.top_right, 2, 6, bgcolor = color.new(color.black, 85), border_width = 1)
