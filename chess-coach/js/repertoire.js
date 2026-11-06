@@ -87,8 +87,9 @@ function RepSession(root, n, T) {
       <p class="note">ما يأتي بعدها غالبًا: <bdi class="mv">${esc(numberedLine(fen, cont))}</bdi></p>
       ${r.alt && r.alt.length ? `<p class="note">نقلات أساتذة أخرى هنا: ${r.alt.map(([s, sh]) => `${esc(s)} ${Math.round(100 * sh)}%`).join("، ")}.</p>` : ""}
       ${adviceHtml(tips, took, avg, ok, T)}
-      <div class="row"><button class="btn" data-a="next">الموقف التالي</button></div>`;
+      <div class="row"><button class="btn" data-a="next">الموقف التالي</button><button class="btn quiet" data-a="think">ماذا يفكر المحرك بعدها؟ (أسهم 1-5)</button></div>`;
     $('[data-a="next"]', root).onclick = () => next();
+    $('[data-a="think"]', root).onclick = () => ThinkPanel($("#t-x", root), board, fen, repUci, { title: `ماذا يحدث بعد ${r.m}؟`, verdict: "لماذا هي نقلة الذخيرة" });
     board.update({ fen, last: null, arrows: [{ from: repUci.slice(0, 2), to: repUci.slice(2, 4), color: "good" }, ...(ok ? [] : [{ from: m.uci.slice(0, 2), to: m.uci.slice(2, 4), color: "bad" }])] });
     setStatus(ok ? "أحسنت." : "راجع الفكرة، ثم الموقف التالي.");
   }

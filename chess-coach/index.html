@@ -301,6 +301,9 @@ h4 { margin: 0; font-size: .95rem; font-weight: 600; }
 .xmoves { padding-inline-start: 18px; display: grid; gap: 8px; } .xmoves li { border-bottom: 1px solid var(--line); padding-bottom: 6px; } .xmoves .fh { flex-wrap: wrap; }
 .tlesson p { margin: 4px 0; } .method ol { margin: 4px 0; padding-inline-start: 20px; } .method summary { cursor: pointer; } .fastway { margin: 4px 0; }
 .advice { border: 1px solid var(--line); border-inline-start: 4px solid var(--accent); border-radius: 8px; padding: 6px 10px; margin: 8px 0; background: var(--surface); } .warnline { color: var(--mistake); }
+.think { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; background: var(--surface); display: grid; gap: 6px; margin: 6px 0; }
+.tsteps { padding: 0; list-style: none; display: grid; gap: 6px; } .tsteps li { border-radius: 8px; padding: 4px 6px; cursor: pointer; } .tsteps li.on { background: var(--sunk); }
+.tnum { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; color: #fff; font-weight: 700; font-size: .8rem; } .tnum.me { background: var(--arrow-good); } .tnum.op { background: var(--arrow-bad); }
 .dpools { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
 .livecheck .bcheck { display: flex; gap: 6px; align-items: center; } .livecheck .bcheck input { width: 18px; height: 18px; flex: none; }
 .checklist.live li.warn { color: var(--mistake); } .checklist.live li.warn::marker { content: "!  "; }
@@ -365,5 +368,6 @@ svg text.mkt.back { fill: var(--ink); }
 <script src="js/warmup.js"></script>
 <script src="js/drill.js"></script>
 <script src="js/coach.js"></script>
+<script src="js/think.js"></script>
 <script src="js/repertoire.js"></script>
 <script src="js/app.js"></script>

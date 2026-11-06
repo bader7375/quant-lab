@@ -168,7 +168,9 @@ function DrillSession(root, n, P) {
     cd.innerHTML = `<div class="fh"><bdi class="mv">${esc(moveLabel(fen, rec.san))}</bdi><span class="cls ${rec.cls}">${CLASS_AR[rec.cls]}</span>${rec.uci === rec.bestUci ? `<span class="tag best">نقلة المحرك الأولى</span>` : ""}</div>
       <p>${verdict}</p>${candHtml}
       ${rec.uci !== rec.bestUci ? `<p>الأفضل: <bdi class="mv">${esc(rec.best)}</bdi>. ${rec.candBest ? "كانت بين مرشحاتك: الاختيار هو ما يحتاج تدريبًا." : rec.nc ? "لم تكن بين مرشحاتك: ابحث عن نقلات من هذا النوع في المرة القادمة." : ""}</p>${why.length ? `<ul class="facts">${why.map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul>` : ""}` : ""}
-      <p class="note">أفضل نقلات Stockfish: ${b.lines.map(line).join(" · ")}</p>`;
+      <p class="note">أفضل نقلات Stockfish: ${b.lines.map(line).join(" · ")}</p>
+      <div class="row"><button class="chip-q" data-dthink>ماذا يفكر المحرك بعد ${esc(rec.best)}؟ (أسهم 1-5)</button></div><div class="dthink"></div>`;
+    $("[data-dthink]", cd).onclick = () => busy ? setStatus("انتظر رد الخصم، ثم افتح ما يفكر فيه المحرك.") : ThinkPanel($(".dthink", cd), board, fen, rec.bestUci, { title: `ماذا يفكر المحرك بعد ${rec.best}؟`, verdict: "لماذا هي الأفضل" });
   }
   function finished(rec, noReply = false) {
     if (game.in_checkmate()) return "mate";

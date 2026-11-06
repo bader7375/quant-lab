@@ -343,6 +343,22 @@ The user skipped Chapter 5 ("I have all basics"); it can still be opened with th
   - 390 px with nothing off-screen.
   - New globals were checked against all scripts for name clashes.
 
+### "What the engine thinks", numbered arrows 1-5 (2026-11-06, by request)
+- `js/think.js` `ThinkPanel(el, board, fen, uci)`: Stockfish's line after a move (the move plus 4 best replies, depth 15):
+  - numbered arrows 1–5 on the board, green for your moves and red for the opponent's (Board arrows take `n`, drawn as a numbered disc mid-shaft);
+  - a numbered list saying what each move does: `bestMoveWhy` and technique tags for your moves; captures, checks, rescues and ideas for the opponent's;
+  - a verdict: where the line ends (material won or given, mate) and your chances now and at the end.
+  - "التالية / السابقة" plays the line on the board step by step (each step shows the next numbered arrow); "كل الأسهم" shows all five; "عودة إلى موقفي" restores the board exactly as it was (position, arrows, whether it takes moves).
+- Where it appears:
+  - Play: the hint ("ماذا يفكر المحرك بعدها؟"), and the move card's "الأفضل كان …" and "ماذا يحدث بعد نقلتي؟", which now use the panel. It opens only on your turn, so the opponent's move cannot redraw the board under it.
+  - Positions: every rated move, for Stockfish's best, not while the opponent is replying.
+  - Technique drills: after an answer, and on every move of the "all moves" and piece-explorer lists.
+  - Repertoire trainer: after the repertoire move.
+- Tests (headless, no page errors):
+  - in Play the hint opens the panel with arrows 1–5; stepping, then back, restores the game position and the game continues;
+  - the technique drill and the explained lists open the panel;
+  - at 390 px nothing is off-screen; this caught SVG labels whose font came from the page, now fixed with an explicit size.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

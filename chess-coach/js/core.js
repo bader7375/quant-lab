@@ -215,7 +215,9 @@ function Board(el, init) {
     return `<svg class="arrows" viewBox="0 0 8 8" aria-hidden="true">${st.arrows.map((a) => {
       const [x1, y1] = center(a.from), [x2, y2] = center(a.to); const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
       const hx = x2 - ux * 0.32, hy = y2 - uy * 0.32, sx = x1 + ux * 0.22, sy = y1 + uy * 0.22; const w = 0.2, px = -uy, py = ux; const c = ARROW_COLORS[a.color || "good"] || a.color;
-      return `<g style="color:${c}"><line x1="${sx}" y1="${sy}" x2="${hx}" y2="${hy}" stroke="currentColor" stroke-width="0.16" stroke-linecap="round" opacity=".85"></line><polygon points="${x2},${y2} ${hx + px * w},${hy + py * w} ${hx - px * w},${hy - py * w}" fill="currentColor" opacity=".9"></polygon></g>`;
+      // a numbered arrow (the engine's line, step by step) carries its number at the middle of the shaft
+      const lbl = a.n ? (() => { const mx = (sx + hx) / 2 + px * 0.12 * ((a.n % 2) ? 1 : -1), my = (sy + hy) / 2 + py * 0.12 * ((a.n % 2) ? 1 : -1); return `<circle cx="${mx}" cy="${my}" r="0.24" fill="currentColor" stroke="#fff" stroke-width="0.03"></circle><text x="${mx}" y="${my}" style="font: 700 0.3px sans-serif; letter-spacing: 0" fill="#fff" text-anchor="middle" dominant-baseline="central">${a.n}</text>`; })() : "";
+      return `<g style="color:${c}"><line x1="${sx}" y1="${sy}" x2="${hx}" y2="${hy}" stroke="currentColor" stroke-width="0.16" stroke-linecap="round" opacity=".85"></line><polygon points="${x2},${y2} ${hx + px * w},${hy + py * w} ${hx - px * w},${hy - py * w}" fill="currentColor" opacity=".9"></polygon>${lbl}</g>`;
     }).join("")}</svg>`;
   }
   function draw() {

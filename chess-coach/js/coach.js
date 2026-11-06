@@ -91,10 +91,20 @@ function explainMove(fen, uci, line, esBest, es, mateInfo) {
 }
 function explainedHtml(fen, x, mine) {
   return `<li class="xmove"><div class="fh"><bdi class="mv">${esc(moveLabel(fen, x.san))}</bdi><span class="cls ${x.cls}">${CLASS_AR[x.cls]}</span>${mine ? `<span class="tag">نقلتك</span>` : ""}<span class="note">فرصك <bdi class="mono">${x.es}%</bdi></span></div>
-    ${x.good.length ? `<p class="note">ما تفعله: ${x.good.map(fmtNote).join(" ")}</p>` : ""}${x.risks.length ? `<p class="note warnline">ما تخاطر به: ${x.risks.map(fmtNote).join(" ")}</p>` : ""}<p class="habit">${esc(x.advice)}</p></li>`;
+    ${x.good.length ? `<p class="note">ما تفعله: ${x.good.map(fmtNote).join(" ")}</p>` : ""}${x.risks.length ? `<p class="note warnline">ما تخاطر به: ${x.risks.map(fmtNote).join(" ")}</p>` : ""}<p class="habit">${esc(x.advice)}</p>
+    <button class="chip-q" data-think="${x.uci}" data-cls="${x.cls}">ماذا يفكر المحرك بعدها؟ (أسهم 1-5)</button></li>`;
 }
 /* Stockfish's top moves in a position (multipv), each explained, plus the student's move if it is not among them. */
-async function explainTopMoves(el, fen, ply, { k = 6, mineUci = null } = {}) {
+/* Wire the "what the engine thinks" buttons of an explained list to a ThinkPanel on the board. */
+function wireThink(el, board, fen) {
+  if (!board) { for (const b of $$("[data-think]", el)) b.remove(); return; }
+  for (const b of $$("[data-think]", el)) b.onclick = () => {
+    let box = $(".thinkbox", el); if (!box) { box = document.createElement("div"); box.className = "thinkbox"; el.prepend(box); }
+    const good = ["excellent", "good"].includes(b.dataset.cls);
+    ThinkPanel(box, board, fen, b.dataset.think, { verdict: good ? "لماذا هي ممتازة" : "إلى أين تقود هذه النقلة" }); box.scrollIntoView?.({ block: "nearest" });
+  };
+}
+async function explainTopMoves(el, fen, ply, { k = 6, mineUci = null, board = null } = {}) {
   el.innerHTML = `<p class="note">Stockfish يحلل كل النقلات المهمة...</p>`;
   const me = new Chess(fen).turn(); const pc = Prob.ctx(fen, ply ?? 30);
   const r = await Engine.analyse(fen, { depth: 13, movetime: 2500, multipv: k });
@@ -105,6 +115,7 @@ async function explainTopMoves(el, fen, ply, { k = 6, mineUci = null } = {}) {
   const n = new Chess(fen).moves().length;
   el.innerHTML = `<p class="note">لديك ${arCount(n, "نقلة قانونية واحدة", "نقلتان قانونيتان", "نقلات قانونية", "نقلة قانونية")}. هذه أهمها عند Stockfish، مرتبة من الأفضل:</p>
     <ol class="xmoves">${lines.map((l) => explainedHtml(fen, explainMove(fen, l.pv[0], l.pv, esBest, es(l)), l.pv[0] === mineUci)).join("")}</ol>`;
+  wireThink(el, board, fen);
 }
 /* Every move of one piece, each explained; the target squares are coloured on the board. */
 async function explainPiece(el, board, fen, sq, ply, token) {
@@ -133,6 +144,7 @@ async function explainPiece(el, board, fen, sq, ply, token) {
   for (const x of out) marks[x.uci.slice(2, 4)] = col[x.cls];
   board.update({ marks });
   $(".xmoves", el).outerHTML = `<ol class="xmoves">${out.map((x) => explainedHtml(fen, x)).join("")}</ol><p class="note">على الرقعة: الأخضر جيد، الأصفر مقبول، الأحمر سيئ.</p>`;
+  wireThink(el, board, fen);
 }
 
 /* ---------- the chapter's techniques ---------- */
@@ -241,7 +253,7 @@ function TechniqueSession(root, n, T) {
     board.update({ fen, orient: me, last: null, interactive: true, onMove: (m) => answer(m, t) });
     setStatus("فكّر، ثم العب نقلتك."); t0 = now();
     const help = document.createElement("button"); help.className = "btn quiet"; help.textContent = "اشرح لي النقلات المتاحة (يُحسب مساعدة)";
-    help.onclick = () => { help.remove(); explainTopMoves($("#t-x", root), fen, item.ply, { k: 6 }); ts.help = (ts.help || 0) + 1; }; $("#t-ctl", root).append(help);
+    help.onclick = () => { help.remove(); explainTopMoves($("#t-x", root), fen, item.ply, { k: 6, board }); ts.help = (ts.help || 0) + 1; }; $("#t-ctl", root).append(help);
   }
   async function answer(m, t) {
     if (solved) return; solved = true; board.update({ interactive: false, fen: m.fenAfter, last: m.uci });
@@ -271,9 +283,10 @@ function TechniqueSession(root, n, T) {
       ${!ok && mineL ? `<p class="note warnline">${moveRisks(fen, m.san, pvToSan(fen, mineL.pv, 4).slice(1)).map(fmtNote).join(" ")}</p>` : ""}
       ${adviceHtml(tips, took, avg, ok, T)}
       <p class="note">اضغط أي قطعة لك على الرقعة لترى كل نقلاتها مع شرح كل واحدة.</p>
-      <div class="row"><button class="btn" data-a="next">الموقف التالي</button><button class="btn quiet" data-a="all">اشرح كل النقلات المتاحة</button></div>`;
+      <div class="row"><button class="btn" data-a="next">الموقف التالي</button><button class="btn quiet" data-a="think">ماذا يفكر المحرك؟ (أسهم 1-5)</button><button class="btn quiet" data-a="all">اشرح كل النقلات المتاحة</button></div>`;
     $('[data-a="next"]', root).onclick = () => next();
-    $('[data-a="all"]', root).onclick = (e) => { e.target.remove(); explainTopMoves($("#t-x", root), fen, item.ply, { k: 6, mineUci: m.uci }); };
+    $('[data-a="all"]', root).onclick = (e) => { e.target.remove(); explainTopMoves($("#t-x", root), fen, item.ply, { k: 6, mineUci: m.uci, board }); };
+    $('[data-a="think"]', root).onclick = () => ThinkPanel($("#t-x", root), board, fen, best.pv[0], { title: `ماذا يفكر المحرك بعد ${bestSan}؟` });
     // explorer: the original position, tap a piece to see all its moves explained
     board.update({ fen, last: null, interactive: true, arrows: [{ from: best.pv[0].slice(0, 2), to: best.pv[0].slice(2, 4), color: "good" }, ...(m.uci !== best.pv[0] ? [{ from: m.uci.slice(0, 2), to: m.uci.slice(2, 4), color: ok ? "alt" : "bad" }] : [])],
       onMove: () => board.update({ fen }), onSelect: (sq) => { if (sq) explainPiece($("#t-x", root), board, fen, sq, item.ply, () => alive(t)); } });

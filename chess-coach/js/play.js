@@ -133,7 +133,7 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
     if (explore) { G.hints = (G.hints || 0) + 1; save(); $("#p-x", root).innerHTML = `<p class="note">اضغط أي قطعة لك لترى كل نقلاتها مع شرح كل واحدة.</p>`; }
     else board.update({ marks: {} });
   };
-  board.update({ onSelect: (sq) => { if (explore && sq && game.turn() === me && !busy) explainPiece($("#p-x", root), board, game.fen(), sq, G.sans.length, () => alive() && game.turn() === me); } });
+  board.update({ onSelect: (sq) => { if (explore && sq && game.turn() === me && !busy && !lineEl.innerHTML) explainPiece($("#p-x", root), board, game.fen(), sq, G.sans.length, () => alive() && game.turn() === me); } });
   const setStatus = (t) => { $("#p-status", root).textContent = t; };
   let openShown = null;
   function showOpening() {
@@ -278,8 +278,8 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
       ${rec.notes.length ? `<ul class="facts">${rec.notes.map((x) => `<li>${fmtNote(x)}</li>`).join("")}</ul>` : ""}${better}${humanLineHtml(rec)}${mastersLineHtml(rec)}
       ${rec.habit ? `<p class="habit">${esc(rec.habit)}</p>` : ""}
       ${rec.drop > 5 && rec.refut.length ? `<div class="row"><button class="chip-q" data-line="refut">ماذا يحدث بعد نقلتي؟</button></div>` : ""}<div class="fx"></div>`;
-    const bb = $('[data-line="best"]', cd); if (bb) bb.onclick = () => showLine(rec.fenBefore, rec.bestLine, `الأفضل: ${numberedLine(rec.fenBefore, rec.bestLine.slice(0, 4))}`);
-    const rb = $('[data-line="refut"]', cd); if (rb) rb.onclick = () => showLine(rec.fenBefore, [rec.san, ...rec.refut], `ما لعبته: ${numberedLine(rec.fenBefore, [rec.san, ...rec.refut].slice(0, 5))}`);
+    const bb = $('[data-line="best"]', cd); if (bb) bb.onclick = () => thinkLine(rec.fenBefore, rec.bestUci, `ماذا يفكر المحرك بعد ${rec.best}؟`, "لماذا هي الأفضل");
+    const rb = $('[data-line="refut"]', cd); if (rb) rb.onclick = () => thinkLine(rec.fenBefore, rec.uci, `ماذا يحدث بعد ${rec.san}؟`, "إلى أين تقود نقلتك");
   }
   function offerTakeback(rec, base, threatBefore) {
     decide.innerHTML = `<div class="callout ${rec.drop > 10 ? "bad" : ""}"><b>${CLASS_AR[rec.cls]}: فرصك <bdi class="mono">${rec.esBefore}%</bdi> ← <bdi class="mono">${rec.esAfter}%</bdi>.</b> ${rec.notes[0] ? fmtNote(rec.notes[0]) : ""}
@@ -312,6 +312,13 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
     $('[data-o="no"]', offerEl).onclick = () => { offerEl.innerHTML = ""; };
   }
   function closeLine() { if (!lineEl.innerHTML) return; lineEl.innerHTML = ""; board.update({ fen: game.fen(), last: lastUci, interactive: game.turn() === me && !G.finished && !busy, onMove: onUserMove, arrows: threat && game.turn() === me ? [threatArrow(threat)] : [] }); }
+  /* "What the engine thinks" on the game board, in the line slot; "back to my position" restores the game. */
+  function thinkLine(fen, uci, title, verdict) {
+    if (!uci) return;
+    if (!G.finished && (busy || game.turn() !== me)) { setStatus("انتظر دورك، ثم افتح ما يفكر فيه المحرك."); return; } // the opponent's move would redraw the board under the panel
+    lineEl.innerHTML = `<div class="branchbar"></div>`; const box = $(".branchbar", lineEl);
+    ThinkPanel(box, board, fen, uci, { title, verdict }).then(() => { const back = $('[data-t="back"]', box); if (back) { const f = back.onclick; back.onclick = () => { f(); lineEl.innerHTML = ""; closeLine(); }; } });
+  }
   function showLine(fen, sans, title) {
     const fens = [fen], ucis = []; const g = new Chess(fen); for (const s of sans) { const mm = g.move(s, { sloppy: true }); if (!mm) break; fens.push(g.fen()); ucis.push(mm.from + mm.to); }
     let k = 1;
@@ -398,6 +405,8 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
       ${line.length > 1 ? `<p class="note">ما يتوقعه Stockfish بعدها: <bdi class="mv">${esc(numberedLine(fen, line))}</bdi></p>` : ""}
       ${close.length ? `<p class="note">نقلات قريبة منها في القوة: ${close.map(mv).join("، ")}.</p>` : ""}`;
     board.update({ arrows: [...(threat && (!safety || G.threatShown) ? [threatArrow(threat)] : []), { from: r.best.slice(0, 2), to: r.best.slice(2, 4), color: "good" }] });
+    el.insertAdjacentHTML("beforeend", `<div class="row"><button class="chip-q" data-hthink>ماذا يفكر المحرك بعدها؟ (أسهم 1-5)</button></div>`);
+    $("[data-hthink]", el).onclick = () => thinkLine(fen, r.best, `ماذا يفكر المحرك بعد ${san}؟`, "لماذا هي الأفضل");
   }
   function hintItems(f) {
     const mine = f[me]; const out = [];
