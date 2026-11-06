@@ -91,6 +91,14 @@ except Exception as ex:
     print("weekly zactive failed:", ex)
 # scanner table (v22): the 25 most stretched liquid stocks at this close with what each needs for a Z-swing buy at the next open
 zscan = []
+def _ztm(Zdf, L=250):   # round 60: stretch-Z level touches in the last L sessions (first close at/beyond +-1/2/3); weight = level
+    Z = Zdf.iloc[-(L + 1):]; Zp = Z.shift(1).iloc[1:]; Z = Z.iloc[1:]; ok = Z.notna().sum() >= .8 * L
+    U = {k: ((Z >= k) & (Zp < k)).sum() for k in (1, 2, 3)}; Dn = {k: ((Z <= -k) & (Zp > -k)).sum() for k in (1, 2, 3)}
+    return U, Dn, ok
+try:
+    TU, TD, TOK = _ztm(F["zc"])
+except Exception as ex:
+    print("ztm failed:", ex); TU = TD = TOK = None
 try:
     Cl_ = _P["C"]; c1 = Cl_.iloc[-1]; c0 = Cl_.iloc[-2]; zw_last = ZWK.iloc[-1] if pd.Timestamp(ZWK.index[-1]) == pd.Timestamp(last) else pd.Series(dtype=float)
     wfl = WF.iloc[-1] if pd.Timestamp(WF.index[-1]) == pd.Timestamp(last) else pd.Series(dtype=bool)
@@ -105,6 +113,9 @@ try:
         zscan.append({"sym": s_, "close": round(float(c1.get(s_, np.nan)), 3), "chg": round(float(c1.get(s_, np.nan) / c0.get(s_, np.nan) - 1), 4), "zc": round(float(z_), 2),
                       "zw": round(float(zw_last.get(s_, np.nan)), 2) if s_ in zw_last.index else None, "fd": first_d, "fw": first_w, "pct": round(float(r.pct), 3),
                       "loss": s_ in LOSSY, "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s_)})
+        if TU is not None and bool(TOK.get(s_, False)):
+            tu = [int(TU[k].get(s_, 0)) for k in (1, 2, 3)]; td = [int(TD[k].get(s_, 0)) for k in (1, 2, 3)]
+            zscan[-1].update(tm=tu[0] + 2 * tu[1] + 3 * tu[2] - td[0] - 2 * td[1] - 3 * td[2], tu=tu, td=td)
         if len(zscan) >= max(25, len(fresh) + 10): break
 except Exception as ex:
     print("zscan failed:", ex)
