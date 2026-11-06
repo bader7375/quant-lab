@@ -52,6 +52,11 @@ momentum(float src) =>
 bool chartDaily  = timeframe.isdaily and timeframe.multiplier == 1
 bool chartWeekly = timeframe.isweekly and timeframe.multiplier == 1
 bool chartIntra  = timeframe.isintraday
+bool newDay   = timeframe.change("D")
+bool newWeek  = timeframe.change("W")
+bool newMonth = timeframe.change("M")
+bool newQtr   = timeframe.change("3M")
+bool newYear  = timeframe.change("12M")
 
 // on the chart's own bars
 float zDc = stretchZ(close, clipD)
@@ -65,8 +70,10 @@ bool  tWc = firstTouch(zWc, lineW)
 float zD = chartDaily ? zDc : chartIntra ? zDs : na
 float zW = chartWeekly ? zWc : (chartDaily or chartIntra) ? zWs : na
 // entry markers: the bar whose open is the buy (daily: the bar after the first touch; weekly: the first bar after the week closed)
-bool buyD = chartDaily ? tDc[1] : chartIntra ? (tDs and timeframe.change("D")) : false
-bool buyW = chartWeekly ? tWc[1] : (chartDaily or chartIntra) ? (tWs and timeframe.change("W")) : false
+bool tDc1 = tDc[1]
+bool tWc1 = tWc[1]
+bool buyD = chartDaily ? tDc1 : chartIntra ? (tDs and newDay) : false
+bool buyW = chartWeekly ? tWc1 : (chartDaily or chartIntra) ? (tWs and newWeek) : false
 
 // ---------------------------------------------------------------- market sell-off window
 float mm  = request.security(mktSym, "D", momentum(close), ignore_invalid_symbol = true)
@@ -78,16 +85,17 @@ float sw  = math.sum(w, vLen)
 float vwR = math.sum(vSrc * w, vLen) / sw
 float sdR = math.sqrt(math.max(math.sum(vSrc * vSrc * w, vLen) / sw - vwR * vwR, 0.0))
 bool anchor = switch vMode
-    "Session" => timeframe.change("D")
-    "Week"    => timeframe.change("W")
-    "Month"   => timeframe.change("M")
-    "Quarter" => timeframe.change("3M")
-    "Year"    => timeframe.change("12M")
+    "Session" => newDay
+    "Week"    => newWeek
+    "Month"   => newMonth
+    "Quarter" => newQtr
+    "Year"    => newYear
     => false
 [vwA, upA, loA] = ta.vwap(vSrc, anchor, 1.0)
 float vw  = vMode == "Rolling" ? vwR : vwA
 float vsd = vMode == "Rolling" ? sdR : upA - vwA
 float zV  = vsd > 0 ? (close - vw) / vsd : na
+bool  vCross = ta.crossunder(zV, vLine)
 
 // ---------------------------------------------------------------- plots
 hline(0, "Zero", color = color.new(color.gray, 60), linestyle = hline.style_dotted)
@@ -118,4 +126,4 @@ if barstate.islast
 // ---------------------------------------------------------------- alerts
 alertcondition(chartDaily and tDc and win, "Daily stretch-Z setup", "Daily stretch Z first touch inside the sell-off window: buy at the next open (check ML rank and the scanner).")
 alertcondition(buyW and win, "Weekly stretch-Z setup", "Weekly stretch Z first touch at last week's close inside the sell-off window: buy at this open (check the scanner).")
-alertcondition(ta.crossunder(zV, vLine), "VWAP stretch below line", "VWAP stretch crossed below the line.")
+alertcondition(vCross, "VWAP stretch below line", "VWAP stretch crossed below the line.")
