@@ -1,0 +1,127 @@
+//@version=6
+// Z swing: 5-minute VWAP-reclaim entry (reversal edge research, round 57 exploratory idea, NOT a tested rule yet).
+// Use on a 5-minute chart. A setup day is the session after:
+//   - a daily stretch Z first touch (<= -2.62) at yesterday's close, or
+//   - a weekly stretch Z first touch (<= -2.08) at last week's close (first session of the week only),
+//   - and (optional) the market sell-off window open at yesterday's close (market momentum <= -1.18).
+// On a setup day: wait for the first 5-minute close above the session VWAP from 10:30; buy at the next bar's open.
+// No reclaim all day: buy at the close. The day's open (the live rule's entry) is shown for comparison.
+// The scanner also requires ML rank >= 50%, a positive market model, liquidity and a profitable company: check the daily list.
+indicator("Z swing - 5-min VWAP-reclaim entry", shorttitle = "Z VWAP entry", overlay = true, max_labels_count = 500)
+
+// ---------------------------------------------------------------- inputs
+grpS   = "Daily setup"
+lineD  = input.float(-2.62, "Daily stretch Z line", step = 0.01, group = grpS)
+lineW  = input.float(-2.08, "Weekly stretch Z line", step = 0.01, group = grpS)
+clipD  = input.float(0.25, "Clip daily returns at +/-", step = 0.05, group = grpS)
+clipW  = input.float(0.60, "Clip weekly returns at +/-", step = 0.05, group = grpS)
+useWin = input.bool(true, "Require the market sell-off window", group = grpS)
+mktSym = input.symbol("TADAWUL:TASI", "Market index", group = grpS)
+lineM  = input.float(-1.18, "Window opens at market momentum <=", step = 0.01, group = grpS)
+
+grpE   = "Intraday entry"
+startH = input.int(10, "Reclaim allowed from (hour)", minval = 0, maxval = 23, group = grpE)
+startM = input.int(30, "... and minute", minval = 0, maxval = 59, group = grpE)
+showVW = input.bool(true, "Show session VWAP", group = grpE)
+testMode = input.bool(false, "Test mode: treat every day as a setup day", group = grpE, tooltip = "To see how the VWAP-reclaim entry would have bought on any day.")
+useDate  = input.bool(false, "Use the scanner's setup date", group = grpE, tooltip = "TradingView has no bars on market holidays, so its stretch Z can differ slightly from the scanner's and about 1 first-touch day in 6 differs. Tick this and enter the session the daily list says to buy (the day after the signal) to force that day to be a setup day.")
+setDate  = input.time(timestamp(2026, 11, 8, 0, 0), "Scanner setup date (the buy session)", group = grpE)
+
+// ---------------------------------------------------------------- functions (same formulas as the daily scanner)
+clip(float x, float c) => math.max(math.min(x, c), -c)
+
+stretchZ(float src, float c) =>
+    float r  = clip(math.log(src / src[1]), c)
+    float sd = ta.stdev(r, 60, false)
+    float z10 = math.sum(r, 10) / (sd[10] * math.sqrt(10))
+    float z20 = math.sum(r, 20) / (sd[20] * math.sqrt(20))
+    float z60 = math.sum(r, 60) / (sd[60] * math.sqrt(60))
+    (z10 + z20 + z60) / 3
+
+firstTouch(float z, float lvl) => z <= lvl and not (z[1] <= lvl)
+
+momentum(float src) =>
+    float r = clip(math.log(src / src[1]), 0.25)
+    math.sum(r, 60) / (ta.stdev(r, 60, false)[60] * math.sqrt(60))
+
+// ---------------------------------------------------------------- yesterday's daily and last week's weekly state (completed bars only)
+[zD, tD] = request.security(syminfo.tickerid, "D", [stretchZ(close, clipD)[1], firstTouch(stretchZ(close, clipD), lineD)[1]], lookahead = barmerge.lookahead_on)
+[zW, tW] = request.security(syminfo.tickerid, "W", [stretchZ(close, clipW)[1], firstTouch(stretchZ(close, clipW), lineW)[1]], lookahead = barmerge.lookahead_on)
+float mm  = request.security(mktSym, "D", momentum(close)[1], lookahead = barmerge.lookahead_on, ignore_invalid_symbol = true)
+bool  win = not na(mm) and mm <= lineM
+
+// ---------------------------------------------------------------- intraday state
+bool newDay  = timeframe.change("D")
+bool newWeek = timeframe.change("W")
+bool lastBar = session.islastbar_regular
+[vw, vwUp, vwLo] = ta.vwap(hlc3, newDay, 1.0)
+int  barMin  = hour(time, syminfo.timezone) * 60 + minute(time, syminfo.timezone)
+bool afterStart = barMin >= startH * 60 + startM
+bool scannerDay = useDate and year(time, syminfo.timezone) == year(setDate, syminfo.timezone) and month(time, syminfo.timezone) == month(setDate, syminfo.timezone) and dayofmonth(time, syminfo.timezone) == dayofmonth(setDate, syminfo.timezone)
+
+var float  dayOpen = na
+var bool   setup   = false
+var string why     = ""
+var bool   armed   = false
+var bool   bought  = false
+var float  entry   = na
+var string how     = ""
+bool trig = false
+bool buyNow = false
+
+if newDay
+    dayOpen := open
+    bool dSet = tD
+    bool wSet = tW and newWeek
+    setup  := testMode or scannerDay or ((dSet or wSet) and (not useWin or win))
+    why    := testMode ? "test mode" : scannerDay ? "scanner date" : dSet and wSet ? "daily + weekly touch" : dSet ? "daily touch" : wSet ? "weekly touch" : ""
+    armed  := false
+    bought := false
+    entry  := na
+    how    := ""
+
+if setup and not bought and timeframe.isintraday
+    if armed
+        entry  := open
+        bought := true
+        how    := "VWAP reclaim"
+        buyNow := true
+    else if barstate.isconfirmed and afterStart and close > vw and not lastBar
+        armed := true
+        trig  := true
+    else if barstate.isconfirmed and lastBar
+        entry  := close
+        bought := true
+        how    := "close (no reclaim)"
+        buyNow := true
+
+// ---------------------------------------------------------------- plots
+plot(showVW and timeframe.isintraday ? vw : na, "Session VWAP", color = color.new(color.orange, 0), linewidth = 2)
+plot(setup ? dayOpen : na, "Day open (live entry)", color = color.new(color.gray, 30), style = plot.style_linebr)
+plot(setup and bought ? entry : na, "Entry", color = color.new(color.green, 0), style = plot.style_linebr, linewidth = 2)
+bgcolor(setup ? color.new(color.green, 92) : na, title = "Setup day")
+plotshape(trig, "Close above VWAP (buy at the next open)", shape.circle, location.belowbar, color.new(color.green, 0), size = size.tiny)
+if buyNow
+    float d = (entry / dayOpen - 1) * 100
+    label.new(bar_index, entry, "BUY " + how + "\n" + str.tostring(entry, format.mintick) + " (" + (d >= 0 ? "+" : "") + str.tostring(d, "#.##") + "% vs open)",
+              style = label.style_label_up, color = color.new(color.green, 0), textcolor = color.white, size = size.small, yloc = yloc.belowbar)
+
+// ---------------------------------------------------------------- status table
+var table t = table.new(position.top_right, 2, 6, bgcolor = color.new(color.black, 85), border_width = 1)
+if barstate.islast
+    table.cell(t, 0, 0, "Setup today")
+    table.cell(t, 1, 0, setup ? "YES - " + why : "no", text_color = setup ? color.green : color.gray)
+    table.cell(t, 0, 1, "Daily Z (yesterday)")
+    table.cell(t, 1, 1, na(zD) ? "-" : str.tostring(zD, "#.##"))
+    table.cell(t, 0, 2, "Weekly Z (last week)")
+    table.cell(t, 1, 2, na(zW) ? "-" : str.tostring(zW, "#.##"))
+    table.cell(t, 0, 3, "Market momentum")
+    table.cell(t, 1, 3, na(mm) ? "-" : str.tostring(mm, "#.##") + (win ? " (window OPEN)" : " (closed)"))
+    table.cell(t, 0, 4, "Entry")
+    table.cell(t, 1, 4, bought ? str.tostring(entry, format.mintick) + " - " + how : setup ? (armed ? "buy at the next open" : "waiting for a close above VWAP") : "-")
+    table.cell(t, 0, 5, "Chart")
+    table.cell(t, 1, 5, timeframe.isintraday ? timeframe.period : "use a 5-minute chart", text_color = timeframe.isintraday ? color.white : color.red)
+
+// ---------------------------------------------------------------- alerts
+alertcondition(newDay and setup, "Z-swing setup today", "Z-swing setup today: wait for a 5-minute close above the session VWAP after 10:30, then buy at the next bar's open.")
+alertcondition(trig, "VWAP reclaim", "5-minute close above the session VWAP on a Z-swing setup day: buy at the next bar's open.")
