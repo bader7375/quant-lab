@@ -1,8 +1,9 @@
 """Core Strategy on the round-27 panel (same rules as strat/s_ml.py + s_trend.py + blend.py) and a generic event sleeve."""
 from base import *
+import os
 from sim import run, stats, show
 P = yahoo(); C, Hh, L = P["C"], P["H"], P["L"]; dates = C.index; cols = C.columns
-def load_pred(path="preds/M0.parquet"):   # round 27: walk-forward M0 on the cleaned panel (same model as ml26)
+def load_pred(path=os.environ.get("RANKER", "preds/C.parquet" if os.path.exists("preds/C.parquet") else "preds/M0.parquet")):   # round 58: walk-forward ranker C (falls back to round 27 M0; RANKER=path overrides)
     p = pd.read_parquet(path); p["pct"] = p.groupby("date").pred.rank(pct=True)
     return p.pivot(index="date", columns="sym", values="pred").reindex(index=dates, columns=cols), p.pivot(index="date", columns="sym", values="pct").reindex(index=dates, columns=cols)
 PRED, PCT = load_pred()

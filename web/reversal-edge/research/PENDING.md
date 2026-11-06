@@ -1,6 +1,8 @@
 # Open decisions (saved 2026-10-30 at the user's request: "save this, I will come back to it")
 Nothing below is switched on. Live rule today: Z swing (daily -2.62 / weekly -2.08, ML >= 50%, market model > 0, market momentum
 <= -1.18, profitable company), buy next open, 5% per stock, at most 5, hold 40 sessions, no stop.
+Switched on 2026-11-06 at the user's request ("Yes let's switch to scanner C"): the ML score now comes from ranker C (round 58,
+r58/RESULTS.md) instead of M0. The rule itself (ML >= 50% and the rest) is unchanged.
 
 1. ML bar 50% -> 70% (round 38, r38/RESULTS.md). Passed the pre-registered rule. Per trade 2020-26: 74% win, +8.7% vs 72%, +7.6%;
    2023-26 +6.4% vs +4.6%. In the 5-position account: about the same return per year, fewer trades (29 vs 43 in 2020-26), higher win rate.

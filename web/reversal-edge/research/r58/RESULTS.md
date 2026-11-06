@@ -51,3 +51,10 @@ Confidence label: adopted on the Saudi rule, partial replication.
 - **Quarterly retraining:** each is retrained every quarter instead of every January.
 
 Daily cost: about 30 seconds more, because past quarters can be cached and only the current quarter's 4 models are fitted.
+
+## Adopted 2026-11-06
+The user approved the switch. The daily pipeline now runs `r27/wfC.py` (walk-forward C history; finished quarters are cached, so a
+daily run takes about 40 s) and `PICK=C final27.py` (today's score = average rank of the 5/10/20/60-session models trained on all
+data known today). The daily list's track record (`top3.py --history`, top-3 rule, net of costs, market model positive days) with C:
+Z swing 2020-26 77% winners, +8.5% per trade (M0: 78%, +9.3%); since 2024 86%, +8.8% (M0: 79%, +6.3%). The M0 record is kept in
+daily/rule_stats_M0.json. The first list with C (Sunday 2026-11-08) has the same three picks as M0.

@@ -3,10 +3,18 @@ today's Z-rebound candidates, and the ML-sleeve record by year from the round-27
 import json, os, sys, numpy as np, pandas as pd, lightgbm as lgb, warnings; warnings.filterwarnings("ignore")
 PICK = os.environ.get("PICK", "M0")
 D = pd.read_parquet("ds27.parquet"); FE = json.load(open("feats27.json")); dates = np.sort(D.date.unique()); last = dates[-1]; cut = dates[-22]
-FEATS = {"M0": FE["base"], "M1": FE["stock"] + ["sector"], "M1nows": FE["base"] + [f for f in FE["new"] if not f.startswith("ws_") and f != "sector"]}[PICK]
-tr = D[(D.date <= cut) & D.q20.notna() & D.date.isin(dates[::2])]
-pick = lgb.LGBMRegressor(n_estimators=400, learning_rate=0.03, num_leaves=31, min_child_samples=1000, subsample=0.7, subsample_freq=1, colsample_bytree=0.7, reg_lambda=5, verbose=-1, n_jobs=4)
-pick.fit(tr[FEATS], tr.q20, categorical_feature=["sector"] if "sector" in FEATS else "auto")
+FEATS = {"M0": FE["base"], "C": FE["base"], "M1": FE["stock"] + ["sector"], "M1nows": FE["base"] + [f for f in FE["new"] if not f.startswith("ws_") and f != "sector"]}[PICK]
+_LGB = dict(n_estimators=400, learning_rate=0.03, num_leaves=31, min_child_samples=1000, subsample=0.7, subsample_freq=1, colsample_bytree=0.7, reg_lambda=5, verbose=-1, n_jobs=4)
+class _Ens:                                                                   # ranker C (round 58): average daily rank of the 5/10/20/60-session models
+    def __init__(s, ms): s.ms = ms
+    def predict(s, X): return np.mean([pd.Series(m.predict(X)).rank(pct=True).values for m in s.ms], axis=0)
+if PICK == "C":
+    pick = _Ens([lgb.LGBMRegressor(**_LGB).fit(D[(D.date <= dates[-(h + 2)]) & D[f"q{h}"].notna() & D.date.isin(dates[::2])][FEATS],
+                                                D[(D.date <= dates[-(h + 2)]) & D[f"q{h}"].notna() & D.date.isin(dates[::2])][f"q{h}"]) for h in (5, 10, 20, 60)])
+else:
+    tr = D[(D.date <= cut) & D.q20.notna() & D.date.isin(dates[::2])]
+    pick = lgb.LGBMRegressor(**_LGB)
+    pick.fit(tr[FEATS], tr.q20, categorical_feature=["sector"] if "sector" in FEATS else "auto")
 M = D.groupby("date")[FE["market"]].first(); mk20 = D.groupby("date").y20.mean(); tm = M.loc[:cut].join(mk20.rename("y")).dropna(subset=["y"])
 mkt = lgb.LGBMRegressor(n_estimators=200, learning_rate=0.03, num_leaves=7, min_child_samples=100, subsample=.7, subsample_freq=1, verbose=-1); mkt.fit(tm[FE["market"]], tm.y)
 pm = float(mkt.predict(M.loc[[last], FE["market"]])[0]); hist = pd.Series(mkt.predict(M.loc[dates[-60]:, FE["market"]]), M.loc[dates[-60]:].index)

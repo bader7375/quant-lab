@@ -1,5 +1,5 @@
 # Daily Saudi top-3 list
-`run.sh` refreshes Yahoo prices, rebuilds the round-27 features, refits the ML ranker (M0) and market model, runs `final27.py`,
+`run.sh` refreshes Yahoo prices, rebuilds the round-27 features, refits the ML ranker (C, round 58: 5/10/20/60-session models, quarterly refits; M0 until 2026-11-06) and market model, runs `final27.py`,
 then `top3.py` writes the list for the next session (`out/<last close date>.md`) and appends the picks to `out/picks_log.csv`.
 It expects the scratch layout used during the research (`../edge26`, `../r27`, `../strat`, `../tadawul`); price data is not committed.
 

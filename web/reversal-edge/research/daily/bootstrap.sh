@@ -1,6 +1,6 @@
 #!/bin/sh
 # Rebuild the daily pipeline's work folder after the cloud machine was reset (it lives in a temporary scratchpad).
-# Usage: sh bootstrap.sh <work folder>. About 20 minutes: Python packages, code from this repo copy, then a full run.sh,
+# Usage: sh bootstrap.sh <work folder>. About 35 minutes (the first ranker-C history fits 224 models, ~17 min): Python packages, code from this repo copy, then a full run.sh,
 # which downloads the whole Yahoo history (about 290 Saudi codes, 117 US symbols, 15 market series) and refits the models.
 set -e
 S=${1:?usage: sh bootstrap.sh <work folder>}; R=$(cd "$(dirname "$0")/.." && pwd)
