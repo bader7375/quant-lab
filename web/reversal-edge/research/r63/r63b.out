@@ -1,0 +1,39 @@
+live: DESIGN +1.6%/y DD 6.5% r 0.24 avg +19.1% w5 -11.5% | CONFIRM +1.2%/y DD 5.3% r 0.23 avg +7.4% w5 -11.7% | 2023-26 +1.2%/y DD 5.3% r 0.22 avg +4.5% w5 -10.7%
+
+T3 reversal day / 1.5 ATR under low (DESIGN pick)
+  base (10-session window)   DESIGN +3.0%/y DD 4.8% r 0.63 avg +16.2% w5 -12.7% | CONFIRM +0.2%/y DD 6.9% r 0.03 avg +3.5% w5 -17.1% | 2023-26 -0.6%/y DD 6.9% r -0.08 avg -4.3% w5 -17.0%
+  5-session window           DESIGN +2.9%/y DD 4.8% r 0.61 avg +16.7% w5 -12.8% | CONFIRM +0.2%/y DD 6.9% r 0.03 avg +1.7% w5 -17.5% | 2023-26 -0.5%/y DD 6.9% r -0.07 avg -4.2% w5 -17.0%
+  15-session window          DESIGN +2.9%/y DD 6.0% r 0.47 avg +15.6% w5 -13.1% | CONFIRM -0.1%/y DD 7.2% r -0.01 avg +3.5% w5 -17.1% | 2023-26 -0.7%/y DD 7.2% r -0.10 avg -4.4% w5 -17.0%
+  stop on the close          DESIGN +3.0%/y DD 5.0% r 0.60 avg +16.2% w5 -13.8% | CONFIRM +0.5%/y DD 6.9% r 0.08 avg +3.4% w5 -17.3% | 2023-26 -0.6%/y DD 6.9% r -0.09 avg -4.4% w5 -16.0%
+  costs 0.8%                 DESIGN +2.9%/y DD 5.0% r 0.59 avg +15.8% w5 -13.1% | CONFIRM +0.0%/y DD 7.0% r 0.00 avg +3.1% w5 -17.5% | 2023-26 -0.7%/y DD 7.0% r -0.10 avg -4.7% w5 -17.4%
+  risk-based sizing          DESIGN +1.5%/y DD 3.6% r 0.43 avg +16.2% w5 -12.7% | CONFIRM -0.1%/y DD 6.3% r -0.02 avg +3.5% w5 -17.1% | 2023-26 -0.4%/y DD 4.8% r -0.08 avg -4.3% w5 -17.0%  (median size 3.1%)
+
+T1 bounce 3% / 1.0 ATR under low (beat live 3/3)
+  base (10-session window)   DESIGN +2.3%/y DD 6.1% r 0.38 avg +13.5% w5 -14.3% | CONFIRM +1.1%/y DD 3.7% r 0.29 avg +4.9% w5 -15.1% | 2023-26 +0.9%/y DD 3.7% r 0.25 avg +0.1% w5 -13.3%
+  5-session window           DESIGN +2.3%/y DD 6.1% r 0.38 avg +13.8% w5 -14.4% | CONFIRM +1.3%/y DD 3.7% r 0.36 avg +4.8% w5 -15.2% | 2023-26 +1.1%/y DD 3.7% r 0.30 avg +0.4% w5 -13.3%
+  15-session window          DESIGN +2.3%/y DD 6.4% r 0.35 avg +13.4% w5 -14.3% | CONFIRM +1.0%/y DD 4.3% r 0.24 avg +4.8% w5 -15.0% | 2023-26 +0.9%/y DD 4.3% r 0.20 avg +0.0% w5 -13.3%
+  stop on the close          DESIGN +2.6%/y DD 6.1% r 0.43 avg +14.0% w5 -13.8% | CONFIRM +1.2%/y DD 4.7% r 0.25 avg +5.1% w5 -15.9% | 2023-26 +1.0%/y DD 3.7% r 0.26 avg +0.3% w5 -13.0%
+  costs 0.8%                 DESIGN +2.1%/y DD 6.3% r 0.34 avg +13.1% w5 -14.7% | CONFIRM +0.9%/y DD 3.9% r 0.24 avg +4.5% w5 -15.5% | 2023-26 +0.8%/y DD 3.9% r 0.22 avg -0.3% w5 -13.7%
+  risk-based sizing          DESIGN +1.2%/y DD 8.1% r 0.14 avg +13.5% w5 -14.3% | CONFIRM +1.2%/y DD 4.6% r 0.25 avg +4.9% w5 -15.1% | 2023-26 +1.1%/y DD 3.7% r 0.29 avg +0.1% w5 -13.3%  (median size 4.3%)
+
+T2 bounce 5% / none (beat live 3/3)
+  base (10-session window)   DESIGN +2.3%/y DD 5.7% r 0.40 avg +18.9% w5 -8.7% | CONFIRM +1.4%/y DD 4.9% r 0.28 avg +6.4% w5 -12.6% | 2023-26 +1.1%/y DD 4.1% r 0.26 avg +0.6% w5 -13.2%
+  5-session window           DESIGN +2.4%/y DD 5.7% r 0.41 avg +20.0% w5 -8.2% | CONFIRM +1.7%/y DD 4.1% r 0.41 avg +6.0% w5 -12.6% | 2023-26 +1.0%/y DD 4.1% r 0.23 avg +0.4% w5 -13.3%
+  15-session window          DESIGN +2.2%/y DD 5.7% r 0.38 avg +18.5% w5 -9.6% | CONFIRM +1.2%/y DD 5.1% r 0.23 avg +6.2% w5 -12.9% | 2023-26 +0.7%/y DD 5.1% r 0.14 avg +0.4% w5 -13.4%
+  costs 0.8%                 DESIGN +2.2%/y DD 5.7% r 0.38 avg +18.5% w5 -9.1% | CONFIRM +1.3%/y DD 4.9% r 0.26 avg +6.0% w5 -13.0% | 2023-26 +1.0%/y DD 4.2% r 0.23 avg +0.2% w5 -13.6%
+
+T1 bounce 3% / 4% under low (beat live 3/3)
+  base (10-session window)   DESIGN +2.3%/y DD 6.3% r 0.36 avg +12.1% w5 -13.6% | CONFIRM +1.2%/y DD 4.2% r 0.28 avg +4.8% w5 -14.0% | 2023-26 +0.9%/y DD 3.7% r 0.25 avg +0.1% w5 -13.4%
+  5-session window           DESIGN +2.2%/y DD 6.3% r 0.35 avg +12.3% w5 -13.7% | CONFIRM +1.3%/y DD 4.2% r 0.31 avg +4.7% w5 -14.1% | 2023-26 +1.1%/y DD 3.7% r 0.31 avg +0.5% w5 -13.5%
+  15-session window          DESIGN +2.2%/y DD 6.3% r 0.35 avg +12.0% w5 -13.6% | CONFIRM +1.1%/y DD 4.2% r 0.26 avg +4.7% w5 -14.0% | 2023-26 +0.9%/y DD 4.2% r 0.20 avg +0.0% w5 -13.4%
+  stop on the close          DESIGN +2.4%/y DD 5.1% r 0.46 avg +12.9% w5 -13.6% | CONFIRM +1.4%/y DD 4.4% r 0.32 avg +5.1% w5 -15.8% | 2023-26 +1.3%/y DD 3.7% r 0.36 avg +0.9% w5 -13.1%
+  costs 0.8%                 DESIGN +2.1%/y DD 6.6% r 0.31 avg +11.7% w5 -14.0% | CONFIRM +1.0%/y DD 4.3% r 0.23 avg +4.4% w5 -14.4% | 2023-26 +0.8%/y DD 3.8% r 0.22 avg -0.3% w5 -13.8%
+  risk-based sizing          DESIGN +1.3%/y DD 9.5% r 0.14 avg +12.1% w5 -13.6% | CONFIRM +1.5%/y DD 4.5% r 0.34 avg +4.8% w5 -14.0% | 2023-26 +1.1%/y DD 3.1% r 0.34 avg +0.1% w5 -13.4%  (median size 5.1%)
+us100: 115 stocks, 2000-01-03..2026-11-05, eligible on 2026-11-05: 115
+
+US sell-off swing (115 large caps), 0.1% costs
+  live (no wait, no stop)                  2005-09 -1.0%/y DD 11.3% r -0.09 avg -0.2% w5 -35.2% | 2010-17 +0.7%/y DD 5.7% r 0.12 avg +3.0% w5 -17.3% | 2018-26 +2.7%/y DD 5.6% r 0.48 avg +12.1% w5 -12.4%
+  T3 reversal day / 1.5 ATR under low      2005-09 -0.1%/y DD 9.8% r -0.01 avg -4.3% w5 -38.7% | 2010-17 +1.1%/y DD 5.2% r 0.21 avg +3.7% w5 -15.6% | 2018-26 +1.4%/y DD 8.9% r 0.15 avg +8.1% w5 -14.1%
+  T1 bounce 3% / 1.0 ATR under low         2005-09 +0.9%/y DD 13.0% r 0.07 avg -2.5% w5 -30.8% | 2010-17 +0.2%/y DD 11.6% r 0.01 avg +3.0% w5 -10.8% | 2018-26 +2.0%/y DD 7.0% r 0.29 avg +7.6% w5 -12.5%
+  T2 bounce 5% / none                      2005-09 -0.7%/y DD 12.4% r -0.05 avg -1.7% w5 -30.4% | 2010-17 -0.1%/y DD 9.1% r -0.01 avg +4.0% w5 -13.2% | 2018-26 +1.3%/y DD 11.0% r 0.11 avg +10.3% w5 -13.2%
+  T1 bounce 3% / 4% under low              2005-09 +0.9%/y DD 10.0% r 0.09 avg -3.0% w5 -21.6% | 2010-17 +0.3%/y DD 9.7% r 0.03 avg +3.1% w5 -10.5% | 2018-26 +1.9%/y DD 7.7% r 0.24 avg +6.8% w5 -10.9%

@@ -44,6 +44,9 @@ washouts, VIX, oil) beats simply being in the live sell-off window as a market t
 9. Z touch momentum filter for Z swing (round 60, r60/RESULTS.md): take a Z-swing signal only if the stock's 120-session net
    stretch-Z touches are <= -9 (more down-touches than up). Met the pre-registered rule (2020-26 +8.7% vs +6.5% per trade; sleeve
    ratio 0.24 -> 0.34 / 0.23 -> 0.26) but failed half the stress tests and the US check. NOT recommended; listed because it passed.
+Saved 2026-11-07 at the user's request ("Let's back to them later. Save them."): options 1, 7 and 8 wait for the user.
+   Before deciding on option 8, re-run it with ranker C (its numbers used M0). Option 1 was re-checked with ranker C in round 62:
+   sleeve ratio 0.31 / 0.25 / 0.39 vs live 0.24 / 0.23 / 0.22 (2013-19 / 2020-26 / 2023-26).
 Overnight conclusion (rounds 48-53): the split exit (option 4) is the one Z-swing change that holds across markets (better in 7 of
 10 market-eras: Saudi, US, India, GCC). v2's turn gate is strong in Saudi (both periods, stress-tested) but helps in only 5 of 10
 market-eras elsewhere, so treat it as a Saudi-specific choice for lower risk. Size: 5 x 10% keeps drawdown under 15%.
