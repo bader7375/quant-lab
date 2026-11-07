@@ -1,0 +1,75 @@
+events: 4836 (4574 with a finished 40-session trade), 2010-10-11 .. 2026-11-05
+features: 60; missing share of the ranker features 0.7%
+  2013: trained on 245 events, predicted 36
+  2014: trained on 289 events, predicted 489
+  2015: trained on 455 events, predicted 569
+  2016: trained on 1304 events, predicted 608
+  2017: trained on 1956 events, predicted 138
+  2018: trained on 2034 events, predicted 193
+  2019: trained on 2284 events, predicted 147
+  2020: trained on 2429 events, predicted 403
+  2021: trained on 2833 events, predicted 295
+  2022: trained on 2896 events, predicted 527
+  2023: trained on 3573 events, predicted 109
+  2024: trained on 3761 events, predicted 122
+  2025: trained on 3874 events, predicted 467
+  2026: trained on 4244 events, predicted 479
+
+AUC (0.5 = coin flip):
+  DESIGN   all dips 0.514 (2180) | Z swing signals 0.562 (268; 268 scored)
+  CONFIRM  all dips 0.661 (2140) | Z swing signals 0.624 (188; 188 scored)
+  2023-26  all dips 0.623 (915) | Z swing signals 0.412 (52; 52 scored)
+
+U1 filter at the DESIGN median p 0.507:
+  DESIGN   kept 134 +19.7% 82% | dropped 134 +18.5% 83% -> gap +1.2
+  CONFIRM  kept 166 +7.9% 74% | dropped 22 +3.5% 50% -> gap +4.4
+  2023-26  kept 47 +4.6% 68% | dropped 5 +3.6% 60% -> gap +1.0
+
+Sleeves (5 slots):
+  live                   DESIGN   tr  33/268  +1.6%/y DD  6.5% ratio 0.24 Sh 0.48 worst yr  -2.3% cap avg   4% max  25%
+  live                   CONFIRM  tr  36/188  +1.2%/y DD  5.3% ratio 0.23 Sh 0.40 worst yr  -0.8% cap avg   4% max  25%
+  live                   2023-26  tr  17/ 52  +1.2%/y DD  5.3% ratio 0.22 Sh 0.52 worst yr  +0.4% cap avg   4% max  25%
+  option 1 (ML >= 70%)   DESIGN   tr  31/171  +1.7%/y DD  5.5% ratio 0.31 Sh 0.54 worst yr  -1.9% cap avg   4% max  25%
+  option 1 (ML >= 70%)   CONFIRM  tr  29/120  +1.2%/y DD  4.8% ratio 0.25 Sh 0.40 worst yr  -1.5% cap avg   4% max  25%
+  option 1 (ML >= 70%)   2023-26  tr  14/ 32  +1.7%/y DD  4.3% ratio 0.39 Sh 0.69 worst yr  +0.1% cap avg   3% max  25%
+  U1 filter              DESIGN   tr  29/134  +1.9%/y DD  6.0% ratio 0.32 Sh 0.56 worst yr  -3.3% cap avg   3% max  25%
+  U1 filter              CONFIRM  tr  32/166  +1.2%/y DD  5.1% ratio 0.24 Sh 0.40 worst yr  -1.8% cap avg   4% max  25%
+  U1 filter              2023-26  tr  16/ 47  +1.4%/y DD  4.4% ratio 0.31 Sh 0.55 worst yr  +0.1% cap avg   3% max  25%
+  U2 priority            DESIGN   tr  33/268  +1.8%/y DD  7.8% ratio 0.23 Sh 0.53 worst yr  -3.1% cap avg   4% max  25%
+  U2 priority            CONFIRM  tr  36/188  +1.6%/y DD  4.2% ratio 0.37 Sh 0.53 worst yr  -0.8% cap avg   4% max  25%
+  U2 priority            2023-26  tr  17/ 52  +1.8%/y DD  4.0% ratio 0.45 Sh 0.81 worst yr  +0.4% cap avg   4% max  25%
+  U3 sizing              DESIGN   tr  33/268  +1.2%/y DD  6.7% ratio 0.18 Sh 0.34 worst yr  -2.4% cap avg   4% max  38%
+  U3 sizing              CONFIRM  tr  36/188  +1.7%/y DD  6.9% ratio 0.24 Sh 0.48 worst yr  -1.2% cap avg   5% max  38%
+  U3 sizing              2023-26  tr  17/ 52  +1.5%/y DD  6.9% ratio 0.21 Sh 0.47 worst yr  +0.3% cap avg   5% max  38%
+  -> U1 filter: fails (AUC rule True, gap rule False, beats live and option 1 False, 2023-26 True)
+  -> U2 priority: fails (AUC rule True, gap rule True, beats live and option 1 False, 2023-26 True)
+  -> U3 sizing: fails (AUC rule True, gap rule True, beats live and option 1 False, 2023-26 False)
+
+What the model leans on (share of split gain): {'pm': 0.176, 'ms': 0.151, 'limup20': 0.053, 'mkt20': 0.035, 'breadth': 0.032, 'sector': 0.028, 'N250': 0.021, 'limdn20': 0.021, 'z20': 0.02, 'zw': 0.018, 'age': 0.017, 'z60': 0.016}
+
+Momentum features vs the 40-session result inside the Z swing signals (rank correlation with net):
+  r5       DESIGN -0.076 | CONFIRM -0.121 | 2023-26 -0.027
+  r10      DESIGN -0.098 | CONFIRM -0.068 | 2023-26 -0.086
+  r20      DESIGN -0.061 | CONFIRM -0.019 | 2023-26 -0.107
+  r60      DESIGN -0.047 | CONFIRM -0.180 | 2023-26 -0.245
+  r120     DESIGN -0.034 | CONFIRM -0.115 | 2023-26 -0.079
+  mom12_1  DESIGN +0.024 | CONFIRM -0.207 | 2023-26 -0.193
+  dma50    DESIGN -0.084 | CONFIRM -0.180 | 2023-26 -0.189
+  dma200   DESIGN -0.039 | CONFIRM -0.154 | 2023-26 -0.069
+  hi52     DESIGN -0.097 | CONFIRM -0.178 | 2023-26 -0.049
+  dz5      DESIGN -0.075 | CONFIRM +0.038 | 2023-26 -0.003
+  N250     DESIGN +0.130 | CONFIRM -0.245 | 2023-26 -0.077
+
+Momentum features vs the label (rank correlation, all dips with a finished trade):
+  r5       DESIGN +0.048 | CONFIRM +0.168
+  r10      DESIGN +0.058 | CONFIRM +0.225
+  r20      DESIGN +0.085 | CONFIRM +0.228
+  r60      DESIGN +0.083 | CONFIRM +0.175
+  r120     DESIGN +0.027 | CONFIRM +0.151
+  mom12_1  DESIGN +0.032 | CONFIRM +0.016
+  dma50    DESIGN +0.104 | CONFIRM +0.220
+  dma200   DESIGN +0.065 | CONFIRM +0.160
+  hi52     DESIGN -0.004 | CONFIRM +0.075
+  dz5      DESIGN -0.035 | CONFIRM +0.018
+  N250     DESIGN -0.008 | CONFIRM -0.025
+  mlrank   DESIGN +0.085 | CONFIRM +0.102
