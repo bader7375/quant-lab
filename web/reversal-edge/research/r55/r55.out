@@ -1,0 +1,36 @@
+
+== Saudi hourly Z swing (ML >= 0.5, market model > 0, liquid): 245 stocks, 2485 hourly bars 2024-11-06 .. 2026-11-05; sell-off window open 35% of bars
+  line -2.00 hold  5 bars | DESIGN n 110 win  68% avg +1.63% (random +2.11%) worst5  -2.9% || CONFIRM n 130 win  39% avg -1.01% (random -1.19%) worst5  -6.5%
+  line -2.00 hold 10 bars | DESIGN n 102 win  78% avg +2.47% (random +2.70%) worst5  -2.0% || CONFIRM n 123 win  51% avg +0.04% (random -0.14%) worst5  -9.9%
+  line -2.00 hold 20 bars | DESIGN n  97 win  64% avg +2.88% (random +3.90%) worst5  -3.5% || CONFIRM n 109 win  78% avg +2.79% (random +4.66%) worst5  -4.1%
+  line -2.00 hold 40 bars | DESIGN n  97 win  95% avg +6.76% (random +7.19%) worst5  +0.2% || CONFIRM n 105 win  58% avg +7.08% (random +2.97%) worst5  -7.5%
+  line -2.62 hold  5 bars | DESIGN n  65 win  88% avg +3.32% (random +3.50%) worst5  -0.7% || CONFIRM n  98 win  45% avg -0.71% (random -0.78%) worst5  -6.7%
+  line -2.62 hold 10 bars | DESIGN n  65 win  94% avg +3.45% (random +2.65%) worst5  -0.6% || CONFIRM n  94 win  66% avg +1.19% (random +1.37%) worst5  -7.7%
+  line -2.62 hold 20 bars | DESIGN n  64 win  66% avg +4.16% (random +7.47%) worst5  -2.6% || CONFIRM n  86 win  76% avg +3.88% (random +5.21%) worst5  -3.9%
+  line -2.62 hold 40 bars | DESIGN n  64 win  92% avg +7.45% (random +7.49%) worst5  -0.7% || CONFIRM n  85 win  59% avg +9.19% (random +5.57%) worst5  -6.7%
+  line -3.00 hold  5 bars | DESIGN n  57 win  95% avg +4.30% (random +3.32%) worst5  -0.1% || CONFIRM n  87 win  56% avg -0.08% (random +0.07%) worst5  -7.8%
+  line -3.00 hold 10 bars | DESIGN n  57 win  95% avg +4.25% (random +4.14%) worst5  +0.5% || CONFIRM n  84 win  67% avg +2.16% (random +3.02%) worst5  -7.3%
+  line -3.00 hold 20 bars | DESIGN n  56 win  77% avg +5.57% (random +6.97%) worst5  -2.1% || CONFIRM n  81 win  81% avg +4.79% (random +8.19%) worst5  -3.2%
+  line -3.00 hold 40 bars | DESIGN n  56 win  96% avg +8.66% (random +9.69%) worst5  +1.6% || CONFIRM n  80 win  65% avg +11.69% (random +9.19%) worst5  -7.6%
+
+DESIGN pick: line -3.0, hold 40 bars -> CONFIRM n  80 win  65% avg +11.69% (random +9.19%) worst5  -7.6% -> WORKS: True
+CONFIRM sleeves (5 x 5%): hourly +1.93%/y DD 2.42% ratio 0.80 | daily Z swing +3.15%/y DD 2.12% ratio 1.49 | both +5.08%/y DD 3.58% ratio 1.42
+WORTH ADDING: False
+
+== US hourly Z swing (no ML / market-model gate): 115 stocks, 3484 hourly bars 2024-11-06 .. 2026-11-05; sell-off window open 8% of bars
+  line -2.00 hold  5 bars | DESIGN n 366 win  44% avg -0.51% (random -0.35%) worst5  -5.8% || CONFIRM n  64 win  64% avg +0.87% (random +0.47%) worst5  -1.6%
+  line -2.00 hold 10 bars | DESIGN n 330 win  49% avg -0.43% (random -0.25%) worst5  -8.8% || CONFIRM n  59 win  68% avg +1.37% (random +0.65%) worst5  -2.1%
+  line -2.00 hold 20 bars | DESIGN n 281 win  42% avg -0.79% (random -0.60%) worst5  -8.9% || CONFIRM n  59 win  63% avg +1.58% (random +1.12%) worst5  -2.5%
+  line -2.00 hold 40 bars | DESIGN n 230 win  53% avg +0.16% (random +0.38%) worst5  -8.7% || CONFIRM n  57 win  47% avg -0.05% (random +0.29%) worst5  -5.2%
+  line -2.62 hold  5 bars | DESIGN n 228 win  50% avg -0.25% (random -0.37%) worst5  -7.2% || CONFIRM n  22 win  68% avg +1.13% (random +0.55%) worst5  -2.0%
+  line -2.62 hold 10 bars | DESIGN n 203 win  45% avg -0.84% (random -0.88%) worst5  -9.6% || CONFIRM n  22 win  73% avg +2.10% (random +0.63%) worst5  -0.9%
+  line -2.62 hold 20 bars | DESIGN n 177 win  38% avg -0.99% (random -0.78%) worst5  -9.1% || CONFIRM n  22 win  73% avg +2.14% (random +0.64%) worst5  -1.6%
+  line -2.62 hold 40 bars | DESIGN n 159 win  54% avg +0.61% (random +0.87%) worst5  -8.0% || CONFIRM n  22 win  64% avg +2.46% (random +0.76%) worst5  -3.4%
+  line -3.00 hold  5 bars | DESIGN n 185 win  52% avg +0.01% (random -0.18%) worst5  -5.8% || CONFIRM n   5 win  80% avg +2.40% (random +1.06%) worst5  +0.3%
+  line -3.00 hold 10 bars | DESIGN n 158 win  44% avg -0.63% (random -0.84%) worst5  -8.2% || CONFIRM n   5 win  80% avg +3.35% (random +1.25%) worst5  -0.1%
+  line -3.00 hold 20 bars | DESIGN n 133 win  37% avg -1.33% (random -1.30%) worst5  -9.2% || CONFIRM n   5 win  80% avg +1.46% (random +0.52%) worst5  -0.2%
+  line -3.00 hold 40 bars | DESIGN n 123 win  59% avg +1.79% (random +1.66%) worst5  -7.5% || CONFIRM n   5 win  60% avg -0.74% (random -0.16%) worst5  -4.0%
+US replication of line -3.0, hold 40: CONFIRM n   5 win  60% avg -0.74% (random -0.16%) worst5  -4.0% -> False
+
+== C (exploratory) intraday VWAP stretch <= -2 after 11:00, 15-minute bars 2026-08-13 .. 2026-11-05, liquid Saudi stocks
+  trades 4274, win 22%, avg -0.55% net of 0.40% (random same-time buys -0.58%), median hold 8 bars; before costs -0.15%

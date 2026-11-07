@@ -1,0 +1,57 @@
+accounts: 1025 stock-years; 269 stocks; fiscal years ['2021', '2022', '2023', '2024', '2025', '2026']
+
+Z swing (live filters, hold 40): 52 trades from 2023-04 (52 with accounts)
+    profitable (NI > 0)      n   36 win  72% avg  +5.3%
+    loss-making              n   16 win  50% avg  -0.1%
+    ROE high third           n   21 win  67% avg  +4.7%
+    ROE mid third            n   11 win  82% avg  +5.8%
+    ROE low third            n   20 win  55% avg  +1.3%
+    earnings grew            n   35 win  69% avg  +3.1%
+    earnings fell            n   15 win  53% avg  +4.6%
+    debt/equity low (non-fin) n   14 win  86% avg  +6.7%
+    debt/equity mid (non-fin) n   15 win  47% avg  +0.2%
+    debt/equity high (non-fin) n   14 win  71% avg  +6.0%
+    financial sector         n    9 win  56% avg  +1.0%
+    no accounts              n    0
+
+price-only dips, hold 20: 419 trades from 2023-04 (418 with accounts)
+    profitable (NI > 0)      n  330 win  51% avg  +0.6%
+    loss-making              n   88 win  35% avg  -3.5%
+    ROE high third           n  180 win  48% avg  -0.2%
+    ROE mid third            n  107 win  55% avg  +1.3%
+    ROE low third            n  126 win  42% avg  -1.4%
+    earnings grew            n  232 win  51% avg  +0.5%
+    earnings fell            n  117 win  45% avg  -1.1%
+    debt/equity low (non-fin) n   88 win  50% avg  +0.9%
+    debt/equity mid (non-fin) n  130 win  52% avg  +0.2%
+    debt/equity high (non-fin) n  129 win  42% avg  -1.6%
+    financial sector         n   61 win  49% avg  +0.4%
+    no accounts              n    1
+
+price-only dips, hold 40: 370 trades from 2023-04 (369 with accounts)
+    profitable (NI > 0)      n  296 win  51% avg  +0.7%
+    loss-making              n   73 win  37% avg  -2.6%
+    ROE high third           n  155 win  48% avg  -0.3%
+    ROE mid third            n  102 win  55% avg  +1.1%
+    ROE low third            n  108 win  44% avg  -0.2%
+    earnings grew            n  205 win  45% avg  -0.3%
+    earnings fell            n   97 win  51% avg  -0.5%
+    debt/equity low (non-fin) n   86 win  62% avg  +2.7%
+    debt/equity mid (non-fin) n  113 win  45% avg  -0.3%
+    debt/equity high (non-fin) n  107 win  42% avg  -2.1%
+    financial sector         n   54 win  48% avg  +0.7%
+    no accounts              n    1
+
+weekly Z swing (live filters, hold 40): 7 trades from 2023-04 (7 with accounts)
+    profitable (NI > 0)      n    5 win  60% avg  +8.3%
+    loss-making              n    2
+    ROE high third           n    2
+    ROE mid third            n    0
+    ROE low third            n    5 win  40% avg  -0.5%
+    earnings grew            n    5 win  60% avg  +6.4%
+    earnings fell            n    2
+    debt/equity low (non-fin) n    1
+    debt/equity mid (non-fin) n    5 win  20% avg  -8.2%
+    debt/equity high (non-fin) n    0
+    financial sector         n    1
+    no accounts              n    0

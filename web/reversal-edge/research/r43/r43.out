@@ -1,0 +1,40 @@
+
+== DESIGN
+baseline                               n 267 win 84% avg +19.5% w5 -11.1% | sleeve  34 tr +2.8%/y DD  5.1% ratio 0.55 Sharpe 0.78 | median hold 40d
+K1 Connors: buy at the signal close    n 267 win 81% avg +17.9% w5 -10.0% | sleeve  34 tr +2.6%/y DD  6.0% ratio 0.44 Sharpe 0.75 | median hold 41d
+K2 Turtle Soup (+ its stop)            n  39 win 46% avg +16.1% w5 -10.3% | sleeve  35 tr +3.1%/y DD  5.7% ratio 0.54 Sharpe 1.28 | median hold 40d
+K3 Connors: buy close when RSI(2) < 5  n 201 win 79% avg +17.0% w5 -11.9% | sleeve  34 tr +2.1%/y DD  6.1% ratio 0.35 Sharpe 0.60 | median hold 41d
+F1 Connors: above 200-day average      n<10 | median hold 40d
+F2 Bulkowski: no limit-down in 20d     n  97 win 69% avg +10.4% w5 -13.7% | sleeve  34 tr +1.6%/y DD  6.0% ratio 0.26 Sharpe 0.50 | median hold 40d
+F3 Nagel: market volatility high       n 263 win 83% avg +19.7% w5 -11.2% | sleeve  32 tr +2.8%/y DD  5.1% ratio 0.54 Sharpe 0.78 | median hold 40d
+F4 George-Hwang: not at 52-week low    n 125 win 81% avg +17.1% w5  -9.8% | sleeve  27 tr +3.2%/y DD  4.8% ratio 0.66 Sharpe 0.86 | median hold 40d
+X1 Connors: exit close > 5-day avg     n 332 win 64% avg  +2.0% w5 -11.7% | sleeve 113 tr +0.1%/y DD  5.6% ratio 0.01 Sharpe 0.02 | median hold 3d
+X2 Connors: exit RSI(2) > 70           n 318 win 68% avg  +2.8% w5 -10.4% | sleeve  94 tr +0.4%/y DD  5.3% ratio 0.08 Sharpe 0.15 | median hold 4d
+
+== CONFIRM
+baseline                               n 200 win 72% avg  +7.6% w5 -12.3% | sleeve  43 tr +1.7%/y DD  5.6% ratio 0.31 Sharpe 0.54 | median hold 40d
+K1 Connors: buy at the signal close    n 200 win 72% avg  +7.0% w5 -12.6% | sleeve  43 tr +1.4%/y DD  5.4% ratio 0.26 Sharpe 0.44 | median hold 41d
+K2 Turtle Soup (+ its stop)            n  37 win 73% avg +10.0% w5  -6.0% | sleeve  20 tr +1.2%/y DD  3.1% ratio 0.37 Sharpe 0.61 | median hold 40d
+K3 Connors: buy close when RSI(2) < 5  n 156 win 78% avg  +9.3% w5 -10.0% | sleeve  33 tr +1.2%/y DD  4.1% ratio 0.29 Sharpe 0.43 | median hold 41d
+F1 Connors: above 200-day average      n<10 | median hold 40d
+F2 Bulkowski: no limit-down in 20d     n  89 win 81% avg +10.6% w5 -11.4% | sleeve  35 tr +1.0%/y DD  5.7% ratio 0.18 Sharpe 0.43 | median hold 40d
+F3 Nagel: market volatility high       n 196 win 73% avg  +7.8% w5 -12.4% | sleeve  40 tr +1.6%/y DD  5.2% ratio 0.31 Sharpe 0.52 | median hold 40d
+F4 George-Hwang: not at 52-week low    n  66 win 76% avg  +7.0% w5 -12.2% | sleeve  28 tr +1.2%/y DD  4.4% ratio 0.28 Sharpe 0.49 | median hold 40d
+X1 Connors: exit close > 5-day avg     n 268 win 60% avg  +0.8% w5 -11.5% | sleeve  98 tr +0.8%/y DD  3.1% ratio 0.25 Sharpe 0.42 | median hold 3d
+X2 Connors: exit RSI(2) > 70           n 260 win 66% avg  +1.9% w5 -10.8% | sleeve  83 tr +1.4%/y DD  3.4% ratio 0.41 Sharpe 0.68 | median hold 4d
+
+== 2023-26
+baseline                               n  60 win 68% avg  +4.6% w5 -12.6% | sleeve  23 tr +1.5%/y DD  5.6% ratio 0.26 Sharpe 0.67 | median hold 40d
+K1 Connors: buy at the signal close    n  60 win 68% avg  +3.8% w5 -12.6% | sleeve  23 tr +1.4%/y DD  5.4% ratio 0.26 Sharpe 0.67 | median hold 41d
+K2 Turtle Soup (+ its stop)            n<10 | median hold 40d
+K3 Connors: buy close when RSI(2) < 5  n  43 win 70% avg  +4.3% w5  -9.7% | sleeve  17 tr +1.6%/y DD  4.1% ratio 0.39 Sharpe 0.78 | median hold 41d
+F1 Connors: above 200-day average      n<10 | median hold 40d
+F2 Bulkowski: no limit-down in 20d     n  34 win 71% avg  +4.8% w5 -13.3% | sleeve  21 tr +1.0%/y DD  4.7% ratio 0.21 Sharpe 0.60 | median hold 40d
+F3 Nagel: market volatility high       n  59 win 69% avg  +5.0% w5 -12.7% | sleeve  23 tr +1.5%/y DD  5.2% ratio 0.29 Sharpe 0.67 | median hold 40d
+F4 George-Hwang: not at 52-week low    n  13 win 62% avg  -0.2% w5 -15.0% | sleeve  11 tr +0.1%/y DD  4.2% ratio 0.03 Sharpe 0.22 | median hold 40d
+X1 Connors: exit close > 5-day avg     n  99 win 83% avg  +4.7% w5  -3.0% | sleeve  37 tr +1.1%/y DD  2.2% ratio 0.52 Sharpe 0.68 | median hold 3d
+X2 Connors: exit RSI(2) > 70           n  97 win 90% avg  +5.7% w5  -2.3% | sleeve  37 tr +1.7%/y DD  2.2% ratio 0.81 Sharpe 1.00 | median hold 4d
+Family K: no variant beats the baseline's DESIGN ratio while keeping 90% of its return -> none
+Family F: DESIGN pick 'F4 George-Hwang: not at 52-week low' ratio 0.66 vs 0.55 -> CONFIRM ratio 0.28 vs 0.31, return +1.2% vs +1.7% -> ADOPTED: False
+Family X: no variant beats the baseline's DESIGN ratio while keeping 90% of its return -> none
+ADOPTED: []

@@ -1,0 +1,7 @@
+hourly data from 2023-11-09 stocks with bars: 260
+rescaled bars on 0 trades (should be 0)
+buy at the open (H1, same trades)        trades  359 | mean net +0.772% per trade-day (t +2.70) | gross per trade +1.34% | win 56%
+H2: buy ~11:00 (first-hour close)        trades  355 | mean net -0.358% per trade-day (t -1.88) | gross per trade -0.05% | win 36%
+buy ~12:00 (second-hour close)           trades  355 | mean net -0.284% per trade-day (t -1.82) | gross per trade +0.06% | win 36%
+first 60m bar open vs daily open: median diff +0.000%, |diff|>0.5% on 10% of trades
+first-hour volume share of the day: median 37%

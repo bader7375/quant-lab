@@ -1,0 +1,14 @@
+B. hourly signals: 158; on stocks the daily book does not hold: 128
+  DESIGN   daily alone                 +1.54%/y DD  4.38% ratio 0.35
+  DESIGN   daily + all hourly          +6.43%/y DD  4.22% ratio 1.52
+  DESIGN   daily + hourly complement   +6.63%/y DD  4.22% ratio 1.57
+  DESIGN   hourly complement alone     +5.09%/y DD  1.01% ratio 5.06
+  DESIGN   complement trades taken 11, win 100%, avg +9.07%
+  CONFIRM  daily alone                 +3.15%/y DD  2.12% ratio 1.49
+  CONFIRM  daily + all hourly          +5.08%/y DD  3.58% ratio 1.42
+  CONFIRM  daily + hourly complement   +4.41%/y DD  3.63% ratio 1.21
+  CONFIRM  hourly complement alone     +1.25%/y DD  2.57% ratio 0.49
+  CONFIRM  complement trades taken 12, win 58%, avg +2.10%
+DECISION B: hourly complement worth adding: False
+
+C (exploratory, 76 daily signals Aug 13 - Oct 29 with 5-minute data): buying after the first 5-minute close above the session VWAP costs -0.35% vs the open on average (median +0.00%); day-5 return from the open +10.87% vs from the VWAP-cross entry +11.31% (before costs)

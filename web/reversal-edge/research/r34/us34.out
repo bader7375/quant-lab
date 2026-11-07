@@ -1,0 +1,49 @@
+US lines (2010-17 2% quantiles): daily -1.67, weekly -1.13 | Saudi: -2.62 / -2.08
+  r = np.log(C).diff().clip(-.25, .25); mr = r.where(el).mean(1); msd = mr.rolling(60, min_periods=40).std()
+
+=== us100 (market momentum <= -1.18 on 7% of days)
+  A daily + gate             2010-17 n 200 win 69% avg +3.5% | random +3.4% (68% win) edge +0.0 | SPY +2.3% (68%) edge +1.2
+  A daily + gate             2018-26 n 336 win 78% avg +11.8% | random +9.6% (74% win) edge +2.1 | SPY +9.6% (80%) edge +2.2
+  A daily + gate             2023-26 n  83 win 94% avg +21.1% | random +17.1% (90% win) edge +3.9 | SPY +18.1% (100%) edge +2.9
+  B weekly + gate            2010-17 n  64 win 67% avg +4.9% | random +5.6% (76% win) edge -0.7 | SPY +4.7% (89%) edge +0.1
+  B weekly + gate            2018-26 n 201 win 83% avg +17.1% | random +16.0% (81% win) edge +1.1 | SPY +15.8% (86%) edge +1.3
+  B weekly + gate            2023-26 n  36 win 89% avg +19.9% | random +16.3% (89% win) edge +3.6 | SPY +19.7% (100%) edge +0.2
+  C daily or weekly + gate   2010-17 n 206 win 69% avg +3.6% | random +3.5% (68% win) edge +0.1 | SPY +2.4% (68%) edge +1.2
+  C daily or weekly + gate   2018-26 n 389 win 76% avg +11.8% | random +9.9% (72% win) edge +1.9 | SPY +10.0% (78%) edge +1.8
+  C daily or weekly + gate   2023-26 n  88 win 93% avg +21.1% | random +16.8% (89% win) edge +4.2 | SPY +18.7% (100%) edge +2.3
+  daily, no gate (round 30)  2010-17 n 651 win 66% avg +3.5% | random +3.7% (68% win) edge -0.2 | SPY +2.8% (76%) edge +0.7
+  daily, no gate (round 30)  2018-26 n 954 win 65% avg +4.6% | random +3.9% (61% win) edge +0.7 | SPY +3.4% (68%) edge +1.3
+  daily, no gate (round 30)  2023-26 n 354 win 67% avg +6.4% | random +5.6% (64% win) edge +0.8 | SPY +5.9% (83%) edge +0.5
+  C without gate             2010-17 n 695 win 66% avg +3.7% | random +3.6% (67% win) edge +0.1 | SPY +2.8% (75%) edge +0.9
+  C without gate             2018-26 n1083 win 64% avg +4.8% | random +4.0% (62% win) edge +0.8 | SPY +3.6% (69%) edge +1.2
+  C without gate             2023-26 n 391 win 66% avg +6.4% | random +5.2% (64% win) edge +1.2 | SPY +5.7% (84%) edge +0.6
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2010-17: n 20 win 95% avg +5.0%
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2018-26: n 20 win 70% avg +3.7%
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2023-26: n 5 win 100% avg +14.2%
+  r = np.log(C).diff().clip(-.25, .25); mr = r.where(el).mean(1); msd = mr.rolling(60, min_periods=40).std()
+
+=== KDD17 (market momentum <= -1.18 on 6% of days)
+  A daily + gate             2007-09 n  57 win 33% avg -4.8% | random -4.6% (38% win) edge -0.2 | SPY -8.0% (42%) edge +3.2
+  A daily + gate             2010-16 n 102 win 68% avg +2.3% | random +2.5% (68% win) edge -0.1 | SPY +2.6% (67%) edge -0.2
+  B weekly + gate            2007-09 n  39 win 46% avg -2.8% | random -7.4% (32% win) edge +4.6 | SPY -7.8% (0%) edge +5.0
+  B weekly + gate            2010-16 n  26 win 81% avg +6.1% | random +5.5% (79% win) edge +0.5 | SPY +6.3% (100%) edge -0.3
+  C daily or weekly + gate   2007-09 n  78 win 37% avg -4.3% | random -4.7% (38% win) edge +0.4 | SPY -8.0% (31%) edge +3.7
+  C daily or weekly + gate   2010-16 n 103 win 68% avg +2.5% | random +2.3% (66% win) edge +0.3 | SPY +2.7% (67%) edge -0.2
+  daily, no gate (round 30)  2007-09 n 122 win 50% avg -1.3% | random -1.4% (46% win) edge +0.2 | SPY -3.1% (48%) edge +1.8
+  daily, no gate (round 30)  2010-16 n 304 win 63% avg +2.0% | random +2.4% (65% win) edge -0.4 | SPY +2.5% (74%) edge -0.5
+  C without gate             2007-09 n 160 win 49% avg -0.7% | random -1.1% (47% win) edge +0.4 | SPY -2.8% (46%) edge +2.1
+  C without gate             2010-16 n 335 win 63% avg +2.2% | random +2.5% (65% win) edge -0.4 | SPY +2.6% (75%) edge -0.4
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2007-09: n 7 win 0% avg -18.5%
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2010-16: n 11 win 91% avg +4.6%
+  r = np.log(C).diff().clip(-.25, .25); mr = r.where(el).mean(1); msd = mr.rolling(60, min_periods=40).std()
+
+=== CMIN-US (market momentum <= -1.18 on 5% of days)
+  A daily + gate             2018-21 n 102 win 81% avg +12.5% | random +11.5% (79% win) edge +1.1 | SPY +12.0% (100%) edge +0.5
+  B weekly + gate            2018-21 n  76 win 92% avg +21.9% | random +24.1% (95% win) edge -2.2 | SPY +24.4% (100%) edge -2.5
+  C daily or weekly + gate   2018-21 n 120 win 80% avg +13.4% | random +13.5% (81% win) edge -0.1 | SPY +14.1% (100%) edge -0.6
+  daily, no gate (round 30)  2018-21 n 258 win 65% avg +4.0% | random +4.0% (65% win) edge -0.0 | SPY +3.4% (67%) edge +0.6
+  C without gate             2018-21 n 288 win 65% avg +4.1% | random +4.4% (66% win) edge -0.3 | SPY +4.0% (71%) edge +0.1
+  market timing alone: SPY when momentum first <= -1.18, hold 40, 2018-21: n 1 win 100% avg +1.7%
+
+VERDICT: us100 rule C passes (win >= 60%, edge vs random >= +1 pt, edge vs SPY >= 0, both eras): False; other sets edge vs random >= 0: False
+STRATEGY WORKS ON US STOCKS: False
