@@ -71,6 +71,16 @@ try:
                          "left": int(40 - max(held, 0)), "ml": round(float(WPCT.iloc[i][s_]), 3)})
 except Exception as ex:
     print("zactive failed:", ex); zact = []
+try:   # option 7 (round 47): Z swing only after the market turns; the switch is daily/settings.json; shown in the list and the terminal
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "../daily")); from opt7 import market_turn, status as o7status, settings as o7settings
+    MT = market_turn(PP["C"], PP["VAL"], PP["elig"]); _g7 = MT.gate
+    O7B = sorted({z_["sym"] for z_ in zact if not bool(_g7.get(pd.Timestamp(z_["signal"]), False))})   # bought by the live rule before the turn, still held
+    _sp = MT.iloc[-90:]; _b0 = float(_sp.idx.dropna().iloc[0])
+    OPT7 = dict(on=bool(o7settings()["option7"]), blocked=O7B, **o7status(MT),
+                spark=dict(dates=[str(d_.date()) for d_ in _sp.index], idx=[None if not np.isfinite(v_) else round(100 * v_ / _b0, 2) for v_ in _sp.idx],
+                           trig=[None if not np.isfinite(v_) else round(104 * v_ / _b0, 2) for v_ in _sp.low20], gate=[bool(v_) for v_ in _sp.gate]))
+except Exception as ex:
+    print("option 7 failed:", ex); OPT7 = None; O7B = []
 zwx = []
 if wk_done and pd.Timestamp(ZWK.index[-1]) == pd.Timestamp(last):
     for s_ in WF.columns[WF.iloc[-1].fillna(False).values]:
@@ -118,7 +128,7 @@ try:
         r = tv.loc[s_]; first_d = bool(z_ <= -2.62 and zc0.get(s_, np.nan) > -2.62); first_w = bool(wk_done and wfl.get(s_, False))
         zscan.append({"sym": s_, "close": round(float(c1.get(s_, np.nan)), 3), "chg": round(float(c1.get(s_, np.nan) / c0.get(s_, np.nan) - 1), 4), "zc": round(float(z_), 2),
                       "zw": round(float(zw_last.get(s_, np.nan)), 2) if s_ in zw_last.index else None, "fd": first_d, "fw": first_w, "pct": round(float(r.pct), 3),
-                      "loss": s_ in LOSSY, "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s_)})
+                      "loss": s_ in LOSSY, "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s_), "b7": s_ in O7B})
         if TU is not None and bool(TOK.get(s_, False)):
             tu = [int(TU[k].get(s_, 0)) for k in (1, 2, 3)]; td = [int(TD[k].get(s_, 0)) for k in (1, 2, 3)]
             zscan[-1].update(tm=tu[0] + 2 * tu[1] + 3 * tu[2] - td[0] - 2 * td[1] - 3 * td[2], tu=tu, td=td)
@@ -133,7 +143,7 @@ old = json.load(open("../ml26/today.json"))
 T = {"date": str(pd.Timestamp(last).date()), "model": PICK, "pm": pm, "pm_hist": {str(k.date()): round(float(v), 5) for k, v in hist.items()}, "universe": int(len(liq)),
      "picks": [{"sym": r.sym, "rank": int(r["rank"]), "score": round(float(r.score), 4), "val_m": round(float(r.val) / 1e6, 1), "div": bool(r["div"]), **{c: round(float(r[c]) + .5, 3) for c in cols}} for _, r in liq.head(30).iterrows()],
      "ranks": {r.sym: round(float(r.pct), 3) for _, r in today.iterrows()}, "ranked": int(len(today)),
-     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62, "zactive": zact, "zhold": 40, "ms": round(ms_now, 3), "ms_gate": MS_GATE, "ms_deep": -2.53, "zwx": zwx, "wline": WLINE, "wk_done": bool(wk_done), "fin": FIN, "zscan": zscan}
+     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62, "zactive": zact, "zhold": 40, "ms": round(ms_now, 3), "ms_gate": MS_GATE, "ms_deep": -2.53, "zwx": zwx, "wline": WLINE, "wk_done": bool(wk_done), "fin": FIN, "zscan": zscan, "opt7": OPT7}
 for k in ("record", "summary", "filter_test"):
     if k in old: T[k] = old[k]
 if os.path.exists("record27.json"): T.update(json.load(open("record27.json")))

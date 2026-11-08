@@ -14,6 +14,8 @@ Change 2026-10-25 (round 33): tier 1 also takes WEEKLY Z swings - first weekly c
 Each pick also shows its latest annual accounts (Yahoo, FY usable 91 days after year end).
 Change 2026-10-25 (round 36, the user's choice): companies whose latest usable annual result is a LOSS are skipped (next candidate moves up).
 Accounts exist only from FY2022 (usable from April 2023), so the filter acts from then on; earlier history is unchanged.
+Option 7 switch (2026-11-08, the user's request): settings.json {"option7": true/false}. When on, tier 1 (Z swing) takes a signal only while the
+market-turn window is open and the stock was not bought by the live rule before the turn (opt7.py, round 47/49). The track record stays the live rule's.
 Usage: python top3.py --history   (walk-forward track record of the rule -> rule_stats.json)
        python top3.py             (today's list -> out/<date>.md, appended to out/picks_log.csv)"""
 import os, sys, json, glob, numpy as np, pandas as pd
@@ -52,10 +54,10 @@ def _loss_mask():
     return M
 LOSS = _loss_mask()
 
-def ranked(i, pct, pmv, msv, wk_ok=True):
+def ranked(i, pct, pmv, msv, wk_ok=True, zmask=None):
     """all candidates at close i in list order: [(column index, tier)]; pct = ML rank per column (array), pmv = market model."""
     ok = LIQ[i] & np.isfinite(pct) & np.isfinite(A[i]) & (A[i] > 0) & ~LOSS[i]; out, seen = [], set()
-    masks = ([(1, ok & (ZFIRST[i] | (WFIRST[i] & wk_ok)) & (pct >= .5))] if pmv > 0 and msv <= MS_GATE else []) + [(2, ok & BRK[i] & (pct >= .7)), (3, ok)]
+    masks = ([(1, ok & (ZFIRST[i] | (WFIRST[i] & wk_ok)) & (pct >= .5) & (True if zmask is None else zmask))] if pmv > 0 and msv <= MS_GATE else []) + [(2, ok & BRK[i] & (pct >= .7)), (3, ok)]
     for t, m in masks:
         for j in np.where(m)[0][np.argsort(-pct[m], kind="stable")]:
             if j not in seen: seen.add(j); out.append((j, t))
@@ -144,7 +146,12 @@ def live():
     now = pd.Timestamp.now(tz="Asia/Riyadh").tz_localize(None).normalize(); day = BD.rollforward(now) if now > last else last + BD
     nm = names(); St = json.load(open(os.path.join(H, "rule_stats.json")))
     wk_ok = day.to_period("W-THU") != last.to_period("W-THU")   # the last week is complete only when the list day is in a new week
-    msv = float(MS[i]); cand = ranked(i, pct, pmv, msv, wk_ok); top = cand[:3]; FA = accounts(); half = pmv <= 0; size = "2.5%" if half else "5%"
+    from opt7 import settings as o7settings
+    O7 = T.get("opt7"); o7on = bool(o7settings()["option7"]) and O7 is not None
+    zmask = np.array([bool(O7["gate"]) and c_ not in set(O7["blocked"]) for c_ in cols]) if o7on else None
+    msv = float(MS[i]); cand = ranked(i, pct, pmv, msv, wk_ok, zmask); top = cand[:3];
+    o7skip = [cols[j] for j, t in ranked(i, pct, pmv, msv, wk_ok) if t == 1 and (j, 1) not in cand] if o7on else []
+    FA = accounts(); half = pmv <= 0; size = "2.5%" if half else "5%"
     L = [f"**Saudi top 3 for {day.strftime('%A %d %b %Y')}** (prices to the {fmt_d(last)} close; buy at the 10:00 open)", ""]
     if last < day - BD: L += [f"Warning: the newest close in the data is {fmt_d(last)}, not {fmt_d(day - BD)} (Yahoo has not published it yet or the market was closed).", ""]
     L.append(f"Market model: {pc(pmv, 2)} expected 20-day market move -> " + ("**positive**, normal size." if not half else
@@ -153,6 +160,14 @@ def live():
     L.append(f"Market momentum (market stretch): {msv:+.2f} -> " + ("**deep mean-reversion zone** (at or below -2.53): dip buys have worked best here." if msv <= MS_DEEP else
              "**mean-reversion zone** (-2.53 to -1.18): dip buys allowed." if msv <= MS_GATE else
              "**momentum zone** (above -1.18): the market is not falling, so single-stock dips tend to keep falling; Z swing is off, breakouts are fine."))
+    if O7 is not None:
+        fdt = lambda x: pd.Timestamp(x).strftime("%a %d %b") if x else "-"
+        L += ["", f"Option 7 (Z swing only after the market turns): **{'ON' if o7on else 'off'}**. Market index (equal-weight liquid Saudi stocks): "
+              f"{pc(O7['bounce'])} above its 20-day low, {pc(O7['dd'], 0)} from its 1-year high -> "
+              + (f"turn window **open** since {fdt(O7.get('window_start'))}, until about {fdt(O7.get('window_end'))}." if O7["gate"] else
+                 "turn window **closed** (it opens on a close 4% above the 20-day low after a fall of 10% or more).")]
+        if o7on and o7skip: L.append("Option 7 skipped: " + ", ".join(o7skip[:8]) + (" (the market has not turned)." if not O7["gate"] else
+                                     f" (bought by the live rule before the {fdt(O7.get('window_start'))} turn; blocked for their 40 sessions)."))
     L += ["", "| # | Stock | Setup | Last close | Plan | Latest accounts |", "|---|---|---|---|---|---|"]
     log_rows = []
     for n, (j, t) in enumerate(top, 1):
@@ -172,6 +187,7 @@ def live():
         if x: L.append(f"- {TIERS[t]['name']}: {100 * x['win']:.0f}% winners, {pc(x['avg'])} per trade (wins {pc(x['avg_win'])}, losses {pc(x['avg_loss'])}, "
                        f"median {x['hold']:.0f} sessions); random liquid stock {pc(r['avg'])}."
                        + (f" Since 2024: {100 * y['win']:.0f}% winners, {pc(y['avg'])} (random {pc(ry['avg'])})." if y and ry else ""))
+    if o7on and any(t == 1 for _, t in top): L.append("- Option 7 record (Z swing after a turn), 2020-26: 88% winners, +12.1% per trade, worst 5% -5.2% (all Z swing: 71%, +7.4%, -11.7%).")
     if any("LOSS" in FA.get(cols[j], "") for j, _ in top): L += ["", "Loss-making companies: in 2023-26 dips in loss-makers won 35-50% of the time vs 51-72% for profitable ones (one period only, so a caution, not a rule)."]
     more = [(j, t) for j, t in cand[3:] if t < 3][:6]
     if more: L += ["", "Also qualifying today: " + ", ".join(f"{cols[j]} {nm.get(cols[j], '')[:18]} ({TIERS[t]['name']}, ML {100 * pct[j]:.0f}%)" for j, t in more) + "."]

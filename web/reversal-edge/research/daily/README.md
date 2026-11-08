@@ -43,3 +43,7 @@ Change 2026-10-31 (user): the option ranges and the dollar-volume list were remo
 30 largest US companies by market value (Yahoo 'largest market cap' list, US companies only, one share class each; edge26/us30.py,
 rebuilt each run) - with price, 1-month move, distance from the 52-week high, stretch Z (daily / weekly), RSI(2), 200-day average and
 the tested US rule for each (sell-off swing: a fresh touch while the US window is open). Terminal v24.
+
+Option 7 switch (2026-11-08): `settings.json` `{"option7": false}`. When true, the Z-swing tier takes a signal only while the market-turn
+window is open (opt7.py: equal-weight liquid Saudi stocks closed 4% above their 20-day low after a 10%+ fall, within the last
+20 sessions) and skips stocks the live rule bought before the turn. The list prints the window's state every day either way.
