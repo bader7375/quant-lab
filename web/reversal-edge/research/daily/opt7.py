@@ -6,8 +6,12 @@ turn stay blocked for their 40 sessions (the "shadow book" of round 49). The swi
 import os, json, numpy as np, pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__)); BD = pd.offsets.CustomBusinessDay(weekmask="Sun Mon Tue Wed Thu")
 def settings():
-    try: return dict({"option7": False}, **json.load(open(os.path.join(HERE, "settings.json"))))
-    except Exception: return {"option7": False}
+    """The user's switches (2026-11-08): "zscore" = the live Z-swing rule's signals, "market_returned" = option 7's own signals."""
+    d = {"zscore": True, "market_returned": False}
+    try: f = json.load(open(os.path.join(HERE, "settings.json")))
+    except Exception: f = {}
+    if "option7" in f: d["market_returned"] = bool(f["option7"])
+    d.update({k: bool(v) for k, v in f.items() if k in d}); d["option7"] = d["market_returned"]; return d
 def market_turn(C, VAL, elig):
     """Same numbers as r47/mk47.py measures() and zswing.g4_mask(): idx, low20, bounce, dd250, turn, gate per date."""
     C = C.where(C > 0); r = np.log(C).diff().clip(-.25, .25); el = elig & (VAL.rolling(60, min_periods=20).median() >= 3e6) & C.notna()

@@ -14,8 +14,9 @@ Change 2026-10-25 (round 33): tier 1 also takes WEEKLY Z swings - first weekly c
 Each pick also shows its latest annual accounts (Yahoo, FY usable 91 days after year end).
 Change 2026-10-25 (round 36, the user's choice): companies whose latest usable annual result is a LOSS are skipped (next candidate moves up).
 Accounts exist only from FY2022 (usable from April 2023), so the filter acts from then on; earlier history is unchanged.
-Option 7 switch (2026-11-08, the user's request): settings.json {"option7": true/false}. When on, tier 1 (Z swing) takes a signal only while the
-market-turn window is open and the stock was not bought by the live rule before the turn (opt7.py, round 47/49). The track record stays the live rule's.
+Two signal sets (2026-11-08, the user's choice; switches in settings.json): "Z score" = tier 1 above (the live Z-swing rule, named Z score in the list)
+and "Market returned" = option 7 (round 47/49): the same signals, taken only while the market-turn window is open and skipping stocks the live rule
+bought before the turn (opt7.py). It has its own section, record and log (tier 4), at most 5 positions; a stock in both is one trade.
 Usage: python top3.py --history   (walk-forward track record of the rule -> rule_stats.json)
        python top3.py             (today's list -> out/<date>.md, appended to out/picks_log.csv)"""
 import os, sys, json, glob, numpy as np, pandas as pd
@@ -24,7 +25,7 @@ sys.path.insert(0, R27); sys.path.insert(0, os.path.join(S, "strat")); os.chdir(
 from core import P, C, dates, cols, PCT, pm, ATR, SMA200, START
 from sectors import industry
 COST = 0.004; ZLINE = -2.62; MS_GATE, MS_DEEP = -1.18, -2.53
-TIERS = {1: dict(name="Z swing", kind=1, h=40), 2: dict(name="Trend breakout", kind=4, h=60, k=3.0), 3: dict(name="ML leader", kind=1, h=20)}
+TIERS = {4: dict(name="Market returned", kind=1, h=40), 1: dict(name="Z score", kind=1, h=40), 2: dict(name="Trend breakout", kind=4, h=60, k=3.0), 3: dict(name="ML leader", kind=1, h=20)}
 F = pd.read_pickle("F27y.pkl"); ZC = F["zc"].reindex(index=dates, columns=cols)
 LIQ = ((P["VAL"].rolling(60, min_periods=20).median() >= 3e6) & P["elig"]).values
 ZFIRST = ((ZC <= ZLINE) & ~(ZC <= ZLINE).shift(1, fill_value=False)).values
@@ -147,10 +148,11 @@ def live():
     nm = names(); St = json.load(open(os.path.join(H, "rule_stats.json")))
     wk_ok = day.to_period("W-THU") != last.to_period("W-THU")   # the last week is complete only when the list day is in a new week
     from opt7 import settings as o7settings
-    O7 = T.get("opt7"); o7on = bool(o7settings()["option7"]) and O7 is not None
-    zmask = np.array([bool(O7["gate"]) and c_ not in set(O7["blocked"]) for c_ in cols]) if o7on else None
-    msv = float(MS[i]); cand = ranked(i, pct, pmv, msv, wk_ok, zmask); top = cand[:3];
-    o7skip = [cols[j] for j, t in ranked(i, pct, pmv, msv, wk_ok) if t == 1 and (j, 1) not in cand] if o7on else []
+    SET = o7settings(); O7 = T.get("opt7"); mron = bool(SET["market_returned"]) and O7 is not None
+    msv = float(MS[i]); cand = ranked(i, pct, pmv, msv, wk_ok, None if SET["zscore"] else np.zeros(len(cols), bool)); top = cand[:3]
+    zs_all = [j for j, t in ranked(i, pct, pmv, msv, wk_ok) if t == 1]                      # every Z score signal at this close
+    mr = [j for j in zs_all if mron and O7["gate"] and cols[j] not in set(O7["blocked"])][:5]  # Market returned signals (its own list)
+    mr_skip = [cols[j] for j in zs_all if mron and cols[j] not in [cols[k] for k in mr]]
     FA = accounts(); half = pmv <= 0; size = "2.5%" if half else "5%"
     L = [f"**Saudi top 3 for {day.strftime('%A %d %b %Y')}** (prices to the {fmt_d(last)} close; buy at the 10:00 open)", ""]
     if last < day - BD: L += [f"Warning: the newest close in the data is {fmt_d(last)}, not {fmt_d(day - BD)} (Yahoo has not published it yet or the market was closed).", ""]
@@ -160,20 +162,13 @@ def live():
     L.append(f"Market momentum (market stretch): {msv:+.2f} -> " + ("**deep mean-reversion zone** (at or below -2.53): dip buys have worked best here." if msv <= MS_DEEP else
              "**mean-reversion zone** (-2.53 to -1.18): dip buys allowed." if msv <= MS_GATE else
              "**momentum zone** (above -1.18): the market is not falling, so single-stock dips tend to keep falling; Z swing is off, breakouts are fine."))
-    if O7 is not None:
-        fdt = lambda x: pd.Timestamp(x).strftime("%a %d %b") if x else "-"
-        L += ["", f"Option 7 (Z swing only after the market turns): **{'ON' if o7on else 'off'}**. Market index (equal-weight liquid Saudi stocks): "
-              f"{pc(O7['bounce'])} above its 20-day low, {pc(O7['dd'], 0)} from its 1-year high -> "
-              + (f"turn window **open** since {fdt(O7.get('window_start'))}, until about {fdt(O7.get('window_end'))}." if O7["gate"] else
-                 "turn window **closed** (it opens on a close 4% above the 20-day low after a fall of 10% or more).")]
-        if o7on and o7skip: L.append("Option 7 skipped: " + ", ".join(o7skip[:8]) + (" (the market has not turned)." if not O7["gate"] else
-                                     f" (bought by the live rule before the {fdt(O7.get('window_start'))} turn; blocked for their 40 sessions)."))
+    if not SET["zscore"]: L += ["", "Z score signals are switched off (settings.json): the list below has no Z score picks."]
     L += ["", "| # | Stock | Setup | Last close | Plan | Latest accounts |", "|---|---|---|---|---|---|"]
     log_rows = []
     for n, (j, t) in enumerate(top, 1):
         s = cols[j]; c = Cl[i, j]; a = A[i, j]; z = ZC.iloc[i, j]; ml = pct[j]
         wkly = t == 1 and not ZFIRST[i, j]
-        setup = {1: (f"Z swing (weekly candles): weekly stretch Z {ZWV[i, j]:.2f}, ML {100 * ml:.0f}%" if wkly else f"Z swing: stretch Z {z:.2f}, ML {100 * ml:.0f}%"), 2: f"Trend breakout: new 55-day high, ML {100 * ml:.0f}%", 3: f"ML leader: ML {100 * ml:.0f}%"}[t]
+        setup = {1: (f"Z score (weekly candles): weekly stretch Z {ZWV[i, j]:.2f}, ML {100 * ml:.0f}%" if wkly else f"Z score: stretch Z {z:.2f}, ML {100 * ml:.0f}%"), 2: f"Trend breakout: new 55-day high, ML {100 * ml:.0f}%", 3: f"ML leader: ML {100 * ml:.0f}%"}[t]
         if t == 1: plan = f"{size} of the account. Hold 40 sessions (sell at the open around {fmt_d(day + 40 * BD)}). No stop."
         elif t == 2: plan = (f"{size}. Sell at the next open after a close below (highest close since entry - {3 * a:.2f}); "
                              f"first stop about {c - 3 * a:.2f}. At most 60 sessions.")
@@ -187,11 +182,27 @@ def live():
         if x: L.append(f"- {TIERS[t]['name']}: {100 * x['win']:.0f}% winners, {pc(x['avg'])} per trade (wins {pc(x['avg_win'])}, losses {pc(x['avg_loss'])}, "
                        f"median {x['hold']:.0f} sessions); random liquid stock {pc(r['avg'])}."
                        + (f" Since 2024: {100 * y['win']:.0f}% winners, {pc(y['avg'])} (random {pc(ry['avg'])})." if y and ry else ""))
-    if o7on and any(t == 1 for _, t in top): L.append("- Option 7 record (Z swing after a turn), 2020-26: 88% winners, +12.1% per trade, worst 5% -5.2% (all Z swing: 71%, +7.4%, -11.7%).")
     if any("LOSS" in FA.get(cols[j], "") for j, _ in top): L += ["", "Loss-making companies: in 2023-26 dips in loss-makers won 35-50% of the time vs 51-72% for profitable ones (one period only, so a caution, not a rule)."]
     more = [(j, t) for j, t in cand[3:] if t < 3][:6]
     if more: L += ["", "Also qualifying today: " + ", ".join(f"{cols[j]} {nm.get(cols[j], '')[:18]} ({TIERS[t]['name']}, ML {100 * pct[j]:.0f}%)" for j, t in more) + "."]
-    elif all(t == 3 for _, t in top): L += ["", "No Z-swing or breakout signal at this close; the list is the top ML ranks."]
+    elif all(t == 3 for _, t in top): L += ["", "No Z score or breakout signal at this close; the list is the top ML ranks."]
+    if mron:   # ---- Market returned signals: their own list
+        fdt = lambda x: pd.Timestamp(x).strftime("%a %d %b") if x else "-"
+        L += ["", "**Market returned signals** (Z score signals taken only after the market turns; their own list, at most 5 positions; a stock on both lists is one trade)", "",
+              f"Market index (equal-weight liquid Saudi stocks): {pc(O7['bounce'])} above its 20-day low, {pc(O7['dd'], 0)} from its 1-year high -> "
+              + (f"turn window **open** since {fdt(O7.get('window_start'))}, until about {fdt(O7.get('window_end'))}." if O7["gate"] else
+                 "turn window **closed**: no market-returned buys (it opens on a close 4% above the 20-day low after a fall of 10% or more).")]
+        if mr:
+            L += ["", "| # | Stock | Setup | Last close | Plan | Latest accounts |", "|---|---|---|---|---|---|"]
+            for n, j in enumerate(mr, 1):
+                s_ = cols[j]; wk_ = not ZFIRST[i, j]; both = any(jj == j for jj, _ in top)
+                setup = (f"Market returned (weekly candles): weekly stretch Z {ZWV[i, j]:.2f}" if wk_ else f"Market returned: stretch Z {ZC.iloc[i, j]:.2f}") + f", ML {100 * pct[j]:.0f}%" + (" (also on the list above)" if both else "")
+                L.append(f"| {n} | **{s_}** {nm.get(s_, s_)[:28]} ({industry(s_)}) | {setup} | {Cl[i, j]:.2f} | {size} of the account. Hold 40 sessions (sell at the open around {fmt_d(day + 40 * BD)}). No stop. | {FA.get(s_, '—')} |")
+                log_rows.append(dict(signal=str(last.date()), sym=s_, tier=4, close=round(float(Cl[i, j]), 4), atr=round(float(A[i, j]), 4), ml=round(float(pct[j]), 3), pm=round(pmv, 5)))
+        elif O7["gate"]: L += ["", "No new market-returned signal at this close."]
+        if mr_skip and O7["gate"]: L.append(f"Skipped here: {', '.join(mr_skip[:8])} (Z score bought them before the {fdt(O7.get('window_start'))} turn; blocked for their 40 sessions).")
+        L += ["", "Market returned record (Z score signals after a turn): 2020-26 88% winners, +12.1% per trade, worst 5% -5.2%; 2013-19 82%, +20.1% "
+              "(all Z score signals: 71%, +7.4%, -11.7% and 82%, +19.1%). It misses fast V-shaped rebounds (April 2025) and lost in late 2015."]
     # earlier picks: exits due at this open, using the same exit rules (repeat picks while held are ignored)
     lf = os.path.join(H, "out/picks_log.csv"); old = pd.read_csv(lf, dtype={"sym": str}) if os.path.exists(lf) else pd.DataFrame(columns=["signal", "sym", "tier"])
     old = old[old.signal != str(last.date())]; due, still = [], 0; held = {}
@@ -208,7 +219,7 @@ def live():
     if due: L += ["", "Exits due at today's open (earlier picks, if you bought them): " + "; ".join(due) + "."]
     if still: L += ["", f"{still} earlier pick(s) are still inside their holding rule."]
     L += ["", "Research signals, not financial advice. About 4 in 10 picks lose, so keep each position small"
-          + ("; keep at most 5 Z-swing positions open at once (as tested; with the market-momentum gate the worst Z-swing trade lost about 23%)." if any(t == 1 for _, t in top) else ".")]
+          + ("; keep at most 5 Z score positions open at once (as tested; with the market-momentum gate the worst Z-swing trade lost about 23%)." if any(t == 1 for _, t in top) else ".")]
     md = "\n".join(L); open(os.path.join(H, f"out/{last.date()}.md"), "w").write(md)
     pd.concat([old, pd.DataFrame(log_rows)]).to_csv(lf, index=False); print(md)
 

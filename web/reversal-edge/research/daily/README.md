@@ -44,6 +44,7 @@ Change 2026-10-31 (user): the option ranges and the dollar-volume list were remo
 rebuilt each run) - with price, 1-month move, distance from the 52-week high, stretch Z (daily / weekly), RSI(2), 200-day average and
 the tested US rule for each (sell-off swing: a fresh touch while the US window is open). Terminal v24.
 
-Option 7 switch (2026-11-08): `settings.json` `{"option7": false}`. When true, the Z-swing tier takes a signal only while the market-turn
-window is open (opt7.py: equal-weight liquid Saudi stocks closed 4% above their 20-day low after a 10%+ fall, within the last
-20 sessions) and skips stocks the live rule bought before the turn. The list prints the window's state every day either way.
+Two signal sets (2026-11-08, the user's choice, both on): `settings.json` `{"zscore": true, "market_returned": true}`.
+"Z score" = tier 1, the live Z-swing rule. "Market returned" = option 7 (opt7.py): the same signals, taken only while the market-turn
+window is open (equal-weight liquid Saudi stocks closed 4% above their 20-day low after a 10%+ fall, within the last 20 sessions) and
+skipping stocks Z score bought before the turn. It has its own section in the list, its own record line and log (tier 4), at most 5 positions.

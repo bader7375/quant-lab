@@ -35,7 +35,9 @@ washouts, VIX, oil) beats simply being in the live sell-off window as a market t
    Note (round 49): option 7 works only as a "shadow book" - run the live rule on paper and actually buy only its trades that start
    after the turn (a stock the paper book bought before the turn stays blocked for its 40 sessions). Gating the signals instead
    (letting pre-turn signalers be bought on a later signal) is much weaker (2020-26 ratio 0.37 vs 0.34, 2023-26 worse).
-   Switch added 2026-11-08 at the user's request ("put this in setting to be on and off"): daily/settings.json option7, OFF.
+   Switch added 2026-11-08 at the user's request ("put this in setting to be on and off"); then the user chose two signal sets, both ON
+   ("let us keep the off setting called z score and has own signals. and the option 7 is called market returned signals ... both are on"):
+   the daily list shows "Z score" (the live rule) and its own "Market returned" section (option 7). daily/settings.json.
    The daily list prints the turn window every day; the terminal's Settings has its own view switch (as the list / on / off).
 8. Z swing v2 (rounds 48-50, overnight 2026-11-03): option 7 (shadow turn gate) + option 1 (ML bar 0.7) + option 4 (split exit:
    half held 40 sessions, half sold when stretch Z is back at 0), 5 slots. Passed the combination test and 10 of 12 stress variants
