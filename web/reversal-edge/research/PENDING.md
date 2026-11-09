@@ -51,11 +51,9 @@ washouts, VIX, oil) beats simply being in the live sell-off window as a market t
 Saved 2026-11-07 at the user's request ("Let's back to them later. Save them."): options 1, 7 and 8 wait for the user.
    Before deciding on option 8, re-run it with ranker C (its numbers used M0). Option 1 was re-checked with ranker C in round 62:
    sleeve ratio 0.31 / 0.25 / 0.39 vs live 0.24 / 0.23 / 0.22 (2013-19 / 2020-26 / 2023-26).
-10. Z score slot order (round 64, checked by walk-forward in round 65, r65/RESULTS.md): when there are more Z score signals than
-   free slots, take the most volatile stocks first (60-day volatility) instead of the highest ML rank; keep the 40-session hold.
-   Honest yearly walk-forward 2016-26 (re-chosen from past years only; it picks this order every year from 2017): ratio 0.56 vs
-   live 0.43, +2.8% vs +2.3% a year, drawdown 5.0% vs 5.3%; better in 2016-20 (0.94 vs 0.89) and 2021-26 (0.28 vs 0.16).
-   The round-64 exit change (sell when market momentum recovers) did NOT survive the walk-forward and is dropped. Waiting for the user.
+10. DONE 2026-11-09 (round 66, r66/RESULTS.md, the user's choice): Z score signals most volatile first (60-day volatility) when there are
+   more signals than free slots; ML rank 50%+ stays a filter. Volatility + ML blended was tested and lost to volatility alone in every
+   era. Market returned keeps the ML order. Switch: daily/settings.json "zscore_order": "volatility" or "ml".
 Overnight conclusion (rounds 48-53): the split exit (option 4) is the one Z-swing change that holds across markets (better in 7 of
 10 market-eras: Saudi, US, India, GCC). v2's turn gate is strong in Saudi (both periods, stress-tested) but helps in only 5 of 10
 market-eras elsewhere, so treat it as a Saudi-specific choice for lower risk. Size: 5 x 10% keeps drawdown under 15%.

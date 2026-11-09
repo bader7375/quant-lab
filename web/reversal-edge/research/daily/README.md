@@ -48,3 +48,10 @@ Two signal sets (2026-11-08, the user's choice, both on): `settings.json` `{"zsc
 "Z score" = tier 1, the live Z-swing rule. "Market returned" = option 7 (opt7.py): the same signals, taken only while the market-turn
 window is open (equal-weight liquid Saudi stocks closed 4% above their 20-day low after a 10%+ fall, within the last 20 sessions) and
 skipping stocks Z score bought before the turn. It has its own section in the list, its own record line and log (tier 4), at most 5 positions.
+
+Change 2026-11-09 (round 66, the user's choice): Z score signals are listed most volatile first (60-day volatility = daily sd of returns,
+settings.json "zscore_order": "volatility"; "ml" restores the old order); ML rank 50%+ stays a filter. Tested 2013-26 with 5 slots x 5%:
+return/drawdown 0.39 / 0.37 / 0.40 (2013-19 / 2020-26 / 2023-26) vs 0.24 / 0.27 / 0.21 in ML order; ML + volatility blended 0.37 / 0.28 / 0.24.
+Market returned keeps the ML order. Each Z score row shows its volatility and its rank among liquid stocks; the export adds vol / vr to the
+scan rows and "zorder"; terminal v29 shows a volatility column and the buy priority. rule_stats.json was recomputed with the new order
+(old: rule_stats_mlorder.json).

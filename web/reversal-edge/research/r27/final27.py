@@ -100,6 +100,12 @@ try:   # weekly Z-swing trades still inside their 40 sessions (walk-forward ML r
 except Exception as ex:
     print("weekly zactive failed:", ex)
 # scanner table (v22): the 25 most stretched liquid stocks at this close with what each needs for a Z-swing buy at the next open
+try:   # round 66: 60-day volatility (daily sd of returns) and its rank among liquid stocks; Z score order: most volatile first
+    _cv = PP["C"].where(PP["C"] > 0); _rv = np.log(_cv).diff().clip(-.25, .25); VOLL = _rv.rolling(60, min_periods=40).std().iloc[-1]
+    _lq = (PP["elig"] & (PP["VAL"].rolling(60, min_periods=20).median() >= 3e6)).iloc[-1]; VRL = VOLL.where(_lq).rank(pct=True)
+    ZORDER = o7settings()["zscore_order"]
+except Exception as ex:
+    print("volatility failed:", ex); VOLL = VRL = None; ZORDER = "ml"
 zscan = []
 def _ztm(Zdf, L=250):   # round 60: stretch-Z level touches in the last L sessions (first close at/beyond +-1/2/3); weight = level
     Z = Zdf.iloc[-(L + 1):]; Zp = Z.shift(1).iloc[1:]; Z = Z.iloc[1:]; ok = Z.notna().sum() >= .8 * L
@@ -122,13 +128,16 @@ try:
     order = zc.dropna().sort_values()
     fresh = [s_ for s_, z_ in order.items() if (z_ <= -2.62 and zc0.get(s_, np.nan) > -2.62) or (wk_done and wfl.get(s_, False))]
     rest = [s_ for s_ in order.index if s_ not in fresh]
-    for s_ in sorted(fresh, key=lambda x: ((x in LOSSY) or float(tv.loc[x, "pct"]) < .5, -float(tv.loc[x, "pct"])) if x in tv.index else (True, 0)) + rest:   # buyable fresh touches first, then skipped ones, then the most stretched
+    _vk = lambda x: -float(VOLL.get(x, np.nan)) if ZORDER == "volatility" and VOLL is not None and np.isfinite(VOLL.get(x, np.nan)) else (0.0 if ZORDER == "volatility" and VOLL is not None else -float(tv.loc[x, "pct"]))
+    for s_ in sorted(fresh, key=lambda x: ((x in LOSSY) or float(tv.loc[x, "pct"]) < .5, _vk(x)) if x in tv.index else (True, 0)) + rest:   # round 66: buyable ones most volatile first   # buyable fresh touches first, then skipped ones, then the most stretched
         z_ = float(order[s_])
         if s_ not in tv.index or tv.loc[s_, "val"] < 3e6: continue
         r = tv.loc[s_]; first_d = bool(z_ <= -2.62 and zc0.get(s_, np.nan) > -2.62); first_w = bool(wk_done and wfl.get(s_, False))
         zscan.append({"sym": s_, "close": round(float(c1.get(s_, np.nan)), 3), "chg": round(float(c1.get(s_, np.nan) / c0.get(s_, np.nan) - 1), 4), "zc": round(float(z_), 2),
                       "zw": round(float(zw_last.get(s_, np.nan)), 2) if s_ in zw_last.index else None, "fd": first_d, "fw": first_w, "pct": round(float(r.pct), 3),
                       "loss": s_ in LOSSY, "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s_), "b7": s_ in O7B})
+        if VOLL is not None and np.isfinite(VOLL.get(s_, np.nan)):
+            zscan[-1].update(vol=round(float(VOLL[s_]), 4), vr=round(float(VRL.get(s_, np.nan)), 3) if np.isfinite(VRL.get(s_, np.nan)) else None)
         if TU is not None and bool(TOK.get(s_, False)):
             tu = [int(TU[k].get(s_, 0)) for k in (1, 2, 3)]; td = [int(TD[k].get(s_, 0)) for k in (1, 2, 3)]
             zscan[-1].update(tm=tu[0] + 2 * tu[1] + 3 * tu[2] - td[0] - 2 * td[1] - 3 * td[2], tu=tu, td=td)
@@ -143,7 +152,7 @@ old = json.load(open("../ml26/today.json"))
 T = {"date": str(pd.Timestamp(last).date()), "model": PICK, "pm": pm, "pm_hist": {str(k.date()): round(float(v), 5) for k, v in hist.items()}, "universe": int(len(liq)),
      "picks": [{"sym": r.sym, "rank": int(r["rank"]), "score": round(float(r.score), 4), "val_m": round(float(r.val) / 1e6, 1), "div": bool(r["div"]), **{c: round(float(r[c]) + .5, 3) for c in cols}} for _, r in liq.head(30).iterrows()],
      "ranks": {r.sym: round(float(r.pct), 3) for _, r in today.iterrows()}, "ranked": int(len(today)),
-     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62, "zactive": zact, "zhold": 40, "ms": round(ms_now, 3), "ms_gate": MS_GATE, "ms_deep": -2.53, "zwx": zwx, "wline": WLINE, "wk_done": bool(wk_done), "fin": FIN, "zscan": zscan, "opt7": OPT7}
+     "div": sorted(today[today["div"]].sym.tolist()), "zx": zx, "zline": -2.62, "zactive": zact, "zhold": 40, "ms": round(ms_now, 3), "ms_gate": MS_GATE, "ms_deep": -2.53, "zwx": zwx, "wline": WLINE, "wk_done": bool(wk_done), "fin": FIN, "zscan": zscan, "opt7": OPT7, "zorder": ZORDER}
 for k in ("record", "summary", "filter_test"):
     if k in old: T[k] = old[k]
 if os.path.exists("record27.json"): T.update(json.load(open("record27.json")))
