@@ -1,0 +1,10 @@
+check: generic account = live account in 2020-26 ratio 0.268 vs 0.268
+  live (ML rank, hold 40)                        2016-26 +2.3%/y DD 5.3% r 0.43 | 2016-20 +3.9%/y DD 4.4% r 0.89 | 2021-26 +0.9%/y DD 5.3% r 0.16
+  walk-forward over the EXIT only (ML order)     2016-26 +2.3%/y DD 6.1% r 0.38 | 2016-20 +2.9%/y DD 4.4% r 0.66 | 2021-26 +1.8%/y DD 6.1% r 0.30
+    2016: momentum>-0.5; 2017: momentum>-0.5; 2018: momentum>-0.5; 2019: momentum>-0.5; 2020: momentum>0; 2021: momentum>0; 2022: momentum>0; 2023: momentum>0; 2024: momentum>0; 2025: momentum>0; 2026: momentum>0
+  walk-forward over the SLOT ORDER only (hold 40) 2016-26 +2.8%/y DD 5.0% r 0.56 | 2016-20 +4.7%/y DD 5.0% r 0.94 | 2021-26 +1.2%/y DD 4.2% r 0.28
+    2016: largest; 2017: vol high; 2018: vol high; 2019: vol high; 2020: vol high; 2021: vol high; 2022: vol high; 2023: vol high; 2024: vol high; 2025: vol high; 2026: vol high
+  fixed: ML rank + hold 40                       2016-26 +2.3%/y DD 5.3% r 0.43 | 2016-20 +3.9%/y DD 4.4% r 0.89 | 2021-26 +0.9%/y DD 5.3% r 0.16
+  fixed: ML rank + momentum>0                    2016-26 +2.5%/y DD 6.1% r 0.40 | 2016-20 +3.2%/y DD 4.4% r 0.73 | 2021-26 +1.8%/y DD 6.1% r 0.30
+  fixed: ML rank + momentum>-0.5                 2016-26 +2.1%/y DD 6.1% r 0.35 | 2016-20 +2.9%/y DD 4.4% r 0.66 | 2021-26 +1.5%/y DD 6.1% r 0.24
+  fixed: ML rank + market Z>0                    2016-26 +1.7%/y DD 6.1% r 0.28 | 2016-20 +2.3%/y DD 4.4% r 0.52 | 2021-26 +1.2%/y DD 6.1% r 0.20
