@@ -1,0 +1,28 @@
+
+Z score: 456 trades
+  ML rank (live)                     DESIGN +1.6%/y DD 6.5% r 0.24 | CONFIRM +1.4%/y DD 5.3% r 0.27 | 2023-26 +1.1%/y DD 5.3% r 0.21
+  beta high first                    DESIGN +2.4%/y DD 7.1% r 0.34 | CONFIRM +1.9%/y DD 4.3% r 0.45 | 2023-26 +1.8%/y DD 3.8% r 0.47
+  beta low first                     DESIGN +1.2%/y DD 7.6% r 0.16 | CONFIRM +0.8%/y DD 5.0% r 0.17 | 2023-26 +0.5%/y DD 3.5% r 0.16
+  deepest stretch Z first            DESIGN +2.3%/y DD 6.2% r 0.38 | CONFIRM +1.5%/y DD 4.4% r 0.34 | 2023-26 +0.9%/y DD 3.6% r 0.26
+  volatility high first              DESIGN +2.4%/y DD 6.3% r 0.39 | CONFIRM +1.9%/y DD 5.0% r 0.37 | 2023-26 +1.6%/y DD 3.9% r 0.40
+  volatility low first               DESIGN +1.2%/y DD 8.8% r 0.13 | CONFIRM +1.1%/y DD 4.6% r 0.24 | 2023-26 +1.0%/y DD 3.4% r 0.30
+  smallest first                     DESIGN +1.5%/y DD 7.8% r 0.19 | CONFIRM +1.1%/y DD 5.0% r 0.21 | 2023-26 +0.9%/y DD 4.1% r 0.23
+  largest first                      DESIGN +2.3%/y DD 6.7% r 0.35 | CONFIRM +1.3%/y DD 4.2% r 0.30 | 2023-26 +0.6%/y DD 4.1% r 0.15
+  within-sector loser first          DESIGN +2.2%/y DD 6.7% r 0.33 | CONFIRM +1.3%/y DD 6.1% r 0.22 | 2023-26 +0.7%/y DD 6.1% r 0.11
+  ML rank, max 2 per sector          DESIGN +1.6%/y DD 6.5% r 0.24 | CONFIRM +1.7%/y DD 4.4% r 0.38 | 2023-26 +1.9%/y DD 3.9% r 0.49
+  random (20 seeds, mean)            DESIGN +1.8%/y DD 7.4% r 0.25 | CONFIRM +1.3%/y DD 4.9% r 0.26 | 2023-26 +0.9%/y DD 4.3% r 0.23
+
+Market returned: 303 trades
+  ML rank (live)                     DESIGN +2.7%/y DD 5.5% r 0.50 | CONFIRM +1.8%/y DD 3.3% r 0.55 | 2023-26 +0.8%/y DD 2.2% r 0.36
+  beta high first                    DESIGN +3.2%/y DD 6.1% r 0.52 | CONFIRM +2.0%/y DD 2.9% r 0.69 | 2023-26 +0.8%/y DD 2.2% r 0.36
+  beta low first                     DESIGN +2.2%/y DD 5.1% r 0.44 | CONFIRM +1.5%/y DD 3.6% r 0.41 | 2023-26 +0.6%/y DD 2.2% r 0.25
+  deepest stretch Z first            DESIGN +3.2%/y DD 5.6% r 0.56 | CONFIRM +1.8%/y DD 3.1% r 0.57 | 2023-26 +0.6%/y DD 2.2% r 0.25
+  volatility high first              DESIGN +3.1%/y DD 5.1% r 0.62 | CONFIRM +1.7%/y DD 3.3% r 0.53 | 2023-26 +0.8%/y DD 2.2% r 0.36
+  volatility low first               DESIGN +2.1%/y DD 6.2% r 0.34 | CONFIRM +1.7%/y DD 3.9% r 0.43 | 2023-26 +0.7%/y DD 2.2% r 0.31
+  smallest first                     DESIGN +2.3%/y DD 5.5% r 0.42 | CONFIRM +1.6%/y DD 3.0% r 0.53 | 2023-26 +0.9%/y DD 2.2% r 0.39
+  largest first                      DESIGN +2.9%/y DD 6.3% r 0.46 | CONFIRM +1.9%/y DD 3.2% r 0.60 | 2023-26 +0.7%/y DD 2.2% r 0.33
+  within-sector loser first          DESIGN +3.0%/y DD 5.4% r 0.56 | CONFIRM +1.9%/y DD 3.2% r 0.61 | 2023-26 +0.8%/y DD 2.2% r 0.36
+  ML rank, max 2 per sector          DESIGN +2.4%/y DD 5.5% r 0.44 | CONFIRM +1.7%/y DD 3.3% r 0.53 | 2023-26 +0.8%/y DD 2.2% r 0.36
+  random (20 seeds, mean)            DESIGN +2.6%/y DD 6.1% r 0.43 | CONFIRM +1.8%/y DD 3.3% r 0.56 | 2023-26 +0.7%/y DD 2.2% r 0.33
+
+DESIGN pick (Z score): volatility high first -> conditions 1-3 MET

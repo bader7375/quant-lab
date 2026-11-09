@@ -51,6 +51,11 @@ washouts, VIX, oil) beats simply being in the live sell-off window as a market t
 Saved 2026-11-07 at the user's request ("Let's back to them later. Save them."): options 1, 7 and 8 wait for the user.
    Before deciding on option 8, re-run it with ranker C (its numbers used M0). Option 1 was re-checked with ranker C in round 62:
    sleeve ratio 0.31 / 0.25 / 0.39 vs live 0.24 / 0.23 / 0.22 (2013-19 / 2020-26 / 2023-26).
+10. Z score v3 (round 64 research loop, r64/RESULTS.md): (A) when there are more Z score signals than free slots, take the most
+   volatile stocks first (60-day volatility) instead of the highest ML rank, and (B) sell when market momentum is back above 0
+   (at least 10, at most 60 sessions) instead of after 40. 5 x 5%: ratio 0.51 / 0.49 / 0.54 vs 0.24 / 0.27 / 0.21 (2013-19 /
+   2020-26 / 2023-26), return +2.9% / +2.5% / +2.6% a year vs +1.6% / +1.4% / +1.1%, drawdown lower. Passed the loop's rule
+   and 3 of 4 stress tests (not with 10 slots). Does not help Market returned. Waiting for the user.
 Overnight conclusion (rounds 48-53): the split exit (option 4) is the one Z-swing change that holds across markets (better in 7 of
 10 market-eras: Saudi, US, India, GCC). v2's turn gate is strong in Saudi (both periods, stress-tested) but helps in only 5 of 10
 market-eras elsewhere, so treat it as a Saudi-specific choice for lower risk. Size: 5 x 10% keeps drawdown under 15%.

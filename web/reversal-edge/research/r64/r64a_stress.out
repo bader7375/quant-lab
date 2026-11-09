@@ -1,0 +1,17 @@
+  live (ML rank)                     DESIGN +1.6%/y DD 6.5% r 0.24 | CONFIRM +1.4%/y DD 5.3% r 0.27 | 2023-26 +1.1%/y DD 5.3% r 0.21
+  vol high, 20-day window            DESIGN +2.4%/y DD 6.4% r 0.38 | CONFIRM +1.8%/y DD 4.9% r 0.36 | 2023-26 +1.6%/y DD 3.2% r 0.51   -> CONFIRM ratio above live
+  vol high, 120-day window           DESIGN +2.6%/y DD 6.6% r 0.39 | CONFIRM +1.8%/y DD 5.0% r 0.37 | 2023-26 +1.6%/y DD 4.3% r 0.37   -> CONFIRM ratio above live
+  live, 0.8% costs                   DESIGN +1.5%/y DD 6.8% r 0.22 | CONFIRM +1.3%/y DD 5.4% r 0.24 | 2023-26 +1.0%/y DD 5.4% r 0.19
+  vol high, 0.8% costs               DESIGN +2.4%/y DD 6.5% r 0.36 | CONFIRM +1.8%/y DD 5.0% r 0.35 | 2023-26 +1.5%/y DD 4.1% r 0.36   -> CONFIRM ratio above live
+  live, 10 slots                     DESIGN +3.5%/y DD 12.6% r 0.28 | CONFIRM +2.6%/y DD 8.5% r 0.30 | 2023-26 +2.6%/y DD 6.9% r 0.37
+  vol high, 10 slots                 DESIGN +3.2%/y DD 14.4% r 0.22 | CONFIRM +2.6%/y DD 8.5% r 0.30 | 2023-26 +2.5%/y DD 7.5% r 0.33   -> CONFIRM ratio above live
+stress: 4 of 4 pass (needs 3)
+
+runner-up, beta high first:
+  beta high, 0.8% costs              DESIGN +2.3%/y DD 7.3% r 0.32 | CONFIRM +1.8%/y DD 4.4% r 0.41 | 2023-26 +1.7%/y DD 4.0% r 0.43   -> CONFIRM ratio above live
+  beta high, 10 slots                DESIGN +3.2%/y DD 13.7% r 0.23 | CONFIRM +2.6%/y DD 8.4% r 0.31 | 2023-26 +2.4%/y DD 7.9% r 0.31   -> CONFIRM ratio above live
+
+US sell-off swing
+  US default (deepest Z first)       2005-09 -1.0%/y DD 11.3% r -0.09 | 2010-17 +0.7%/y DD 5.7% r 0.12 | 2018-26 +2.7%/y DD 5.6% r 0.48
+  US vol high first                  2005-09 -1.3%/y DD 14.1% r -0.10 | 2010-17 +0.8%/y DD 5.6% r 0.15 | 2018-26 +3.5%/y DD 6.7% r 0.52   -> worse than default in 1 of 3 eras
+  US beta high first                 2005-09 -0.8%/y DD 12.2% r -0.07 | 2010-17 +0.7%/y DD 5.9% r 0.12 | 2018-26 +3.4%/y DD 6.7% r 0.51   -> worse than default in 0 of 3 eras
