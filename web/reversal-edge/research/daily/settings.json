@@ -1,1 +1,1 @@
-{"zscore": true, "market_returned": true, "zscore_order": "volatility"}
+{"zscore": false, "market_returned": true, "zscore_order": "volatility", "mr_size": 0.1, "plan": "A"}

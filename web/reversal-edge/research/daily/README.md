@@ -55,3 +55,9 @@ return/drawdown 0.39 / 0.37 / 0.40 (2013-19 / 2020-26 / 2023-26) vs 0.24 / 0.27 
 Market returned keeps the ML order. Each Z score row shows its volatility and its rank among liquid stocks; the export adds vol / vr to the
 scan rows and "zorder"; terminal v29 shows a volatility column and the buy priority. rule_stats.json was recomputed with the new order
 (old: rule_stats_mlorder.json).
+
+Change 2026-11-09 (round 67, the user's choice "Let put A"): plan A. settings.json {zscore: false, market_returned: true,
+zscore_order: volatility, mr_size: 0.10, plan: A}. The list opens with the plan, then the Market returned signals (10% of the account each,
+at most 5, most volatile first; chkA.py: volatility order 2013-19 / 2020-26 / 2016-26 +6.8% / +6.5% / +8.7% a year vs ML order
++6.1% / +6.7% / +8.4%), then the ML leader / breakout table for reference only. Exits due are listed only for plan picks from
+2026-11-09 on (earlier picks of every kind stay tracked). The export's opt7 block carries mr_size and plan; terminal v30 shows them.

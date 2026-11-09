@@ -76,7 +76,7 @@ try:   # option 7 (round 47): Z swing only after the market turns; the switch is
     MT = market_turn(PP["C"], PP["VAL"], PP["elig"]); _g7 = MT.gate
     O7B = sorted({z_["sym"] for z_ in zact if not bool(_g7.get(pd.Timestamp(z_["signal"]), False))})   # bought by the live rule before the turn, still held
     _sp = MT.iloc[-90:]; _b0 = float(_sp.idx.dropna().iloc[0])
-    OPT7 = dict(on=bool(o7settings()["market_returned"]), zscore=bool(o7settings()["zscore"]), blocked=O7B, **o7status(MT),
+    OPT7 = dict(on=bool(o7settings()["market_returned"]), zscore=bool(o7settings()["zscore"]), mr_size=o7settings()["mr_size"], plan=o7settings()["plan"], blocked=O7B, **o7status(MT),
                 spark=dict(dates=[str(d_.date()) for d_ in _sp.index], idx=[None if not np.isfinite(v_) else round(100 * v_ / _b0, 2) for v_ in _sp.idx],
                            trig=[None if not np.isfinite(v_) else round(104 * v_ / _b0, 2) for v_ in _sp.low20], gate=[bool(v_) for v_ in _sp.gate]))
 except Exception as ex:

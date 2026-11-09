@@ -20,6 +20,9 @@ bought before the turn (opt7.py). It has its own section, record and log (tier 4
 Change 2026-11-09 (round 66, the user's choice): Z score signals are listed most volatile first (60-day volatility = daily sd of returns)
 instead of highest ML rank; ML rank >= 50% stays a filter. Market returned keeps the ML order (volatility did not clearly help there).
 settings.json "zscore_order": "volatility" (default) or "ml". Each Z score row shows its volatility and its rank among liquid stocks.
+Change 2026-11-09 (round 67, the user's choice: plan A): buy only Market returned signals, 10% of the account each (settings.json mr_size),
+at most 5, most volatile first; Z score signals off (they still run as the shadow book that decides the blocked stocks); the top-3 table
+(ML leaders / breakouts) is printed after them for reference only; idle money in a SAR money-market fund. settings.json "plan": "A".
 Usage: python top3.py --history   (walk-forward track record of the rule -> rule_stats.json)
        python top3.py             (today's list -> out/<date>.md, appended to out/picks_log.csv)"""
 import os, sys, json, glob, numpy as np, pandas as pd
@@ -160,10 +163,12 @@ def live():
     SET = o7settings(); O7 = T.get("opt7"); mron = bool(SET["market_returned"]) and O7 is not None
     msv = float(MS[i]); cand = ranked(i, pct, pmv, msv, wk_ok, None if SET["zscore"] else np.zeros(len(cols), bool)); top = cand[:3]
     zs_all = [j for j, t in ranked(i, pct, pmv, msv, wk_ok) if t == 1]                      # every Z score signal at this close
-    mr = sorted([j for j in zs_all if mron and O7["gate"] and cols[j] not in set(O7["blocked"])], key=lambda j: -pct[j])[:5]  # Market returned (its own list, ML order)
+    mr = [j for j in zs_all if mron and O7["gate"] and cols[j] not in set(O7["blocked"])]   # Market returned (its own list)
+    mr = (mr if ZORDER == "volatility" else sorted(mr, key=lambda j: -pct[j]))[:5]          # plan A (round 67): most volatile first, as tested
+    PLAN = SET["plan"]; mrsz = f"{100 * SET['mr_size']:.0f}%"
     mr_skip = [cols[j] for j in zs_all if mron and cols[j] not in [cols[k] for k in mr]]
     FA = accounts(); half = pmv <= 0; size = "2.5%" if half else "5%"
-    L = [f"**Saudi top 3 for {day.strftime('%A %d %b %Y')}** (prices to the {fmt_d(last)} close; buy at the 10:00 open)", ""]
+    L = [f"**Saudi {'plan A list' if PLAN == 'A' else 'top 3'} for {day.strftime('%A %d %b %Y')}** (prices to the {fmt_d(last)} close; buy at the 10:00 open)", ""]
     if last < day - BD: L += [f"Warning: the newest close in the data is {fmt_d(last)}, not {fmt_d(day - BD)} (Yahoo has not published it yet or the market was closed).", ""]
     L.append(f"Market model: {pc(pmv, 2)} expected 20-day market move -> " + ("**positive**, normal size." if not half else
              "**negative**: the system would hold cash today. If you trade anyway, use half size; Z-swing entries are switched off on such days."))
@@ -171,7 +176,12 @@ def live():
     L.append(f"Market momentum (market stretch): {msv:+.2f} -> " + ("**deep mean-reversion zone** (at or below -2.53): dip buys have worked best here." if msv <= MS_DEEP else
              "**mean-reversion zone** (-2.53 to -1.18): dip buys allowed." if msv <= MS_GATE else
              "**momentum zone** (above -1.18): the market is not falling, so single-stock dips tend to keep falling; Z swing is off, breakouts are fine."))
-    if not SET["zscore"]: L += ["", "Z score signals are switched off (settings.json): the list below has no Z score picks."]
+    if PLAN == "A":
+        L += ["", f"**Your plan: A** (round 67): buy only the **Market returned** signals, **{mrsz} of the account each**, at most 5 at once (most volatile first), "
+                  "hold 40 sessions, no stop. Keep all idle money in a SAR money-market fund. ML leaders and breakouts are shown at the end for reference only. "
+                  "Tested on the whole account (idle money at T-bill interest): 2013-19 +6.8% a year, worst drawdown 9.7%; 2020-26 +6.5%, 6.3%; 2016-26 +8.7%, 6.3%."]
+    elif not SET["zscore"]: L += ["", "Z score signals are switched off (settings.json): the list below has no Z score picks."]
+    L0 = L; L = []
     L += ["", "| # | Stock | Setup | Last close | Plan | Latest accounts |", "|---|---|---|---|---|---|"]
     log_rows = []
     for n, (j, t) in enumerate(top, 1):
@@ -198,6 +208,7 @@ def live():
     more = [(j, t) for j, t in cand[3:] if t < 3][:6]
     if more: L += ["", "Also qualifying today: " + ", ".join(f"{cols[j]} {nm.get(cols[j], '')[:18]} ({TIERS[t]['name']}, ML {100 * pct[j]:.0f}%{_vt(i, j) if t == 1 else ''})" for j, t in more) + "."]
     elif all(t == 3 for _, t in top): L += ["", "No Z score or breakout signal at this close; the list is the top ML ranks."]
+    TOPB = L; L = []
     if mron:   # ---- Market returned signals: their own list
         fdt = lambda x: pd.Timestamp(x).strftime("%a %d %b") if x else "-"
         L += ["", "**Market returned signals** (Z score signals taken only after the market turns; their own list, at most 5 positions; a stock on both lists is one trade)", "",
@@ -209,17 +220,22 @@ def live():
             for n, j in enumerate(mr, 1):
                 s_ = cols[j]; wk_ = not ZFIRST[i, j]; both = any(jj == j for jj, _ in top)
                 setup = (f"Market returned (weekly candles): weekly stretch Z {ZWV[i, j]:.2f}" if wk_ else f"Market returned: stretch Z {ZC.iloc[i, j]:.2f}") + f", ML {100 * pct[j]:.0f}%" + _vt(i, j) + (" (also on the list above)" if both else "")
-                L.append(f"| {n} | **{s_}** {nm.get(s_, s_)[:28]} ({industry(s_)}) | {setup} | {Cl[i, j]:.2f} | {size} of the account. Hold 40 sessions (sell at the open around {fmt_d(day + 40 * BD)}). No stop. | {FA.get(s_, '—')} |")
+                L.append(f"| {n} | **{s_}** {nm.get(s_, s_)[:28]} ({industry(s_)}) | {setup} | {Cl[i, j]:.2f} | {mrsz} of the account. Hold 40 sessions (sell at the open around {fmt_d(day + 40 * BD)}). No stop. | {FA.get(s_, '—')} |")
                 log_rows.append(dict(signal=str(last.date()), sym=s_, tier=4, close=round(float(Cl[i, j]), 4), atr=round(float(A[i, j]), 4), ml=round(float(pct[j]), 3), pm=round(pmv, 5)))
         elif O7["gate"]: L += ["", "No new market-returned signal at this close."]
+        if PLAN == "A" and not mr: L += ["", "**Nothing to buy in your plan at this close.** Idle money stays in the money-market fund."]
         if mr_skip and O7["gate"]: L.append(f"Skipped here: {', '.join(mr_skip[:8])} (Z score bought them before the {fdt(O7.get('window_start'))} turn; blocked for their 40 sessions).")
         L += ["", "Market returned record (Z score signals after a turn): 2020-26 88% winners, +12.1% per trade, worst 5% -5.2%; 2013-19 82%, +20.1% "
               "(all Z score signals: 71%, +7.4%, -11.7% and 82%, +19.1%). It misses fast V-shaped rebounds (April 2025) and lost in late 2015."]
+    MRB = L
+    L = L0 + (MRB + ["", "---", "", "**For reference only, not in your plan A** (ML leaders / breakouts: they add losing years and deeper drawdowns, round 67):"] + TOPB
+              if PLAN == "A" else TOPB + MRB)
     # earlier picks: exits due at this open, using the same exit rules (repeat picks while held are ignored)
     lf = os.path.join(H, "out/picks_log.csv"); old = pd.read_csv(lf, dtype={"sym": str}) if os.path.exists(lf) else pd.DataFrame(columns=["signal", "sym", "tier"])
     old = old[old.signal != str(last.date())]; due, still = [], 0; held = {}
     for _, r in old.sort_values("signal").iterrows():
         if r.sym not in cols or pd.Timestamp(r.signal) not in dates: continue
+        if PLAN == "A" and r.signal >= "2026-11-09" and int(r.tier) != 4 and not (SET["zscore"] and int(r.tier) == 1): continue   # plan A: only its own picks from its start
         ii = dates.get_loc(pd.Timestamp(r.signal)); jj = cols.get_loc(r.sym)
         if held.get(r.sym, -1) > ii: continue
         tr = trade(ii, jj, int(r.tier))
@@ -231,7 +247,8 @@ def live():
     if due: L += ["", "Exits due at today's open (earlier picks, if you bought them): " + "; ".join(due) + "."]
     if still: L += ["", f"{still} earlier pick(s) are still inside their holding rule."]
     L += ["", "Research signals, not financial advice. About 4 in 10 picks lose, so keep each position small"
-          + ("; keep at most 5 Z score positions open at once, taking them from the top (as tested; with the market-momentum gate the worst Z-swing trade lost about 23%)." if any(t == 1 for _, t in top) else ".")]
+          + (f"; plan A: at most 5 Market returned positions of {mrsz} (at most {5 * 100 * SET['mr_size']:.0f}% of the account in stocks), the rest in the money-market fund." if PLAN == "A" else
+             "; keep at most 5 Z score positions open at once, taking them from the top (as tested; with the market-momentum gate the worst Z-swing trade lost about 23%)." if any(t == 1 for _, t in top) else ".")]
     md = "\n".join(L); open(os.path.join(H, f"out/{last.date()}.md"), "w").write(md)
     pd.concat([old, pd.DataFrame(log_rows)]).to_csv(lf, index=False); print(md)
 
