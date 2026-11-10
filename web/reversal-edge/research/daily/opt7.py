@@ -7,12 +7,13 @@ import os, json, numpy as np, pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__)); BD = pd.offsets.CustomBusinessDay(weekmask="Sun Mon Tue Wed Thu")
 def settings():
     """The user's switches (2026-11-08): "zscore" = the live Z-swing rule's signals, "market_returned" = option 7's own signals."""
-    d = {"zscore": True, "market_returned": False, "zscore_order": "volatility", "mr_size": 0.05, "plan": "", "plan_start": ""}   # zscore_order (round 66); mr_size, plan (round 67)
+    d = {"zscore": True, "market_returned": False, "zscore_order": "volatility", "mr_size": 0.05, "z_size": 0.05, "plan": "", "plan_start": ""}   # zscore_order (round 66); mr_size, plan (round 67)
     try: f = json.load(open(os.path.join(HERE, "settings.json")))
     except Exception: f = {}
     if "option7" in f: d["market_returned"] = bool(f["option7"])
     d.update({k: bool(v) for k, v in f.items() if k in ("zscore", "market_returned")}); d["option7"] = d["market_returned"]
     if isinstance(f.get("mr_size"), (int, float)) and 0 < f["mr_size"] <= .2: d["mr_size"] = float(f["mr_size"])
+    if isinstance(f.get("z_size"), (int, float)) and 0 < f["z_size"] <= .2: d["z_size"] = float(f["z_size"])   # plan Z position size (round 70)
     if isinstance(f.get("plan"), str): d["plan"] = f["plan"]
     if isinstance(f.get("plan_start"), str): d["plan_start"] = f["plan_start"]   # first signal date of the plan account (round 68)
     if f.get("zscore_order") in ("volatility", "ml"): d["zscore_order"] = f["zscore_order"]

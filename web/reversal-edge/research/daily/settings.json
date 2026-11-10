@@ -1,1 +1,1 @@
-{"zscore": false, "market_returned": true, "zscore_order": "volatility", "mr_size": 0.1, "plan": "A", "plan_start": "2026-11-09"}
+{"zscore": true, "market_returned": true, "zscore_order": "volatility", "mr_size": 0.1, "z_size": 0.05, "plan": "Z", "plan_start": "2026-11-10"}

@@ -70,14 +70,14 @@ try:
     import planbook as PB
     from core import P as PP
     assert pd.Timestamp(PB.dates[-1]) == pd.Timestamp(last), (PB.dates[-1], last)
-    _set = o7settings(); ST = PB.state(loss=True, week_complete=bool(wk_done), start=_set["plan_start"] or None); _T = PB.T_; _i = _T - 1; _ds = PB.dates; _c = PB.cols
+    _set = o7settings(); _kind = "Z" if _set["plan"] == "Z" else "A"; ST = PB.state(loss=True, week_complete=bool(wk_done), start=_set["plan_start"] or None, kind=_kind); _T = PB.T_; _i = _T - 1; _ds = PB.dates; _c = PB.cols
     _sh = ST["SH"]; _op = _sh[(_sh.ex >= _T) & (_sh.i < _i)]; _held = set(int(x) for x in ST["keep"].j) | set(int(x) for x in ST["due"].j)
     zact = [dict(sym=_c[r.j], signal=str(_ds[r.i].date()), entry=round(float(PB.Of[r.d1, r.j]), 3), ret=round(float(PB.Cl[_i, r.j] / PB.Of[r.d1, r.j] - 1), 4),
                  left=int(r.ex - _T + 1), ml=round(float(PB.PCTv[r.i, r.j]), 3), g=bool(PB.GATE[r.i]), plan=int(r.j) in _held, **({} if PB.ZFIRST[r.i, r.j] else {"tf": "W"}))
             for r in _op.sort_values(["i", "j"]).itertuples()]
     MT = PB.MT; O7B = sorted(_c[j] for j, v in ST["blocked"].items() if not v[1])          # paper trade opened before the turn: blocked until it ends
     _pos = lambda r: dict(sym=_c[r.j], signal=str(_ds[r.i].date()), bought=str(_ds[r.d1].date()), entry=round(float(PB.Of[r.d1, r.j]), 3), ret=round(float(PB.Cl[_i, r.j] / PB.Of[r.d1, r.j] - 1), 4), left=int(r.xo - _T))
-    BOOK = dict(slots=PB.SLOTS, free=int(ST["free"]), start=_set["plan_start"], held=[_pos(r) for r in ST["keep"].sort_values("d1").itertuples()], due=[_pos(r) for r in ST["due"].itertuples()],
+    BOOK = dict(kind=_kind, size=_set["z_size"] if _kind == "Z" else _set["mr_size"], slots=PB.SLOTS, free=int(ST["free"]), start=_set["plan_start"], held=[_pos(r) for r in ST["keep"].sort_values("d1").itertuples()], due=[_pos(r) for r in ST["due"].itertuples()],
                 today=[dict(sym=_c[j], act=a) for j, a in ST["new"]] + [dict(sym=_c[j], act=a, since=str(_ds[s0].date())) for j, a, s0 in ST["rep"]])
     PA = {x["sym"]: x for x in BOOK["today"]}
     _sp = MT.iloc[-90:]; _b0 = float(_sp.idx.dropna().iloc[0])

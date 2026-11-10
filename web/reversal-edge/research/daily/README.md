@@ -70,3 +70,10 @@ model are now the walk-forward values (preds/C.parquet, pm27.parquet) the tests 
 
 Round 69 (2026-11-10): planbook.py also holds the stop engine used by the stop-loss tests (stop_fn; plan(stop=..., reuse=...)). No stop is
 switched on: none of 36 improved plan A (r69/RESULTS.md). The list says so in its record line.
+
+Change 2026-11-10 (the user: "Let's go back to previous strategy stretch with ML"): plan Z. settings.json {zscore: true, market_returned: true,
+zscore_order: volatility, z_size: 0.05, plan: Z, plan_start: 2026-11-10}. The list opens with the Z score plan book (planbook.state kind "Z":
+every paper trade of the Z score rule, 5 slots, most volatile first): held positions, free slots, sells due, buys up to the free slots, skipped
+signals with the reason; the market-turn window is context; ML leaders / breakouts for reference. Verified account (r70/z70a.out, 5 x 5%, T-bill
+interest on idle money): 2013-19 +3.2% a year / drawdown 6.1%, 2020-26 +4.9% / 4.9%; 69 trades, 71% winners, +9.0% per trade. Terminal v32.
+planbook.py also gained: shadow(exit_fn, renew), plan(pre_cap, pace, half), account per-row weights and half exits (round 70 tests).

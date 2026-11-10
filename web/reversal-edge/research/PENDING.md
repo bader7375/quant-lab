@@ -1,5 +1,8 @@
 # Open decisions (saved 2026-10-30 at the user's request: "save this, I will come back to it")
-LIVE SINCE 2026-11-09 (round 67, r67/RESULTS.md, the user's choice "Let put A"): plan A - buy only Market returned signals (option 7),
+LIVE SINCE 2026-11-10 (the user: "Let's go back to previous strategy stretch with ML"): plan Z = the Z score rule (stretch Z touch, ML rank 50%+,
+market model positive, market momentum -1.18 or lower, profitable), 5 positions of 5%, most volatile first, hold 40 sessions, no stop; reported
+through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2026-11-09 only and made no trade.
+WAS LIVE 2026-11-09 to 2026-11-10 (round 67, r67/RESULTS.md, the user's choice "Let put A"): plan A - buy only Market returned signals (option 7),
 10% of the account each, at most 5, most volatile first, hold 40 sessions, no stop; Z score signals off (they run as the shadow book);
 ML leaders / breakouts shown for reference only; idle money in a SAR money-market fund. Switches: daily/settings.json.
 Audit 2026-11-10 (round 68, r68/RESULTS.md): numbers confirmed by an independent rebuild; the list now follows daily/planbook.py (the tested

@@ -55,71 +55,94 @@ def signals(loss=True, week_complete=True, ml=.5):
     if not week_complete: W[-1] = False                                    # the last week's bar is still forming
     S_ = (ZFIRST | W) & (PMv > 0)[:, None] & (MS <= MS_GATE)[:, None] & (np.nan_to_num(PCTv, nan=-1) >= ml) & EL
     return S_ & ~LOSS if loss else S_
-def shadow(SIG, hold=HOLD):
-    """paper trades (i signal close, j stock, d1 entry open, ex exit open); ex >= T_ means still open at the end of the data."""
+ALL = np.ones(T_, bool)
+def zexit_fn(zt=0.0, cap=60):
+    """exit open of a trade sold at the open after the first close with stretch Z >= zt, at most cap sessions (r50/sim50.run50)."""
+    Zv = ZC.values
+    def f(i, j, d1):
+        for k in range(d1, min(d1 + cap - 1, T_ - 1) + 1):
+            if np.isfinite(Zv[k, j]) and Zv[k, j] >= zt: return k + 1
+        return d1 + cap
+    return f
+def shadow(SIG, hold=HOLD, exit_fn=None, renew=False, cap=120):
+    """paper trades (i signal close, j stock, d1 entry open, ex exit open); ex >= T_ means still open at the end of the data.
+    exit_fn(i, j, d1) -> exit open (the next paper trade can start from that day); renew: a signal while the paper trade is open
+    restarts its hold sessions (at most cap sessions in all) instead of being ignored. Columns nr / il: renewals and the last signal."""
     out = []
     for j in range(N_):
-        nxt = -1
+        cur = None
         for i in np.where(SIG[:, j])[0]:
-            if i < nxt: continue                                           # the paper trade is open: this signal is ignored
+            if cur is not None and i < cur[3]:                             # the paper trade is open
+                if renew: cur[3] = max(cur[3], min(i + 1 + hold, cur[2] + cap)); cur[4] += 1; cur[5] = i
+                continue
             d1 = i + 1
             if d1 < T_ and not (np.isfinite(Of[d1, j]) and Of[d1, j] > 0): continue
-            out.append((i, j, d1, d1 + hold)); nxt = d1 + hold
-    return pd.DataFrame(out, columns=["i", "j", "d1", "ex"]).astype(int)
-def plan(SH, gate=None, slots=SLOTS, rank=None, start=None, stop=None, reuse=True):
+            cur = [i, j, d1, exit_fn(i, j, d1) if exit_fn is not None else d1 + hold, 0, i]; out.append(cur)
+    return pd.DataFrame(out, columns=["i", "j", "d1", "ex", "nr", "il"]).astype(int)
+def plan(SH, gate=None, slots=SLOTS, rank=None, start=None, stop=None, reuse=True, pre_cap=None, pace=None, half=None):
     """SH -> plan trades: in-window shadow trades, slots, most volatile first. stop(i, j, d1, ex) -> (exit open index, fill price or nan,
-    reason) lets a plan position leave early (the shadow trade keeps its 40 sessions). start: first signal date of the plan account."""
+    reason) lets a plan position leave early (the shadow trade keeps its 40 sessions). start: first signal date of the plan account.
+    pre_cap: at most this many positions bought before the market turn (signal outside the turn window) at once; pace: at least this
+    many sessions between two new positions; half(i, j, d1, ex) -> open at which half of the position is sold (column xh)."""
     g = GATE if gate is None else gate; rk = np.nan_to_num(VOL, nan=-9e9) if rank is None else rank
-    T = SH[g[SH.i.values]].copy(); T["rk"] = rk[T.i.values, T.j.values]
+    T = SH[g[SH.i.values]].copy(); T["rk"] = rk[T.i.values, T.j.values]; T["pre"] = ~GATE[T.i.values]
     if start is not None: T = T[dates[T.i.values] >= pd.Timestamp(start)]
     T["xo"] = T.ex; T["fill"] = np.nan; T["why"] = f"{HOLD} sessions"
     if stop is not None and len(T):
         r_ = [stop(int(a), int(b), int(c), int(d)) for a, b, c, d in zip(T.i, T.j, T.d1, T.ex)]
         T["xo"] = [x[0] for x in r_]; T["fill"] = [x[1] for x in r_]; T["why"] = [x[2] for x in r_]; T["intraday"] = [bool(x[3]) if len(x) > 3 else False for x in r_]
-    T = T.sort_values(["d1", "rk"], ascending=[True, False]); held = []; take = []
-    for idx, d1, xo in zip(T.index, T.d1.values, (T.xo if reuse else T.ex).values):   # reuse=False: a stopped position's slot stays empty until its 40 sessions end
-        held = [f for f in held if f > d1]
-        if len(held) < slots: held.append(xo); take.append(idx)
+    if half is not None and len(T): T["xh"] = [min(int(half(int(a), int(b), int(c), int(e))), int(e)) for a, b, c, e in zip(T.i, T.j, T.d1, T.xo)]
+    T = T.sort_values(["d1", "rk"], ascending=[True, False]); held = []; take = []; last = None
+    for idx, d1, xo, pre in zip(T.index, T.d1.values, (T.xo if reuse else T.ex).values, T.pre.values):   # reuse=False: a stopped position's slot stays empty until its 40 sessions end
+        held = [f for f in held if f[0] > d1]
+        if len(held) >= slots: continue
+        if pre_cap is not None and pre and sum(1 for f in held if f[1]) >= pre_cap: continue
+        if pace is not None and last is not None and d1 - last < pace: continue
+        held.append((xo, bool(pre))); take.append(idx); last = d1
     T["taken"] = T.index.isin(take); return T
-def state(loss=True, week_complete=True, start=None, slots=SLOTS, stop=None, at=None):
-    """The books at a close (the last one, or index `at` for a replay), for the list of the next session (open index n = close + 1)."""
-    i = T_ - 1 if at is None else int(at); n = i + 1
+def state(loss=True, week_complete=True, start=None, slots=SLOTS, stop=None, at=None, kind="A", pre_cap=None, pace=None):
+    """The books at a close (the last one, or index `at` for a replay), for the list of the next session (open index n = close + 1).
+    kind "A": plan trades are the paper trades that start inside a market-turn window; kind "Z": every paper trade (the Z score rule)."""
+    i = T_ - 1 if at is None else int(at); n = i + 1; g = GATE if kind == "A" else ALL
     SIG = signals(loss, week_complete if at is None else True); SH = shadow(SIG); SH = SH[SH.i <= i]
-    PL = plan(SH[SH.i < i], slots=slots, start=start, stop=stop)             # trades entered up to this session's open
+    PLn = plan(SH, gate=g, slots=slots, start=start, stop=stop, pre_cap=pre_cap, pace=pace)   # the tested rule to this close, including this close's signals
+    PL = PLn[PLn.i < i]                                                      # trades entered up to this session's open
     open_sh = SH[(SH.ex >= n) & (SH.i < i)]                                  # paper trades open at the next open (their stocks cannot start a new one today)
     pos = PL[PL.taken & (PL.xo >= n)]                                        # plan positions held into the next open
     due = pos[pos.xo == n]; keep = pos[pos.xo > n]; free = slots - len(keep)
     new = SH[SH.i == i]; rows = []                                           # signals at this close that start a paper trade
     blocked = {int(j): (int(a), bool(GATE[a])) for a, j in zip(open_sh.i, open_sh.j)}
-    held = set(int(j) for j in pos.j)
-    cand = sorted([int(j) for j in new.j], key=lambda j: -np.nan_to_num(VOL[i, j], nan=-9e9)); nbuy = 0
-    for j in cand:
-        if not GATE[i]: act = "wait"                                         # the market has not turned: paper trade only, blocks the stock for 40 sessions
-        elif start is not None and dates[i] < pd.Timestamp(start): act = "before"
-        elif nbuy < free: act = "buy"; nbuy += 1
-        else: act = "noslot"
+    held = set(int(j) for j in pos.j); tk = set(int(j) for j in PLn[(PLn.i == i) & PLn.taken].j); inpl = set(int(j) for j in PLn[PLn.i == i].j)
+    for j in sorted([int(j) for j in new.j], key=lambda j: -np.nan_to_num(VOL[i, j], nan=-9e9)):
+        if not g[i]: act = "wait"                                            # plan A: the market has not turned (paper trade only; blocks the stock for 40 sessions)
+        elif j not in inpl: act = "before"                                   # before the plan account started
+        elif j in tk: act = "buy"
+        else: act = "noslot" if free - len(tk) <= 0 else "rule"              # no free slot, or held back by the plan's own cap / pacing
         rows.append((j, act))
-    rep = [(int(j), "held" if int(j) in held else ("repeat" if blocked[int(j)][1] else "blocked"), blocked[int(j)][0])
+    rep = [(int(j), "held" if int(j) in held else ("repeat" if (kind != "A" or blocked[int(j)][1]) else "blocked"), blocked[int(j)][0])
            for j in np.where(SIG[i])[0] if int(j) in blocked]                # this close's signals in stocks whose paper trade is open
-    return dict(SIG=SIG, SH=SH, PL=PL, i=i, gate=bool(GATE[i]), keep=keep, due=due, free=free, new=rows, rep=rep, blocked=blocked)
+    return dict(SIG=SIG, SH=SH, PL=PL, i=i, gate=bool(g[i]), turn=bool(GATE[i]), kind=kind, keep=keep, due=due, free=free, new=rows, rep=rep, blocked=blocked)
 def account(PL, w=.10, side=.002, cash=True, a=None, b=None):
     """Whole-account curve for the taken plan trades: each position is bought with w x (account value at the previous close), held as
     shares (no rebalancing), sold at its exit; 0.20% per side; idle money earns the T-bill yield. PL needs i, j, d1, xo (open index from
     which the slot is free), fill (exit price; nan = the open of xo), intraday (True: sold during day xo - 1 at fill). Daily close values."""
     T = PL[PL.taken] if "taken" in PL else PL; rate = P["cash"].reindex(dates).fillna(0).values if cash else np.zeros(T_)
-    ent = {}; exo = {}; exi = {}
+    ent = {}; exo = {}; exi = {}; exh = {}
     for r in T.itertuples():
         intr = bool(getattr(r, "intraday", False)); ent.setdefault(r.d1, []).append(r.Index)
         (exi if intr else exo).setdefault(r.xo - 1 if intr else r.xo, []).append(r.Index)
+        if hasattr(r, "xh") and r.xh < r.xo: exh.setdefault(int(r.xh), []).append(r.Index)      # half of the position sold earlier
     eq = np.ones(T_); cashv = 1.0; sh = {}; rows = T.to_dict("index"); t0 = int(T.d1.min()) if len(T) else 0; res = {}
     for t in range(max(t0 - 1, 1), T_):
         prev = eq[t - 1]; cashv *= 1 + rate[t]
         for k in exo.get(t, []):                                              # sold at this open
             if k in sh:
                 px = rows[k]["fill"] if np.isfinite(rows[k]["fill"]) else Of[t, rows[k]["j"]]; cashv += sh[k] * px * (1 - side); res[k] = px; del sh[k]
+        for k in exh.get(t, []):                                              # half sold at this open
+            if k in sh: px = Of[t, rows[k]["j"]]; cashv += .5 * sh[k] * px * (1 - side); sh[k] *= .5
         for k in ent.get(t, []):                                              # bought at this open
             px = Of[t, rows[k]["j"]]
-            if np.isfinite(px) and px > 0: alloc = w * prev; sh[k] = alloc / (px * (1 + side)); cashv -= alloc
+            if np.isfinite(px) and px > 0: alloc = rows[k].get("w", w) * prev; sh[k] = alloc / (px * (1 + side)); cashv -= alloc
         for k in exi.get(t, []):                                              # stop filled during this session
             if k in sh: cashv += sh[k] * rows[k]["fill"] * (1 - side); res[k] = rows[k]["fill"]; del sh[k]
         eq[t] = cashv + sum(s * Cf[t, rows[k]["j"]] for k, s in sh.items())
