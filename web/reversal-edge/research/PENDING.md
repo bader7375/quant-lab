@@ -2,6 +2,11 @@
 LIVE SINCE 2026-11-10 (the user: "Let's go back to previous strategy stretch with ML"): plan Z = the Z score rule (stretch Z touch, ML rank 50%+,
 market model positive, market momentum -1.18 or lower, profitable), 5 positions of 5%, most volatile first, hold 40 sessions, no stop; reported
 through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2026-11-09 only and made no trade.
+11. OFFERED 2026-11-10 (round 70, r70/RESULTS.md): pacing for the Z score plan - at least 3 sessions between two new positions (one buy a
+   day, the most volatile signal). Same growth over 2013-26 at 5% (+4.2% vs +4.1% a year) with a 3.8% worst drawdown instead of 6.1%; less
+   growth than live in 2020-26 at the same size (+4.2% vs +4.9%), so it did not pass the advance rule; the yearly re-choice supports it.
+   At 8% positions (exploratory): +5.6% a year over 2013-26 at the live rule's 6.1% drawdown. Waiting for the user (pacing yes/no, 5% or 8%).
+   Round 70 also retired options 1 (ML bar 70%: now worse) and 4 (split exit: no gain in the verified engine).
 WAS LIVE 2026-11-09 to 2026-11-10 (round 67, r67/RESULTS.md, the user's choice "Let put A"): plan A - buy only Market returned signals (option 7),
 10% of the account each, at most 5, most volatile first, hold 40 sessions, no stop; Z score signals off (they run as the shadow book);
 ML leaders / breakouts shown for reference only; idle money in a SAR money-market fund. Switches: daily/settings.json.

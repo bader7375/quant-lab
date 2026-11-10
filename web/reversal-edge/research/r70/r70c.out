@@ -1,0 +1,17 @@
+pacing 3 vs pacing 3 + at most 2 before the turn: trades 50 50 different: 0
+live      trades per year: 2014: 5, 2015: 9, 2016: 10, 2017: 2, 2018: 5, 2019: 2, 2020: 10, 2021: 2, 2022: 8, 2023: 1, 2024: 2, 2025: 8, 2026: 5
+          days with a buy: 26; most buys on one day: 5; days with 3 or more buys: 12
+pacing 3  trades per year: 2014: 5, 2015: 7, 2016: 10, 2017: 1, 2018: 3, 2019: 1, 2020: 6, 2021: 1, 2022: 6, 2023: 1, 2024: 1, 2025: 5, 2026: 3
+          days with a buy: 50; most buys on one day: 1; days with 3 or more buys: 0
+
+yearly growth of the account (%):
+date          2013  2014  2015  2016  2017  2018  2019  2020  2021  2022  2023  2024  2025  2026
+live 5%        0.0  -0.6  -2.0  10.0   1.9   9.0   4.2   6.2   0.1   1.2   5.3   5.3   6.8   7.9
+pacing 3, 5%   0.0  -0.8   5.9  15.6   1.9   3.6   3.5   5.6  -0.4   4.2   5.1   4.8   3.9   4.5
+pacing 3, 8%   0.0  -1.3   9.5  25.2   2.5   4.7   4.3   8.8  -0.7   5.5   5.3   4.8   3.8   5.3
+losing years: {'live 5%': 2, 'pacing 3, 5%': 2, 'pacing 3, 8%': 2} | worst year: {'live 5%': np.float64(-2.0), 'pacing 3, 5%': np.float64(-0.8), 'pacing 3, 8%': np.float64(-1.3)}
+live 5%       worst periods: 2015-10-20 to 2016-01-17 -6.1% (back at the high 2016-10-23); 2014-12-08 to 2014-12-16 -5.0% (back at the high 2014-12-29); 2020-03-11 to 2020-03-16 -4.9% (back at the high 2020-04-02)
+pacing 3, 5%  worst periods: 2016-02-07 to 2016-02-14 -3.8% (back at the high 2016-02-23); 2015-10-20 to 2016-01-17 -3.7% (back at the high 2016-01-31); 2014-12-08 to 2014-12-16 -3.7% (back at the high 2014-12-24)
+pacing 3, 8%  worst periods: 2016-02-07 to 2016-02-14 -6.1% (back at the high 2016-02-23); 2014-12-08 to 2014-12-16 -5.9% (back at the high 2014-12-24); 2015-10-20 to 2016-01-17 -5.8% (back at the high 2016-01-31)
+
+replay with pacing 3: list buys 53 | tested 53 | same 53 | what the list said: {'buy': 53, 'rule': 405, 'noslot': 14}
