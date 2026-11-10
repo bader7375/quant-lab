@@ -215,10 +215,12 @@ function visionAdvice(kind, fen, miss, extra) {
   return out;
 }
 
-function TechniqueSession(root, n, T) {
+function TechniqueSession(root, n, T, opts = {}) {
   const ts = techState(T.id); let token = 0, fen = null, item = null, board, solved = false, picks = new Set(), truth = null;
+  // a counted set (the daily skill): opts.count positions, then opts.onDone({ n, ok, helped }); ok counts only answers given without help
+  const S = { n: 0, ok: 0, helped: 0, now: false };
   root.innerHTML = `
-    <div class="whead"><button class="btn quiet" id="t-back">→ الفصل ${n}</button><div class="wtitle"><b>${esc(T.title)}</b><span class="note" id="t-prog"></span></div></div>
+    <div class="whead"><button class="btn quiet" id="t-back">${opts.onBack ? "→ جلسة اليوم" : `→ الفصل ${n}`}</button><div class="wtitle"><b>${esc(T.title)}</b><span class="note" id="t-prog"></span></div></div>
     <div class="panel tlesson"><p><b>القاعدة:</b> ${esc(T.rule)}</p><p><b>لماذا:</b> ${esc(T.why)}</p><p><b>لا تفعل:</b> ${esc(T.dont)}</p><p><b>كيف تراها:</b> ${esc(T.see)}</p>${methodHtml(T)}</div>
     <div class="watch">
       <div class="wboard"><div class="boardcap"><span class="turn" id="t-turn"></span><span class="note" id="t-status"></span></div><div class="note" id="t-src"></div>
@@ -228,16 +230,19 @@ function TechniqueSession(root, n, T) {
   board = Board($("#t-board", root), { interactive: false });
   const alive = (t) => t === token && document.body.contains(root) && $("#t-board", root);
   const setStatus = (t) => { $("#t-status", root).textContent = t; };
-  $("#t-back", root).onclick = () => { token++; go("chapter", n); };
-  const prog = () => { const m = techMastery(ts); $("#t-prog", root).textContent = `${m.mastered ? "متقنة · " : ""}صحيحة ${m.ok} من آخر ${m.of || 0} · المجموع ${ts.n}`; };
+  $("#t-back", root).onclick = () => { token++; opts.onBack ? opts.onBack() : go("chapter", n); };
+  const prog = () => { const m = techMastery(ts); $("#t-prog", root).textContent = opts.count ? `الموقف ${Math.min(S.n + (solved ? 0 : 1), opts.count)} من ${opts.count} · صحيحة بلا مساعدة ${S.ok}` : `${m.mastered ? "متقنة · " : ""}صحيحة ${m.ok} من آخر ${m.of || 0} · المجموع ${ts.n}`; };
   let t0 = 0; const secs = () => Math.max(1, Math.round((now() - t0) / 1000));
-  const record = (ok, s) => { ts.n++; ts.last.push(ok ? 1 : 0); if (ts.last.length > 20) ts.last.shift(); ts.times = (ts.times || []).concat(s).slice(-10); saveJourney(); prog(); };
+  const record = (ok, s) => { ts.n++; ts.last.push(ok ? 1 : 0); if (ts.last.length > 20) ts.last.shift(); ts.times = (ts.times || []).concat(s).slice(-10); S.n++; if (ok && !S.now) S.ok++; if (S.now) S.helped++; saveJourney(); prog(); };
+  const lastOne = () => opts.count && S.n >= opts.count;
+  const nextLabel = () => (lastOne() ? "أنهِ المجموعة" : "الموقف التالي");
 
   async function next() {
-    const t = ++token; solved = false; picks = new Set(); truth = null; $("#t-x", root).innerHTML = ""; $("#t-ctl", root).innerHTML = "";
+    if (lastOne()) { token++; return opts.onDone && opts.onDone({ n: S.n, ok: S.ok, helped: S.helped }); }
+    const t = ++token; S.now = false; solved = false; prog(); picks = new Set(); truth = null; $("#t-x", root).innerHTML = ""; $("#t-ctl", root).innerHTML = "";
     setStatus("أجهّز الموقف..."); board.update({ interactive: false, arrows: [], marks: {}, onSquare: null, onSelect: null });
     if (T.kind === "pool") {
-      let items = []; for (const id of T.pools) items = items.concat((await drillPool(id + ".json")).filter((x) => (T.struct ? x.s && x.s.id === T.struct && (!T.rel || (T.rel === "own") === (x.s.side === x.fen.split(" ")[1])) : (x.mt || x.t || []).includes(T.tag)))); // master positions (mt): the tag of the move the master played; chapter 7: the structure
+      let items = []; for (const id of T.pools) items = items.concat((await drillPool(id + ".json")).filter((x) => (T.struct ? x.s && x.s.id === T.struct && (!T.rel || (T.rel === "own") === (x.s.side === x.fen.split(" ")[1])) : T.tag === "any" || (x.mt || x.t || []).includes(T.tag)))); // master positions (mt): the tag of the move the master played; chapter 7: the structure
       if (!alive(t)) return; if (!items.length) { setStatus("لا مواقف لهذه التقنية بعد."); return; }
       item = items[Math.floor(Math.random() * items.length)]; fen = item.fen;
       $("#t-src", root).textContent = (item.w ? `من مباراة أساتذة: ${item.w} ضد ${item.bl} (${item.y})، النقلة ${Math.floor(item.ply / 2) + 1}.` : `من مباراة حقيقية على Lichess (متوسط التقييم ${item.r})، النقلة ${Math.floor(item.ply / 2) + 1}.`);
@@ -253,7 +258,7 @@ function TechniqueSession(root, n, T) {
     board.update({ fen, orient: me, last: null, interactive: true, onMove: (m) => answer(m, t) });
     setStatus("فكّر، ثم العب نقلتك."); t0 = now();
     const help = document.createElement("button"); help.className = "btn quiet"; help.textContent = "اشرح لي النقلات المتاحة (يُحسب مساعدة)";
-    help.onclick = () => { help.remove(); explainTopMoves($("#t-x", root), fen, item.ply, { k: 6, board }); ts.help = (ts.help || 0) + 1; }; $("#t-ctl", root).append(help);
+    help.onclick = () => { help.remove(); explainTopMoves($("#t-x", root), fen, item.ply, { k: 6, board }); ts.help = (ts.help || 0) + 1; S.now = true; }; $("#t-ctl", root).append(help);
   }
   async function answer(m, t) {
     if (solved) return; solved = true; board.update({ interactive: false, fen: m.fenAfter, last: m.uci });
@@ -262,7 +267,7 @@ function TechniqueSession(root, n, T) {
     const b = await Engine.analyse(fen, { depth: T.kind === "basic" ? 18 : 14, movetime: 1500, multipv: 3 }); if (!alive(t)) return;
     const mineL = b.lines.find((l) => l.pv[0] === m.uci) || (await Engine.analyse(fen, { depth: 13, movetime: 900, searchmoves: [m.uci] })).lines[0];
     if (!alive(t)) return;
-    const best = b.lines[0]; const tags = Tech.tagsOf(fen, m.uci); const usesT = (u) => (T.struct ? !!Tech.structPlan(fen, u) : Tech.tagsOf(fen, u).includes(T.tag)); const used = usesT(m.uci);
+    const best = b.lines[0]; const tags = Tech.tagsOf(fen, m.uci); const usesT = (u) => (T.struct ? !!Tech.structPlan(fen, u) : T.tag === "any" || Tech.tagsOf(fen, u).includes(T.tag)); const used = usesT(m.uci); // "any": a safe move is the technique
     let ok, verdict;
     if (best.mate && best.mate > 0) { // mates: judged by mate distance
       const mm = new Chess(m.fenAfter).in_checkmate() ? 1 : mineL && mineL.mate > 0 ? mineL.mate : null;
@@ -283,7 +288,7 @@ function TechniqueSession(root, n, T) {
       ${!ok && mineL ? `<p class="note warnline">${moveRisks(fen, m.san, pvToSan(fen, mineL.pv, 4).slice(1)).map(fmtNote).join(" ")}</p>` : ""}
       ${adviceHtml(tips, took, avg, ok, T)}
       <p class="note">اضغط أي قطعة لك على الرقعة لترى كل نقلاتها مع شرح كل واحدة.</p>
-      <div class="row"><button class="btn" data-a="next">الموقف التالي</button><button class="btn quiet" data-a="think">ماذا يفكر المحرك؟ (أسهم 1-5)</button><button class="btn quiet" data-a="all">اشرح كل النقلات المتاحة</button></div>`;
+      <div class="row"><button class="btn" data-a="next">${nextLabel()}</button><button class="btn quiet" data-a="think">ماذا يفكر المحرك؟ (أسهم 1-5)</button><button class="btn quiet" data-a="all">اشرح كل النقلات المتاحة</button></div>`;
     $('[data-a="next"]', root).onclick = () => next();
     $('[data-a="all"]', root).onclick = (e) => { e.target.remove(); explainTopMoves($("#t-x", root), fen, item.ply, { k: 6, mineUci: m.uci, board }); };
     $('[data-a="think"]', root).onclick = () => ThinkPanel($("#t-x", root), board, fen, best.pv[0], { title: `ماذا يفكر المحرك بعد ${bestSan}؟` });
@@ -335,7 +340,7 @@ function TechniqueSession(root, n, T) {
       const G = Facts.grid(new Chess(fen)); const nm = (s) => (G[s] ? `${Facts.NAME_AR[G[s].type]} ${s}` : s);
       $("#t-card", root).innerHTML = `<div class="callout ${ok ? "good" : "bad"}"><b>${ok ? "صحيح تمامًا" : "ليس تمامًا"}</b>
         <p>الصحيح: ${truth.size ? [...truth].map(nm).join("، ") : "لا شيء"}.</p>${miss.length ? `<p>فاتك: ${miss.map(nm).join("، ")}.</p>` : ""}${extra.length ? `<p>زيادة: ${extra.map(nm).join("، ")}.</p>` : ""}</div>
-        ${adviceHtml(visionAdvice(T.vision, fen, miss, extra), took, avg, ok, T)}<div class="row"><button class="btn" data-a="next">الموقف التالي</button></div>`;
+        ${adviceHtml(visionAdvice(T.vision, fen, miss, extra), took, avg, ok, T)}<div class="row"><button class="btn" data-a="next">${nextLabel()}</button></div>`;
       $('[data-a="next"]', root).onclick = () => next();
       setStatus(ok ? "أحسنت." : "انظر إلى المربعات الخضراء.");
     };

@@ -16,9 +16,12 @@ function warmPanelHtml() {
     <p class="note">مواقف لعبت فيها نقلة ضعيفة في مبارياتك. جد نقلة أفضل. دقيقتان أو ثلاث.${due.length > k ? ` (مستحق الآن: ${due.length})` : ""}</p></div>
     <button class="btn" id="warm-go">ابدأ الإحماء</button></div></div>`;
 }
-function startWarmup() {
-  const list = warmDue().slice(0, 5); let k = 0, right = 0; const root = $("#v-journey");
+function startWarmup(opts = {}) {
+  // opts.any: when nothing is due, the cards that come due soonest (the daily session always has your own positions)
+  const due = warmDue(); const list = (due.length || !opts.any ? due : WARM.cards.slice().sort((a, b) => (a.due ?? 0) - (b.due ?? 0))).slice(0, opts.max || 5);
+  let k = 0, right = 0; const root = $("#v-journey");
   const next = () => {
+    if (k >= list.length && opts.onDone) return opts.onDone({ n: list.length, ok: right });
     if (k >= list.length) {
       root.innerHTML = `<div class="panel"><h3>انتهى الإحماء</h3><p>${right} من ${list.length} صحيحة من المحاولة الأولى. المواقف التي أخطأت فيها تعود أقرب، والصحيحة تبتعد.</p><div class="row"><button class="btn" id="warm-back">إلى الرحلة</button></div></div>`;
       $("#warm-back", root).onclick = () => go("journey"); return;
@@ -31,7 +34,7 @@ function startWarmup() {
       sm2(c, qualityOf(R)); c.last = now(); c.attempts = (c.attempts || 0) + 1; Store.set("cards/" + c.id, c);
       k++; next();
     } });
-    $("#warm-stop", root).onclick = () => go("journey");
+    $("#warm-stop", root).onclick = () => (opts.onBack ? opts.onBack() : go("journey"));
   };
   next();
 }

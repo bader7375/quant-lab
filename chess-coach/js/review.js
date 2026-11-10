@@ -86,14 +86,14 @@ function reviewSummary(G, c, m) {
   return { well, work, lesson };
 }
 
-function openReview(n, G) {
-  if (!G) return;
+function openReview(n, G, opts = {}) {
+  if (!G) return; if (typeof todaySync === "function") todaySync(G, true);
   const c = chapter(n); const root = $("#v-chapter"); const m = G.metrics || computeMetrics(G);
   const s = chState(n); s.review.games = [...new Set([...(s.review.games || []), G.id])]; s.review.count = s.review.games.length; saveJourney();
   const moments = keyMoments(G); const sum = reviewSummary(G, c, m); const opening = (c.rule || {}).kind === "opening_checklist"; const prog = ruleProgress(c);
   const safety = (c.rule || {}).kind === "safety";
   root.innerHTML = `
-    <div class="whead"><button class="btn quiet" id="r-back">→ الفصل ${n}</button>
+    <div class="whead"><button class="btn quiet" id="r-back">${opts.onBack ? "→ جلسة اليوم" : `→ الفصل ${n}`}</button>
       <div class="wtitle"><b>مراجعة المباراة · ${esc(gameTitle(G))}</b><span class="note">${esc(G.reason || "")} · ${esc(OPP.label(G.opp.rating, G.opp.kind))}</span>${theoryNote(G)}</div></div>
     <div class="kpis small rk">${kpi(m.moves, "نقلاتك")}${kpi(m.okShare == null ? "–" : m.okShare + "%", "ممتازة أو جيدة")}${kpi(m.inaccuracies, "غير دقيقة")}${kpi(m.mistakes, "أخطاء")}${kpi(m.blunders, "أخطاء فادحة")}${kpi(m.takebacks, "تراجعات")}${kpi(m.hints, "تلميحات")}</div>
     <div class="panel"><h3>فرصك خلال المباراة</h3>${esChart(G, moments)}<p class="note">تقدير فرصك (من 100) بعد كل نقلة عند لاعبين بمستواك. الدوائر المرقّمة هي اللحظات الحاسمة أدناه، والدائرة المفرغة نقلة تراجعت عنها (خارج المنحنى).</p></div>
@@ -110,7 +110,7 @@ function openReview(n, G) {
     <div class="panel"><h3>درس واحد</h3><p class="lesson">${esc(sum.lesson)}</p><div id="r-claude"></div></div>
     ${G.warmCards ? `<div class="panel"><h3>للإحماء</h3><p>حفظتُ ${arCount(G.warmCards, "موقفًا واحدًا", "موقفين", "مواقف", "موقفًا")} من أخطائك في هذه المباراة. ${G.warmCards === 1 ? "سيعود" : "ستعود"} إليك كتمرين إحماء قصير في جلسة لاحقة: تجد النقلة الأفضل بنفسك.</p></div>` : ""}
     <div class="row"><button class="btn" id="r-again">مباراة جديدة</button><button class="btn quiet" id="r-ch">عودة إلى الفصل</button></div>`;
-  $("#r-back", root).onclick = () => go("chapter", n); $("#r-ch", root).onclick = () => go("chapter", n);
+  $("#r-back", root).onclick = () => (opts.onBack ? opts.onBack() : go("chapter", n)); $("#r-ch", root).onclick = () => go("chapter", n);
   $("#r-again", root).onclick = () => { go("chapter", n); STAGE_RUNNERS.play(n); };
   moments.forEach((mo, i) => {
     const el = $(`[data-m="${i}"]`, root); const r = mo.r;

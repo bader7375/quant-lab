@@ -382,6 +382,57 @@ The user skipped Chapter 5 ("I have all basics"); it can still be opened with th
   - In the safety chapter the threat layers are off. Moves played with the lens on are counted and mentioned in the review.
 - Tests (headless, no page errors): every drill answered right and wrong (with advice); level-up 1→2 unlocks the flash drill; a daily 10 (6/10 logged); the lens in Play (after 1.e4 d5, e4 is shown threatened and d5 attacked); 390 px with nothing off-screen.
 
+### New way of teaching: جلسة اليوم (2026-11-10, by request: "still I didn't make any progress")
+
+Diagnosis from the user's data (83 games, read with ArtifactData):
+- 52 of 78 finished games were left unfinished, 33 of them right after a mistake.
+- Hints: 0.33 per move in the last 25 games. With hints the blunder rate looked low (3.3 per 100 moves). Without hints it stayed high (11.0 → 8.5 per 100) against stronger opponents.
+- Of 189 bad moves, 67 were missed threats and 51 were pieces left hanging (62%). Most came in the first 20 moves.
+- Technique drills were thin (t2-save 1/6, t4-pin 4/10), with one vision session.
+
+User choices:
+- a daily guided session;
+- a hint that teaches instead of giving the best move;
+- the opponent kept at 1900-2000;
+- every game finished.
+
+What changed:
+- **Home = جلسة اليوم** (`js/today.js`, `renderDaily`). The chapter map is still below it as «المكتبة». The session has five steps. Any step can be started; the next one is highlighted.
+  1. **إحماء العين**: 5 vision questions, weakest drills first. When the last game had 2 or more safety errors, the first two are «ماذا تغيّر؟».
+  2. **Skill of the day**: the first unmastered skill of a 31-skill ladder in 6 levels (safety, opportunities, opening, finishing, plans, structures; `SKILLS`). A skill is 10 positions and is mastered at 8/10 answered without help (the explain-moves button marks that answer as helped). A mastered skill comes back as a 5-position review after 7 and 21 days. Under 4/5 un-masters it.
+  3. **أخطاؤك أنت**: up to 5 warm cards from your own games. When none are due, the cards due soonest.
+  4. **One full game**: colours alternate; the chapter is the skill's chapter, so its flags apply (level 1 = the safety chapter: threats not announced, check questions on). An open game is resumed.
+  5. **The review of that game.**
+  The session also shows a streak, the skill ladder and «مستواك الحقيقي»:
+  - blunders, safety errors (hung + missed) and average drop per 100 own moves played without help, the last 100 against the 100 before, abandoned games included;
+  - old games count only if the whole game had ≤1 hint.
+  On the user's data: last 100 = 7 blunders, 10 safety errors, drop 4.7; the 100 before = 6, 7, 3.6. These are the numbers that must fall.
+- **Teaching hint** (`play.js showHint`): three steps, each counted on the move as `rec.hint` (1-3).
+  1. «أين أنظر؟» marks the square that matters with a question. The order is: the check, the opponent's threatening piece, your loose pieces, the target of a winning capture, the enemy king, the pieces a tactic hits, else the key square.
+  2. «ما الفكرة؟» names the idea (from `Tech.tagsOf`: save, take, fork, castle…; out of check, how the check is met; "the only legal move") and marks the piece that moves.
+  3. «اختر من ثلاث»: the best move among two decoys (Maia ~1500 moves, then Stockfish's next lines, never a move within 3 points of the best). A wrong pick is explained (chances, risks, the reply) and the other two stay open. You play the move yourself.
+  The best move is shown only after your move. The move explorer counts as level 3 and the lens as level 1 (`rec.hint`); metrics add `hintMoves`/`freeMoves`.
+- **Every game is finished**:
+  - the «أنهِ وراجع» button is gone; resigning asks once (with a reason to play on) and counts as a loss;
+  - no new game starts while any game is open (resume only, from any chapter); `abandonGame` is no longer called on a new start.
+  - Once (`dailyMigrate`), the open games left by the old flow are closed, except the most recent, which is kept to finish.
+- **Opponent**: `OPP_FLOOR = 1900`; wins move it up to 2000 and losses no lower than 1900.
+- **Session hooks**:
+  - `TechniqueSession`/`RepSession(root, n, T, {count, onBack, onDone})`, `vgRun(root, only, {count, prefer, onBack, onDone})`, `startWarmup({max, any, onBack, onDone})`, `PlayGame({…, onBack})` (returns `G`), `openReview(n, G, {onBack})`;
+  - `todaySync(G, reviewed)` marks the game and review steps, also for a game finished from the library.
+- New technique `t2-safe` (tag `any`: every ch02-safety position where a real player blundered; correct = within 5 points).
+- Tests (`daily.mjs` headless, on a copy of the user's data, no page errors):
+  - migration left 1 open game, opponent 1900;
+  - warm-up 4/5;
+  - the vision skill mastered at 8/10, then the technique set 9/10 with one helped answer not counted;
+  - 5 own-mistake cards solved;
+  - the library play page shows only «أكمل المباراة»;
+  - the resumed game: hint steps 1-3 (in check: king and attacker marked), the pick, `rec.hint` 3 then 0;
+  - resign asks first;
+  - the game and review steps are marked; the next game is Black after White at 1900;
+  - 390 px with nothing off-screen; the Practice view still works.
+  A clash (`renderToday` already existed in practice.js) was caught and renamed `renderDaily`.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

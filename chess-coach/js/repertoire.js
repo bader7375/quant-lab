@@ -22,10 +22,10 @@ function repWalk(G) {
 }
 
 /* ---------- the repertoire trainer ---------- */
-function RepSession(root, n, T) {
-  const ts = techState(T.id); let token = 0, fen = null, r = null, board, solved = false, t0 = 0;
+function RepSession(root, n, T, opts = {}) {
+  const ts = techState(T.id); let token = 0, fen = null, r = null, board, solved = false, t0 = 0; const S = { n: 0, ok: 0 };
   root.innerHTML = `
-    <div class="whead"><button class="btn quiet" id="t-back">→ الفصل ${n}</button><div class="wtitle"><b>${esc(T.title)}</b><span class="note" id="t-prog"></span></div></div>
+    <div class="whead"><button class="btn quiet" id="t-back">${opts.onBack ? "→ جلسة اليوم" : `→ الفصل ${n}`}</button><div class="wtitle"><b>${esc(T.title)}</b><span class="note" id="t-prog"></span></div></div>
     <div class="panel tlesson"><p><b>القاعدة:</b> ${esc(T.rule)}</p><p><b>لماذا:</b> ${esc(T.why)}</p><p><b>لا تفعل:</b> ${esc(T.dont)}</p><p><b>كيف تراها:</b> ${esc(T.see)}</p>${methodHtml(T)}</div>
     <div class="watch">
       <div class="wboard"><div class="boardcap"><span class="turn" id="t-turn"></span><span class="note" id="t-status"></span></div><div class="note" id="t-src"></div>
@@ -35,11 +35,13 @@ function RepSession(root, n, T) {
   board = Board($("#t-board", root), { interactive: false });
   const alive = (t) => t === token && document.body.contains(root) && $("#t-board", root);
   const setStatus = (t) => { $("#t-status", root).textContent = t; };
-  $("#t-back", root).onclick = () => { token++; go("chapter", n); };
-  const prog = () => { const m = techMastery(ts); $("#t-prog", root).textContent = `${m.mastered ? "متقنة · " : ""}صحيحة ${m.ok} من آخر ${m.of || 0} · المجموع ${ts.n}`; };
-  const record = (ok, s) => { ts.n++; ts.last.push(ok ? 1 : 0); if (ts.last.length > 20) ts.last.shift(); ts.times = (ts.times || []).concat(s).slice(-10); (ts.miss = ts.miss || {}); saveJourney(); prog(); };
+  $("#t-back", root).onclick = () => { token++; opts.onBack ? opts.onBack() : go("chapter", n); };
+  const prog = () => { const m = techMastery(ts); $("#t-prog", root).textContent = opts.count ? `الموقف ${Math.min(S.n + (solved ? 0 : 1), opts.count)} من ${opts.count} · صحيحة ${S.ok}` : `${m.mastered ? "متقنة · " : ""}صحيحة ${m.ok} من آخر ${m.of || 0} · المجموع ${ts.n}`; };
+  const lastOne = () => opts.count && S.n >= opts.count;
+  const record = (ok, s) => { S.n++; if (ok) S.ok++; ts.n++; ts.last.push(ok ? 1 : 0); if (ts.last.length > 20) ts.last.shift(); ts.times = (ts.times || []).concat(s).slice(-10); (ts.miss = ts.miss || {}); saveJourney(); prog(); };
   async function next() {
-    const t = ++token; solved = false; $("#t-x", root).innerHTML = ""; setStatus("أجهّز الموقف...");
+    if (lastOne()) { token++; return opts.onDone && opts.onDone({ n: S.n, ok: S.ok, helped: 0 }); }
+    const t = ++token; solved = false; prog(); $("#t-x", root).innerHTML = ""; setStatus("أجهّز الموقف...");
     await loadRep(); if (!alive(t)) return;
     // positions you got wrong come back first; otherwise a random one, shallow positions a little more often
     const keys = Object.keys(REP).filter((k) => T.groups.includes(REP[k].g));
@@ -87,7 +89,7 @@ function RepSession(root, n, T) {
       <p class="note">ما يأتي بعدها غالبًا: <bdi class="mv">${esc(numberedLine(fen, cont))}</bdi></p>
       ${r.alt && r.alt.length ? `<p class="note">نقلات أساتذة أخرى هنا: ${r.alt.map(([s, sh]) => `${esc(s)} ${Math.round(100 * sh)}%`).join("، ")}.</p>` : ""}
       ${adviceHtml(tips, took, avg, ok, T)}
-      <div class="row"><button class="btn" data-a="next">الموقف التالي</button><button class="btn quiet" data-a="think">ماذا يفكر المحرك بعدها؟ (أسهم 1-5)</button></div>`;
+      <div class="row"><button class="btn" data-a="next">${lastOne() ? "أنهِ المجموعة" : "الموقف التالي"}</button><button class="btn quiet" data-a="think">ماذا يفكر المحرك بعدها؟ (أسهم 1-5)</button></div>`;
     $('[data-a="next"]', root).onclick = () => next();
     $('[data-a="think"]', root).onclick = () => ThinkPanel($("#t-x", root), board, fen, repUci, { title: `ماذا يحدث بعد ${r.m}؟`, verdict: "لماذا هي نقلة الذخيرة" });
     board.update({ fen, last: null, arrows: [{ from: repUci.slice(0, 2), to: repUci.slice(2, 4), color: "good" }, ...(ok ? [] : [{ from: m.uci.slice(0, 2), to: m.uci.slice(2, 4), color: "bad" }])] });

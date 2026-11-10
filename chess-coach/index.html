@@ -311,6 +311,12 @@ h4 { margin: 0; font-size: .95rem; font-weight: 600; }
 .lenslegend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 6px 0; } .lenslegend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-inline-end: 4px; vertical-align: middle; background: var(--surface); }
 .lenslegend i.vthreat { border: 3px solid var(--blunder); } .lenslegend i.vwarn { border: 3px solid var(--mistake); } .lenslegend i.vatt { border: 3px solid var(--arrow-plan); } .lenslegend i.vwin { border: 3px solid var(--good); } .lenslegend i.vloose { background: var(--inacc); border-radius: 50%; } .lenslegend i.vdef { background: var(--good); border-radius: 50%; }
 .countq { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 4px 0; } .countq .chip-q { min-width: 36px; }
+.today h2 { margin: 2px 0 4px; } .today-steps { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 8px; }
+.today-steps li { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--surface); }
+.today-steps li.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); } .today-steps li.done { opacity: .72; }
+.today-steps li .btn { margin-top: 8px; } .library { margin-top: 18px; }
+.chip-q.on { border-color: var(--good); color: var(--good); } .chip-q.bad { border-color: var(--blunder); color: var(--blunder); text-decoration: line-through; }
+.wctrl .ctl:disabled { opacity: .5; }
 .dpools { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
 .livecheck .bcheck { display: flex; gap: 6px; align-items: center; } .livecheck .bcheck input { width: 18px; height: 18px; flex: none; }
 .checklist.live li.warn { color: var(--mistake); } .checklist.live li.warn::marker { content: "!  "; }
@@ -378,4 +384,5 @@ svg text.mkt.back { fill: var(--ink); }
 <script src="js/think.js"></script>
 <script src="js/vision.js"></script>
 <script src="js/repertoire.js"></script>
+<script src="js/today.js"></script>
 <script src="js/app.js"></script>

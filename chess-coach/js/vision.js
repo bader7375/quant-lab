@@ -119,20 +119,22 @@ function VisionGym(root) {
 }
 
 /* A run: one drill (endless), or the daily mix of 10 (weakest drills first). */
-function vgRun(root, only) {
-  let k = 0, ok = 0, times = [], token = 0; const total = only ? Infinity : 10;
+function vgRun(root, only, opts = {}) {
+  let k = 0, ok = 0, times = [], token = 0; const total = opts.count || (only ? Infinity : 10);
   const unlocked = VG_DRILLS.filter((d) => !d.unlock || Math.max(...VG_DRILLS.map((x) => vgDrillState(x.id).level)) >= d.unlock);
   const pick = () => { if (only) return VG_DRILLS.find((d) => d.id === only);
+    if (opts.prefer && k < 2) { const d = unlocked.find((x) => x.id === opts.prefer); if (d) return d; } // the last game's weakness first
     const w = unlocked.map((d) => { const a = vgAcc(vgDrillState(d.id)); return { d, w: a == null ? 2 : 1 + (100 - a) / 25 }; });
     let x = Math.random() * w.reduce((s, e) => s + e.w, 0); for (const e of w) { x -= e.w; if (x <= 0) return e.d; } return w[0].d; };
-  root.innerHTML = `<div class="whead"><button class="btn quiet" id="vg-stop">→ تدريب العين</button><div class="wtitle"><b id="vg-title"></b><span class="note" id="vg-prog"></span></div></div>
+  root.innerHTML = `<div class="whead"><button class="btn quiet" id="vg-stop">${opts.onBack ? "→ جلسة اليوم" : "→ تدريب العين"}</button><div class="wtitle"><b id="vg-title"></b><span class="note" id="vg-prog"></span></div></div>
     <div class="watch"><div class="wboard"><div class="boardcap"><span class="turn" id="vg-turn"></span><span class="note mono" id="vg-clock"></span></div><div class="board" id="vg-board"></div><div class="row" id="vg-ctl"></div></div>
       <div class="wside"><div class="panel" id="vg-card" aria-live="polite"></div><div class="panel" id="vg-method"></div></div></div>`;
   const board = Board($("#vg-board", root), { interactive: false }); let clockT = null;
-  $("#vg-stop", root).onclick = () => { token++; clearInterval(clockT); VisionGym(root); };
+  $("#vg-stop", root).onclick = () => { token++; clearInterval(clockT); opts.onBack ? opts.onBack() : VisionGym(root); };
   const finish = () => {
     clearInterval(clockT);
     if (!only) { const s = { day: new Date().toISOString().slice(0, 10), t: now(), n: k, ok, avg: times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0 }; vgState().sessions.push(s); vgState().sessions = vgState().sessions.slice(-60); saveJourney(); }
+    if (opts.onDone) return opts.onDone({ n: k, ok, helped: 0, avg: times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0 });
     $("#vg-card", root).innerHTML = `<h3>انتهى التمرين</h3><p>${ok} من ${k} صحيحة. متوسط الوقت ${times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0} ثانية.</p><div class="row"><button class="btn" id="vg-again">مرة أخرى</button><button class="btn quiet" id="vg-home">تدريب العين</button></div>`;
     $("#vg-again", root).onclick = () => vgRun(root, only); $("#vg-home", root).onclick = () => VisionGym(root);
   };

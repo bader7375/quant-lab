@@ -125,19 +125,16 @@ const ICON = {
   review: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M7 15l3-4 3 2 4-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="7" r="1.6" fill="currentColor"/></svg>`,
 };
 function renderJourney() {
-  const el = $("#v-journey"); const cur = currentChapterN(); const c = chapter(cur); const ns = nextStage(cur);
-  const done = CUR.chapters.filter((x) => chapterStatus(x.n) === "done").length;
+  const el = $("#v-journey"); const cur = currentChapterN();
+  const done =CUR.chapters.filter((x) => chapterStatus(x.n) === "done").length;
   el.innerHTML = `
-    <div class="where panel">
-      <div class="where-main"><span class="eyebrow">أنت هنا</span><h2>الفصل ${cur}: ${esc(c.title)}</h2><p class="lead">${esc(c.goal)}</p></div>
-      <div class="where-next"><span class="note">الخطوة التالية</span><b>${ns.letter}. ${ns.ar}</b><button class="btn" data-open="${cur}">افتح الفصل</button></div>
-      <div class="where-stat"><span class="mono">${done}/${CUR.chapters.length}</span><span class="note">فصول مكتملة</span></div>
-    </div>
-    ${typeof warmPanelHtml === "function" ? warmPanelHtml() : ""}
-    ${typeof visionPanelHtml === "function" ? visionPanelHtml() : ""}
+    <div id="today"></div>
+    <div class="panel library"><span class="eyebrow">المكتبة</span><h3>كل الفصول والتدريبات</h3>
+      <p class="note">جلسة اليوم تختار لك ما تتدرب عليه من هذه الفصول. افتح أي فصل لتقرأ الدرس أو تتدرب على تقنية بعينها. فصول مكتملة: <span class="mono">${done}/${CUR.chapters.length}</span>.</p>
+      <div class="row"><button class="btn quiet" id="vg-go">تدريب العين</button>${typeof warmDue === "function" && warmDue().length ? `<button class="btn quiet" id="warm-go">مواقف من أخطائك (${warmDue().length})</button>` : ""}</div></div>
     <div class="map" id="map"></div>`;
-  for (const b of $$("[data-open]", el)) b.onclick = () => go("chapter", +b.dataset.open);
-  const wg = $("#warm-go", el); if (wg) wg.onclick = startWarmup;
+  if (typeof renderDaily === "function") renderDaily($("#today", el));
+  const wg = $("#warm-go", el); if (wg) wg.onclick = () => startWarmup();
   const vg = $("#vg-go", el); if (vg) vg.onclick = () => VisionGym(el);
   layoutMap($("#map", el), cur);
 }
