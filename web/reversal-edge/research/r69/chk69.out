@@ -1,0 +1,23 @@
+
+25% below entry on close: the four worst exits
+  stopped 8 of 298
+  8100 signal 2014-12-10 entry 17.40 | exit at the open of 2014-12-17 at 12.24 (-29.7%) | close the day before the exit -27.6%, low that day -27.6% | lowest close in the trade -30.9% | if held 40 sessions +12.8%
+  8280 signal 2016-01-18 entry 34.10 | exit at the open of 2016-02-15 at 24.40 (-28.4%) | close the day before the exit -28.2%, low that day -28.2% | lowest close in the trade -28.2% | if held 40 sessions -10.6%
+  4003 signal 2016-01-14 entry 9.29 | exit at the open of 2016-02-15 at 6.81 (-26.7%) | close the day before the exit -26.3%, low that day -26.3% | lowest close in the trade -26.3% | if held 40 sessions -8.3%
+  2040 signal 2020-03-12 entry 15.33 | exit at the open of 2020-03-24 at 11.34 (-26.0%) | close the day before the exit -28.4%, low that day -29.2% | lowest close in the trade -28.4% | if held 40 sessions +2.9%
+
+15% stop order: the four worst exits
+  stopped 55 of 298
+  4040 signal 2016-01-12 entry 11.32 | exit at the open of 2016-01-17 at 9.05 (-20.0%) | close the day before the exit -11.3%, low that day -11.9% | lowest close in the trade -26.8% | if held 40 sessions -10.8%
+  1214 signal 2020-03-12 entry 8.71 | exit at the open of 2020-03-16 at 7.00 (-19.6%) | close the day before the exit -13.4%, low that day -13.4% | lowest close in the trade -22.1% | if held 40 sessions -11.9%
+  2380 signal 2016-01-14 entry 5.91 | exit at the open of 2016-01-21 at 4.81 (-18.6%) | close the day before the exit -10.8%, low that day -11.0% | lowest close in the trade -12.6% | if held 40 sessions +30.8%
+  8040 signal 2014-12-14 entry 21.96 | exit at the open of 2014-12-16 at 17.96 (-18.2%) | close the day before the exit -9.6%, low that day -10.9% | lowest close in the trade -19.0% | if held 40 sessions +20.1%
+
+market stop (index below its lowest close of the 20 sessions up to the signal): five trades
+  2040 signal 2016-01-07: index at the signal 1.1304, its 20-session low 1.1304 (+0.0%), lowest in the next 40 sessions 0.8947 (-20.8%) -> first below on 2016-01-12; stock after 40 sessions +2.1%
+  4080 signal 2014-12-16: index at the signal 1.3868, its 20-session low 1.3868 (+0.0%), lowest in the next 40 sessions 1.4137 (+1.9%) -> never below; stock after 40 sessions +36.4%
+  3007 signal 2022-06-16: index at the signal 1.5317, its 20-session low 1.5317 (+0.0%), lowest in the next 40 sessions 1.4314 (-6.5%) -> first below on 2022-06-19; stock after 40 sessions +15.2%
+  1810 signal 2016-01-17: index at the signal 0.9192, its 20-session low 0.9192 (+0.0%), lowest in the next 40 sessions 0.8947 (-2.7%) -> first below on 2016-01-20; stock after 40 sessions -19.3%
+  4031 signal 2026-03-02: index at the signal 0.9842, its 20-session low 0.9842 (+0.0%), lowest in the next 40 sessions 0.9803 (-0.4%) -> first below on 2026-03-03; stock after 40 sessions +2.7%
+
+where signals sit: the index at the signal is on average +1.0% above its 20-session low (median +0.0%); within 1% of that low in 78% of signals

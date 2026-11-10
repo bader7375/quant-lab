@@ -15,7 +15,7 @@ H = os.path.dirname(os.path.abspath(__file__)); S = os.path.dirname(H); R27 = os
 for _p in (R27, os.path.join(S, "strat"), H):
     if _p not in sys.path: sys.path.insert(0, _p)
 _cwd = os.getcwd(); os.chdir(R27)
-from core import P, C, dates, cols, PCT, pm
+from core import P, C, dates, cols, PCT, pm, ATR as _ATR
 ZC = pd.read_pickle("F27y.pkl")["zc"].reindex(index=dates, columns=cols)
 os.chdir(_cwd)
 import opt7
@@ -66,7 +66,7 @@ def shadow(SIG, hold=HOLD):
             if d1 < T_ and not (np.isfinite(Of[d1, j]) and Of[d1, j] > 0): continue
             out.append((i, j, d1, d1 + hold)); nxt = d1 + hold
     return pd.DataFrame(out, columns=["i", "j", "d1", "ex"]).astype(int)
-def plan(SH, gate=None, slots=SLOTS, rank=None, start=None, stop=None):
+def plan(SH, gate=None, slots=SLOTS, rank=None, start=None, stop=None, reuse=True):
     """SH -> plan trades: in-window shadow trades, slots, most volatile first. stop(i, j, d1, ex) -> (exit open index, fill price or nan,
     reason) lets a plan position leave early (the shadow trade keeps its 40 sessions). start: first signal date of the plan account."""
     g = GATE if gate is None else gate; rk = np.nan_to_num(VOL, nan=-9e9) if rank is None else rank
@@ -75,9 +75,9 @@ def plan(SH, gate=None, slots=SLOTS, rank=None, start=None, stop=None):
     T["xo"] = T.ex; T["fill"] = np.nan; T["why"] = f"{HOLD} sessions"
     if stop is not None and len(T):
         r_ = [stop(int(a), int(b), int(c), int(d)) for a, b, c, d in zip(T.i, T.j, T.d1, T.ex)]
-        T["xo"] = [x[0] for x in r_]; T["fill"] = [x[1] for x in r_]; T["why"] = [x[2] for x in r_]
+        T["xo"] = [x[0] for x in r_]; T["fill"] = [x[1] for x in r_]; T["why"] = [x[2] for x in r_]; T["intraday"] = [bool(x[3]) if len(x) > 3 else False for x in r_]
     T = T.sort_values(["d1", "rk"], ascending=[True, False]); held = []; take = []
-    for idx, d1, xo in zip(T.index, T.d1.values, T.xo.values):
+    for idx, d1, xo in zip(T.index, T.d1.values, (T.xo if reuse else T.ex).values):   # reuse=False: a stopped position's slot stays empty until its 40 sessions end
         held = [f for f in held if f > d1]
         if len(held) < slots: held.append(xo); take.append(idx)
     T["taken"] = T.index.isin(take); return T
@@ -135,3 +135,62 @@ def trade_net(PL, cost=.004):
     for r in PL.itertuples():
         e = Of[r.d1, r.j] if r.d1 < T_ else np.nan; x = r.fill if np.isfinite(r.fill) else (Of[r.xo, r.j] if r.xo < T_ else np.nan); out.append(x / e - 1 - cost)
     return np.array(out)
+# ---------------------------------------------------------------- stops (round 69): one engine for the tests and the list
+ARR = dict(Of=Of, O=P["O"].values.astype(float), L=P["L"].values.astype(float), C=Cl, ATR=_ATR.reindex(index=dates, columns=cols).values.astype(float),
+           IDX=MT.idx.reindex(dates).values.astype(float), T=T_)
+def stop_fn(spec, A=None, late=0, worse=0.0, hold=HOLD):
+    """spec: one dict or a list (the earliest exit wins). Returns f(i, j, d1, ex) -> (xo, fill, why, intraday): xo = the open from which the
+    slot is free; fill = exit price (nan = the open of xo); intraday = sold during session xo - 1 by a resting order.
+    kinds: pct_close p | pct_order p | atr_close k | low_close b [n] | time n [q] | mkt_low | mkt_pct x | breakeven g | trail_atr k.
+    late = sessions of delay on close-based exits; worse = fraction lost on every stop fill (stress tests)."""
+    A = ARR if A is None else A; specs = spec if isinstance(spec, (list, tuple)) else [spec]
+    Of_, O_, L_, C_, n = A["Of"], A["O"], A["L"], A["C"], A["T"]
+    def one(sp, i, j, d1, ex):
+        e = Of_[d1, j] if d1 < n else np.nan; k = sp["kind"]
+        if not (np.isfinite(e) and e > 0): return None
+        lc = min(ex - 2 - late, n - 1 - late); cl = lambda t: (t + 1 + late, np.nan, False)       # a close-based exit: sold at a later open
+        if k in ("pct_close", "atr_close", "low_close"):
+            lvl = e * (1 - sp["p"]) if k == "pct_close" else e - sp["k"] * A["ATR"][i, j] if k == "atr_close" else np.nanmin(L_[max(i - sp.get("n", 10) + 1, 0):i + 1, j]) * (1 - sp["b"])
+            if not np.isfinite(lvl): return None
+            for t in range(d1, lc + 1):
+                if np.isfinite(C_[t, j]) and C_[t, j] <= lvl: return cl(t)
+        elif k == "pct_order":
+            lvl = e * (1 - sp["p"])
+            for t in range(d1, min(ex - 1, n - 1) + 1):
+                o, lo = O_[t, j], L_[t, j]
+                if t > d1 and np.isfinite(o) and o <= lvl: return (t, o, False)                   # the open is already below the stop
+                if np.isfinite(lo) and lo <= lvl: return (t + 1, lvl, True)
+        elif k == "time":
+            t = d1 + sp["n"] - 1
+            if t <= lc and np.isfinite(C_[t, j]) and C_[t, j] < e * (1 + sp.get("q", 0.0)): return cl(t)
+        elif k in ("mkt_low", "mkt_pct"):
+            X = A["IDX"]; lvl = np.nanmin(X[max(i - 19, 0):i + 1]) if k == "mkt_low" else X[i] * (1 - sp["x"])
+            if not np.isfinite(lvl): return None
+            for t in range(d1, lc + 1):
+                if np.isfinite(X[t]) and (X[t] < lvl if k == "mkt_low" else X[t] <= lvl): return cl(t)
+        elif k == "breakeven":
+            armed = False
+            for t in range(d1, lc + 1):
+                c = C_[t, j]
+                if not np.isfinite(c): continue
+                if not armed and c >= e * (1 + sp["g"]): armed = True
+                elif armed and c <= e: return cl(t)
+        elif k == "trail_atr":
+            peak = e; a = A["ATR"][i, j]
+            if not np.isfinite(a): return None
+            for t in range(d1, lc + 1):
+                c = C_[t, j]
+                if not np.isfinite(c): continue
+                peak = max(peak, c)
+                if c < peak - sp["k"] * a: return cl(t)
+        return None
+    def f(i, j, d1, ex):
+        best = None
+        for sp in specs:
+            r = one(sp, i, j, d1, ex)
+            if r is not None and r[0] < ex + (1 if r[2] else 0) and (best is None or (r[0], not r[2]) < (best[0][0], not best[0][2])): best = (r, sp["kind"])
+        if best is None: return (ex, np.nan, f"{hold} sessions", False)
+        (xo, fill, intr), kind = best
+        if worse and xo < n: fill = (fill if np.isfinite(fill) else Of_[xo, j]) * (1 - worse)
+        return (xo, fill, "stop: " + kind, intr)
+    return f

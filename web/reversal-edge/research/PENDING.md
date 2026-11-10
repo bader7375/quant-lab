@@ -4,6 +4,9 @@ LIVE SINCE 2026-11-09 (round 67, r67/RESULTS.md, the user's choice "Let put A"):
 ML leaders / breakouts shown for reference only; idle money in a SAR money-market fund. Switches: daily/settings.json.
 Audit 2026-11-10 (round 68, r68/RESULTS.md): numbers confirmed by an independent rebuild; the list now follows daily/planbook.py (the tested
 rule replayed: plan book, free slots, repeat signals ignored). Plan A rests on 53 trades in 14 years.
+Stop loss for plan A (round 69, r69/RESULTS.md, the user asked for one): 36 stops tested, none improves it (the plan buys the retest of the
+market low, so dips after the entry are normal; stops lock them in). More, smaller positions (8 to 20 slots at the same 50%) are not better
+either. Plan A stays 5 x 10%, hold 40 sessions, no stop.
 Nothing below is switched on. Live rule today: Z swing (daily -2.62 / weekly -2.08, ML >= 50%, market model > 0, market momentum
 <= -1.18, profitable company), buy next open, 5% per stock, at most 5, hold 40 sessions, no stop.
 Switched on 2026-11-06 at the user's request ("Yes let's switch to scanner C"): the ML score now comes from ranker C (round 58,

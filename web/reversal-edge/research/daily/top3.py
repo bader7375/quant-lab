@@ -246,7 +246,8 @@ def live():
         if PLAN == "A" and not buys: L += ["", "**Nothing to buy in your plan at this close.**" + ("" if len(keep) else " Idle money stays in the money-market fund.")]
         L += ["", "Plan record as traded (5 slots, most volatile first, round 68): 2013-19 26 trades, 73% winners, +16.8% per trade, worst -12.6%; "
               "2020-26 25 trades, 84%, +9.4%, worst -12.3%. About 4 trades a year and none in 5 of the 14 years; it misses fast V-shaped rebounds "
-              "(April 2025) and lost in late 2015."]
+              "(April 2025) and lost in late 2015. No stop: 36 stop rules were tested (round 69) and none improved the plan; a position typically "
+              "closes about 6% below its entry at some point before it ends, and the plan's worst periods were about -10% of the account."]
     MRB = L
     L = L0 + (MRB + ["", "---", "", "**For reference only, not in your plan A** (ML leaders / breakouts: they add losing years and deeper drawdowns, round 67):"] + TOPB
               if PLAN == "A" else TOPB + MRB)

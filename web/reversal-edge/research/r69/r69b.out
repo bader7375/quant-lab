@@ -1,0 +1,45 @@
+no stop                                       2013-19  +6.8% DD  9.8% r 0.69 | 2020-26  +6.3% DD  6.3% r 1.00 | 2013-26  +6.5% DD  9.8% r 0.66
+worst periods without a stop (start of the fall, lowest day, back at the old high, depth):
+   2014-12-08 -> 2014-12-16 -> 2014-12-29: -9.8% of the account (8 days down, 13 days to recover)
+   2015-10-12 -> 2016-01-17 -> 2016-10-11: -9.6% of the account (97 days down, 268 days to recover)
+   2020-03-15 -> 2020-03-23 -> 2020-04-02: -6.3% of the account (8 days down, 10 days to recover)
+   2014-12-30 -> 2015-09-03 -> 2015-10-11: -6.3% of the account (247 days down, 38 days to recover)
+   2020-05-03 -> 2020-05-11 -> 2020-06-02: -6.2% of the account (8 days down, 22 days to recover)
+
+stops with the freed slot left EMPTY (no new buy in its place) vs the same stop with the slot reused
+  A 12% on close               empty: 2013-19  +4.5% DD 12.1% r 0.37 | 2020-26  +5.4% DD  6.2% r 0.89 | 2013-26  +5.0% DD 12.1% r 0.41
+                               reuse: 2013-19  +7.3% DD 13.5% r 0.54 | 2020-26  +5.5% DD  6.9% r 0.80 | 2013-26  +6.4% DD 13.5% r 0.48
+                               worst two periods, empty / reuse: 2014: -7.2% / -13.5% (no stop -9.8%); 2015: -12.1% / -11.4% (no stop -9.6%)
+  A 15% on close               empty: 2013-19  +5.4% DD 13.2% r 0.41 | 2020-26  +6.2% DD  6.4% r 0.97 | 2013-26  +5.8% DD 13.2% r 0.44
+                               reuse: 2013-19  +6.9% DD 10.9% r 0.63 | 2020-26  +6.6% DD  6.8% r 0.98 | 2013-26  +6.7% DD 10.9% r 0.62
+                               worst two periods, empty / reuse: 2014: -9.8% / -9.8% (no stop -9.8%); 2015: -13.2% / -10.9% (no stop -9.6%)
+  A 20% on close               empty: 2013-19  +6.5% DD  9.8% r 0.67 | 2020-26  +6.2% DD  6.4% r 0.97 | 2013-26  +6.3% DD  9.8% r 0.65
+                               reuse: 2013-19  +7.0% DD  9.8% r 0.71 | 2020-26  +6.6% DD  6.8% r 0.98 | 2013-26  +6.8% DD  9.8% r 0.69
+                               worst two periods, empty / reuse: 2014: -9.8% / -9.8% (no stop -9.8%); 2015: -9.8% / -9.6% (no stop -9.6%)
+  A 25% on close               empty: 2013-19  +6.8% DD  9.8% r 0.69 | 2020-26  +6.3% DD  6.3% r 1.00 | 2013-26  +6.5% DD  9.8% r 0.66
+                               reuse: 2013-19  +6.8% DD  9.8% r 0.69 | 2020-26  +6.3% DD  6.3% r 1.00 | 2013-26  +6.5% DD  9.8% r 0.66
+                               worst two periods, empty / reuse: 2014: -9.8% / -9.8% (no stop -9.8%); 2015: -9.6% / -9.6% (no stop -9.6%)
+  B 12% stop order             empty: 2013-19  +4.2% DD 12.4% r 0.34 | 2020-26  +5.2% DD  5.4% r 0.96 | 2013-26  +4.7% DD 12.4% r 0.38
+                               reuse: 2013-19  +6.9% DD 14.8% r 0.47 | 2020-26  +5.6% DD  7.5% r 0.75 | 2013-26  +6.3% DD 14.8% r 0.42
+                               worst two periods, empty / reuse: 2014: -6.4% / -14.8% (no stop -9.8%); 2015: -12.4% / -11.6% (no stop -9.6%)
+  B 15% stop order             empty: 2013-19  +5.1% DD 12.7% r 0.40 | 2020-26  +6.2% DD  6.2% r 1.01 | 2013-26  +5.6% DD 12.7% r 0.44
+                               reuse: 2013-19  +6.6% DD 13.2% r 0.50 | 2020-26  +6.1% DD  6.9% r 0.89 | 2013-26  +6.4% DD 13.2% r 0.48
+                               worst two periods, empty / reuse: 2014: -7.6% / -12.3% (no stop -9.8%); 2015: -12.7% / -13.2% (no stop -9.6%)
+  B 20% stop order             empty: 2013-19  +5.3% DD 13.9% r 0.38 | 2020-26  +6.2% DD  6.2% r 1.00 | 2013-26  +5.7% DD 13.9% r 0.41
+                               reuse: 2013-19  +7.5% DD 10.3% r 0.73 | 2020-26  +6.6% DD  6.7% r 0.98 | 2013-26  +7.1% DD 10.3% r 0.69
+                               worst two periods, empty / reuse: 2014: -10.2% / -10.3% (no stop -9.8%); 2015: -13.9% / -9.6% (no stop -9.6%)
+  C 4 ATR on close             empty: 2013-19  +6.2% DD 11.8% r 0.52 | 2020-26  +6.3% DD  6.3% r 1.00 | 2013-26  +6.2% DD 11.8% r 0.53
+                               reuse: 2013-19  +7.6% DD  9.8% r 0.77 | 2020-26  +6.3% DD  6.3% r 1.00 | 2013-26  +7.0% DD  9.8% r 0.71
+                               worst two periods, empty / reuse: 2014: -9.8% / -9.8% (no stop -9.8%); 2015: -11.8% / -9.6% (no stop -9.6%)
+  E time 20: below -5%         empty: 2013-19  +6.4% DD  9.8% r 0.65 | 2020-26  +6.0% DD  6.3% r 0.95 | 2013-26  +6.2% DD  9.8% r 0.63
+                               reuse: 2013-19  +6.6% DD  9.8% r 0.67 | 2020-26  +6.0% DD  6.3% r 0.95 | 2013-26  +6.3% DD  9.8% r 0.64
+                               worst two periods, empty / reuse: 2014: -9.8% / -9.8% (no stop -9.8%); 2015: -9.0% / -9.8% (no stop -9.6%)
+  F market -8% from the signal empty: 2013-19  +4.8% DD 13.5% r 0.35 | 2020-26  +3.8% DD  6.4% r 0.58 | 2013-26  +4.3% DD 13.5% r 0.32
+                               reuse: 2013-19  +7.6% DD 13.9% r 0.55 | 2020-26  +3.8% DD  6.5% r 0.59 | 2013-26  +5.7% DD 13.9% r 0.41
+                               worst two periods, empty / reuse: 2014: -6.6% / -13.9% (no stop -9.8%); 2015: -11.3% / -10.4% (no stop -9.6%)
+  G breakeven after +10%       empty: 2013-19  +6.5% DD  9.8% r 0.66 | 2020-26  +6.3% DD  6.3% r 1.00 | 2013-26  +6.4% DD  9.8% r 0.65
+                               reuse: 2013-19  +6.7% DD  9.8% r 0.68 | 2020-26  +6.3% DD  6.3% r 1.00 | 2013-26  +6.5% DD  9.8% r 0.66
+                               worst two periods, empty / reuse: 2014: -9.8% / -9.8% (no stop -9.8%); 2015: -9.6% / -9.6% (no stop -9.6%)
+  H trailing 4 ATR             empty: 2013-19  +5.1% DD 14.4% r 0.35 | 2020-26  +6.3% DD  6.3% r 1.00 | 2013-26  +5.7% DD 14.4% r 0.39
+                               reuse: 2013-19  +8.0% DD 10.0% r 0.80 | 2020-26  +6.3% DD  6.3% r 1.00 | 2013-26  +7.2% DD 10.0% r 0.72
+                               worst two periods, empty / reuse: 2014: -9.1% / -9.7% (no stop -9.8%); 2015: -14.4% / -10.0% (no stop -9.6%)

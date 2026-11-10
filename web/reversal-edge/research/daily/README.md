@@ -67,3 +67,6 @@ stock; plan book = the paper trades that start inside a market-turn window, 5 sl
 Market returned section, the export (opt7.book, zactive, zscan pa) and the tests. The list shows held positions, free slots (from
 settings.json plan_start), sells due, buys up to the free slots and why each other signal is skipped. The export's ML ranks and market
 model are now the walk-forward values (preds/C.parquet, pm27.parquet) the tests used; a fresh fit is only the fallback. Terminal v31.
+
+Round 69 (2026-11-10): planbook.py also holds the stop engine used by the stop-loss tests (stop_fn; plan(stop=..., reuse=...)). No stop is
+switched on: none of 36 improved plan A (r69/RESULTS.md). The list says so in its record line.
