@@ -89,12 +89,15 @@ function dailyMigrate() {
 }
 function renderDaily(el) {
   dailyMigrate();
+  if (typeof loadLines === "function" && !LINES) loadLines().then(() => { if (document.body.contains(el)) renderDaily(el); }).catch(() => {});
   const t = todayState(); const sk = dueReview() || currentSkill(); const review = !!dueReview(); const ss = skillState(sk.id);
   const lv = SKILL_LEVELS.find((x) => x.n === sk.lv); const mastered = SKILLS.filter((s) => skillState(s.id).mastered).length;
   const gOpen = J.games.find((g) => !g.finished && g.sans && g.sans.length);
   const tg = t.gameId && J.games.find((g) => g.id === t.gameId); const hasGame = J.games.some((g) => g.finished && g.result !== "abandoned");
   const steps = [
     { k: "warm", t: "إحماء العين", d: "5 أسئلة رؤية سريعة، الأضعف أولًا.", min: 3 },
+    (() => { const q = typeof linesQueue === "function" ? linesQueue({ newMax: 2, dueMax: 8 }) : { due: [], fresh: [] }; const x = t.linesDone;
+      return { k: "lines", t: "خطوطي: افتتاحي وخطتي", d: t.done.lines && x ? `اليوم: ${x.n} خط، ${x.perfect} بلا خطأ${x.upgraded ? `، و${x.upgraded} ارتقى مستوى` : ""}.` : LINES ? `${q.due.length} للمراجعة + ${q.fresh.length} جديد. تحفظ الخط وفكرة كل نقلة، ثم خطته: أين تهاجم.` : "تحفظ خطوط ذخيرتك وفكرة كل نقلة، ثم خطة كل خط.", min: 8 }; })(),
     t.done.skill && t.skillDone ? (() => { const x = t.skillDone; const s0 = SKILLS.find((s) => s.id === x.id) || sk;
       return { k: "skill", t: `${x.review ? "مراجعة" : "مهارة اليوم"}: ${s0.title}`, d: `اليوم: ${x.ok} من ${x.n} بلا مساعدة${x.mastered ? (x.review ? "، وما زالت ثابتة." : "، وأتقنتها.") : "."} ${s0.id !== sk.id ? `التالية في السلّم: ${sk.title}.` : "تعود في الجلسة القادمة بمواقف جديدة."}`, min: 10 }; })()
     : { k: "skill", t: review ? `مراجعة: ${sk.title}` : `مهارة اليوم: ${sk.title}`, d: review ?`${REVIEW_N} مواقف. أتقنتها قبل ${Math.round((now() - ss.mastered) / 864e5)} يومًا: هل ما زالت ثابتة؟` : `${SET_N} مواقف. تُتقن عند 8 من 10 بلا مساعدة.${ss.sets.length ? ` آخر محاولة: ${ss.sets[ss.sets.length - 1].ok}/${ss.sets[ss.sets.length - 1].n}.` : ""}`, min: 10 },
@@ -105,7 +108,7 @@ function renderDaily(el) {
   const nextK = steps.find((s) => !t.done[s.k]);
   const R = realLevel(); const fmt = (x) => (x ? `${x.bl} خطأ فادح و${x.safety} خطأ أمان لكل 100 نقلة (متوسط الخسارة ${x.drop})` : "لا بيانات كافية بعد");
   el.innerHTML = `<div class="panel today">
-    <div class="row" style="justify-content:space-between"><div><span class="eyebrow">جلسة اليوم · نحو 40 دقيقة</span><h2>${esc(lv.name)}</h2><p class="note">${esc(lv.why)} المهارات المتقنة: ${mastered} من ${SKILLS.length}.${J.state.streak && J.state.streak.days ? ` أيام متتالية: ${J.state.streak.days}.` : ""}</p></div></div>
+    <div class="row" style="justify-content:space-between"><div><span class="eyebrow">جلسة اليوم · نحو 45 دقيقة</span><h2>${esc(lv.name)}</h2><p class="note">${esc(lv.why)} المهارات المتقنة: ${mastered} من ${SKILLS.length}.${J.state.streak && J.state.streak.days ? ` أيام متتالية: ${J.state.streak.days}.` : ""}</p></div></div>
     <ol class="tsteps today-steps">${steps.map((s, i) => `<li class="${t.done[s.k] ? "done" : nextK === s ? "on" : ""}"><span class="tnum ${t.done[s.k] ? "me" : "op"}">${t.done[s.k] ? "✓" : i + 1}</span> <b>${esc(s.t)}</b> <span class="note">~${s.min} د</span><div class="note">${esc(s.d)}</div>
       ${s.k === "review" && !hasGame ? "" : `<button class="btn ${nextK === s || (s.k === "game" && gOpen) ? "" : "quiet"}" data-step="${s.k}">${s.k === "game" && gOpen ? "أكمل المباراة" : t.done[s.k] ? "مرة أخرى" : nextK === s ? "ابدأ" : "ابدأ هذه الخطوة"}</button>`}</li>`).join("")}</ol>
     ${!nextK ? `<div class="callout good"><b>أنهيت جلسة اليوم.</b> عد غدًا: التكرار اليومي القصير أنفع من جلسة طويلة مرة في الأسبوع.</div>` : ""}
@@ -129,6 +132,12 @@ async function runStep(k, sk, review) {
     const prefer = (m.hanging || 0) + (m.missedThreats || 0) >= 2 ? "changed" : null; // the last game's safety errors steer the warm-up
     return vgRun(root, null, { count: 5, prefer, onBack: backToday, onDone: (r) => { markStep("warm"); stepSummary(root, "إحماء العين", `${r.ok} من ${r.n} صحيحة، متوسط ${r.avg} ثانية.${prefer ? " بدأنا بـ«ماذا تغيّر؟» لأن مباراتك الأخيرة فيها أخطاء أمان." : ""}`); } });
   }
+  if (k === "lines") {
+    await loadLines(); const q = linesQueue({ newMax: 2, dueMax: 8 });
+    const done = (r) => { t.linesDone = r; markStep("lines"); stepSummary(root, "خطوطي", `${r.n} خط: ${r.perfect} بلا خطأ${r.upgraded ? `، و${r.upgraded} ارتقى مستوى (أطول)` : ""}${r.fresh ? `، منها ${r.fresh} جديد` : ""}. الخطوط تعود في وقتها: ما أخطأت فيه غدًا، وما حفظته بعد أيام.`); };
+    if (!q.due.length && !q.fresh.length) return done({ n: 0, perfect: 0, upgraded: 0, fresh: 0 });
+    return LinesSession(root, { newMax: 2, dueMax: 8, onBack: backToday, onDone: done });
+  }
   if (k === "skill") {
     const n = review ? REVIEW_N : SET_N; const st = skillState(sk.id);
     const done = (r) => {
@@ -151,9 +160,9 @@ async function runStep(k, sk, review) {
   if (k === "game") {
     const open = J.games.filter((g) => !g.finished && g.sans && g.sans.length).sort((a, b) => b.t - a.t)[0];
     go("chapter", open ? open.chapter : sk.ch); const v = $("#v-chapter");
-    if (open) { t.gameId = open.id; saveJourney(); return PlayGame(v, { n: open.chapter, resume: open, onBack: backToday }); }
+    if (open) { t.gameId = open.id; saveJourney(); return PlayGame(v, { n: open.chapter, resume: open, onBack: backToday, rep: true }); }
     const lastCol = (J.games.filter((g) => g.finished).slice(-1)[0] || {}).color; const color = lastCol === "w" ? "b" : "w"; // colours alternate
-    const G = PlayGame(v, { n: sk.ch, color, rating: J.state.settings.oppRating, onBack: backToday });
+    const G = PlayGame(v, { n: sk.ch, color, rating: J.state.settings.oppRating, onBack: backToday, rep: true });
     if (G) { G.today = t.day; t.gameId = G.id; saveJourney(); }
     return;
   }

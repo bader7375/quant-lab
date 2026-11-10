@@ -83,13 +83,16 @@ STAGE_RUNNERS.play = (n) => {
 };
 
 let PLAY_TOKEN = 0;
-function PlayGame(root, { n, color, rating, resume = null, start = null, startNote = null, onBack = null }) {
+function PlayGame(root, { n, color, rating, resume = null, start = null, startNote = null, onBack = null, rep = false }) {
   const c = chapter(n); const set = J.state.settings; const opening = (c.rule || {}).kind === "opening_checklist";
   // chapter 2 (safety): the opponent's threats are not announced (finding them is the skill); a hint reveals them, and
   // an optional check step asks the safety questions before each move is played
-  const planCh = (c.rule || {}).kind === "middlegame_quality"; const repCh = (c.rule || {}).kind === "repertoire";
+  // repertoire notes: the repertoire chapter, and every game of the daily session (rep), where your lines are trained
+  const planCh = (c.rule || {}).kind === "middlegame_quality"; const repCh = (c.rule || {}).kind === "repertoire" || !!rep || !!(resume && resume.rep);
   const safety = (c.rule || {}).kind === "safety"; const blunderCheck = () => safety && set.blunderCheck !== false;
   const G = resume || { id: "g" + uid(), chapter: n, t: now(), color, opp: { kind: OPP.kind, rating, fallbacks: 0 }, start: start || START_FEN, startNote, sans: [], ucis: [], recs: [], takebacks: 0, hints: 0, threats: 0, finished: false };
+  if (rep && !G.rep) G.rep = true;
+  if (repCh) loadRep().catch(() => {});
   if (!J.games.includes(G)) J.games.push(G);
   const me = G.color, opp = me === "w" ? "b" : "w", oppRating = G.opp.rating;
   const game = new Chess(G.start); let ownMoves = 0;
@@ -364,7 +367,11 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
     for (const t of moveFacts(rec.fenBefore, rec.san, "opp")) add(t);
     if (repCh && REP && rec.ply >= 1 && rec.ply <= 30) { // the opponent's move left your repertoire
       const before = new Chess(G.start); for (const s of G.sans.slice(0, rec.ply - 1)) before.move(s, { sloppy: true });
-      if (repAt(before.fen()) && !repAt(rec.fen)) add("الخصم خرج عن ذخيرتك. الآن المبادئ: المركز، التطوير، التبييت، وانظر ماذا لعب الأساتذة هنا (تحت كل نقلة).");
+      if (repAt(before.fen()) && !repAt(rec.fen)) {
+        add("انتهى خطك المحفوظ هنا (الخط انتهى، أو خرج الخصم عنه). من هنا تقودك الخطة لا الذاكرة.");
+        const C = Tech.compass(rec.fen, me);
+        if (C) add(`الخطة: أين أهاجم؟ ${C.name}. ${C.reasons.slice(0, 2).join(". ")}.${C.levers.length ? ` دفعات بيدق في هذه الجهة: [${C.levers.join("] [")}].` : ""}`);
+      }
     }
     mastersSummary(rec.fenBefore, rec.san).then((ms) => { if (ms) ul.insertAdjacentHTML("beforeend", `<li class="mastersli">${mastersText(ms, rec.san, "opp")}</li>`); });
     if (game.in_check()) add("عالج الكش أولًا: حرّك الملك، أو ضع قطعة في طريق الكش، أو أسر القطعة التي تعطيه.");
@@ -409,9 +416,15 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
     const r = await bestNow(fen); if (!alive() || game.fen() !== fen) return;
     const el = $(".hbody", cd);
     if (!r || !r.best) { el.innerHTML = `<p class="note">تعذّر التحليل الآن. جرّب مرة أخرى.</p>`; hintStep--; hintButton(); return; }
-    const H = step === 1 ? hintWhere(fen, r) : step === 2 ? hintIdea(fen, r) : null;
+    const inLine = repCh && REP ? repAt(fen) : null;
+    const H = inLine && step < 3 ? hintLine(fen, inLine, step) : step === 1 ? hintWhere(fen, r) : step === 2 ? hintIdea(fen, r) : null;
     if (H) { el.innerHTML = `<p>${H.text}</p>${H.q ? `<p class="note"><b>اسأل نفسك:</b> ${esc(H.q)}</p>` : ""}`; board.update({ marks: H.marks }); return; }
-    hintChoose(el, fen, r);
+    hintChoose(el, fen, r, inLine ? inLine.m : null);
+  }
+  function hintLine(fen, rp, step) {
+    if (step === 1) return { marks: {}, text: `أنت داخل خطك (ذخيرتك): ${G.sans.length ? `<bdi class="mv">${esc(numberedLine(G.start, G.sans))}</bdi>` : "الموقف الأول"}.`, q: "ما نقلتك التالية في الخط؟ قل فكرتها لنفسك قبل أن تلعبها." };
+    const m = new Chess(fen).move(rp.m, { sloppy: true }); const I = typeof moveIdeas === "function" ? moveIdeas(fen, rp.m) : { label: "", ideas: [] };
+    return { marks: m ? { [m.from]: "vsel" } : {}, text: `<b>فكرة نقلة خطك:</b> ${esc(I.label || "تحسين")}${I.ideas[0] ? ` (${fmtNote(I.ideas[0])})` : ""}<br>القطعة التي تتحرك: <b>${esc(m ? sqName(Facts.grid(new Chess(fen)), m.from) : "")}</b>.`, q: "إلى أين تذهب؟" };
   }
   const sqName = (G0, s) => (G0[s] ? `${Facts.NAME_AR[G0[s].type]} ${s}` : s);
   function hintWhere(fen, r) {
@@ -455,22 +468,24 @@ function PlayGame(root, { n, color, rating, resume = null, start = null, startNo
       : idea ? IDEA_AR[idea] : "نقلة هادئة تحسّن قطعة دون أن تترك شيئًا بلا حماية.";
     return { marks, text: `<b>الفكرة:</b> ${esc(text)}<br>القطعة التي تتحرك: <b>${esc(sqName(G0, m.from))}</b>.${only && legal > 1 ? "<br>هنا نقلة جيدة واحدة تقريبًا: البدائل تخسر كثيرًا." : ""}`, q: "إلى أين تذهب هذه القطعة لتحقق الفكرة؟ وبعد نقلتك: هل تبقى كل قطعة محمية؟" };
   }
-  async function hintChoose(el, fen, r) {
+  async function hintChoose(el, fen, r, lineSan = null) {
     // two plausible decoys: what players at your level play here (Maia), else Stockfish's next lines; never another move as good as the best
     const pc = Prob.ctx(fen, G.sans.length); const es = (l) => Prob.esFor(l.cpWhite, me, pc); const esB = es(r.lines[0]);
     const good = new Set(r.lines.filter((l) => esB - es(l) <= 3).map((l) => l.pv[0]));
+    const lineU = lineSan ? (() => { const x = new Chess(fen).move(lineSan, { sloppy: true }); return x ? x.from + x.to + (x.promotion || "") : null; })() : null;
+    if (lineU) { good.clear(); good.add(lineU); } // inside your line, the right answer is your line's move
     const h = await Human.predict(G.start, G.ucis.slice(), Math.max(1100, Math.min(1500, oppRating - 400))).catch(() => null);
     if (!alive() || game.fen() !== fen) return;
     const cands = []; for (const x of (h && h.policy) || []) { if (!good.has(x.uci) && !cands.includes(x.uci)) cands.push(x.uci); if (cands.length >= 2) break; }
     for (const l of r.lines) { if (cands.length >= 2) break; if (!good.has(l.pv[0]) && !cands.includes(l.pv[0])) cands.push(l.pv[0]); }
     if (cands.length < 2) for (const x of new Chess(fen).moves({ verbose: true })) { if (cands.length >= 2) break; const u = x.from + x.to + (x.promotion || ""); if (!good.has(u) && !cands.includes(u)) cands.push(u); }
-    const opts = [r.best, ...cands].sort(() => Math.random() - 0.5);
-    el.innerHTML = `<p>واحدة من هذه النقلات هي الأفضل عند Stockfish. اختر، ثم اشرح لنفسك لماذا قبل أن تلعبها.</p><div class="row">${opts.map((u) => `<button class="chip-q" data-hc="${u}"><bdi class="mv">${esc(moveLabel(fen, sanOf(fen, u)))}</bdi></button>`).join("")}</div><div class="hres"></div>`;
+    const opts = [lineU || r.best, ...cands.filter((u) => u !== lineU)].slice(0, 3).sort(() => Math.random() - 0.5);
+    el.innerHTML = `<p>${lineU ? "واحدة من هذه النقلات هي نقلة خطك." : "واحدة من هذه النقلات هي الأفضل عند Stockfish."} اختر، ثم اشرح لنفسك لماذا قبل أن تلعبها.</p><div class="row">${opts.map((u) => `<button class="chip-q" data-hc="${u}"><bdi class="mv">${esc(moveLabel(fen, sanOf(fen, u)))}</bdi></button>`).join("")}</div><div class="hres"></div>`;
     board.update({ arrows: opts.map((u, i) => ({ from: u.slice(0, 2), to: u.slice(2, 4), color: "alt", n: i + 1 })) });
     for (const b of $$("[data-hc]", el)) b.onclick = async () => {
       const u = b.dataset.hc; const res = $(".hres", el); for (const x of $$("[data-hc]", el)) x.disabled = true;
-      if (u === r.best || good.has(u)) { b.classList.add("on");
-        res.innerHTML = `<div class="callout good"><b>صحيح.</b> ${bestMoveWhy(fen, sanOf(fen, u), u, threat).slice(0, 2).map(fmtNote).join(" ") || "هذه نقلة Stockfish الأولى."} الآن العبها على الرقعة.</div>`;
+      if ((!lineU && u === r.best) || good.has(u)) { b.classList.add("on");
+        res.innerHTML = `<div class="callout good"><b>${lineU ? "صحيح: نقلة خطك." : "صحيح."}</b> ${(lineU && typeof moveIdeas === "function" ? moveIdeas(fen, sanOf(fen, u)).ideas : bestMoveWhy(fen, sanOf(fen, u), u, threat)).slice(0, 2).map(fmtNote).join(" ") || "هذه نقلة Stockfish الأولى."} الآن العبها على الرقعة.</div>`;
         board.update({ arrows: [{ from: u.slice(0, 2), to: u.slice(2, 4), color: "good" }] }); return; }
       res.innerHTML = `<p class="note">أفكّر في ${esc(sanOf(fen, u))}...</p>`;
       const a = await Engine.analyse(fen, { depth: 12, movetime: 700, searchmoves: [u] }).catch(() => null); if (!alive() || game.fen() !== fen) return;

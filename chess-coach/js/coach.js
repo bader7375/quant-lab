@@ -28,6 +28,8 @@ function planFor(fen, ply, { noThreats = false } = {}) {
     if (!mine.center.pawns) out.push("لا بيدق لك في المركز: d4 أو e4 (d5 أو e5) إن كان آمنًا.");
     if (!mine.dev.castled && mine.dev.kingCenter) out.push("ملكك في الوسط: بيّت قريبًا.");
   } else if (f.phase === "middlegame") {
+    const C = Tech.compass(fen, me); // where to attack, with its main reason
+    if (C) out.push(`أين أهاجم؟ ${C.name}: ${C.reasons[0] || ""}${C.levers.length ? `. دفعات بيدق: ${C.levers.join("، ")}` : ""}.`);
     // the piece with the fewest moves is the one to improve
     let worst = null; for (const [sq, p] of Object.entries(G)) { if (p.color !== me || "kp".includes(p.type)) continue; const n = g.moves({ square: sq }).length; if (!worst || n < worst.n) worst = { sq, p, n }; }
     if (worst && worst.n <= 3) out.push(`حسّن أسوأ قطعة: ${N[worst.p.type]} على ${worst.sq} ${worst.n ? `له ${arCount(worst.n, "نقلة واحدة", "نقلتان", "نقلات", "نقلة")} فقط` : "لا يتحرك"}. أين تعمل أفضل؟`);

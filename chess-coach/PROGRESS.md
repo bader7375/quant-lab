@@ -433,6 +433,56 @@ What changed:
   - 390 px with nothing off-screen; the Practice view still works.
   A clash (`renderToday` already existed in practice.js) was caught and renamed `renderDaily`.
 
+### خطوطي: lines in memory, a plan at the end of each, and «where do I attack?» (2026-11-10, by request)
+
+The user's request: "I don't know how to start, or to have a plan, or where to attack. I want to be like a machine with a brain: save the moves in my head, then upgrade them, with guidance."
+
+- **Data** (`tools/repertoire/build_lines.mjs` → `data/curriculum/ch08/lines.json`, 103 KB): every leaf of the chapter-8 repertoire tree, 241 lines (95 White, 64 vs 1.e4, 45 vs 1.d4, 37 vs 1.c4/1.Nf3). Each line has:
+  - `w`, how often you meet it: 0.5 × the product of master reply shares (× White's first-move share for Black lines), so both colours sort together;
+  - `sh`, the master share of each move;
+  - the opening name and family;
+  - `cont`: masters' most played continuation (50+ games), up to 4 more own moves, each within 50 cp of Stockfish 17.1 at depth 14 (2 continuations were cut);
+  - `end`: Stockfish at depth 16 at the end of the line (cp and an 8-ply best line).
+- **`Tech.compass(fen, side)`** (techniques.js, engine-free, Node-testable) answers «أين أهاجم؟»: queenside, centre or kingside, with weighted reasons and the pawn levers on that wing. The reasons:
+  - the enemy king: opposite castling means a pawn storm; same-side castling means attack with pieces; an uncastled king counts only if a d/e file is free of your pawns or it can no longer castle;
+  - space; the direction of a blocked pawn chain (a blocked base preferred, so e4-d5 in the King's Indian);
+  - half-open files, isolated enemy pawns, hooks (opposite castling only), where your pieces aim;
+  - the structure's classic plan (Carlsbad minority attack, IQP, hanging pawns).
+  
+  Checked on classic positions: King's Indian (White queenside with c5, Black kingside), French chain (kingside), Carlsbad (White queenside), opposite-castled Sicilian (kingside, g4/f4), IQP (kingside), QGD as Black (queenside, c5/b5).
+  
+  `Tech.wingOfMoves(fen, sans, side)` gives the wing a sequence of moves plays on, used to compare with what masters and Stockfish played.
+- **`js/lines.js`**:
+  - **Move ideas** (`moveIdeas`), computed from the position and the rest of the line, never free text: develops, castles, centre pawn, a new threat, aims at a point only the king defends, pressure, defends, saves, steps away before a pawn can chase it, prevents (squares the pawn now covers where enemy pieces could go), prepares a 4th-rank centre push or a push the line plays later, luft, vacates a square for a later move (only if it stays empty: castling first puts a rook there), the first step of a manoeuvre (captures end it), and a rook to a half-open/open file. Each move also gets a short label to remember it by (e.g. "تمنع Nd4 + تحضير d4" for c3).
+  - Over all 4938 own moves at all levels: no errors, and 127 fall back to "quiet improvement".
+  - **Learn**: step through the line with the ideas, the master shares and arrows. The move strip labels your moves.
+  - **Recall**: play your moves from memory; the replies come by themselves. A wrong move gets:
+    - the line's move with its idea;
+    - Stockfish's comparison ("not a mistake but not your line", or worse by N pawns);
+    - you must play the line's move to go on.
+    Then SM-2 on the line, and a retry button after mistakes.
+  - **Levels**: 1 = first 5 own moves, 2 = the whole line, 3 = plus masters' continuation. A line goes up after 2 recalls without a mistake on different days. 13 lines have only level 1, 139 go to 2, 89 to 3.
+  - **Plan card** at the end of what was recalled:
+    - the structure, the compass and its levers (arrows on the board);
+    - masters' next moves, your moves in them with labels, and their wing;
+    - Stockfish's evaluation and line (from the file at the full line's end, live otherwise) with its wing;
+    - the three compared honestly ("not fully agreed … what masters played here is more precise").
+    From level 2, a quiz «أين تلعب من هنا؟» comes first; the truth is masters' wing, else the compass.
+  - `LinesSession` runs due reviews (≤8), then new lines (≤2). `LinesHome` (library «خطوطي») lists families by frequency, with the level and due date of each line, and shows coverage per colour. The memory method is in `MEMORY_TIPS`.
+- **Daily session**: a new step 2 «خطوطي: افتتاحي وخطتي» (~8 min), so the session is about 45 min.
+- **Daily games** (`PlayGame({rep: true})`, remembered as `G.rep`) get the repertoire notes ("ضمن ذخيرتك" / "خرجت عن ذخيرتك"):
+  - inside your line the hint ladder trains the line: step 1 "what's your next move in the line?", step 2 the line move's idea and the piece, step 3 the line move among two decoys;
+  - where your line ends, the feed says the plan now leads, not memory, and gives the compass with its levers;
+  - the middlegame plan box starts with «أين أهاجم؟».
+- Tests (`lines.mjs` headless, no page errors):
+  - the library page;
+  - two new lines: learn, then recall with one deliberate mistake (Stockfish: 0.8 pawn worse), then the plan card;
+  - an upgrade 1→2 (10 → 16 plies) and the level-2 quiz;
+  - the daily step (2 lines, summary, step marked);
+  - a daily game: in-line hint steps 1-3, the line move picked, the repertoire followed until "انتهى خطك المحفوظ" with the compass card, 7 in-line notes;
+  - 390 px with nothing off-screen.
+  Caught before publishing: `GROUP_AR` already existed in practice/modes.js (renamed `LINE_GROUP_AR`), and a comment that hid a declaration.
+
 ## Earlier state (exam-style version, kept as Practice)
 
 All training modes are built. The user asked for two changes, both done:

@@ -131,11 +131,12 @@ function renderJourney() {
     <div id="today"></div>
     <div class="panel library"><span class="eyebrow">المكتبة</span><h3>كل الفصول والتدريبات</h3>
       <p class="note">جلسة اليوم تختار لك ما تتدرب عليه من هذه الفصول. افتح أي فصل لتقرأ الدرس أو تتدرب على تقنية بعينها. فصول مكتملة: <span class="mono">${done}/${CUR.chapters.length}</span>.</p>
-      <div class="row"><button class="btn quiet" id="vg-go">تدريب العين</button>${typeof warmDue === "function" && warmDue().length ? `<button class="btn quiet" id="warm-go">مواقف من أخطائك (${warmDue().length})</button>` : ""}</div></div>
+      <div class="row"><button class="btn quiet" id="ln-go">خطوطي: افتتاحي وخطتي</button><button class="btn quiet" id="vg-go">تدريب العين</button>${typeof warmDue === "function" && warmDue().length ? `<button class="btn quiet" id="warm-go">مواقف من أخطائك (${warmDue().length})</button>` : ""}</div></div>
     <div class="map" id="map"></div>`;
   if (typeof renderDaily === "function") renderDaily($("#today", el));
   const wg = $("#warm-go", el); if (wg) wg.onclick = () => startWarmup();
   const vg = $("#vg-go", el); if (vg) vg.onclick = () => VisionGym(el);
+  const lg = $("#ln-go", el); if (lg) lg.onclick = () => LinesHome(el);
   layoutMap($("#map", el), cur);
 }
 function layoutMap(box, cur) {

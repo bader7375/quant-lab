@@ -169,6 +169,85 @@
     if (st.id === "open") return tags.some((x) => ["openfile", "outpost", "worst"].includes(x)) ? "open-activity" : null;
     return null;
   }
-  const T = { tagsOf, knightJump, structure, structPlan };
+  /* «أين أهاجم؟»: which part of the board to play on (q = queenside a-c, c = centre d-e, k = kingside f-h), from the
+     position alone, with the reasons that decided it. The rules are the classic ones: go where the enemy king is (with
+     pawns only when the kings are on opposite wings), where your space is, where your pawn chain points, along half-open
+     files, at weak pawns, and where your pieces already aim. Each reason has a weight; the wing with the most wins.
+     A heuristic, so the trainer shows it next to what masters and Stockfish actually play (wingOfMoves). */
+  const WING_OF = (f) => ("abc".includes(f) ? "q" : "de".includes(f) ? "c" : "k");
+  const WING_AR = { q: "جناح الوزير", c: "المركز", k: "جناح الملك" };
+  function compass(fen, side) {
+    const g = new ChessLib(fen); const me = side || g.turn(), opp = me === "w" ? "b" : "w"; const G = Facts.grid(g);
+    const S = { q: 0, c: 0, k: 0 }; const R = []; const add = (w, n, t) => { S[w] += n; R.push({ w, n, t }); };
+    const rel = (s, c) => (c === "w" ? +s[1] : 9 - +s[1]); // rank counted from that side's back rank
+    const pawnsOf = (c) => Object.keys(G).filter((s) => G[s].type === "p" && G[s].color === c);
+    const kingOf = (c) => Object.keys(G).find((s) => G[s].type === "k" && G[s].color === c);
+    const ek = kingOf(opp), mk = kingOf(me); if (!ek || !mk) return null;
+    const ew = WING_OF(ek[0]), mw = WING_OF(mk[0]); const opposite = ew !== "c" && mw !== "c" && ew !== mw;
+    // 1. the enemy king
+    if (ew === "c") { // a king in the centre is a target only if the centre can be opened (a d/e file without your pawn) or it can no longer castle
+      const rights = (fen.split(" ")[2] || "").split("").filter((x) => (opp === "w" ? /[KQ]/ : /[kq]/).test(x)).length;
+      const lever = ["d", "e"].some((f) => !pawnsOf(me).some((s) => s[0] === f));
+      if (!rights || lever) add("c", 3, `ملك الخصم ما زال في الوسط (${ek})${rights ? "" : " ولا يستطيع التبييت"}: افتح المركز قبل أن يبيّت`);
+      else add("c", 1, `ملك الخصم في الوسط (${ek})، لكنه سيبيّت غالبًا: أكمل تطويرك أولًا`);
+    }
+    else if (opposite) add(ew, 4, `ملك الخصم على ${ek} وملكك في الجهة الأخرى: ادفع بيادقك نحو ملكه، فهذا لا يكشف ملكك`);
+    else add(ew, 1.5, `ملك الخصم على ${ek}، وملكك في الجهة نفسها: هاجمه بالقطع لا بالبيادق`);
+    // 2. space and 3. the direction of a blocked pawn chain
+    const mine = pawnsOf(me), his = pawnsOf(opp); const at = (f, r) => f + r;
+    const ahead = (s, c) => s[0] + (+s[1] + (c === "w" ? 1 : -1));
+    // the chain: the most advanced blocked pawn of yours with a pawn diagonally behind it; a base that is itself blocked
+    // is preferred (e4-d5 in the King's Indian, not the c4 pawn that only supports d5)
+    let chain = null; const blockedP = (s, c) => { const a = G[ahead(s, c)]; return !!a && a.type === "p" && a.color !== c; };
+    for (const s of mine) if (rel(s, me) >= 5) add(WING_OF(s[0]), 1, `بيدقك على ${s} يعطيك مساحة في ${WING_AR[WING_OF(s[0])]}`);
+    for (const s of mine.slice().sort((a, b) => rel(b, me) - rel(a, me))) {
+      if (!blockedP(s, me) || rel(s, me) < 4) continue;
+      const back = +s[1] + (me === "w" ? -1 : 1);
+      const bases = [-1, 1].map((df) => at(String.fromCharCode(s.charCodeAt(0) + df), back)).filter((b) => G[b] && G[b].type === "p" && G[b].color === me);
+      if (bases.length) { chain = { head: s, base: bases.find((b) => blockedP(b, me)) || bases[0] }; break; }
+    }
+    if (chain) { const w = chain.head[0] > chain.base[0] ? "k" : "q"; add(w, 2.5, `سلسلة بيادقك ${chain.base}-${chain.head} تشير إلى ${WING_AR[w]}: هاجم في الجهة التي تشير إليها`); }
+    // 4. half-open files: no pawn of yours, an enemy pawn to press
+    for (const f of "abcdefgh") {
+      const my = mine.some((s) => s[0] === f), hp = his.filter((s) => s[0] === f);
+      if (!my && hp.length) { const front = hp.sort((a, b) => rel(b, opp) - rel(a, opp))[0]; add(WING_OF(f), 1, `العمود ${f} نصف مفتوح لك: رخ عليه يضغط على البيدق ${front}`); }
+    }
+    // 5. weak enemy pawns
+    const ps = Facts.pawnStructure(G, opp);
+    for (const s of ps.isolated) add(WING_OF(s[0]), 1, `بيدق الخصم على ${s} معزول: هدف لقطعك`);
+    // the structure's classic plan (chapter 7)
+    const st = structure(fen);
+    if (st && st.id === "carlsbad") { if (st.side === me) add("q", 2, "بنية Carlsbad: هجوم الأقلية، b4 ثم b5 لتصنع بيدقًا ضعيفًا في c6"); else add("k", 2, "بنية Carlsbad: خصمك يلعب على جناح الوزير، فالعب أنت على جناح الملك والمركز"); }
+    if (st && st.id === "iqp") { if (st.side === me) add("k", 1.5, "بيدقك المعزول يعطي قطعك مربعات نشطة: الهجوم على الملك قبل أن تُبادَل القطع"); else add("c", 2, `حاصر البيدق المعزول على ${st.sq} من المربع الذي أمامه واضغط عليه`); }
+    if (st && st.id === "hanging") add("c", 2, st.side === me ? "بيدقاك المعلّقان: ادفع أحدهما في الوقت المناسب" : "بيدقا الخصم المعلّقان: اضغط عليهما ليدفع أحدهما فيضعف");
+    // 6. hooks: enemy pawns already advanced in front of a castled king
+    if (opposite) for (const s of his) if ("fgh".includes(s[0]) === (ew === "k") && "abc".includes(s[0]) === (ew === "q") && rel(s, opp) === 3 && Math.abs(s.charCodeAt(0) - ek.charCodeAt(0)) <= 1)
+      add(ew, 1, `بيدق الخصم ${s} تقدّم أمام ملكه: خطاف تفتح عليه دفعة بيدق خطًّا نحو الملك`);
+    // 7. where your pieces already aim (squares attacked in the enemy half)
+    const aim = { q: 0, c: 0, k: 0 };
+    for (const f of "abcdefgh") for (let r = 1; r <= 8; r++) { const s = f + r; if (rel(s, me) < 5) continue; aim[WING_OF(f)] += Facts.attackers(G, s, me).filter((a) => a.type !== "p" && a.type !== "k").length; }
+    const ord = Object.entries(aim).sort((a, b) => b[1] - a[1]);
+    if (ord[0][1] >= 4 && ord[0][1] >= 1.4 * ord[1][1]) add(ord[0][0], 1, `قطعك تستهدف ${WING_AR[ord[0][0]]} أكثر من غيره (${ord[0][1]} هجومًا على مربعات في نصف الخصم)`);
+    const wing = Object.keys(S).sort((a, b) => S[b] - S[a] || (b === ew) - (a === ew) || (b === "c") - (a === "c"))[0];
+    // levers: your pawn moves on that wing that attack an enemy pawn (a break) or, with opposite kings, storm toward his king
+    const gm = new ChessLib(g.turn() === me ? fen : (() => { const p = fen.split(" "); p[1] = me; p[3] = "-"; return p.join(" "); })());
+    const levers = [];
+    for (const m of gm.moves({ verbose: true })) {
+      if (m.piece !== "p" || WING_OF(m.from[0]) !== wing || m.captured) continue;
+      const t = tagsOf(gm.fen(), m.from + m.to + (m.promotion || ""));
+      const storm = opposite && wing === ew && Math.abs(m.to.charCodeAt(0) - ek.charCodeAt(0)) <= 2;
+      if (t.includes("break") || storm) levers.push({ san: m.san, k: (t.includes("break") ? 0 : 10) + Math.abs(m.to.charCodeAt(0) - ek.charCodeAt(0)) - (m.flags.includes("b") ? 0.5 : 0) });
+    }
+    levers.sort((a, b) => a.k - b.k);
+    return { me, wing, name: WING_AR[wing], scores: S, reasons: R.filter((x) => x.w === wing).sort((a, b) => b.n - a.n).map((x) => x.t), other: R.filter((x) => x.w !== wing && x.n >= 2).map((x) => x.t), levers: levers.slice(0, 3).map((x) => x.san), opposite };
+  }
+  /* The wing a sequence of moves plays on: the destination squares of `side`'s moves (castling ignored). */
+  function wingOfMoves(fen, sans, side) {
+    const g = new ChessLib(fen); const c = { q: 0, c: 0, k: 0 }; const me = side || g.turn();
+    for (const s of sans) { const mover = g.turn(); const m = g.move(s, { sloppy: true }); if (!m) break; if (mover === me && !m.flags.includes("k") && !m.flags.includes("q")) c[WING_OF(m.to[0])]++; }
+    const w = Object.keys(c).sort((a, b) => c[b] - c[a])[0];
+    return c[w] ? { wing: w, name: WING_AR[w], counts: c } : null;
+  }
+  const T = { tagsOf, knightJump, structure, structPlan, compass, wingOfMoves, WING_AR, WING_OF };
   if (isNode) module.exports = T; else root.Tech = T;
 })(typeof self !== "undefined" ? self : this);
