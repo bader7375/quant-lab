@@ -61,3 +61,9 @@ zscore_order: volatility, mr_size: 0.10, plan: A}. The list opens with the plan,
 at most 5, most volatile first; chkA.py: volatility order 2013-19 / 2020-26 / 2016-26 +6.8% / +6.5% / +8.7% a year vs ML order
 +6.1% / +6.7% / +8.4%), then the ML leader / breakout table for reference only. Exits due are listed only for plan picks from
 2026-11-09 on (earlier picks of every kind stay tracked). The export's opt7 block carries mr_size and plan; terminal v30 shows them.
+
+Change 2026-11-10 (round 68, audit): `planbook.py` replays the tested rule (paper book of the Z score rule, one 40-session paper trade per
+stock; plan book = the paper trades that start inside a market-turn window, 5 slots, most volatile first) and is the single source for the
+Market returned section, the export (opt7.book, zactive, zscan pa) and the tests. The list shows held positions, free slots (from
+settings.json plan_start), sells due, buys up to the free slots and why each other signal is skipped. The export's ML ranks and market
+model are now the walk-forward values (preds/C.parquet, pm27.parquet) the tests used; a fresh fit is only the fallback. Terminal v31.

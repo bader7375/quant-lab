@@ -1,0 +1,5 @@
+signal matrices equal: True | research 762 plan book 762 | differing cells 0
+shadow trades: research 457 plan book (closed) 457 | only research 0 only plan book 0 | still open 38
+gate days: research 2015 plan book 2015 | differing days 0 | first/last differing None
+plan trades taken with the research gate: research 53 plan book 53 | only research 0 only plan book 0
+plan trades taken with the live gate (opt7.market_turn): 53 | differ from research 0

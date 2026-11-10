@@ -1,0 +1,4 @@
+40 random past closes checked (2013-2026): mismatches 0
+ranker C: a quarter's model is trained on rows up to (h + 2) sessions before the quarter, target = open t+1 -> open t+h+1, so the last label ends before the quarter starts
+market model: a year's model is trained on rows up to 22 sessions before the year, target = next 20 sessions
+walk-forward predictions from 2013-01-01 to 2026-11-09 | last date matches the panel: True

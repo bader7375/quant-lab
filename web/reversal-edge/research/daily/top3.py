@@ -23,6 +23,10 @@ settings.json "zscore_order": "volatility" (default) or "ml". Each Z score row s
 Change 2026-11-09 (round 67, the user's choice: plan A): buy only Market returned signals, 10% of the account each (settings.json mr_size),
 at most 5, most volatile first; Z score signals off (they still run as the shadow book that decides the blocked stocks); the top-3 table
 (ML leaders / breakouts) is printed after them for reference only; idle money in a SAR money-market fund. settings.json "plan": "A".
+Change 2026-11-10 (round 68): the Market returned section comes from planbook.py, which replays the tested rule to the last close:
+held positions and free slots (from settings.json plan_start), sells due, buys in tested order up to the free slots, and the reason
+for every skipped signal (already held / no free slot / paper trade from before the turn). ML ranks and the market model in the
+export are the walk-forward values the tests used.
 Usage: python top3.py --history   (walk-forward track record of the rule -> rule_stats.json)
        python top3.py             (today's list -> out/<date>.md, appended to out/picks_log.csv)"""
 import os, sys, json, glob, numpy as np, pandas as pd
@@ -162,11 +166,11 @@ def live():
     from opt7 import settings as o7settings
     SET = o7settings(); O7 = T.get("opt7"); mron = bool(SET["market_returned"]) and O7 is not None
     msv = float(MS[i]); cand = ranked(i, pct, pmv, msv, wk_ok, None if SET["zscore"] else np.zeros(len(cols), bool)); top = cand[:3]
-    zs_all = [j for j, t in ranked(i, pct, pmv, msv, wk_ok) if t == 1]                      # every Z score signal at this close
-    mr = [j for j in zs_all if mron and O7["gate"] and cols[j] not in set(O7["blocked"])]   # Market returned (its own list)
-    mr = (mr if ZORDER == "volatility" else sorted(mr, key=lambda j: -pct[j]))[:5]          # plan A (round 67): most volatile first, as tested
+    import planbook as PB                                                            # round 68: the tested rule replayed to this close
+    assert PB.T_ == T_ and list(PB.cols) == list(cols) and PB.dates[-1] == last, 'plan book and list use different data'
     PLAN = SET["plan"]; mrsz = f"{100 * SET['mr_size']:.0f}%"
-    mr_skip = [cols[j] for j in zs_all if mron and cols[j] not in [cols[k] for k in mr]]
+    ST = PB.state(loss=True, week_complete=bool(wk_ok), start=SET["plan_start"] or None)
+    cand = [(j, t) for j, t in cand if not (t == 1 and j in ST["blocked"])]; top = cand[:3]   # a signal while the stock's paper trade is open is not a new trade
     FA = accounts(); half = pmv <= 0; size = "2.5%" if half else "5%"
     L = [f"**Saudi {'plan A list' if PLAN == 'A' else 'top 3'} for {day.strftime('%A %d %b %Y')}** (prices to the {fmt_d(last)} close; buy at the 10:00 open)", ""]
     if last < day - BD: L += [f"Warning: the newest close in the data is {fmt_d(last)}, not {fmt_d(day - BD)} (Yahoo has not published it yet or the market was closed).", ""]
@@ -209,24 +213,40 @@ def live():
     if more: L += ["", "Also qualifying today: " + ", ".join(f"{cols[j]} {nm.get(cols[j], '')[:18]} ({TIERS[t]['name']}, ML {100 * pct[j]:.0f}%{_vt(i, j) if t == 1 else ''})" for j, t in more) + "."]
     elif all(t == 3 for _, t in top): L += ["", "No Z score or breakout signal at this close; the list is the top ML ranks."]
     TOPB = L; L = []
-    if mron:   # ---- Market returned signals: their own list
+    if mron:   # ---- Market returned signals: the plan book (planbook.py)
         fdt = lambda x: pd.Timestamp(x).strftime("%a %d %b") if x else "-"
-        L += ["", "**Market returned signals** (Z score signals taken only after the market turns; their own list, at most 5 positions; a stock on both lists is one trade)", "",
+        nmj = lambda j: f"{cols[j]} {nm.get(cols[j], '')[:18]}".strip()
+        L += ["", "**Market returned signals** (Z score signals taken only after the market turns; at most 5 positions, most volatile first)", "",
               f"Market index (equal-weight liquid Saudi stocks): {pc(O7['bounce'])} above its 20-day low, {pc(O7['dd'], 0)} from its 1-year high -> "
               + (f"turn window **open** since {fdt(O7.get('window_start'))}, until about {fdt(O7.get('window_end'))}." if O7["gate"] else
                  "turn window **closed**: no market-returned buys (it opens on a close 4% above the 20-day low after a fall of 10% or more).")]
-        if mr:
-            L += ["", "| # | Stock | Setup | Last close | Plan | Latest accounts |", "|---|---|---|---|---|---|"]
-            for n, j in enumerate(mr, 1):
-                s_ = cols[j]; wk_ = not ZFIRST[i, j]; both = any(jj == j for jj, _ in top)
-                setup = (f"Market returned (weekly candles): weekly stretch Z {ZWV[i, j]:.2f}" if wk_ else f"Market returned: stretch Z {ZC.iloc[i, j]:.2f}") + f", ML {100 * pct[j]:.0f}%" + _vt(i, j) + (" (also on the list above)" if both else "")
+        keep, due_p = ST["keep"], ST["due"]
+        L += ["", f"Plan book: **{len(keep)} of {PB.SLOTS} slots in use**, {ST['free']} free" + (f" (your plan started on {fdt(SET['plan_start'])})" if SET["plan_start"] else "") + "."]
+        if len(keep):
+            L += ["", "| Held | Bought at the open of | Entry | Last close | So far | Sell at the open of |", "|---|---|---|---|---|---|"]
+            for r in keep.sort_values("d1").itertuples():
+                e = Of[r.d1, r.j]; L.append(f"| **{cols[r.j]}** {nm.get(cols[r.j], '')[:24]} | {fmt_d(dates[r.d1])} | {e:.2f} | {Cl[i, r.j]:.2f} | {pc(Cl[i, r.j] / e - 1)} | {fmt_d(day + (r.xo - T_) * BD)} |")
+        if len(due_p): L += ["", "**SELL at today's open** (40 sessions done): " + "; ".join(f"**{cols[r.j]}** {nm.get(cols[r.j], '')[:18]} ({pc(Cl[i, r.j] / Of[r.d1, r.j] - 1)} so far)" for r in due_p.itertuples()) + "."]
+        buys = [j for j, a in ST["new"] if a == "buy"]; nos = [j for j, a in ST["new"] if a == "noslot"]; wait = [j for j, a in ST["new"] if a == "wait"]
+        if buys:
+            L += ["", "**BUY at today's open:**", "", "| # | Stock | Setup | Last close | Plan | Latest accounts |", "|---|---|---|---|---|---|"]
+            for n, j in enumerate(buys, 1):
+                s_ = cols[j]; wk_ = not ZFIRST[i, j]
+                setup = (f"Market returned (weekly candles): weekly stretch Z {ZWV[i, j]:.2f}" if wk_ else f"Market returned: stretch Z {ZC.iloc[i, j]:.2f}") + f", ML {100 * PB.PCTv[i, j]:.0f}%" + _vt(i, j)
                 L.append(f"| {n} | **{s_}** {nm.get(s_, s_)[:28]} ({industry(s_)}) | {setup} | {Cl[i, j]:.2f} | {mrsz} of the account. Hold 40 sessions (sell at the open around {fmt_d(day + 40 * BD)}). No stop. | {FA.get(s_, '—')} |")
-                log_rows.append(dict(signal=str(last.date()), sym=s_, tier=4, close=round(float(Cl[i, j]), 4), atr=round(float(A[i, j]), 4), ml=round(float(pct[j]), 3), pm=round(pmv, 5)))
-        elif O7["gate"]: L += ["", "No new market-returned signal at this close."]
-        if PLAN == "A" and not mr: L += ["", "**Nothing to buy in your plan at this close.** Idle money stays in the money-market fund."]
-        if mr_skip and O7["gate"]: L.append(f"Skipped here: {', '.join(mr_skip[:8])} (Z score bought them before the {fdt(O7.get('window_start'))} turn; blocked for their 40 sessions).")
-        L += ["", "Market returned record (Z score signals after a turn): 2020-26 88% winners, +12.1% per trade, worst 5% -5.2%; 2013-19 82%, +20.1% "
-              "(all Z score signals: 71%, +7.4%, -11.7% and 82%, +19.1%). It misses fast V-shaped rebounds (April 2025) and lost in late 2015."]
+                log_rows.append(dict(signal=str(last.date()), sym=s_, tier=4, close=round(float(Cl[i, j]), 4), atr=round(float(A[i, j]), 4), ml=round(float(PB.PCTv[i, j]), 3), pm=round(pmv, 5)))
+        elif ST["gate"]: L += ["", "No new market-returned signal at this close."]
+        if nos: L += ["", f"Not bought, no free slot ({PB.SLOTS} positions is the tested limit): " + ", ".join(nmj(j) for j in nos) + "."]
+        if wait: L += ["", "Z score signals at this close, not bought (the market has not turned; each stays blocked for 40 sessions): " + ", ".join(nmj(j) for j in wait) + "."]
+        for kind, txt in (("held", "Signal again in a stock you hold: keep holding, no second buy (the tested rule ignores it)"),
+                          ("repeat", "Skipped, signalled after the turn before and was not bought then (no second signal within its 40 sessions)"),
+                          ("blocked", "Skipped, its paper trade started before the turn (blocked until that paper trade ends)")):
+            xs = [(j, s0) for j, k, s0 in ST["rep"] if k == kind]
+            if xs: L += ["", txt + ": " + ", ".join(f"{nmj(j)} (signal {fmt_d(dates[s0])})" for j, s0 in xs) + "."]
+        if PLAN == "A" and not buys: L += ["", "**Nothing to buy in your plan at this close.**" + ("" if len(keep) else " Idle money stays in the money-market fund.")]
+        L += ["", "Plan record as traded (5 slots, most volatile first, round 68): 2013-19 26 trades, 73% winners, +16.8% per trade, worst -12.6%; "
+              "2020-26 25 trades, 84%, +9.4%, worst -12.3%. About 4 trades a year and none in 5 of the 14 years; it misses fast V-shaped rebounds "
+              "(April 2025) and lost in late 2015."]
     MRB = L
     L = L0 + (MRB + ["", "---", "", "**For reference only, not in your plan A** (ML leaders / breakouts: they add losing years and deeper drawdowns, round 67):"] + TOPB
               if PLAN == "A" else TOPB + MRB)
@@ -235,7 +255,8 @@ def live():
     old = old[old.signal != str(last.date())]; due, still = [], 0; held = {}
     for _, r in old.sort_values("signal").iterrows():
         if r.sym not in cols or pd.Timestamp(r.signal) not in dates: continue
-        if PLAN == "A" and r.signal >= "2026-11-09" and int(r.tier) != 4 and not (SET["zscore"] and int(r.tier) == 1): continue   # plan A: only its own picks from its start
+        if int(r.tier) == 4 and (not SET["plan_start"] or r.signal >= SET["plan_start"]): continue      # Market returned positions: the plan book above reports them
+        if PLAN == "A" and SET["plan_start"] and r.signal >= SET["plan_start"] and not (SET["zscore"] and int(r.tier) == 1): continue   # not in the plan
         ii = dates.get_loc(pd.Timestamp(r.signal)); jj = cols.get_loc(r.sym)
         if held.get(r.sym, -1) > ii: continue
         tr = trade(ii, jj, int(r.tier))

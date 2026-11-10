@@ -1,0 +1,6 @@
+loss filter off: tested rule buys 308 | old live list buys 459 | same 308 | old list only 151 (already held: 151, blocked by a weekly paper trade: 0, other: 0) | tested only (old list skipped) 0
+    same           n 304  win  85%  avg +17.1%  worst -21.6%
+    old list only  n 150  win  91%  avg +19.0%  worst -23.7%
+loss filter on : tested rule buys 301 | old live list buys 449 | same 301 | old list only 148 (already held: 148, blocked by a weekly paper trade: 0, other: 0) | tested only (old list skipped) 0
+    same           n 298  win  85%  avg +17.4%  worst -21.6%
+    old list only  n 148  win  91%  avg +19.2%  worst -23.7%

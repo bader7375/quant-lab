@@ -9,7 +9,8 @@ class _Ens:                                                                   # 
     def __init__(s, ms): s.ms = ms
     def predict(s, X): return np.mean([pd.Series(m.predict(X)).rank(pct=True).values for m in s.ms], axis=0)
 if PICK == "C":
-    pick = _Ens([lgb.LGBMRegressor(**_LGB).fit(D[(D.date <= dates[-(h + 2)]) & D[f"q{h}"].notna() & D.date.isin(dates[::2])][FEATS],
+  def _fitC():
+    return _Ens([lgb.LGBMRegressor(**_LGB).fit(D[(D.date <= dates[-(h + 2)]) & D[f"q{h}"].notna() & D.date.isin(dates[::2])][FEATS],
                                                 D[(D.date <= dates[-(h + 2)]) & D[f"q{h}"].notna() & D.date.isin(dates[::2])][f"q{h}"]) for h in (5, 10, 20, 60)])
 else:
     tr = D[(D.date <= cut) & D.q20.notna() & D.date.isin(dates[::2])]
@@ -18,6 +19,8 @@ else:
 M = D.groupby("date")[FE["market"]].first(); mk20 = D.groupby("date").y20.mean(); tm = M.loc[:cut].join(mk20.rename("y")).dropna(subset=["y"])
 mkt = lgb.LGBMRegressor(n_estimators=200, learning_rate=0.03, num_leaves=7, min_child_samples=100, subsample=.7, subsample_freq=1, verbose=-1); mkt.fit(tm[FE["market"]], tm.y)
 pm = float(mkt.predict(M.loc[[last], FE["market"]])[0]); hist = pd.Series(mkt.predict(M.loc[dates[-60]:, FE["market"]]), M.loc[dates[-60]:].index)
+_pmw = pd.read_parquet("pm27.parquet").pm_old.dropna()                      # round 68: the walk-forward market model the tests used (mkt27.py, refit each January)
+if len(_pmw) and pd.Timestamp(_pmw.index[-1]) == pd.Timestamp(last): pm_fresh = pm; pm = float(_pmw.iloc[-1]); hist = _pmw.iloc[-60:]
 F = pd.read_pickle("F27y.pkl"); fl = F["zc"].index[-1]; assert pd.Timestamp(fl) == pd.Timestamp(last), (fl, last)
 dm = F["divmonth"].loc[fl]; zc = F["zc"].loc[fl]; zc0 = F["zc"].iloc[-2]; zcx = (zc <= -2.62) & (zc0 > -2.62)
 sys.path.insert(0, "../strat"); from sectors import industry
@@ -36,7 +39,12 @@ _wk = _P["C"].index.to_period("W-THU"); _we = pd.Series(_P["C"].index, index=_P[
 ZWK = _zcb(_Cw); WF = (ZWK <= WLINE) & ~(ZWK <= WLINE).shift(1, fill_value=False)
 _now = pd.Timestamp.now(tz="Asia/Riyadh").tz_localize(None).normalize()
 wk_done = pd.Timestamp(last).weekday() == 3 or _now.to_period("W-THU") != pd.Timestamp(last).to_period("W-THU")
-today = D[D.date == last].copy(); today["score"] = pick.predict(today[FEATS]); today["pct"] = today.score.rank(pct=True)
+today = D[D.date == last].copy(); _wfs = None
+if PICK == "C" and os.path.exists("preds/C.parquet"):                         # round 68: the walk-forward ranker the tests used (wfC.py, quarterly refits)
+    _w = pd.read_parquet("preds/C.parquet"); _w = _w[_w.date == pd.Timestamp(last)].set_index("sym").pred
+    if len(_w) and today.sym.isin(_w.index).all(): _wfs = today.sym.map(_w).values
+if _wfs is None and PICK == "C": pick = _fitC(); print("walk-forward ranks missing for the last date: fresh fit used")
+today["score"] = _wfs if _wfs is not None else pick.predict(today[FEATS]); today["pct"] = today.score.rank(pct=True)
 today["div"] = today.sym.map(lambda s: bool(dm.get(s, 0) == 1))   # info only: the dividend-month tilt was rejected on clean data
 liq = today[today.val >= 3e6].sort_values("score", ascending=False); liq["rank"] = np.arange(1, len(liq) + 1)
 FIN = {}   # latest annual accounts usable at this date (Yahoo; fiscal year usable 91 days after its end)
@@ -56,31 +64,29 @@ for s in [s for s in zcx[zcx].index]:
     if row.empty: continue
     r = row.iloc[0]; zx.append({"sym": s, "zc": round(float(zc[s]), 2), "pct": round(float(r.pct), 3), "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s),
         "ok": bool(r.pct >= .5 and pm > 0 and r.val >= 3e6 and ms_now <= MS_GATE and s not in LOSSY), "loss": s in LOSSY})
-# live Z-swing trades (round 28): qualifying first touches in the last 40 sessions, using the walk-forward ML ranks and market model of the signal day
+# round 68: the paper (shadow) book and the plan book come from daily/planbook.py = the tested rule replayed to this close
 try:
-    from core import P as PP, PCT as WPCT, pm as WPM
-    Of = PP["Of"]; Cl = PP["C"]; ds = Cl.index; zcF = F["zc"].reindex(index=ds, columns=Cl.columns)
-    liqm = PP["VAL"].rolling(60, min_periods=20).median() >= 3e6
-    fz = (zcF <= -2.62) & ~(zcF <= -2.62).shift(1, fill_value=False)
-    ok_ = fz & (WPCT >= .5) & pd.DataFrame(np.repeat((WPM > 0).values[:, None], Cl.shape[1], 1), index=ds, columns=Cl.columns) & PP["elig"] & liqm & pd.DataFrame(np.repeat((MSER.reindex(ds) <= MS_GATE).values[:, None], Cl.shape[1], 1), index=ds, columns=Cl.columns)
-    zact = []
-    for i in range(len(ds) - 41, len(ds) - 1):   # signals before the last close (today's new ones are in zx)
-        for s_ in Cl.columns[ok_.iloc[i].values]:
-            held = len(ds) - 1 - (i + 1); e_ = float(Of.iloc[i + 1][s_]) if i + 1 < len(ds) else None
-            zact.append({"sym": s_, "signal": str(ds[i].date()), "entry": round(e_, 3) if e_ else None, "ret": round(float(Cl.iloc[-1][s_] / e_ - 1), 4) if e_ else None,
-                         "left": int(40 - max(held, 0)), "ml": round(float(WPCT.iloc[i][s_]), 3)})
-except Exception as ex:
-    print("zactive failed:", ex); zact = []
-try:   # option 7 (round 47): Z swing only after the market turns; the switch is daily/settings.json; shown in the list and the terminal
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "../daily")); from opt7 import market_turn, status as o7status, settings as o7settings
-    MT = market_turn(PP["C"], PP["VAL"], PP["elig"]); _g7 = MT.gate
-    O7B = sorted({z_["sym"] for z_ in zact if not bool(_g7.get(pd.Timestamp(z_["signal"]), False))})   # bought by the live rule before the turn, still held
+    import planbook as PB
+    from core import P as PP
+    assert pd.Timestamp(PB.dates[-1]) == pd.Timestamp(last), (PB.dates[-1], last)
+    _set = o7settings(); ST = PB.state(loss=True, week_complete=bool(wk_done), start=_set["plan_start"] or None); _T = PB.T_; _i = _T - 1; _ds = PB.dates; _c = PB.cols
+    _sh = ST["SH"]; _op = _sh[(_sh.ex >= _T) & (_sh.i < _i)]; _held = set(int(x) for x in ST["keep"].j) | set(int(x) for x in ST["due"].j)
+    zact = [dict(sym=_c[r.j], signal=str(_ds[r.i].date()), entry=round(float(PB.Of[r.d1, r.j]), 3), ret=round(float(PB.Cl[_i, r.j] / PB.Of[r.d1, r.j] - 1), 4),
+                 left=int(r.ex - _T + 1), ml=round(float(PB.PCTv[r.i, r.j]), 3), g=bool(PB.GATE[r.i]), plan=int(r.j) in _held, **({} if PB.ZFIRST[r.i, r.j] else {"tf": "W"}))
+            for r in _op.sort_values(["i", "j"]).itertuples()]
+    MT = PB.MT; O7B = sorted(_c[j] for j, v in ST["blocked"].items() if not v[1])          # paper trade opened before the turn: blocked until it ends
+    _pos = lambda r: dict(sym=_c[r.j], signal=str(_ds[r.i].date()), bought=str(_ds[r.d1].date()), entry=round(float(PB.Of[r.d1, r.j]), 3), ret=round(float(PB.Cl[_i, r.j] / PB.Of[r.d1, r.j] - 1), 4), left=int(r.xo - _T))
+    BOOK = dict(slots=PB.SLOTS, free=int(ST["free"]), start=_set["plan_start"], held=[_pos(r) for r in ST["keep"].sort_values("d1").itertuples()], due=[_pos(r) for r in ST["due"].itertuples()],
+                today=[dict(sym=_c[j], act=a) for j, a in ST["new"]] + [dict(sym=_c[j], act=a, since=str(_ds[s0].date())) for j, a, s0 in ST["rep"]])
+    PA = {x["sym"]: x for x in BOOK["today"]}
     _sp = MT.iloc[-90:]; _b0 = float(_sp.idx.dropna().iloc[0])
-    OPT7 = dict(on=bool(o7settings()["market_returned"]), zscore=bool(o7settings()["zscore"]), mr_size=o7settings()["mr_size"], plan=o7settings()["plan"], blocked=O7B, **o7status(MT),
+    OPT7 = dict(on=bool(_set["market_returned"]), zscore=bool(_set["zscore"]), mr_size=_set["mr_size"], plan=_set["plan"], blocked=O7B, book=BOOK, **o7status(MT),
                 spark=dict(dates=[str(d_.date()) for d_ in _sp.index], idx=[None if not np.isfinite(v_) else round(100 * v_ / _b0, 2) for v_ in _sp.idx],
                            trig=[None if not np.isfinite(v_) else round(104 * v_ / _b0, 2) for v_ in _sp.low20], gate=[bool(v_) for v_ in _sp.gate]))
 except Exception as ex:
-    print("option 7 failed:", ex); OPT7 = None; O7B = []
+    print("plan book failed:", ex); OPT7 = None; O7B = []; zact = []; PA = {}
+    def o7settings(): return {"zscore_order": "ml"}
 zwx = []
 if wk_done and pd.Timestamp(ZWK.index[-1]) == pd.Timestamp(last):
     for s_ in WF.columns[WF.iloc[-1].fillna(False).values]:
@@ -88,17 +94,6 @@ if wk_done and pd.Timestamp(ZWK.index[-1]) == pd.Timestamp(last):
         if row.empty: continue
         r = row.iloc[0]; zwx.append({"sym": s_, "zw": round(float(ZWK.iloc[-1][s_]), 2), "pct": round(float(r.pct), 3), "val_m": round(float(r.val) / 1e6, 1),
                                       "sector": industry(s_), "ok": bool(r.pct >= .5 and pm > 0 and r.val >= 3e6 and ms_now <= MS_GATE and s_ not in LOSSY), "loss": s_ in LOSSY})
-try:   # weekly Z-swing trades still inside their 40 sessions (walk-forward ML rank / market model on the signal day)
-    WFd = WF.reindex(index=ds, columns=Cl.columns).fillna(False)
-    okw = WFd & (WPCT >= .5) & pd.DataFrame(np.repeat(((WPM > 0) & (MSER.reindex(ds) <= MS_GATE)).values[:, None], Cl.shape[1], 1), index=ds, columns=Cl.columns) & PP["elig"] & liqm
-    have = {(z["sym"], z["signal"]) for z in zact}
-    for i in range(len(ds) - 41, len(ds) - 1):
-        for s_ in Cl.columns[okw.iloc[i].values]:
-            if (s_, str(ds[i].date())) in have: continue
-            held = len(ds) - 1 - (i + 1); e_ = float(Of.iloc[i + 1][s_])
-            zact.append({"sym": s_, "signal": str(ds[i].date()), "entry": round(e_, 3), "ret": round(float(Cl.iloc[-1][s_] / e_ - 1), 4), "left": int(40 - max(held, 0)), "ml": round(float(WPCT.iloc[i][s_]), 3), "tf": "W"})
-except Exception as ex:
-    print("weekly zactive failed:", ex)
 # scanner table (v22): the 25 most stretched liquid stocks at this close with what each needs for a Z-swing buy at the next open
 try:   # round 66: 60-day volatility (daily sd of returns) and its rank among liquid stocks; Z score order: most volatile first
     _cv = PP["C"].where(PP["C"] > 0); _rv = np.log(_cv).diff().clip(-.25, .25); VOLL = _rv.rolling(60, min_periods=40).std().iloc[-1]
@@ -138,6 +133,7 @@ try:
                       "loss": s_ in LOSSY, "val_m": round(float(r.val) / 1e6, 1), "sector": industry(s_), "b7": s_ in O7B})
         if VOLL is not None and np.isfinite(VOLL.get(s_, np.nan)):
             zscan[-1].update(vol=round(float(VOLL[s_]), 4), vr=round(float(VRL.get(s_, np.nan)), 3) if np.isfinite(VRL.get(s_, np.nan)) else None)
+        if s_ in PA: zscan[-1].update(pa=PA[s_]["act"], ps=PA[s_].get("since"))   # round 68: the plan book's decision for this signal
         if TU is not None and bool(TOK.get(s_, False)):
             tu = [int(TU[k].get(s_, 0)) for k in (1, 2, 3)]; td = [int(TD[k].get(s_, 0)) for k in (1, 2, 3)]
             zscan[-1].update(tm=tu[0] + 2 * tu[1] + 3 * tu[2] - td[0] - 2 * td[1] - 3 * td[2], tu=tu, td=td)
