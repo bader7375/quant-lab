@@ -1,0 +1,410 @@
+<title>Reversal Edge Fable</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a phone-first weather station. One column of plain statements; the barometer and the ladder are the two instruments; five views on a bottom bar. */
+:root{
+  --bg:#edf1f4; --panel:#f9fbfc; --sunk:#e3e9ee; --ink:#13202b; --ink2:#3f4f5c; --muted:#6c7b88; --line:#cfd8e0;
+  --lamp:#b5600d; --lamp-soft:#f6e3cb; --sea:#1d4f7c; --sea-soft:#d9e6f1;
+  --good:#0b7d55; --bad:#c2383a; --calm:#5f9f8c; --cloud:#93a3b2; --storm:#d1842a; --deep:#a8361c;
+  --display:"Instrument Serif","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0d151c; --panel:#141f29; --sunk:#0a1016; --ink:#eaf0f5; --ink2:#b7c4cf; --muted:#8393a1; --line:#283746;
+  --lamp:#f0a33c; --lamp-soft:#3a2a12; --sea:#7fb2e2; --sea-soft:#17293a;
+  --good:#45cf95; --bad:#f2787b; --calm:#5fb39b; --cloud:#7f8f9e; --storm:#e89a3c; --deep:#e0623f; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0d151c; --panel:#141f29; --sunk:#0a1016; --ink:#eaf0f5; --ink2:#b7c4cf; --muted:#8393a1; --line:#283746;
+  --lamp:#f0a33c; --lamp-soft:#3a2a12; --sea:#7fb2e2; --sea-soft:#17293a;
+  --good:#45cf95; --bad:#f2787b; --calm:#5fb39b; --cloud:#7f8f9e; --storm:#e89a3c; --deep:#e0623f; color-scheme:dark }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink2);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--sea);outline-offset:2px;border-radius:4px}
+h1,h2,h3{margin:0;color:var(--ink);text-wrap:balance}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.up{color:var(--good)}.dn{color:var(--bad)}.mut{color:var(--muted)}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.brand{display:flex;align-items:baseline;gap:8px;min-width:0}
+.brand b{font:italic 400 24px/1 var(--display);color:var(--ink);letter-spacing:.01em}
+.brand span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.dayline{margin-left:auto;text-align:right;font-size:12px;line-height:1.3;color:var(--muted);min-width:0}
+.dayline b{display:block;color:var(--ink);font-weight:600;font-size:13px}
+
+/* bottom bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs .wrap{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.tabs button{padding:9px 2px 8px;display:grid;justify-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.02em;border-top:2px solid transparent;margin-top:-1px}
+.tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-current="page"]{color:var(--ink);border-top-color:var(--lamp)}
+main{padding-block:14px calc(84px + env(safe-area-inset-bottom,0px))}
+section.view{display:grid;gap:22px}
+section.view>*{min-width:0}
+
+/* shared pieces */
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.h2{font:400 26px/1.15 var(--display);color:var(--ink)}
+.lead{font-size:15px;color:var(--ink2);max-width:62ch}
+.block{display:grid;gap:10px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.rule{border:0;border-top:1px solid var(--line);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;color:var(--ink2);background:var(--panel);white-space:nowrap}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.chip.ok i{background:var(--good)}.chip.no i{background:var(--bad)}.chip.lamp i{background:var(--lamp)}
+.note{font-size:13px;color:var(--muted);max-width:68ch}
+.warn{border:1px solid var(--lamp);background:var(--lamp-soft);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:14px}
+.rows{display:grid}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:11px 0;border-top:1px solid var(--line);text-align:left;width:100%}
+.row:first-child{border-top:0}
+.row .t{color:var(--ink);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .t small{font-weight:400;color:var(--muted);margin-left:6px}
+.row .s{grid-column:1;font-size:12.5px;color:var(--muted);min-width:0}
+.row .v{grid-row:1/span 2;grid-column:2;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;color:var(--ink)}
+.row .v small{display:block;font-size:11.5px;color:var(--muted)}
+button.row:hover .t{text-decoration:underline;text-underline-offset:3px}
+.tag{font:600 10.5px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:5px;background:var(--sunk);color:var(--ink2);white-space:nowrap}
+.tag.buy{background:var(--good);color:var(--panel)}.tag.sell{background:var(--bad);color:var(--panel)}.tag.paper{background:var(--sea-soft);color:var(--sea)}.tag.deep{background:var(--lamp-soft);color:var(--lamp)}
+table.tb{width:100%;border-collapse:collapse;font-size:13px}
+table.tb th{font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.tb td{padding:8px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
+table.tb th:first-child,table.tb td:first-child{text-align:left;font-family:var(--sans);padding-left:0}
+table.tb td small{color:var(--muted);font-size:11.5px}
+.scroll{overflow-x:auto}
+svg text{font-family:var(--mono);fill:var(--muted);font-size:11px}
+
+/* today */
+.hero{display:grid;gap:14px}
+.hero .word{font:italic 400 clamp(52px,15vw,84px)/.95 var(--display);color:var(--ink);letter-spacing:-.01em}
+.hero .word.storm,.hero .word.deep{color:var(--lamp)}
+.heroGrid{display:grid;gap:18px}
+.gauge{width:100%;max-width:420px;height:auto;display:block}
+.verdict{display:grid;gap:8px;padding:16px;border-radius:14px;background:var(--ink);color:var(--bg)}
+.verdict .eyebrow{color:var(--cloud)}
+.verdict .big{font:400 26px/1.15 var(--display);color:var(--bg)}
+.verdict .rows .row{border-color:color-mix(in srgb,var(--bg) 22%,transparent)}
+.verdict .row .t,.verdict .row .v{color:var(--bg)}.verdict .row .s,.verdict .row .v small,.verdict .row .t small{color:var(--cloud)}
+.verdict .paper{font-size:13px;color:var(--cloud);border-top:1px solid color-mix(in srgb,var(--bg) 22%,transparent);padding-top:10px}
+.verdict .paper b{color:var(--bg);font-weight:600}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fact{background:var(--panel);padding:12px 14px;display:grid;gap:2px}
+.fact b{font:500 20px/1.2 var(--mono);color:var(--ink);font-variant-numeric:tabular-nums}
+.fact span{font-size:12.5px;color:var(--muted)}
+
+/* ladder */
+.seg{display:inline-grid;grid-auto-flow:column;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+.seg button{padding:8px 14px;font-size:13px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.ladder{display:grid;gap:0;position:relative;padding:6px 0 6px 0}
+.ladder::before,.ladder::after{content:"";position:absolute;top:0;bottom:0;width:3px;background:var(--line);border-radius:2px}
+.ladder::before{left:10px}.ladder::after{right:10px}
+.rung{position:relative;margin:5px 10px;padding:9px 16px;border-radius:6px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;text-align:left;border:1px dashed var(--line);min-height:44px;color:var(--muted);font-size:13px}
+.rung.on{border:1px solid var(--line);background:var(--panel);color:var(--ink2)}
+.rung.on.deep{box-shadow:inset 4px 0 0 var(--lamp)}
+.rung .t{color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rung .s{grid-column:1;font-size:12px;color:var(--muted)}
+.rung .v{grid-row:1/span 2;grid-column:2;text-align:right;font:500 14px var(--mono);font-variant-numeric:tabular-nums}
+.rung .bar{grid-column:1/-1;height:3px;border-radius:2px;background:var(--sunk);overflow:hidden;margin-top:4px}
+.rung .bar i{display:block;height:100%;background:var(--sea)}
+.pair{display:grid;gap:12px}
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.duo .panel{padding:12px 14px;display:grid;gap:4px}
+.duo .panel b{font:500 22px/1.1 var(--mono);color:var(--ink)}
+.duo .panel span{font-size:12.5px;color:var(--muted)}
+
+/* sizing */
+.stepper{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:10px}
+.stepper button{height:44px;border:1px solid var(--line);border-radius:10px;background:var(--panel);font:500 22px var(--mono);color:var(--ink)}
+.stepper button:disabled{opacity:.35;cursor:default}
+.stepper .val{text-align:center}
+.stepper .val b{display:block;font:500 30px/1.1 var(--mono);color:var(--ink)}
+.stepper .val span{font-size:12.5px;color:var(--muted)}
+.rangebar{display:grid;gap:4px}
+.rangebar .lab{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.rangebar .lab b{color:var(--ink);font-weight:600}
+.field{display:grid;gap:4px;font-size:13px}
+.field input{font:500 16px var(--mono);padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);width:100%}
+
+/* sheet */
+.sheet{position:fixed;inset:0;z-index:40;display:grid;align-items:end;background:color-mix(in srgb,var(--sunk) 70%,transparent)}
+.sheet .card{background:var(--panel);border-top:1px solid var(--line);border-radius:18px 18px 0 0;max-height:88%;overflow:auto;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:grid;gap:14px}
+.sheet .card>*{max-width:640px;width:100%;margin-inline:auto}
+.sheet .x{justify-self:end;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--ink);width:auto}
+.gate{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line);font-size:14px}
+.gate:first-child{border-top:0}
+.gate i{font-style:normal;font-weight:700}.gate i.y{color:var(--good)}.gate i.n{color:var(--bad)}
+.gate span{color:var(--ink)}.gate small{display:block;color:var(--muted);font-size:12px}
+.gate b{font:500 13px var(--mono);color:var(--ink)}
+.empty{padding:36px 0;display:grid;gap:10px;justify-items:start}
+.gloss{display:grid;gap:8px;font-size:14px}
+.gloss div{display:grid;gap:1px}.gloss b{color:var(--ink)}
+ul.plain{margin:0;padding-left:18px;display:grid;gap:6px;max-width:68ch}
+@media (min-width:820px){
+  .tabs{position:sticky;top:calc(env(safe-area-inset-top,0px) + 53px);bottom:auto;border-top:0;border-bottom:1px solid var(--line);background:var(--bg);padding-bottom:0}
+  .tabs .wrap{grid-template-columns:repeat(5,auto);justify-content:start;gap:8px}
+  .tabs button{grid-auto-flow:column;align-items:center;gap:8px;padding:10px 12px;font-size:13px;border-top:0;border-bottom:2px solid transparent;margin:0 0 -1px}
+  .tabs button[aria-current="page"]{border-bottom-color:var(--lamp)}
+  main{padding-block:22px 48px}
+  .heroGrid{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:end}
+  .facts{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:start}
+  .sheet{align-items:center}.sheet .card{border-radius:18px;max-width:700px;margin:auto;border:1px solid var(--line)}
+}
+@media (prefers-reduced-motion:no-preference){ .needle{transition:transform .9s cubic-bezier(.2,.8,.2,1)} }
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><b>Fable</b><span>Reversal Edge</span></div>
+  <div class="dayline" id="dayline"><b>Waiting for data</b>the daily export has not arrived</div>
+</div></header>
+<nav class="tabs" aria-label="Views"><div class="wrap" id="tabs">
+  <button data-v="today"><svg viewBox="0 0 24 24"><path d="M4 16a8 8 0 0 1 16 0"/><path d="M12 16l4-6"/><path d="M3 20h18"/></svg>Today</button>
+  <button data-v="selloff"><svg viewBox="0 0 24 24"><path d="M3 6c4 0 4 10 9 10s4-6 9-6"/><path d="M3 20h18"/></svg>Sell-off</button>
+  <button data-v="books"><svg viewBox="0 0 24 24"><path d="M7 3v18M17 3v18M7 7h10M7 12h10M7 17h10"/></svg>Books</button>
+  <button data-v="sizing"><svg viewBox="0 0 24 24"><path d="M4 18h16"/><path d="M6 14h4M14 14h4"/><path d="M8 6v8M16 9v5"/></svg>Sizing</button>
+  <button data-v="evidence"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>Evidence</button>
+</div></nav>
+<main class="wrap" id="main">
+  <section class="view"><div class="empty">
+    <div class="eyebrow">Fable terminal</div>
+    <h1 class="h2">The day's picture appears here after each Saudi close.</h1>
+    <p class="lead">It shows the market weather, today's orders, your plan book, the sell-off against past ones, what-if sizing and the evidence. The data comes from the daily export; nothing is typed in by hand.</p>
+    <p class="note" id="wait">Looking for today's data…</p>
+  </div></section>
+</main>
+<div id="sheet" hidden></div>
+
+<script>
+(function(){
+"use strict";
+var D=null, LOG=[], view="today", bookRule="live", sizeRule="live", sizeIdx={live:2,fable:2}, acct=0;
+try{ acct=+localStorage.getItem("fable.acct")||0; bookRule=localStorage.getItem("fable.book")||"live"; }catch(e){}
+var $=function(s){return document.querySelector(s)}, main=$("#main");
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], DAY=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+function dt(s){ if(!s) return "n/a"; var p=s.split("-"), d=new Date(Date.UTC(+p[0],+p[1]-1,+p[2])); return DAY[d.getUTCDay()]+" "+(+p[2])+" "+MON[+p[1]-1]; }
+function dshort(s){ if(!s) return ""; var p=s.split("-"); return (+p[2])+" "+MON[+p[1]-1]+" "+p[0].slice(2); }
+function pct(x,n,sign){ if(x==null||!isFinite(x)) return "n/a"; var v=(100*x).toFixed(n==null?1:n); return (sign!==false&&x>0?"+":"")+v+"%"; }
+function cls(x){ return x==null?"":(x>0?"up":(x<0?"dn":"")); }
+function px(x){ return x==null?"n/a":(x>=100?x.toFixed(1):x.toFixed(2)); }
+function sar(x){ return "SAR "+Math.round(x).toLocaleString("en-US"); }
+var WORD={"deep storm":"Deep storm","storm":"Storm","clearing":"Clearing","clouds":"Clouds","calm":"Calm"};
+var SAY={"deep storm":"A deep market sell-off. The buy window is open and ladder steps are double size.","storm":"A market sell-off. The buy window is open.","clearing":"The sell-off has eased. The buy window is closed for now.","clouds":"The market is weak but not in a sell-off. No buys.","calm":"No sell-off. No buys; idle money stays in the money-market fund."};
+
+/* ---------- charts ---------- */
+function gauge(ms){
+  var W=420,H=236,cx=210,cy=206,r=168, lo=3, hi=-6, T=function(v){return Math.max(0,Math.min(1,(lo-v)/(lo-hi)))};
+  var P=function(t,rr){return [cx-rr*Math.cos(t*Math.PI), cy-rr*Math.sin(t*Math.PI)]};
+  var arc=function(a,b,col){var p=P(T(a),r),q=P(T(b),r);return '<path d="M'+p[0].toFixed(1)+' '+p[1].toFixed(1)+' A'+r+' '+r+' 0 0 1 '+q[0].toFixed(1)+' '+q[1].toFixed(1)+'" stroke="'+col+'" stroke-width="16" fill="none"/>'};
+  var g=D.weather.gate, dp=D.weather.deep, s='<svg class="gauge" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Market momentum '+ms.toFixed(2)+'">';
+  s+=arc(lo,g/2,"var(--calm)")+arc(g/2,g,"var(--cloud)")+arc(g,dp,"var(--storm)")+arc(dp,hi,"var(--deep)");
+  [[lo,"+3"],[0,"0"],[g,String(g)],[dp,String(dp)],[hi,"−6"]].forEach(function(m){var a=P(T(m[0]),r-14),b=P(T(m[0]),r-24),c=P(T(m[0]),r-38);
+    s+='<path d="M'+a[0].toFixed(1)+' '+a[1].toFixed(1)+' L'+b[0].toFixed(1)+' '+b[1].toFixed(1)+'" stroke="var(--muted)" stroke-width="1.5" fill="none"/><text x="'+c[0].toFixed(1)+'" y="'+(c[1]+4).toFixed(1)+'" text-anchor="middle">'+m[1].replace("-","−")+'</text>'});
+  [["calm",1.2],["storm",-1.85],["deep",-4.3]].forEach(function(m){var c=P(T(m[1]),r+16);s+='<text x="'+c[0].toFixed(1)+'" y="'+c[1].toFixed(1)+'" text-anchor="middle" style="font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase">'+m[0]+'</text>'});
+  var ang=T(ms)*180-90;
+  s+='<g class="needle" style="transform-origin:'+cx+'px '+cy+'px;transform:rotate('+ang.toFixed(1)+'deg)"><path d="M'+(cx-5)+' '+cy+' L'+cx+' '+(cy-r+26)+' L'+(cx+5)+' '+cy+' Z" fill="var(--ink)"/></g><circle cx="'+cx+'" cy="'+cy+'" r="9" fill="var(--ink)"/><circle cx="'+cx+'" cy="'+cy+'" r="3.5" fill="var(--bg)"/>';
+  s+='<text x="'+cx+'" y="'+(cy-52)+'" text-anchor="middle" style="font-size:34px;font-weight:500;fill:var(--ink)">'+ms.toFixed(2).replace("-","−")+'</text><text x="'+cx+'" y="'+(cy-32)+'" text-anchor="middle" style="font-family:var(--sans);font-size:11px;letter-spacing:.1em;text-transform:uppercase">market momentum</text></svg>';
+  return s;
+}
+function strip(){
+  var h=D.weather.hist, v=h.ms, n=v.length, W=720,H=190,L=34,R=8,T=10,B=22, mn=Math.min(-6,Math.min.apply(null,v.filter(function(x){return x!=null}))), mx=3;
+  var X=function(i){return L+(W-L-R)*i/(n-1)}, Y=function(y){return T+(H-T-B)*(mx-Math.max(mn,Math.min(mx,y)))/(mx-mn)};
+  var g=D.weather.gate, dp=D.weather.deep, s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="Market momentum over the last 250 sessions">';
+  s+='<rect x="'+L+'" y="'+Y(g)+'" width="'+(W-L-R)+'" height="'+(Y(dp)-Y(g))+'" fill="var(--storm)" opacity=".13"/><rect x="'+L+'" y="'+Y(dp)+'" width="'+(W-L-R)+'" height="'+(Y(mn)-Y(dp))+'" fill="var(--deep)" opacity=".16"/>';
+  [3,0,g,dp,-6].forEach(function(y){ if(y<mn) return; s+='<path d="M'+L+' '+Y(y)+' H'+(W-R)+'" stroke="var(--line)" stroke-width="1" fill="none"/><text x="'+(L-6)+'" y="'+(Y(y)+4)+'" text-anchor="end">'+String(y).replace("-","−")+'</text>'});
+  var d="",pen=false; for(var i=0;i<n;i++){ if(v[i]==null){pen=false;continue} d+=(pen?"L":"M")+X(i).toFixed(1)+" "+Y(v[i]).toFixed(1)+" "; pen=true }
+  s+='<path d="'+d+'" stroke="var(--ink)" stroke-width="1.8" fill="none" stroke-linejoin="round"/><circle cx="'+X(n-1)+'" cy="'+Y(v[n-1])+'" r="4" fill="var(--lamp)"/>';
+  [0,Math.floor(n/2),n-1].forEach(function(i,k){s+='<text x="'+X(i)+'" y="'+(H-6)+'" text-anchor="'+(k==0?"start":k==1?"middle":"end")+'">'+dshort(h.d[i])+'</text>'});
+  return s+'</svg>';
+}
+function fanChart(){
+  var W=720,H=330,L=38,R=10,T=12,B=26,N=80, cur=D.past[D.past.length-1], isOpen=cur&&cur.open, past=D.past.filter(function(p){return !p.open});
+  var all=[]; D.past.forEach(function(p){p.path.slice(10).forEach(function(x){if(x!=null)all.push(x)})}); var mn=Math.floor(Math.min.apply(null,all)/5)*5, mx=Math.ceil(Math.max.apply(null,all)/5)*5;
+  var X=function(k){return L+(W-L-R)*k/N}, Y=function(y){return T+(H-T-B)*(mx-y)/(mx-mn)}, line=function(a){var d="",pen=false;a.forEach(function(y,k){if(y==null){pen=false;return}d+=(pen?"L":"M")+X(k).toFixed(1)+" "+Y(y).toFixed(1)+" ";pen=true});return d};
+  var s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="This sell-off against past sell-offs">';
+  for(var y=mn;y<=mx;y+=10){ s+='<path d="M'+L+' '+Y(y)+' H'+(W-R)+'" stroke="var(--line)" stroke-width="'+(y==100?1.6:1)+'" fill="none"/><text x="'+(L-6)+'" y="'+(Y(y)+4)+'" text-anchor="end">'+y+'</text>' }
+  [0,20,40,60,80].forEach(function(k){s+='<text x="'+X(k)+'" y="'+(H-7)+'" text-anchor="'+(k==0?"start":k==80?"end":"middle")+'">'+(k==0?"day 0":k)+'</text>'});
+  var f=D.episode.fan, band=function(a,b){var d="";a.forEach(function(y,k){d+=(k?"L":"M")+X(k).toFixed(1)+" "+Y(y).toFixed(1)+" "});for(var k=b.length-1;k>=0;k--)d+="L"+X(k).toFixed(1)+" "+Y(b[k]).toFixed(1)+" ";return d+"Z"};
+  s+='<path d="'+band(f.p90,f.p10)+'" fill="var(--sea)" opacity=".10"/><path d="'+band(f.p75,f.p25)+'" fill="var(--sea)" opacity=".16"/>';
+  past.forEach(function(p){s+='<path d="'+line(p.path.slice(10))+'" stroke="var(--cloud)" stroke-width="1" fill="none" opacity=".55"/>'});
+  s+='<path d="'+line(f.p50)+'" stroke="var(--sea)" stroke-width="2" fill="none" stroke-dasharray="5 4"/>';
+  if(isOpen){ var c=cur.path.slice(10), last=-1; c.forEach(function(y,k){if(y!=null)last=k}); s+='<path d="'+line(c)+'" stroke="var(--lamp)" stroke-width="3" fill="none" stroke-linejoin="round"/>';
+    if(last>=0) s+='<circle cx="'+X(last)+'" cy="'+Y(c[last])+'" r="5" fill="var(--lamp)"/><text x="'+Math.min(X(last)+8,W-R-60)+'" y="'+(Y(c[last])-9)+'" style="fill:var(--ink);font-weight:600">day '+last+'</text>'; }
+  return s+'</svg>';
+}
+function expectFan(dots){
+  var f=D.expect.fan, N=f.p50.length-1, W=720,H=300,L=40,R=10,T=12,B=26, mn=-.25, mx=.55;
+  var X=function(k){return L+(W-L-R)*k/N}, Y=function(y){return T+(H-T-B)*(mx-Math.max(mn,Math.min(mx,y)))/(mx-mn)};
+  var band=function(a,b){var d="";a.forEach(function(y,k){d+=(k?"L":"M")+X(k).toFixed(1)+" "+Y(y).toFixed(1)+" "});for(var k=b.length-1;k>=0;k--)d+="L"+X(k).toFixed(1)+" "+Y(b[k]).toFixed(1)+" ";return d+"Z"};
+  var s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="Signals against the test record">';
+  [-.2,0,.2,.4].forEach(function(y){s+='<path d="M'+L+' '+Y(y)+' H'+(W-R)+'" stroke="var(--line)" stroke-width="'+(y==0?1.6:1)+'" fill="none"/><text x="'+(L-6)+'" y="'+(Y(y)+4)+'" text-anchor="end">'+pct(y,0)+'</text>'});
+  [0,10,20,30,40].forEach(function(k){s+='<text x="'+X(k)+'" y="'+(H-7)+'" text-anchor="'+(k==0?"start":k==40?"end":"middle")+'">'+(k==0?"bought":k)+'</text>'});
+  s+='<path d="'+band(f.p95,f.p5)+'" fill="var(--sea)" opacity=".10"/><path d="'+band(f.p75,f.p25)+'" fill="var(--sea)" opacity=".18"/>';
+  var d="";f.p50.forEach(function(y,k){d+=(k?"L":"M")+X(k).toFixed(1)+" "+Y(y).toFixed(1)+" "}); s+='<path d="'+d+'" stroke="var(--sea)" stroke-width="2" fill="none"/>';
+  dots.forEach(function(p){ s+='<circle cx="'+X(Math.min(p.day,N))+'" cy="'+Y(p.ret)+'" r="'+(p.live?6:4.5)+'" fill="'+(p.live?"var(--lamp)":"var(--panel)")+'" stroke="'+(p.live?"var(--ink)":"var(--ink2)")+'" stroke-width="1.5"><title>'+esc(p.sym+" "+p.name)+" "+pct(p.ret)+'</title></circle>' });
+  return s+'</svg>';
+}
+function spark(a,line,col,label){
+  var v=a.filter(function(x){return x!=null}); if(v.length<5) return ""; var W=600,H=120,L=4,R=64,T=8,B=8, mn=Math.min.apply(null,v), mx=Math.max.apply(null,v); if(line!=null){mn=Math.min(mn,line);mx=Math.max(mx,line)} var pad=(mx-mn)*.08||1; mn-=pad; mx+=pad;
+  var X=function(i){return L+(W-L-R)*i/(a.length-1)}, Y=function(y){return T+(H-T-B)*(mx-y)/(mx-mn)}, d="",pen=false; a.forEach(function(y,i){if(y==null){pen=false;return}d+=(pen?"L":"M")+X(i).toFixed(1)+" "+Y(y).toFixed(1)+" ";pen=true});
+  var s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="'+esc(label)+'">';
+  if(line!=null) s+='<path d="M'+L+' '+Y(line)+' H'+(W-R)+'" stroke="var(--lamp)" stroke-width="1.4" stroke-dasharray="5 4" fill="none"/><text x="'+(W-R+6)+'" y="'+(Y(line)+4)+'" style="fill:var(--lamp)">'+(Math.abs(line)<10&&label.indexOf("Z")>=0?String(line).replace("-","−"):px(line))+'</text>';
+  var lastv=v[v.length-1]; s+='<path d="'+d+'" stroke="'+col+'" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="'+X(a.length-1)+'" cy="'+Y(lastv)+'" r="4" fill="'+col+'"/>';
+  return s+'</svg>';
+}
+function rbar(q,max,col,act){
+  var W=600,H=34,X=function(x){return 4+(W-8)*Math.max(0,Math.min(1,x/max))};
+  var s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" aria-hidden="true"><rect x="4" y="13" width="'+(W-8)+'" height="8" rx="4" fill="var(--sunk)"/>';
+  s+='<rect x="'+X(q[0])+'" y="11" width="'+Math.max(2,X(q[2])-X(q[0]))+'" height="12" rx="6" fill="'+col+'" opacity=".45"/><rect x="'+(X(q[1])-1.5)+'" y="6" width="3" height="22" rx="1.5" fill="'+col+'"/>';
+  if(act!=null) s+='<path d="M'+X(act)+' 2 l5 7 h-10 z" fill="var(--ink)"/>';
+  return s+'</svg>';
+}
+
+/* ---------- views ---------- */
+function orderRows(b,tagc){
+  return b.map(function(o){return '<button class="row" data-sym="'+esc(o.sym)+'"><span class="t"><span class="tag '+tagc+'">'+(tagc=="buy"?"Buy":"Sell")+'</span> '+esc(o.sym)+'<small>'+esc(o.name)+'</small></span><span class="s">'+(tagc=="buy"?pct(o.w,1,false)+" of the account · sells "+dt(o.sell):"bought "+dt(o.bought)+" · "+pct(o.ret)+" so far")+'</span><span class="v">'+px(tagc=="buy"?o.close:o.last)+'<small>last close</small></span></button>'}).join("");
+}
+function vToday(){
+  var W=D.weather,E=D.episode,L=D.live,F=D.fable,st=W.state, nb=L.buys.length, ns=L.due.length;
+  var big=(nb?("Buy "+nb):"Nothing to buy")+(ns?(". Sell "+ns+"."):(nb?".":". Nothing to sell."));
+  var h='<section class="view">';
+  if(D.stale) h+='<div class="warn"><b>Old picture.</b> The newest close in the data is '+dt(D.asof)+'. Yahoo has not published a later one yet, or the market was closed.</div>';
+  h+='<div class="hero"><div class="heroGrid"><div class="block"><div class="eyebrow">Market weather · close of '+dt(D.asof)+'</div><h1 class="word '+(st=="storm"?"storm":st=="deep storm"?"deep":"")+'">'+WORD[st]+'</h1><p class="lead">'+SAY[st]+(E.open?' Session '+E.day+' of the sell-off that began '+dt(E.start)+'.':'')+'</p>'
+    +'<div class="chips"><span class="chip '+(W.pm_ok?"ok":"no")+'"><i></i>Market model '+(W.pm_ok?"positive":"negative: no buys")+'</span><span class="chip '+(W.turn?"lamp":"")+'"><i></i>Market turn window '+(W.turn?"open":"closed")+'</span></div></div>'
+    +'<div>'+gauge(W.ms)+'</div></div></div>';
+  h+='<div class="verdict"><div class="eyebrow">Your live plan · orders for the 10:00 open of '+dt(D.day)+'</div><div class="big">'+big+'</div>';
+  if(nb||ns) h+='<div class="rows">'+orderRows(L.due,"sell")+orderRows(L.buys,"buy")+'</div>';
+  h+='<div class="s" style="font-size:13px;color:var(--cloud)">'+L.held.length+' held · '+L.free+' of '+L.slots+' slots free'+(L.start?' · plan started '+dt(L.start):'')+'</div>';
+  h+='<div class="paper"><b>Ladder on paper:</b> '+(F.buys.length?('would buy '+F.buys.map(function(b){return esc(b.sym)+" ("+pct(b.w,1,false)+")"}).join(", ")):"would buy nothing")+(F.due.length?"; would sell "+F.due.map(function(p){return esc(p.sym)}).join(", "):"")+'. '+F.held.length+' of '+F.slots+' steps in use.</div></div>';
+  h+='<div class="facts"><div class="fact"><b class="'+cls(E.open?E.since:W.chg20)+'">'+pct(E.open?E.since:W.chg20)+'</b><span>'+(E.open?"market since the sell-off began":"market in 20 sessions")+'</span></div><div class="fact"><b>'+pct(W.dd,0)+'</b><span>from the 1-year high</span></div>'
+    +'<div class="fact"><b>'+pct(W.fear,0,false)+'</b><span>of '+W.n_liquid+' liquid stocks stretched below −2</span></div><div class="fact"><b class="'+cls(W.chg5)+'">'+pct(W.chg5)+'</b><span>market in 5 sessions</span></div></div>';
+  if(D.signals.length){ h+='<div class="block"><div class="eyebrow">Signals at this close</div><div class="rows">'+D.signals.map(function(c){return '<button class="row" data-sym="'+esc(c.sym)+'"><span class="t">'+esc(c.sym)+'<small>'+esc(c.name)+'</small></span><span class="s">live: '+esc(c.live)+' · ladder: '+esc(c.fable)+'</span><span class="v">Z '+(c.weekly?c.zw:c.z)+'<small>'+(c.weekly?"weekly":"daily")+' · ML '+pct(c.ml,0,false)+'</small></span></button>'}).join("")+'</div></div>'; }
+  h+='<div class="block"><div class="eyebrow">The storm so far · market momentum, 250 sessions</div>'+strip()+'<p class="note">Market momentum is how far the whole market has moved in 60 sessions, in units of its normal swing. Buys are allowed in the shaded zone ('+W.gate+' or lower). The darker zone ('+W.deep+' or lower) is a deep sell-off.</p></div>';
+  if(D.watch.length){ h+='<div class="block"><div class="eyebrow">One close away</div><p class="note">Liquid stocks nearest a first touch of the −2.62 line, and the close that would put them on it tomorrow.</p><div class="rows">'+D.watch.slice(0,8).map(function(c){return '<button class="row" data-sym="'+esc(c.sym)+'"><span class="t">'+esc(c.sym)+'<small>'+esc(c.name)+'</small></span><span class="s">Z '+c.z+' · '+(c.ok?"would pass every gate":"would not pass: "+whyNot(c))+'</span><span class="v">'+px(c.band)+'<small>needs '+pct(c.need)+'</small></span></button>'}).join("")+'</div></div>'; }
+  if(D.us&&!D.us.error){ var u=D.us; h+='<div class="block"><div class="eyebrow">US part · close of '+dt(u.date)+'</div><div class="rows">'+Object.keys(u.etf||{}).map(function(k){var e=u.etf[k];return '<div class="row"><span class="t">'+k+'<small>index dip rule</small></span><span class="s">'+esc(e.status)+' · RSI(2) '+e.rsi2+'</span><span class="v">'+px(e.close)+'<small>200-day '+px(e.s200)+'</small></span></div>'}).join("")
+    +'<div class="row"><span class="t">US sell-off window<small>115 large caps</small></span><span class="s">US market momentum '+u.ms+' (opens at '+u.gate+')</span><span class="v">'+(u.window?"open":"closed")+'</span></div></div></div>'; }
+  return h+'</section>';
+}
+function whyNot(c){ var a=[]; if(!c.ml_ok)a.push("ML rank below 50%"); if(c.loss)a.push("loss-making"); if(!D.weather.pm_ok)a.push("market model negative"); if(D.weather.ms>D.weather.gate)a.push("no sell-off"); if(c.paper_open)a.push("signalled in the last 40 sessions"); return a.join(", ")||"n/a"; }
+function vSelloff(){
+  var E=D.episode,R=D.replay, past=D.past.slice().reverse(), mx=0; past.forEach(function(p){mx=Math.max(mx,Math.abs(p.live||0),Math.abs(p.fable||0))});
+  var bar=function(x,col){var w=Math.round(46*Math.abs(x||0)/mx);return '<span style="display:inline-block;width:46px;height:8px;background:var(--sunk);border-radius:4px;vertical-align:middle;margin-right:6px;overflow:hidden"><i style="display:block;height:100%;width:'+w+'px;background:'+(x<0?"var(--bad)":col)+'"></i></span>'};
+  var h='<section class="view"><div class="block"><div class="eyebrow">Sell-off timeline</div><h1 class="h2">'+(E.open?"This sell-off against the "+E.of+" before it":"The last "+E.of+" sell-offs")+'</h1>'
+    +'<p class="lead">'+(E.open?'It began on '+dt(E.start)+'. The market is '+pct(E.since)+' from that day and was '+pct(E.low)+' at its low. It is deeper than '+E.deeper_than+' of the '+E.of+' sell-offs since 2013.':'No sell-off is open. The lines show how the market moved after each past one began.')+'</p></div>'
+    +'<div class="block">'+fanChart()+'<div class="chips"><span class="chip lamp"><i></i>this sell-off</span><span class="chip"><i style="background:var(--cloud)"></i>each past sell-off</span><span class="chip"><i style="background:var(--sea)"></i>middle path and usual range</span></div><p class="note">Equal-weight index of the liquid Saudi stocks, 100 on the first day market momentum fell to −1.18. The inner band holds half of the past sell-offs, the outer band eight in ten.</p></div>';
+  if(E.open&&(R.live.held.length||R.fable.held.length)){ var f=function(r,n){return '<div class="panel"><span>'+n+'</span><b class="'+cls(r.pnl)+'">'+pct(r.pnl,2)+'</b><span>of the account so far · '+r.held.length+' positions, '+pct(r.invested,0,false)+' in stocks</span></div>'};
+    h+='<div class="block"><div class="eyebrow">Had both rules run through this sell-off</div><div class="duo">'+f(R.live,"Live rule, 5 at once")+f(R.fable,"Ladder, one a day")+'</div><p class="note">A replay from the first day of this sell-off, not your account: your plan started '+(D.live.start?dt(D.live.start):"later")+'.</p></div>'; }
+  h+='<div class="block"><div class="eyebrow">Every sell-off since 2013 · result for the account, above interest</div><div class="scroll"><table class="tb"><thead><tr><th>Began</th><th>Depth</th><th>Market low</th><th>Live rule</th><th>Ladder</th></tr></thead><tbody>'
+    +past.map(function(p){return '<tr><td>'+dshort(p.start)+(p.open?' <span class="tag deep">open</span>':'')+'</td><td>'+String(p.depth).replace("-","−")+'</td><td>'+pct(p.low,0)+'</td><td>'+(p.open?'<small>open</small>':bar(p.live,"var(--ink2)")+'<span class="'+cls(p.live)+'">'+pct(p.live)+'</span>')+'</td><td>'+(p.open?'<small>open</small>':bar(p.fable,"var(--sea)")+'<span class="'+cls(p.fable)+'">'+pct(p.fable)+'</span>')+'</td></tr>'}).join("")+'</tbody></table></div>'
+    +'<p class="note">Depth is the lowest market momentum reached. The ladder made more than the live rule in the long sell-offs (2014, 2015, 2016, 2022) and less in the short ones.</p></div>';
+  return h+'</section>';
+}
+function rungs(B,rule){
+  var slots=B.slots, rows=B.held.concat(B.due), h='<div class="ladder">';
+  for(var k=slots-1;k>=0;k--){ var p=rows[k];
+    if(p){ var done=Math.min(1,p.held/40); h+='<button class="rung on'+(p.deep&&rule=="fable"?" deep":"")+'" data-sym="'+esc(p.sym)+'"><span class="t">'+esc(p.sym)+' <small style="font-weight:400;color:var(--muted)">'+esc(p.name)+'</small></span><span class="s">'+pct(p.w,1,false)+' · bought '+dt(p.bought)+' at '+px(p.entry)+' · sells '+dt(p.sell)+'</span><span class="v '+cls(p.ret)+'">'+pct(p.ret)+'</span><span class="bar"><i style="width:'+Math.round(100*done)+'%"></i></span></button>'; }
+    else h+='<div class="rung"><span>'+(rule=="fable"?"free step":"free slot")+'</span></div>'; }
+  return h+'</div>';
+}
+function vBooks(){
+  var S=D.scorecard, B=bookRule=="live"?D.live:D.fable, RP=D.replay[bookRule], showReplay=!B.held.length&&!B.due.length&&RP.held.length;
+  var h='<section class="view"><div class="block"><div class="eyebrow">Plan books</div><h1 class="h2">'+(bookRule=="live"?"Your live book: 5 at once":"The ladder: one step a day")+'</h1>'
+    +'<div class="seg" role="group" aria-label="Book"><button data-book="live" aria-pressed="'+(bookRule=="live")+'">Live · yours</button><button data-book="fable" aria-pressed="'+(bookRule=="fable")+'">Ladder · paper</button></div>'
+    +'<p class="lead">'+(bookRule=="live"?"Up to 5 positions of 5%, most volatile first, any number on one day. Hold 40 sessions, no stop.":"Up to 12 positions, at most one new one a day (the most volatile signal). Each is 2.1% of the account, or 4.2% in a deep sell-off (orange edge). Hold 40 sessions, no stop. On paper until you say yes.")+'</p></div>';
+  h+='<div class="cols"><div class="block"><div class="eyebrow">'+(showReplay?"Replay · had it run through this sell-off":"Since "+(B.start?dt(B.start):"the start")+" · "+B.held.length+" of "+B.slots+" in use")+'</div>'+rungs(showReplay?{slots:B.slots,held:RP.held,due:[]}:B,bookRule)
+    +(showReplay?'<p class="note">Your book is empty: the plan started '+dt(B.start)+' and no signal has passed since. These rungs show what the rule would hold had it run from the start of this sell-off.</p>':'')+'</div>';
+  var dots=S.paper.map(function(p){return {day:p.day,ret:p.ret,sym:p.sym,name:p.name}}).concat((bookRule=="live"?S.live:S.fable).map(function(p){return {day:p.day,ret:p.ret,sym:p.sym,name:p.name,live:true}}));
+  var picks=bookRule=="live"?S.live:S.fable;
+  h+='<div class="block"><div class="eyebrow">Scorecard · picks against the test record</div>'+expectFan(dots)+'<div class="chips"><span class="chip lamp"><i></i>'+(bookRule=="live"?"your picks":"ladder picks")+' ('+picks.length+')</span><span class="chip"><i style="background:var(--panel);border:1.5px solid var(--ink2)"></i>this sell-off\'s signals on paper ('+S.paper.length+')</span><span class="chip"><i style="background:var(--sea)"></i>record: middle and usual range</span></div>'
+    +'<p class="note">Each dot is one position: sessions since it was bought, and its result so far. The band is where '+D.expect.n+' past signals stood at the same session (inner: half of them; outer: nine in ten).'
+    +(S.paper.length?' This sell-off\'s '+S.paper.length+' signals average '+pct(S.paper_avg)+'; the middle one beats '+pct(S.paper_pct,0,false)+' of the record at the same session.':'')+(picks.length?'':' No pick since the plan started.')+'</p></div></div>';
+  if(LOG.length){ h+='<div class="block"><div class="eyebrow">Decision log · what the list said each day</div><div class="scroll"><table class="tb"><thead><tr><th>Close</th><th>Weather</th><th>Live buys</th><th>Live sells</th><th>Ladder buys</th></tr></thead><tbody>'
+    +LOG.map(function(d){var f=function(a){return a&&a.length?a.map(function(x){return esc(Array.isArray(x)?x[0]:x)}).join(" "):"<small>none</small>"};return '<tr><td>'+dshort(d.asof)+'</td><td style="font-family:var(--sans)">'+esc(d.weather?d.weather.state:"")+'</td><td>'+f(d.live&&d.live.buys)+'</td><td>'+f(d.live&&d.live.sells)+'</td><td>'+f(d.fable&&d.fable.buys)+'</td></tr>'}).join("")+'</tbody></table></div><p class="note">Saved on the day and never rewritten, so a later model refit cannot change what you were told.</p></div>'; }
+  return h+'</section>';
+}
+function vSizing(){
+  var A=D.sizing[sizeRule], i=Math.max(0,Math.min(A.length-1,sizeIdx[sizeRule])), s=A[i], gmax=0, dmax=0; D.sizing.live.concat(D.sizing.fable).forEach(function(x){gmax=Math.max(gmax,x.g[2]);dmax=Math.max(dmax,x.dd[2])});
+  var tested=Math.abs(s.mult-1)<1e-9, over=s.most>.5+1e-9, T=D.evidence&&D.evidence.world?D.evidence.world.tails:null;
+  var h='<section class="view"><div class="block"><div class="eyebrow">What-if sizing</div><h1 class="h2">How big should one position be?</h1><p class="lead">Size is your main dial for reward and for risk. Pick a rule and a size; the bars show where growth and the worst drawdown landed across 1,000 redraws of the 18 sell-offs.</p>'
+    +'<div class="seg" role="group" aria-label="Rule"><button data-size="live" aria-pressed="'+(sizeRule=="live")+'">Live rule</button><button data-size="fable" aria-pressed="'+(sizeRule=="fable")+'">Ladder</button></div></div>';
+  h+='<div class="cols"><div class="block"><div class="stepper"><button id="sz-minus" aria-label="Smaller position"'+(i==0?" disabled":"")+'>−</button><div class="val"><b>'+pct(s.pos,1,false)+(sizeRule=="fable"?' <span style="font:500 16px var(--mono);color:var(--muted)">/ '+pct(2*s.pos,1,false)+'</span>':'')+'</b><span>per position'+(sizeRule=="fable"?" (normal / deep)":"")+' · most held '+pct(s.most,0,false)+(tested?" · the tested size":"")+'</span></div><button id="sz-plus" aria-label="Bigger position"'+(i==A.length-1?" disabled":"")+'>+</button></div>'
+    +(over?'<div class="warn">Above the 50% ceiling earlier rounds set for the most the account should hold.</div>':'')
+    +'<label class="field" for="acct">Account size in SAR (kept on this device only)<input id="acct" inputmode="numeric" placeholder="e.g. 500000" value="'+(acct||"")+'"></label>'
+    +(acct?'<div class="duo"><div class="panel"><span>One position</span><b>'+sar(acct*s.pos)+'</b><span>'+(sizeRule=="fable"?"deep step "+sar(2*acct*s.pos):"each of up to 5")+'</span></div><div class="panel"><span>A '+pct(s.dd[1],1,false)+' drawdown</span><b>'+sar(acct*s.dd[1])+'</b><span>the middle redraw\'s worst fall</span></div></div>':'')+'</div>';
+  h+='<div class="block"><div class="rangebar"><div class="lab"><b>Growth a year</b><span class="num">'+pct(s.g[0])+' to '+pct(s.g[2])+' · middle '+pct(s.g[1])+'</span></div>'+rbar(s.g,gmax,"var(--good)",s.eras["2013-26"][0])+'</div>'
+    +'<div class="rangebar"><div class="lab"><b>Worst drawdown</b><span class="num">'+pct(s.dd[0],1,false)+' to '+pct(s.dd[2],1,false)+' · middle '+pct(s.dd[1],1,false)+'</span></div>'+rbar(s.dd,dmax,"var(--bad)",s.eras["2013-26"][1])+'</div>'
+    +'<p class="note">Band: 5th to 95th percentile. Tall mark: the middle redraw. Arrow: what happened in 2013-26. Idle money earns T-bill interest. A redraw can only reuse sell-offs that happened, so it cannot show one worse than the worst so far.</p>'
+    +'<div class="scroll"><table class="tb"><thead><tr><th>Period</th><th>Growth a year</th><th>Worst drawdown</th></tr></thead><tbody>'+["2013-19","2020-26","2023-26","2013-26"].map(function(e){return '<tr><td>'+e+'</td><td>'+pct(s.eras[e][0])+'</td><td>'+pct(s.eras[e][1],1,false)+'</td></tr>'}).join("")+'</tbody></table></div></div></div>';
+  if(T){ var k=s.mult, a=sizeRule=="live"?T.era_dd.live:T.era_dd.ladder; h+='<div class="block"><div class="eyebrow">What a bad decade abroad did at this size</div><p class="lead">In 64 market-decades of 23 other markets, the same shape at this size had a worst drawdown of <b class="num">'+pct(a[0]*k,1,false)+'</b> in the middle case, under <b class="num">'+pct(a[1]*k,1,false)+'</b> in nine of ten, and <b class="num">'+pct(a[2]*k,1,false)+'</b> in the worst (2008).</p><p class="note">Price-only rule abroad, idle money earning nothing, scaled from the tested size. Saudi has not had a 2008 inside this record.</p></div>'; }
+  return h+'</section>';
+}
+function vEvidence(){
+  var ev=D.evidence||{}, S=ev.saudi, W=ev.world, h='<section class="view"><div class="block"><div class="eyebrow">Evidence</div><h1 class="h2">What is proven, and what is not</h1><p class="lead">Every number carries a range. Ranges come from redrawing the 18 sell-offs since 2013, 2,000 times.</p></div>';
+  if(S){ var row=function(k,lab){var e=S[k].eras,r=S[k].range["2013-26"];return '<tr><td>'+lab+'</td>'+["2013-19","2020-26","2023-26","2013-26"].map(function(p){return '<td>'+pct(e[p][0])+' <small>/ '+pct(e[p][1],1,false)+'</small></td>'}).join("")+'<td>'+pct(r.g[0])+' to '+pct(r.g[1])+'</td><td>'+pct(r.dd[0],1,false)+' to '+pct(r.dd[1],1,false)+'</td></tr>'};
+    h+='<div class="block"><div class="eyebrow">Whole account · growth a year / worst drawdown · idle money at T-bill interest</div><div class="scroll"><table class="tb"><thead><tr><th>Rule</th><th>2013-19</th><th>2020-26</th><th>2023-26</th><th>2013-26</th><th>Growth range</th><th>Drawdown range</th></tr></thead><tbody>'+row("LIVE","Live, 5 × 5%")+row("L12D","Ladder, 2.1% / 4.2%")+'</tbody></table></div>'
+      +'<p class="note">Trades: live '+S.LIVE.trades+' ('+pct(S.LIVE.win,0,false)+' winners, '+pct(S.LIVE.avg)+' each), ladder '+S.L12D.trades+' ('+pct(S.L12D.win,0,false)+' winners, '+pct(S.L12D.avg)+' each). Worst single trade '+pct(S.LIVE.worst)+' for both.</p></div>'; }
+  h+='<div class="cols"><div class="block"><div class="eyebrow">For the ladder</div><ul class="plain">'
+    +(W?'<li>Other markets chose it. In '+W.market_eras+' market-decades of 23 markets it beat the live shape in <b>'+pct(W.ladder_beats,0,false)+'</b>, in each of three eras, and still in '+pct(W.costs,0,false)+' with double costs and '+pct(W.late,0,false)+' a day late.</li>':'')
+    +'<li>It fixes the live rule\'s three losing sell-offs (2014, 2015, 2022) and made money in each.</li><li>Its worst sell-off cost 0.2% of the account; the live rule\'s worst cost 1.7%.</li>'+(ev.stress?'<li>Stress tests on Saudi: '+ev.stress.passed+' of '+ev.stress.of+' passed.</li>':'')+'</ul></div>'
+    +'<div class="block"><div class="eyebrow">Against it</div><ul class="plain"><li><b>Not confirmed on Saudi 2020-26.</b> By the strict rule it had to grow at least as fast as the live rule there. It grew 4.5% a year against 4.7%.</li><li>In 2023-26 it earned 4.7% a year against 6.4%: it is small when signals are few and rebounds are fast.</li><li>It made more than the live rule in only 5 of 15 sell-offs. All its extra growth comes from 2014-16.</li><li>A yearly re-choice from past data did not pick it.</li><li>It can hold up to 50% of the account, twice the live rule.</li></ul></div></div>';
+  h+='<div class="block"><div class="eyebrow">Tested in the Fable rounds and rejected</div><div class="chips">'+["buys 3 sessions apart (fails abroad)","a deeper market gate","one buy split over 3 signals","buying the 10 most traded stocks instead","buying at the close","a limit order under the close","a price-only rule without the models","dropping the ML rank bar","dropping the market model","weekly signals only"].map(function(x){return '<span class="chip no"><i></i>'+x+'</span>'}).join("")+'</div>'
+    +'<p class="note">Limits that stay: the price panel holds only stocks listed today; a fresh refit of the models moves the yearly figures by about 0.2 point; the ranges cannot show a sell-off worse than the worst since 2013.</p></div>';
+  h+='<div class="block"><div class="eyebrow">Words</div><div class="gloss">'+[["Stretch Z","How far a stock has fallen or risen, in units of its own normal swing (average of its 10-, 20- and 60-session moves)."],["Market momentum","The same idea for the whole market over 60 sessions."],["Sell-off","The run of sessions with market momentum at −1.18 or lower, joined across short gaps."],["Market model","A 20-session market forecast, refit every January. Negative means no buys."],["ML rank","Where a stock stands among all stocks in a model's ranking; 50% or higher passes."],["Worst drawdown","The largest fall of the whole account from a high to a later low."],["Range","Where the result landed in 9 of 10 redraws of the sell-offs."]].map(function(g){return '<div><b>'+g[0]+'</b><span>'+g[1]+'</span></div>'}).join("")+'</div></div>';
+  return h+'</section>';
+}
+
+/* ---------- why this stock ---------- */
+function card(sym){ var c=null; (D.signals||[]).concat(D.watch||[]).forEach(function(x){if(x.sym==sym)c=x}); return c||(D.cards||{})[sym]||null; }
+function openSheet(sym){
+  var c=card(sym); if(!c) return; var W=D.weather, a=c.acct, zline=-2.62;
+  var G=[[c.z<=zline||c.weekly,"Stretched to the line","first close at stretch Z −2.62 (daily) or −2.08 (weekly)","Z "+c.z+(c.zw!=null?" · weekly "+c.zw:"")],[W.ms<=W.gate,"The market is in a sell-off","market momentum −1.18 or lower",String(W.ms)],[W.pm_ok,"Market model positive","20-session market forecast above zero",pct(W.pm)],
+         [c.ml!=null&&c.ml>=.5,"ML rank 50% or higher","the ranker's view of the stock",pct(c.ml,0,false)],[c.liquid,"Liquid","at least SAR 3m traded a day","SAR "+c.val_m+"m"],[!c.loss,"Latest annual result not a loss",a?("FY"+a.fy+": SAR "+a.ni_m+"m"+(a.roe!=null?", ROE "+pct(a.roe,0,false):"")):"no accounts on file",a?(a.ni_m>0?"profit":"loss"):"n/a"]];
+  var q=D.expect.final.all, h='<div class="card" role="dialog" aria-modal="true" aria-label="Why this stock"><button class="x" id="sheet-x">Close</button><div class="block"><div class="eyebrow">'+esc(c.sector||"")+' · why this stock</div><h2 class="h2">'+esc(c.sym)+' '+esc(c.name)+'</h2>'
+    +'<p class="lead">Last close <b class="num">'+px(c.close)+'</b> (<span class="'+cls(c.chg)+'">'+pct(c.chg)+'</span>), '+pct(c.hi52,0)+' from its 1-year high. Volatility '+pct(c.vol,1,false)+' a day, more than '+pct(c.volr,0,false)+' of liquid stocks; the most volatile signal is bought first.</p></div>'
+    +'<div class="block"><div class="eyebrow">The gates</div><div>'+G.map(function(g){return '<div class="gate"><i class="'+(g[0]?"y":"n")+'">'+(g[0]?"✓":"✕")+'</i><span>'+g[1]+'<small>'+g[2]+'</small></span><b>'+esc(g[3])+'</b></div>'}).join("")+'</div></div>'
+    +'<div class="block"><div class="eyebrow">Stretch Z · the line is −2.62</div>'+spark(c.zs,zline,"var(--sea)","Stretch Z")+'</div>'
+    +'<div class="block"><div class="eyebrow">Price'+(c.band!=null&&c.z>zline?" · a close of "+px(c.band)+" tomorrow would touch the line":"")+'</div>'+spark(c.px,c.band!=null&&c.z>zline?c.band:null,"var(--ink)","Price")+'</div>'
+    +'<p class="note">One signal held 40 sessions, from '+q.n+' in the record: half ended above '+pct(q.q[2])+', '+pct(q.win,0,false)+' made money, 1 in 20 ended below '+pct(q.q[0])+'.'+(c.band0!=null?' Its stretch Z would be back at 0 at a close of '+px(c.band0)+'.':'')+'</p></div>';
+  var s=$("#sheet"); s.innerHTML=h; s.className="sheet"; s.hidden=false; $("#sheet-x").focus();
+}
+function closeSheet(){ var s=$("#sheet"); s.hidden=true; s.innerHTML=""; }
+
+/* ---------- shell ---------- */
+var VIEWS={today:vToday,selloff:vSelloff,books:vBooks,sizing:vSizing,evidence:vEvidence};
+function render(){
+  document.querySelectorAll("#tabs button").forEach(function(b){ if(b.dataset.v==view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
+  if(!D) return;
+  $("#dayline").innerHTML='<b>For '+dt(D.day)+'</b>prices to '+dt(D.asof)+' close';
+  main.innerHTML=VIEWS[view]();
+}
+function route(){ var h=(location.hash||"").replace("#",""); view=VIEWS[h]?h:"today"; render(); window.scrollTo(0,0); }
+window.addEventListener("hashchange",route);
+$("#tabs").addEventListener("click",function(e){ var b=e.target.closest("button[data-v]"); if(!b) return; if(location.hash.replace("#","")==b.dataset.v){route();} else location.hash=b.dataset.v; });
+main.addEventListener("click",function(e){
+  var t=e.target.closest("[data-sym],[data-book],[data-size],#sz-minus,#sz-plus"); if(!t) return;
+  if(t.dataset.sym){ openSheet(t.dataset.sym); return; }
+  if(t.dataset.book){ bookRule=t.dataset.book; try{localStorage.setItem("fable.book",bookRule)}catch(x){} render(); return; }
+  if(t.dataset.size){ sizeRule=t.dataset.size; render(); return; }
+  if(t.id=="sz-minus"){ sizeIdx[sizeRule]=Math.max(0,sizeIdx[sizeRule]-1); render(); $("#sz-minus").focus(); return; }
+  if(t.id=="sz-plus"){ sizeIdx[sizeRule]=Math.min(D.sizing[sizeRule].length-1,sizeIdx[sizeRule]+1); render(); $("#sz-plus").focus(); }
+});
+main.addEventListener("change",function(e){ if(e.target.id=="acct"){ acct=Math.max(0,+String(e.target.value).replace(/[^0-9.]/g,"")||0); try{localStorage.setItem("fable.acct",acct)}catch(x){} render(); } });
+$("#sheet").addEventListener("click",function(e){ if(e.target.id=="sheet-x"||e.target.id=="sheet") closeSheet(); });
+document.addEventListener("keydown",function(e){ if(e.key=="Escape") closeSheet(); });
+route();
+function gone(msg){ var w=$("#wait"); if(w&&!D) w.textContent=msg; }
+(window.claude&&window.claude.use?window.claude.use("db"):Promise.resolve(null)).then(function(db){
+  if(!db){ gone("This view cannot reach the terminal's data. Open the page inside Claude, signed in."); return; }
+  db.doc("fable/latest").onSnapshot(function(s){ if(s.exists){ D=s.data(); render(); } else gone("No export has been written yet. It arrives after the daily run."); }, function(){ gone("The data connection stopped. Reload the page."); });
+  db.collection("days").orderBy("asof","desc").limit(30).onSnapshot(function(q){ LOG=q.docs.map(function(x){return x.data()}); if(D&&view=="books") render(); }, function(){});
+}).catch(function(){ gone("The data could not be loaded. Reload the page."); });
+})();
+</script>
