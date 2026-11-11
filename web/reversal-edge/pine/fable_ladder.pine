@@ -1,0 +1,113 @@
+//@version=6
+// Fable ladder (reversal edge, rounds 71-73): market weather behind the price, the stock's own ladder steps, and the buy-line price.
+// What it draws on a DAILY chart:
+//   - Background: the market weather. Light = sell-off (market momentum <= -1.18), darker = deep sell-off (<= -2.53).
+//     Market momentum = 60-day sum of the index's daily log returns / (60-day standard deviation measured 60 days earlier x sqrt(60)).
+//     The daily list uses an equal-weight average of the liquid Saudi stocks; this script uses the index you choose (TASI is weighted
+//     by size), so the two can differ a little near the lines.
+//   - STEP labels: the bar whose open is the buy. A step needs a first close at stretch Z <= -2.62 (daily) or a first weekly close
+//     <= -2.08, while the market is in a sell-off. "STEP x2" = a double step (deep sell-off). One 40-session paper trade per stock
+//     at a time: a new touch while one is open is ignored, as in the tested rule.
+//   - SELL labels: the open 40 sessions after the buy, with the result.
+//   - Dashed line: the close that would put the stretch Z exactly on -2.62 at the next session (exact, not a forecast).
+// What it cannot see: the ML rank (50%+), the market model (positive), liquidity, the company's accounts, and the ladder's limit of
+// one new step a day across all stocks. The daily Fable brief is the authority; this is the price part of it on a chart.
+indicator("Fable ladder", shorttitle = "Fable", overlay = true, max_labels_count = 200)
+
+// ---------------------------------------------------------------- inputs
+grpR   = "Rule (tested values)"
+lineD  = input.float(-2.62, "Daily buy line (stretch Z)", step = 0.01, group = grpR)
+lineW  = input.float(-2.08, "Weekly buy line (weekly stretch Z)", step = 0.01, group = grpR)
+useW   = input.bool(true, "Weekly touches too", group = grpR)
+holdN  = input.int(40, "Hold (sessions)", minval = 5, group = grpR)
+grpM   = "Market weather"
+mktSym = input.symbol("TADAWUL:TASI", "Market index", group = grpM)
+gateM  = input.float(-1.18, "Sell-off at momentum <=", step = 0.01, group = grpM)
+deepM  = input.float(-2.53, "Deep sell-off at momentum <=", step = 0.01, group = grpM)
+grpS   = "Ladder sizes (% of the account)"
+stepP  = input.float(2.1, "Normal step", step = 0.1, group = grpS)
+deepP  = input.float(4.2, "Deep step", step = 0.1, group = grpS)
+limitP = input.float(10.0, "Daily price limit (%)", step = 0.5, group = grpS, tooltip = "Saudi stocks: 10%. A buy-line price further away than this cannot be reached in one session.")
+showT  = input.bool(true, "Show the weather table")
+
+// ---------------------------------------------------------------- functions (the scanner's formulas)
+clip(float x, float c) => math.max(math.min(x, c), -c)
+stretchZ(float src, float c) =>
+    float r  = clip(math.log(src / src[1]), c)
+    float sd = ta.stdev(r, 60, false)
+    (math.sum(r, 10) / (sd[10] * math.sqrt(10)) + math.sum(r, 20) / (sd[20] * math.sqrt(20)) + math.sum(r, 60) / (sd[60] * math.sqrt(60))) / 3
+firstTouch(float z, float lvl) => z <= lvl and not (z[1] <= lvl)
+momentum(float src) =>
+    float r  = clip(math.log(src / src[1]), 0.25)
+    float sd = ta.stdev(r, 60, false)
+    math.sum(r, 60) / (sd[60] * math.sqrt(60))
+bandNext(float src, float lvl, float c) =>
+    float r   = clip(math.log(src / src[1]), c)
+    float sd  = ta.stdev(r, 60, false)
+    float d10 = sd[9] * math.sqrt(10)
+    float d20 = sd[19] * math.sqrt(20)
+    float d60 = sd[59] * math.sqrt(60)
+    float a   = (math.sum(r, 9) / d10 + math.sum(r, 19) / d20 + math.sum(r, 59) / d60) / 3
+    float b   = (1 / d10 + 1 / d20 + 1 / d60) / 3
+    float x   = (lvl - a) / b
+    math.abs(x) <= c ? src * math.exp(x) : na
+wState() =>
+    float z  = stretchZ(close, 0.60)
+    bool  tt = firstTouch(z, lineW)
+    [z[1], tt[1]]
+
+// ---------------------------------------------------------------- the stock and the market (completed bars only)
+bool  isD  = timeframe.isdaily and timeframe.multiplier == 1
+float zD   = stretchZ(close, 0.25)
+bool  tD   = firstTouch(zD, lineD)
+[zW, tW]   = request.security(syminfo.tickerid, "W", wState(), lookahead = barmerge.lookahead_on)
+bool  newW = timeframe.change("W")
+float mm   = request.security(mktSym, "D", momentum(close), ignore_invalid_symbol = true)
+// the signal is known at a close; the market momentum of that same close decides the gate and the step size
+bool  storm = not na(mm) and mm <= gateM
+bool  deep  = not na(mm) and mm <= deepM
+bool  sigD  = tD and storm                                    // daily first touch at this close, market in a sell-off
+bool  sigW  = useW and tW and newW and storm[1]              // first bar of the week after a weekly first touch
+bool  buyBar = isD and ((sigD[1]) or sigW)                   // the bar whose open is the buy
+bool  wasDeep = deep[1]
+
+// ---------------------------------------------------------------- one paper trade per stock at a time
+var int   openBar = na
+var float entryPx = na
+var bool  openDeep = false
+bool sellBar = not na(openBar) and bar_index - openBar == holdN
+if sellBar
+    float res = (open / entryPx - 1) * 100
+    label.new(bar_index, high, "SELL " + (res >= 0 ? "+" : "") + str.tostring(res, "#.0") + "%", style = label.style_label_down, color = res >= 0 ? color.new(color.teal, 10) : color.new(color.red, 10), textcolor = color.white, size = size.small)
+    openBar := na
+if buyBar and na(openBar)
+    openBar  := bar_index
+    entryPx  := open
+    openDeep := wasDeep
+    label.new(bar_index, low, (openDeep ? "STEP x2  " + str.tostring(deepP, "#.0") + "%" : "STEP  " + str.tostring(stepP, "#.0") + "%"), style = label.style_label_up, color = openDeep ? color.new(#b5600d, 0) : color.new(#1d4f7c, 0), textcolor = color.white, size = size.small)
+
+// ---------------------------------------------------------------- plots
+bgcolor(isD and deep ? color.new(#a8361c, 86) : isD and storm ? color.new(#d1842a, 90) : na, title = "Market weather")
+float bD = bandNext(close, lineD, 0.25)
+bool  reach = not na(bD) and math.abs(bD / close - 1) * 100 <= limitP
+plot(isD and zD > lineD and reach ? bD : na, "Buy-line price (next session)", color = color.new(#1d4f7c, 20), style = plot.style_linebr, linewidth = 1, offset = 1)
+plot(not na(openBar) ? entryPx : na, "Entry of the open paper trade", color = color.new(color.gray, 40), style = plot.style_linebr)
+
+// ---------------------------------------------------------------- the weather table
+if showT and barstate.islast
+    var table t = table.new(position.top_right, 2, 5, bgcolor = color.new(color.black, 80), border_width = 1, border_color = color.new(color.gray, 70))
+    string w = na(mm) ? "no market data" : deep ? "DEEP STORM" : storm ? "STORM" : mm <= gateM / 2 ? "CLOUDS" : "CALM"
+    color  wc = deep ? #e0623f : storm ? #e89a3c : color.silver
+    table.cell(t, 0, 0, "Market weather", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 0, w, text_color = wc, text_size = size.small, text_halign = text.align_right)
+    table.cell(t, 0, 1, "Market momentum", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 1, na(mm) ? "n/a" : str.tostring(mm, "#.00"), text_color = color.white, text_size = size.small, text_halign = text.align_right)
+    table.cell(t, 0, 2, "Stretch Z (weekly)", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 2, str.tostring(zD, "#.00") + " (" + (na(zW) ? "n/a" : str.tostring(zW, "#.00")) + ")", text_color = zD <= lineD ? #e89a3c : color.white, text_size = size.small, text_halign = text.align_right)
+    table.cell(t, 0, 3, "Close for the line", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 3, zD <= lineD ? "at the line" : reach ? str.tostring(bD, format.mintick) + " (" + str.tostring((bD / close - 1) * 100, "#.0") + "%)" : "beyond the limit", text_color = color.white, text_size = size.small, text_halign = text.align_right)
+    table.cell(t, 0, 4, "A step today would be", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 4, not storm ? "none (no sell-off)" : deep ? str.tostring(deepP, "#.0") + "% (double)" : str.tostring(stepP, "#.0") + "%", text_color = color.white, text_size = size.small, text_halign = text.align_right)
+
+alertcondition(sigD, "Fable: daily touch in a sell-off", "{{ticker}}: first close at stretch Z <= -2.62 while the market is in a sell-off. Check the Fable brief (ML rank, market model, accounts) before buying at the next open.")
+alertcondition(deep and not deep[1], "Fable: deep storm begins", "Market momentum fell to -2.53 or lower: ladder steps are double size.")

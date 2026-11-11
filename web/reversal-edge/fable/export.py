@@ -39,7 +39,7 @@ fdate = lambda t: str(pd.Timestamp(t).date()); sdate = lambda k: fdate(d[k]) if 
 # ---------------------------------------------------------------- 1. market weather
 MT = PB.MT; msv = float(MS[i]); pmv = float(PB.PMv[i]); E, eid = B.episodes(first=i0); cur = E.iloc[-1]; in_ep = bool(i - int(cur["last"]) <= 20)
 state = ("deep storm" if msv <= book.DEEP else "storm") if msv <= MS_GATE else ("clearing" if in_ep else ("clouds" if msv <= MS_GATE / 2 else "calm"))
-zl = ZC[i][PB.EL[i]]; idx = MT.idx.values
+zl = ZC[i][PB.EL[i]]; idx = np.exp(np.nancumsum(B.mret.values))        # equal-weight index of the liquid stocks, without the gaps opt7 leaves on thin days
 weather = dict(state=state, ms=R(msv, 2), gate=MS_GATE, deep=book.DEEP, pm=R(pmv, 4), pm_ok=bool(pmv > 0), n_liquid=int(PB.EL[i].sum()), fear=R(float((zl <= -2).mean()), 3), below_line=int((zl <= ZLINE).sum()),
                dd=R(MT.dd250.iloc[i], 4), bounce=R(MT.bounce.iloc[i], 4), turn=bool(PB.GATE[i]), chg1=R(idx[i] / idx[i - 1] - 1, 4), chg5=R(idx[i] / idx[i - 5] - 1, 4), chg20=R(idx[i] / idx[i - 20] - 1, 4),
                hist=dict(d=[fdate(x) for x in d[-250:]], ms=[R(x, 2) for x in MS[-250:]], idx=[R(100 * x / idx[-250], 2) for x in idx[-250:]], pm=[R(x, 4) for x in PB.PMv[-250:]]))
@@ -165,8 +165,8 @@ def clean(x):
     return x
 out = sys.argv[sys.argv.index("--out") + 1] if "--out" in sys.argv else os.path.join(WORK, "fable", "fable_latest.json"); os.makedirs(os.path.dirname(out), exist_ok=True)
 json.dump(clean(OUT), open(out, "w"), allow_nan=False, separators=(",", ":"))
-ledger = dict(asof=OUT["asof"], day=OUT["day"], made=OUT["made"], weather=dict(state=state, ms=weather["ms"], pm_ok=weather["pm_ok"]), live=dict(buys=[(b["sym"], b["w"]) for b in BOOKS["live"]["buys"]], sells=[p["sym"] for p in BOOKS["live"]["due"]], held=[p["sym"] for p in BOOKS["live"]["held"]]),
-              fable=dict(buys=[(b["sym"], b["w"]) for b in BOOKS["fable"]["buys"]], sells=[p["sym"] for p in BOOKS["fable"]["due"]], held=[p["sym"] for p in BOOKS["fable"]["held"]]), signals=[s["sym"] for s in signals])
+ledger = dict(asof=OUT["asof"], day=OUT["day"], made=OUT["made"], weather=dict(state=state, ms=weather["ms"], pm_ok=weather["pm_ok"]), live=dict(buys=[dict(sym=b["sym"], w=b["w"]) for b in BOOKS["live"]["buys"]], sells=[p["sym"] for p in BOOKS["live"]["due"]], held=[p["sym"] for p in BOOKS["live"]["held"]]),
+              fable=dict(buys=[dict(sym=b["sym"], w=b["w"]) for b in BOOKS["fable"]["buys"]], sells=[p["sym"] for p in BOOKS["fable"]["due"]], held=[p["sym"] for p in BOOKS["fable"]["held"]]), signals=[s["sym"] for s in signals])
 json.dump(clean(ledger), open(os.path.join(os.path.dirname(out), f"day_{OUT['asof']}.json"), "w"), allow_nan=False, separators=(",", ":"))
 print(f"fable export: close {OUT['asof']} for {OUT['day']} | weather {state}, momentum {msv:+.2f}, market model {'positive' if pmv > 0 else 'negative'} | signals {len(signals)} | live buys {len(BOOKS['live']['buys'])}, "
       f"ladder buys {len(BOOKS['fable']['buys'])} | {os.path.getsize(out) / 1024:.0f} KB -> {out}")

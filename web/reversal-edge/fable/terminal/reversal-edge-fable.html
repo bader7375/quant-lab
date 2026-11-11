@@ -76,10 +76,12 @@ button.row:hover .t{text-decoration:underline;text-underline-offset:3px}
 table.tb{width:100%;border-collapse:collapse;font-size:13px}
 table.tb th{font:600 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
 table.tb td{padding:8px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
-table.tb th:first-child,table.tb td:first-child{text-align:left;font-family:var(--sans);padding-left:0}
+table.tb th:first-child,table.tb td:first-child{text-align:left;font-family:var(--sans);padding-left:0;white-space:normal}
+table.tb td:last-child,table.tb th:last-child{padding-right:0}
 table.tb td small{color:var(--muted);font-size:11.5px}
 .scroll{overflow-x:auto}
 svg text{font-family:var(--mono);fill:var(--muted);font-size:11px}
+svg.ch{width:100%;height:auto;display:block}
 
 /* today */
 .hero{display:grid;gap:14px}
@@ -87,6 +89,14 @@ svg text{font-family:var(--mono);fill:var(--muted);font-size:11px}
 .hero .word.storm,.hero .word.deep{color:var(--lamp)}
 .heroGrid{display:grid;gap:18px}
 .gauge{width:100%;max-width:420px;height:auto;display:block}
+.dial{display:grid;justify-items:center;gap:0}
+.dial .read{margin-top:-6px;text-align:center}
+.dial .read b{display:block;font:500 34px/1.05 var(--mono);color:var(--ink)}
+.dial .read span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.cols{display:grid;gap:22px}
+.cols>*{min-width:0}
+.cellbar{display:block;height:4px;border-radius:2px;background:var(--sunk);overflow:hidden;margin-top:4px}
+.cellbar i{display:block;height:100%}
 .verdict{display:grid;gap:8px;padding:16px;border-radius:14px;background:var(--ink);color:var(--bg)}
 .verdict .eyebrow{color:var(--cloud)}
 .verdict .big{font:400 26px/1.15 var(--display);color:var(--bg)}
@@ -155,7 +165,7 @@ ul.plain{margin:0;padding-left:18px;display:grid;gap:6px;max-width:68ch}
   main{padding-block:22px 48px}
   .heroGrid{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:end}
   .facts{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:start}
+  .cols{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
   .sheet{align-items:center}.sheet .card{border-radius:18px;max-width:700px;margin:auto;border:1px solid var(--line)}
 }
 @media (prefers-reduced-motion:no-preference){ .needle{transition:transform .9s cubic-bezier(.2,.8,.2,1)} }
@@ -200,24 +210,24 @@ var WORD={"deep storm":"Deep storm","storm":"Storm","clearing":"Clearing","cloud
 var SAY={"deep storm":"A deep market sell-off. The buy window is open and ladder steps are double size.","storm":"A market sell-off. The buy window is open.","clearing":"The sell-off has eased. The buy window is closed for now.","clouds":"The market is weak but not in a sell-off. No buys.","calm":"No sell-off. No buys; idle money stays in the money-market fund."};
 
 /* ---------- charts ---------- */
+function cw(half){ var w=Math.max(288,Math.min(1008,main.clientWidth-32)); return Math.round(half&&window.innerWidth>=820?(w-22)/2:w); }
 function gauge(ms){
-  var W=420,H=236,cx=210,cy=206,r=168, lo=3, hi=-6, T=function(v){return Math.max(0,Math.min(1,(lo-v)/(lo-hi)))};
-  var P=function(t,rr){return [cx-rr*Math.cos(t*Math.PI), cy-rr*Math.sin(t*Math.PI)]};
+  var W=440,H=226,cx=220,cy=206,r=158, lo=3, hi=-6, T=function(v){return Math.max(0,Math.min(1,(lo-v)/(lo-hi)))};
+  var P=function(t,rr){return [cx-rr*Math.cos(t*Math.PI), cy-rr*Math.sin(t*Math.PI)]}, mns=function(x){return String(x).replace("-","−")};
   var arc=function(a,b,col){var p=P(T(a),r),q=P(T(b),r);return '<path d="M'+p[0].toFixed(1)+' '+p[1].toFixed(1)+' A'+r+' '+r+' 0 0 1 '+q[0].toFixed(1)+' '+q[1].toFixed(1)+'" stroke="'+col+'" stroke-width="16" fill="none"/>'};
   var g=D.weather.gate, dp=D.weather.deep, s='<svg class="gauge" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Market momentum '+ms.toFixed(2)+'">';
   s+=arc(lo,g/2,"var(--calm)")+arc(g/2,g,"var(--cloud)")+arc(g,dp,"var(--storm)")+arc(dp,hi,"var(--deep)");
-  [[lo,"+3"],[0,"0"],[g,String(g)],[dp,String(dp)],[hi,"−6"]].forEach(function(m){var a=P(T(m[0]),r-14),b=P(T(m[0]),r-24),c=P(T(m[0]),r-38);
-    s+='<path d="M'+a[0].toFixed(1)+' '+a[1].toFixed(1)+' L'+b[0].toFixed(1)+' '+b[1].toFixed(1)+'" stroke="var(--muted)" stroke-width="1.5" fill="none"/><text x="'+c[0].toFixed(1)+'" y="'+(c[1]+4).toFixed(1)+'" text-anchor="middle">'+m[1].replace("-","−")+'</text>'});
-  [["calm",1.2],["storm",-1.85],["deep",-4.3]].forEach(function(m){var c=P(T(m[1]),r+16);s+='<text x="'+c[0].toFixed(1)+'" y="'+c[1].toFixed(1)+'" text-anchor="middle" style="font-family:var(--sans);font-size:10px;letter-spacing:.12em;text-transform:uppercase">'+m[0]+'</text>'});
+  [[lo,"+3"],[0,"0"],[g,mns(g)],[dp,mns(dp)],[hi,mns(hi)]].forEach(function(m){var a=P(T(m[0]),r-13),b=P(T(m[0]),r-22),c=P(T(m[0]),r-38);
+    s+='<path d="M'+a[0].toFixed(1)+' '+a[1].toFixed(1)+' L'+b[0].toFixed(1)+' '+b[1].toFixed(1)+'" stroke="var(--muted)" stroke-width="1.5" fill="none"/><text x="'+c[0].toFixed(1)+'" y="'+(c[1]+4).toFixed(1)+'" text-anchor="middle">'+m[1]+'</text>'});
+  [["calm",1.3],["storm",-1.85],["deep",-4.4]].forEach(function(m){var c=P(T(m[1]),r+24);s+='<text x="'+c[0].toFixed(1)+'" y="'+(c[1]+4).toFixed(1)+'" text-anchor="middle" style="font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase">'+m[0]+'</text>'});
   var ang=T(ms)*180-90;
-  s+='<g class="needle" style="transform-origin:'+cx+'px '+cy+'px;transform:rotate('+ang.toFixed(1)+'deg)"><path d="M'+(cx-5)+' '+cy+' L'+cx+' '+(cy-r+26)+' L'+(cx+5)+' '+cy+' Z" fill="var(--ink)"/></g><circle cx="'+cx+'" cy="'+cy+'" r="9" fill="var(--ink)"/><circle cx="'+cx+'" cy="'+cy+'" r="3.5" fill="var(--bg)"/>';
-  s+='<text x="'+cx+'" y="'+(cy-52)+'" text-anchor="middle" style="font-size:34px;font-weight:500;fill:var(--ink)">'+ms.toFixed(2).replace("-","−")+'</text><text x="'+cx+'" y="'+(cy-32)+'" text-anchor="middle" style="font-family:var(--sans);font-size:11px;letter-spacing:.1em;text-transform:uppercase">market momentum</text></svg>';
-  return s;
+  s+='<g class="needle" style="transform-origin:'+cx+'px '+cy+'px;transform:rotate('+ang.toFixed(1)+'deg)"><path d="M'+(cx-5)+' '+cy+' L'+cx+' '+(cy-r+30)+' L'+(cx+5)+' '+cy+' Z" fill="var(--ink)"/></g><circle cx="'+cx+'" cy="'+cy+'" r="9" fill="var(--ink)"/><circle cx="'+cx+'" cy="'+cy+'" r="3.5" fill="var(--bg)"/></svg>';
+  return '<div class="dial">'+s+'<div class="read"><b>'+mns(ms.toFixed(2))+'</b><span>market momentum</span></div></div>';
 }
 function strip(){
-  var h=D.weather.hist, v=h.ms, n=v.length, W=720,H=190,L=34,R=8,T=10,B=22, mn=Math.min(-6,Math.min.apply(null,v.filter(function(x){return x!=null}))), mx=3;
+  var h=D.weather.hist, v=h.ms, n=v.length, W=cw(false),H=W<500?170:210,L=44,R=8,T=10,B=22, mn=Math.min(-6,Math.min.apply(null,v.filter(function(x){return x!=null}))), mx=3;
   var X=function(i){return L+(W-L-R)*i/(n-1)}, Y=function(y){return T+(H-T-B)*(mx-Math.max(mn,Math.min(mx,y)))/(mx-mn)};
-  var g=D.weather.gate, dp=D.weather.deep, s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="Market momentum over the last 250 sessions">';
+  var g=D.weather.gate, dp=D.weather.deep, s='<svg class="ch" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Market momentum over the last 250 sessions">';
   s+='<rect x="'+L+'" y="'+Y(g)+'" width="'+(W-L-R)+'" height="'+(Y(dp)-Y(g))+'" fill="var(--storm)" opacity=".13"/><rect x="'+L+'" y="'+Y(dp)+'" width="'+(W-L-R)+'" height="'+(Y(mn)-Y(dp))+'" fill="var(--deep)" opacity=".16"/>';
   [3,0,g,dp,-6].forEach(function(y){ if(y<mn) return; s+='<path d="M'+L+' '+Y(y)+' H'+(W-R)+'" stroke="var(--line)" stroke-width="1" fill="none"/><text x="'+(L-6)+'" y="'+(Y(y)+4)+'" text-anchor="end">'+String(y).replace("-","−")+'</text>'});
   var d="",pen=false; for(var i=0;i<n;i++){ if(v[i]==null){pen=false;continue} d+=(pen?"L":"M")+X(i).toFixed(1)+" "+Y(v[i]).toFixed(1)+" "; pen=true }
@@ -226,10 +236,10 @@ function strip(){
   return s+'</svg>';
 }
 function fanChart(){
-  var W=720,H=330,L=38,R=10,T=12,B=26,N=80, cur=D.past[D.past.length-1], isOpen=cur&&cur.open, past=D.past.filter(function(p){return !p.open});
+  var W=cw(false),H=W<500?270:350,L=38,R=10,T=12,B=26,N=80, cur=D.past[D.past.length-1], isOpen=cur&&cur.open, past=D.past.filter(function(p){return !p.open});
   var all=[]; D.past.forEach(function(p){p.path.slice(10).forEach(function(x){if(x!=null)all.push(x)})}); var mn=Math.floor(Math.min.apply(null,all)/5)*5, mx=Math.ceil(Math.max.apply(null,all)/5)*5;
   var X=function(k){return L+(W-L-R)*k/N}, Y=function(y){return T+(H-T-B)*(mx-y)/(mx-mn)}, line=function(a){var d="",pen=false;a.forEach(function(y,k){if(y==null){pen=false;return}d+=(pen?"L":"M")+X(k).toFixed(1)+" "+Y(y).toFixed(1)+" ";pen=true});return d};
-  var s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="This sell-off against past sell-offs">';
+  var s='<svg class="ch" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="This sell-off against past sell-offs">';
   for(var y=mn;y<=mx;y+=10){ s+='<path d="M'+L+' '+Y(y)+' H'+(W-R)+'" stroke="var(--line)" stroke-width="'+(y==100?1.6:1)+'" fill="none"/><text x="'+(L-6)+'" y="'+(Y(y)+4)+'" text-anchor="end">'+y+'</text>' }
   [0,20,40,60,80].forEach(function(k){s+='<text x="'+X(k)+'" y="'+(H-7)+'" text-anchor="'+(k==0?"start":k==80?"end":"middle")+'">'+(k==0?"day 0":k)+'</text>'});
   var f=D.episode.fan, band=function(a,b){var d="";a.forEach(function(y,k){d+=(k?"L":"M")+X(k).toFixed(1)+" "+Y(y).toFixed(1)+" "});for(var k=b.length-1;k>=0;k--)d+="L"+X(k).toFixed(1)+" "+Y(b[k]).toFixed(1)+" ";return d+"Z"};
@@ -241,10 +251,10 @@ function fanChart(){
   return s+'</svg>';
 }
 function expectFan(dots){
-  var f=D.expect.fan, N=f.p50.length-1, W=720,H=300,L=40,R=10,T=12,B=26, mn=-.25, mx=.55;
+  var f=D.expect.fan, N=f.p50.length-1, W=cw(true),H=W<500?250:300,L=44,R=10,T=12,B=26, mn=-.25, mx=.55;
   var X=function(k){return L+(W-L-R)*k/N}, Y=function(y){return T+(H-T-B)*(mx-Math.max(mn,Math.min(mx,y)))/(mx-mn)};
   var band=function(a,b){var d="";a.forEach(function(y,k){d+=(k?"L":"M")+X(k).toFixed(1)+" "+Y(y).toFixed(1)+" "});for(var k=b.length-1;k>=0;k--)d+="L"+X(k).toFixed(1)+" "+Y(b[k]).toFixed(1)+" ";return d+"Z"};
-  var s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="Signals against the test record">';
+  var s='<svg class="ch" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Signals against the test record">';
   [-.2,0,.2,.4].forEach(function(y){s+='<path d="M'+L+' '+Y(y)+' H'+(W-R)+'" stroke="var(--line)" stroke-width="'+(y==0?1.6:1)+'" fill="none"/><text x="'+(L-6)+'" y="'+(Y(y)+4)+'" text-anchor="end">'+pct(y,0)+'</text>'});
   [0,10,20,30,40].forEach(function(k){s+='<text x="'+X(k)+'" y="'+(H-7)+'" text-anchor="'+(k==0?"start":k==40?"end":"middle")+'">'+(k==0?"bought":k)+'</text>'});
   s+='<path d="'+band(f.p95,f.p5)+'" fill="var(--sea)" opacity=".10"/><path d="'+band(f.p75,f.p25)+'" fill="var(--sea)" opacity=".18"/>';
@@ -253,16 +263,16 @@ function expectFan(dots){
   return s+'</svg>';
 }
 function spark(a,line,col,label){
-  var v=a.filter(function(x){return x!=null}); if(v.length<5) return ""; var W=600,H=120,L=4,R=64,T=8,B=8, mn=Math.min.apply(null,v), mx=Math.max.apply(null,v); if(line!=null){mn=Math.min(mn,line);mx=Math.max(mx,line)} var pad=(mx-mn)*.08||1; mn-=pad; mx+=pad;
+  var v=a.filter(function(x){return x!=null}); if(v.length<5) return ""; var W=Math.max(288,Math.min(640,window.innerWidth-32)),H=120,L=4,R=62,T=8,B=8, mn=Math.min.apply(null,v), mx=Math.max.apply(null,v); if(line!=null){mn=Math.min(mn,line);mx=Math.max(mx,line)} var pad=(mx-mn)*.08||1; mn-=pad; mx+=pad;
   var X=function(i){return L+(W-L-R)*i/(a.length-1)}, Y=function(y){return T+(H-T-B)*(mx-y)/(mx-mn)}, d="",pen=false; a.forEach(function(y,i){if(y==null){pen=false;return}d+=(pen?"L":"M")+X(i).toFixed(1)+" "+Y(y).toFixed(1)+" ";pen=true});
-  var s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" role="img" aria-label="'+esc(label)+'">';
-  if(line!=null) s+='<path d="M'+L+' '+Y(line)+' H'+(W-R)+'" stroke="var(--lamp)" stroke-width="1.4" stroke-dasharray="5 4" fill="none"/><text x="'+(W-R+6)+'" y="'+(Y(line)+4)+'" style="fill:var(--lamp)">'+(Math.abs(line)<10&&label.indexOf("Z")>=0?String(line).replace("-","−"):px(line))+'</text>';
+  var s='<svg class="ch" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(label)+'">';
+  if(line!=null) s+='<path d="M'+L+' '+Y(line)+' H'+(W-R)+'" stroke="var(--lamp)" stroke-width="1.4" stroke-dasharray="5 4" fill="none"/><text x="'+(W-R+6)+'" y="'+(Y(line)+4)+'" style="fill:var(--lamp)">'+(label.indexOf("Z")>=0?String(line).replace("-","\u2212"):px(line))+'</text>';
   var lastv=v[v.length-1]; s+='<path d="'+d+'" stroke="'+col+'" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="'+X(a.length-1)+'" cy="'+Y(lastv)+'" r="4" fill="'+col+'"/>';
   return s+'</svg>';
 }
 function rbar(q,max,col,act){
-  var W=600,H=34,X=function(x){return 4+(W-8)*Math.max(0,Math.min(1,x/max))};
-  var s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;display:block" aria-hidden="true"><rect x="4" y="13" width="'+(W-8)+'" height="8" rx="4" fill="var(--sunk)"/>';
+  var W=cw(true),H=34,X=function(x){return 4+(W-8)*Math.max(0,Math.min(1,x/max))};
+  var s='<svg class="ch" viewBox="0 0 '+W+' '+H+'" aria-hidden="true"><rect x="4" y="13" width="'+(W-8)+'" height="8" rx="4" fill="var(--sunk)"/>';
   s+='<rect x="'+X(q[0])+'" y="11" width="'+Math.max(2,X(q[2])-X(q[0]))+'" height="12" rx="6" fill="'+col+'" opacity=".45"/><rect x="'+(X(q[1])-1.5)+'" y="6" width="3" height="22" rx="1.5" fill="'+col+'"/>';
   if(act!=null) s+='<path d="M'+X(act)+' 2 l5 7 h-10 z" fill="var(--ink)"/>';
   return s+'</svg>';
@@ -296,15 +306,15 @@ function vToday(){
 function whyNot(c){ var a=[]; if(!c.ml_ok)a.push("ML rank below 50%"); if(c.loss)a.push("loss-making"); if(!D.weather.pm_ok)a.push("market model negative"); if(D.weather.ms>D.weather.gate)a.push("no sell-off"); if(c.paper_open)a.push("signalled in the last 40 sessions"); return a.join(", ")||"n/a"; }
 function vSelloff(){
   var E=D.episode,R=D.replay, past=D.past.slice().reverse(), mx=0; past.forEach(function(p){mx=Math.max(mx,Math.abs(p.live||0),Math.abs(p.fable||0))});
-  var bar=function(x,col){var w=Math.round(46*Math.abs(x||0)/mx);return '<span style="display:inline-block;width:46px;height:8px;background:var(--sunk);border-radius:4px;vertical-align:middle;margin-right:6px;overflow:hidden"><i style="display:block;height:100%;width:'+w+'px;background:'+(x<0?"var(--bad)":col)+'"></i></span>'};
+  var cell=function(x,col,open){ if(open) return '<small>open</small>'; return '<span class="'+cls(x)+'">'+pct(x)+'</span><span class="cellbar"><i style="width:'+Math.round(100*Math.abs(x||0)/mx)+'%;background:'+(x<0?"var(--bad)":col)+'"></i></span>' };
   var h='<section class="view"><div class="block"><div class="eyebrow">Sell-off timeline</div><h1 class="h2">'+(E.open?"This sell-off against the "+E.of+" before it":"The last "+E.of+" sell-offs")+'</h1>'
     +'<p class="lead">'+(E.open?'It began on '+dt(E.start)+'. The market is '+pct(E.since)+' from that day and was '+pct(E.low)+' at its low. It is deeper than '+E.deeper_than+' of the '+E.of+' sell-offs since 2013.':'No sell-off is open. The lines show how the market moved after each past one began.')+'</p></div>'
     +'<div class="block">'+fanChart()+'<div class="chips"><span class="chip lamp"><i></i>this sell-off</span><span class="chip"><i style="background:var(--cloud)"></i>each past sell-off</span><span class="chip"><i style="background:var(--sea)"></i>middle path and usual range</span></div><p class="note">Equal-weight index of the liquid Saudi stocks, 100 on the first day market momentum fell to −1.18. The inner band holds half of the past sell-offs, the outer band eight in ten.</p></div>';
   if(E.open&&(R.live.held.length||R.fable.held.length)){ var f=function(r,n){return '<div class="panel"><span>'+n+'</span><b class="'+cls(r.pnl)+'">'+pct(r.pnl,2)+'</b><span>of the account so far · '+r.held.length+' positions, '+pct(r.invested,0,false)+' in stocks</span></div>'};
     h+='<div class="block"><div class="eyebrow">Had both rules run through this sell-off</div><div class="duo">'+f(R.live,"Live rule, 5 at once")+f(R.fable,"Ladder, one a day")+'</div><p class="note">A replay from the first day of this sell-off, not your account: your plan started '+(D.live.start?dt(D.live.start):"later")+'.</p></div>'; }
-  h+='<div class="block"><div class="eyebrow">Every sell-off since 2013 · result for the account, above interest</div><div class="scroll"><table class="tb"><thead><tr><th>Began</th><th>Depth</th><th>Market low</th><th>Live rule</th><th>Ladder</th></tr></thead><tbody>'
-    +past.map(function(p){return '<tr><td>'+dshort(p.start)+(p.open?' <span class="tag deep">open</span>':'')+'</td><td>'+String(p.depth).replace("-","−")+'</td><td>'+pct(p.low,0)+'</td><td>'+(p.open?'<small>open</small>':bar(p.live,"var(--ink2)")+'<span class="'+cls(p.live)+'">'+pct(p.live)+'</span>')+'</td><td>'+(p.open?'<small>open</small>':bar(p.fable,"var(--sea)")+'<span class="'+cls(p.fable)+'">'+pct(p.fable)+'</span>')+'</td></tr>'}).join("")+'</tbody></table></div>'
-    +'<p class="note">Depth is the lowest market momentum reached. The ladder made more than the live rule in the long sell-offs (2014, 2015, 2016, 2022) and less in the short ones.</p></div>';
+  h+='<div class="block"><div class="eyebrow">Every sell-off since 2013 · result for the account, above interest</div><table class="tb"><thead><tr><th>Began</th><th>Live rule</th><th>Ladder</th></tr></thead><tbody>'
+    +past.map(function(p){return '<tr><td>'+dshort(p.start)+(p.open?' <span class="tag deep">open</span>':'')+'<br><small style="color:var(--muted);font-size:11.5px">depth '+String(p.depth).replace("-","\u2212")+' · low '+pct(p.low,0)+'</small></td><td>'+cell(p.live,"var(--ink2)",p.open)+'</td><td>'+cell(p.fable,"var(--sea)",p.open)+'</td></tr>'}).join("")+'</tbody></table>'
+    +'<p class="note">Depth is the lowest market momentum reached; low is the market\'s lowest point after the first day. The ladder made more than the live rule in the long sell-offs (2014, 2015, 2016, 2022) and less in the short ones.</p></div>';
   return h+'</section>';
 }
 function rungs(B,rule){
@@ -326,8 +336,9 @@ function vBooks(){
   h+='<div class="block"><div class="eyebrow">Scorecard · picks against the test record</div>'+expectFan(dots)+'<div class="chips"><span class="chip lamp"><i></i>'+(bookRule=="live"?"your picks":"ladder picks")+' ('+picks.length+')</span><span class="chip"><i style="background:var(--panel);border:1.5px solid var(--ink2)"></i>this sell-off\'s signals on paper ('+S.paper.length+')</span><span class="chip"><i style="background:var(--sea)"></i>record: middle and usual range</span></div>'
     +'<p class="note">Each dot is one position: sessions since it was bought, and its result so far. The band is where '+D.expect.n+' past signals stood at the same session (inner: half of them; outer: nine in ten).'
     +(S.paper.length?' This sell-off\'s '+S.paper.length+' signals average '+pct(S.paper_avg)+'; the middle one beats '+pct(S.paper_pct,0,false)+' of the record at the same session.':'')+(picks.length?'':' No pick since the plan started.')+'</p></div></div>';
-  if(LOG.length){ h+='<div class="block"><div class="eyebrow">Decision log · what the list said each day</div><div class="scroll"><table class="tb"><thead><tr><th>Close</th><th>Weather</th><th>Live buys</th><th>Live sells</th><th>Ladder buys</th></tr></thead><tbody>'
-    +LOG.map(function(d){var f=function(a){return a&&a.length?a.map(function(x){return esc(Array.isArray(x)?x[0]:x)}).join(" "):"<small>none</small>"};return '<tr><td>'+dshort(d.asof)+'</td><td style="font-family:var(--sans)">'+esc(d.weather?d.weather.state:"")+'</td><td>'+f(d.live&&d.live.buys)+'</td><td>'+f(d.live&&d.live.sells)+'</td><td>'+f(d.fable&&d.fable.buys)+'</td></tr>'}).join("")+'</tbody></table></div><p class="note">Saved on the day and never rewritten, so a later model refit cannot change what you were told.</p></div>'; }
+  if(LOG.length){ var f=function(x){ if(!x) return "<small>none</small>"; var a=[]; if(x.buys&&x.buys.length) a.push("buy "+x.buys.map(function(y){return esc(y&&y.sym?y.sym:y)}).join(" ")); if(x.sells&&x.sells.length) a.push("sell "+x.sells.map(esc).join(" ")); return a.length?a.join("<br>"):"<small>nothing</small>" };
+    h+='<div class="block"><div class="eyebrow">Decision log · what the list said each day</div><table class="tb"><thead><tr><th>Close</th><th>Weather</th><th>Live</th><th>Ladder</th></tr></thead><tbody>'
+    +LOG.map(function(d){return '<tr><td>'+dshort(d.asof)+'</td><td style="font-family:var(--sans)">'+esc(d.weather?d.weather.state:"")+'</td><td>'+f(d.live)+'</td><td>'+f(d.fable)+'</td></tr>'}).join("")+'</tbody></table><p class="note">Saved on the day and never rewritten, so a later model refit cannot change what you were told.</p></div>'; }
   return h+'</section>';
 }
 function vSizing(){
@@ -348,9 +359,10 @@ function vSizing(){
 }
 function vEvidence(){
   var ev=D.evidence||{}, S=ev.saudi, W=ev.world, h='<section class="view"><div class="block"><div class="eyebrow">Evidence</div><h1 class="h2">What is proven, and what is not</h1><p class="lead">Every number carries a range. Ranges come from redrawing the 18 sell-offs since 2013, 2,000 times.</p></div>';
-  if(S){ var row=function(k,lab){var e=S[k].eras,r=S[k].range["2013-26"];return '<tr><td>'+lab+'</td>'+["2013-19","2020-26","2023-26","2013-26"].map(function(p){return '<td>'+pct(e[p][0])+' <small>/ '+pct(e[p][1],1,false)+'</small></td>'}).join("")+'<td>'+pct(r.g[0])+' to '+pct(r.g[1])+'</td><td>'+pct(r.dd[0],1,false)+' to '+pct(r.dd[1],1,false)+'</td></tr>'};
-    h+='<div class="block"><div class="eyebrow">Whole account · growth a year / worst drawdown · idle money at T-bill interest</div><div class="scroll"><table class="tb"><thead><tr><th>Rule</th><th>2013-19</th><th>2020-26</th><th>2023-26</th><th>2013-26</th><th>Growth range</th><th>Drawdown range</th></tr></thead><tbody>'+row("LIVE","Live, 5 × 5%")+row("L12D","Ladder, 2.1% / 4.2%")+'</tbody></table></div>'
-      +'<p class="note">Trades: live '+S.LIVE.trades+' ('+pct(S.LIVE.win,0,false)+' winners, '+pct(S.LIVE.avg)+' each), ladder '+S.L12D.trades+' ('+pct(S.L12D.win,0,false)+' winners, '+pct(S.L12D.avg)+' each). Worst single trade '+pct(S.LIVE.worst)+' for both.</p></div>'; }
+  if(S){ var c=function(k,p){var e=S[k].eras[p];return '<td>'+pct(e[0])+' <small>/ '+pct(e[1],1,false)+'</small></td>'}, rg=function(k,w){var r=S[k].range["2013-26"][w];return '<td>'+(w=="g"?pct(r[0])+' to '+pct(r[1]):pct(r[0],1,false)+' to '+pct(r[1],1,false))+'</td>'};
+    h+='<div class="block"><div class="eyebrow">Whole account · growth a year / worst drawdown</div><div class="scroll"><table class="tb"><thead><tr><th>Period</th><th>Live</th><th>Ladder</th></tr></thead><tbody>'
+      +["2013-19","2020-26","2023-26","2013-26"].map(function(p){return '<tr><td>'+p+'</td>'+c("LIVE",p)+c("L12D",p)+'</tr>'}).join("")+'<tr><td>Growth range</td>'+rg("LIVE","g")+rg("L12D","g")+'</tr><tr><td>Drawdown range</td>'+rg("LIVE","dd")+rg("L12D","dd")+'</tr></tbody></table></div>'
+      +'<p class="note">Trades: live '+S.LIVE.trades+' ('+pct(S.LIVE.win,0,false)+' winners, '+pct(S.LIVE.avg)+' each), ladder '+S.L12D.trades+' ('+pct(S.L12D.win,0,false)+' winners, '+pct(S.L12D.avg)+' each). Worst single trade '+pct(S.LIVE.worst)+' for both. Live is 5 positions of 5%; the ladder is up to 12 of 2.1% (4.2% in a deep sell-off). Idle money earns T-bill interest. Ranges are for 2013-26.</p></div>'; }
   h+='<div class="cols"><div class="block"><div class="eyebrow">For the ladder</div><ul class="plain">'
     +(W?'<li>Other markets chose it. In '+W.market_eras+' market-decades of 23 markets it beat the live shape in <b>'+pct(W.ladder_beats,0,false)+'</b>, in each of three eras, and still in '+pct(W.costs,0,false)+' with double costs and '+pct(W.late,0,false)+' a day late.</li>':'')
     +'<li>It fixes the live rule\'s three losing sell-offs (2014, 2015, 2022) and made money in each.</li><li>Its worst sell-off cost 0.2% of the account; the live rule\'s worst cost 1.7%.</li>'+(ev.stress?'<li>Stress tests on Saudi: '+ev.stress.passed+' of '+ev.stress.of+' passed.</li>':'')+'</ul></div>'
@@ -400,6 +412,7 @@ main.addEventListener("change",function(e){ if(e.target.id=="acct"){ acct=Math.m
 $("#sheet").addEventListener("click",function(e){ if(e.target.id=="sheet-x"||e.target.id=="sheet") closeSheet(); });
 document.addEventListener("keydown",function(e){ if(e.key=="Escape") closeSheet(); });
 route();
+var rz=null, lastW=window.innerWidth; window.addEventListener("resize",function(){ if(window.innerWidth==lastW) return; lastW=window.innerWidth; clearTimeout(rz); rz=setTimeout(render,180); });
 function gone(msg){ var w=$("#wait"); if(w&&!D) w.textContent=msg; }
 (window.claude&&window.claude.use?window.claude.use("db"):Promise.resolve(null)).then(function(db){
   if(!db){ gone("This view cannot reach the terminal's data. Open the page inside Claude, signed in."); return; }

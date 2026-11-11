@@ -2,6 +2,17 @@
 LIVE SINCE 2026-11-10 (the user: "Let's go back to previous strategy stretch with ML"): plan Z = the Z score rule (stretch Z touch, ML rank 50%+,
 market model positive, market momentum -1.18 or lower, profitable), 5 positions of 5%, most volatile first, hold 40 sessions, no stop; reported
 through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2026-11-09 only and made no trade.
+12. OFFERED 2026-11-11 (the Fable edition, rounds 71-74; r73/RESULTS.md): the Fable ladder - the same Z score signals, at most ONE new
+   position a day (the most volatile signal), up to 12 positions of 2.1% of the account, 4.2% when market momentum is -2.53 or lower;
+   hold 40 sessions, no stop; the account can hold up to 50%. Chosen on 23 foreign markets plus the US (it beats the live shape in 75% of 64
+   market-eras, in every era, also with 0.8% costs and a day late); pacing 3 sessions apart (item 11) FAILED there (55%: it only invests
+   less). On Saudi at equal risk: 2013-19 +5.4% a year / drawdown 6.1% against live +3.1% / 6.1%; 2020-26 +4.5% / 4.5% against +4.7% / 4.9%;
+   2023-26 +4.7% / 1.0% against +6.4% / 2.7%. By the strict rule it is NOT confirmed (less growth in 2020-26); the yearly walk-forward
+   does not favour it; stress tests 10 of 10. It made money in the three sell-offs where the live rule lost (2014, 2015, 2022) and less
+   in the short ones (5 of 15 sell-offs better). Runs on paper in the Fable terminal (fable/README.md). Waiting for the user.
+   Also from these rounds: the live numbers move by about 0.2 point a year when the models are refit from scratch (round 71); every
+   gate earns its place except the loss filter, which changes 2 trades in 14 years (kept as a guard); buying at the 10:00 open is right
+   (round 74: the close and limit orders do not beat it).
 11. OFFERED 2026-11-10 (round 70, r70/RESULTS.md): pacing for the Z score plan - at least 3 sessions between two new positions (one buy a
    day, the most volatile signal). Same growth over 2013-26 at 5% (+4.2% vs +4.1% a year) with a 3.8% worst drawdown instead of 6.1%; less
    growth than live in 2020-26 at the same size (+4.2% vs +4.9%), so it did not pass the advance rule; the yearly re-choice supports it.

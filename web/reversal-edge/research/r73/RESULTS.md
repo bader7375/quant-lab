@@ -19,6 +19,11 @@ small, fast ones. It is offered as a choice. It is not switched on.
 At the same budget (no resizing): C3 +4.3% / 3.8% and +4.1% / 3.5%; L12 +3.5% / 3.5% and +3.8% / 2.6%; D2 +3.7% / 9.7% and +6.0% / 5.5%;
 L12D +5.5% / 6.1% and +4.5% / 4.5% (its equal-risk multiplier is 0.99, so both rows are the same rule).
 
+What Saudi cannot tell apart: the flat ladder L12 at 3.7% and the ladder with double steps L12D give almost the same account
+(2013-26 +5.1% and +4.9% a year at the same 6.1% drawdown). On Saudi's own paper trades a deep signal was not better than a shallow one
+(deep: 279 trades, +14.2%, 76% winners; shallow: 164, +16.2%, 83%). The double step is the other markets' choice (it beat the flat
+ladder in 70% of market-eras there); on Saudi it neither helps nor hurts.
+
 ## 2. Where the ladder wins and where it loses (account result inside each sell-off, above interest)
 | sell-off | depth | LIVE | ladder | LIVE trades | ladder trades (double) |
 |---|---|---|---|---|---|
