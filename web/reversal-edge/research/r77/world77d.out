@@ -1,0 +1,11 @@
+market-eras counted: 64 | reference L12D: median ratio 0.149, growth +0.73% dd 5.4%, trades 1884 | live shape A0: median ratio 0.082, trades 1767
+market-eras counted: 64
+== stage D: exits by the weather at the entry
+D0 pick: storm and deep sell at -0 | vs L12D 42/64 =  66% p=0.008 (15/20, 14/22, 13/22) | vs D0  0/64 =  50% | median ratio 0.215 | growth +0.86% dd 5.2% | trades 3421 (+4.3%, 74% win, held 17)
+D1 deep sells at 0                 | vs L12D 40/64 =  62% p=0.030 (11/20, 15/22, 14/22) | vs D0 40/64 =  62% | median ratio 0.212 | growth +0.95% dd 5.6% | trades 3363 (+4.7%, 74% win, held 18)
+D2 + clouds half size, sell at -1, | vs L12D 41/64 =  64% p=0.016 (17/20, 14/22, 10/22) | vs D0 33/64 =  52% | median ratio 0.191 | growth +0.87% dd 5.4% | trades 5358 (+3.1%, 72% win, held 14)
+D3 = D1 + D2                       | vs L12D 39/64 =  61% p=0.052 (11/20, 15/22, 13/22) | vs D0 37/64 =  58% | median ratio 0.204 | growth +0.97% dd 5.7% | trades 5303 (+3.3%, 72% win, held 15)
+D4 = D3 + calm half size, sell at  | vs L12D 41/64 =  64% p=0.016 (13/20, 16/22, 12/22) | vs D0 38/64 =  59% | median ratio 0.208 | growth +0.99% dd 5.8% | trades 10061 (+1.9%, 66% win, held 11)
+D5 = D3 + weekly crosses           | vs L12D 40/64 =  62% p=0.030 (11/20, 16/22, 13/22) | vs D0 37/64 =  58% | median ratio 0.207 | growth +1.02% dd 6.0% | trades 5712 (+3.2%, 71% win, held 15)
+
+stage D pick: D0 pick: storm and deep sell at -0.5

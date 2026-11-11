@@ -1,0 +1,20 @@
+== Saudi, live gates, design: growth a year / worst drawdown (return per drawdown); idle money at T-bill interest
+LIVE 5 x 5%                                  2013-19  +3.1% /  6.1% (0.52) | trades 33
+LADDER 12 x 2.1/4.2%                         2013-19  +5.4% /  6.1% (0.87) | trades 49
+SWING pick: line -2.0, sell at -0.5          2013-19  +2.1% /  6.1% (0.34) | x0.63 | 2013-19: 71 trades (10 a year, in 6 of 7 years), 79% win, +6.2%, held 14, worst -19.1%
+neighbour: line -2.0, sell at -1             2013-19  +1.9% /  6.1% (0.31) | x0.75 | 2013-19: 72 trades (10 a year, in 6 of 7 years), 69% win, +4.1%, held 10, worst -21.6%
+neighbour: line -2.0, sell at 0              2013-19  +2.2% /  6.1% (0.37) | x0.63 | 2013-19: 65 trades (9 a year, in 6 of 7 years), 75% win, +7.5%, held 22, worst -19.3%
+neighbour: line -2.0, time only              2013-19  +3.4% /  6.1% (0.55) | x0.62 | 2013-19: 61 trades (9 a year, in 6 of 7 years), 75% win, +13.9%, held 40, worst -19.3%
+neighbour: line -2.5, sell at -1             2013-19  +2.6% /  5.4% (0.48) | x1.00 | 2013-19: 54 trades (8 a year, in 6 of 7 years), 78% win, +6.3%, held 12, worst -17.2%
+neighbour: line -2.5, sell at -0.5           2013-19  +3.1% /  5.4% (0.58) | x1.00 | 2013-19: 54 trades (8 a year, in 6 of 7 years), 80% win, +8.6%, held 16, worst -19.7%
+neighbour: line -2.5, sell at 0              2013-19  +3.9% /  5.4% (0.72) | x1.00 | 2013-19: 54 trades (8 a year, in 6 of 7 years), 83% win, +11.1%, held 23, worst -19.7%
+neighbour: line -2.5, time only              2013-19  +5.2% /  5.8% (0.90) | x1.00 | 2013-19: 51 trades (7 a year, in 6 of 7 years), 82% win, +16.9%, held 40, worst -19.7%
+neighbour: line -3.0, sell at -1             2013-19  +3.1% /  4.0% (0.77) | x1.00 | 2013-19: 47 trades (7 a year, in 6 of 7 years), 79% win, +8.7%, held 13, worst -27.7%
+neighbour: line -3.0, sell at -0.5           2013-19  +3.4% /  4.0% (0.84) | x1.00 | 2013-19: 47 trades (7 a year, in 6 of 7 years), 79% win, +10.6%, held 18, worst -23.4%
+neighbour: line -3.0, sell at 0              2013-19  +3.8% /  5.1% (0.74) | x1.00 | 2013-19: 47 trades (7 a year, in 6 of 7 years), 74% win, +12.1%, held 28, worst -23.4%
+neighbour: line -3.0, time only              2013-19  +5.3% /  6.1% (0.88) | x0.98 | 2013-19: 47 trades (7 a year, in 6 of 7 years), 72% win, +18.5%, held 40, worst -23.4%
+neighbour: pick with 20 sessions at most     2013-19  +2.1% /  6.1% (0.34) | x0.63 | 2013-19: 72 trades (10 a year, in 6 of 7 years), 75% win, +5.7%, held 13, worst -28.0%
+neighbour: pick + weekly crosses             2013-19  +2.2% /  6.1% (0.37) | x0.58 | 2013-19: 77 trades (11 a year, in 6 of 7 years), 81% win, +7.0%, held 14, worst -19.1%
+exploratory: all weather (D4)                2013-19  +2.2% /  6.1% (0.37) | x0.63 | 2013-19: 94 trades (13 a year, in 7 of 7 years), 69% win, +5.2%, held 15, worst -19.6%
+
+design gate: the pick at equal risk grows +2.1% a year in 2013-19 against LIVE +3.1% -> STOP
