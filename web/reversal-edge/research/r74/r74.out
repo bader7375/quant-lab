@@ -1,0 +1,23 @@
+Saudi paper trades: entry-price gain against the open (positive = cheaper), average and 5%-95% range by sell-off
+  2013-19 (270 trades): C +0.22% (-0.79..+1.02) | L0 +0.14% (-0.26..+0.35) filled 86% | L2 +0.33% (-0.33..+0.70) filled 70% | L4 +0.51% (-0.29..+1.04) filled 56%
+  2020-26 (173 trades): C -0.00% (-2.04..+0.63) | L0 +0.11% (-0.23..+0.36) filled 81% | L2 +0.24% (-0.45..+0.50) filled 53% | L4 +0.53% (-0.35..+0.76) filled 42%
+  2013-26 (443 trades): C +0.13% (-0.59..+0.69) | L0 +0.13% (-0.13..+0.30) filled 84% | L2 +0.29% (-0.13..+0.56) filled 63% | L4 +0.52% (+0.01..+0.87) filled 50%
+
+other markets (24 markets, 4563 paper trades):
+  C: -0.44% (range -0.64..-0.23); cheaper on average in 8 of 24 markets
+  L0: +0.01% (range -0.08..+0.11); cheaper on average in 15 of 24 markets; filled 75%
+  L2: -0.03% (range -0.16..+0.10); cheaper on average in 13 of 24 markets; filled 50%
+  L4: +0.02% (range -0.14..+0.18); cheaper on average in 14 of 24 markets; filled 34%
+
+verdict by the plan:
+  C: 2013-19 +0.22% (range from -0.79), 2020-26 -0.00%, abroad range from -0.64 -> the open stays
+  L0: 2013-19 +0.14% (range from -0.26), 2020-26 +0.11%, abroad range from -0.08 -> the open stays
+  L2: 2013-19 +0.33% (range from -0.33), 2020-26 +0.24%, abroad range from -0.16 -> the open stays
+  L4: 2013-19 +0.51% (range from -0.29), 2020-26 +0.53%, abroad range from -0.14 -> the open stays
+
+accounts with the entry changed (growth / worst drawdown), shown for every variant:
+  open  | LIVE: 2013-19 +3.1% / 6.1%, 2020-26 +4.7% / 4.9%, 2013-26 +3.9% / 6.1% | ladder: 2013-19 +5.5% / 6.1%, 2020-26 +4.5% / 4.5%, 2013-26 +5.0% / 6.1%
+  C     | LIVE: 2013-19 +2.8% / 7.5%, 2020-26 +4.6% / 4.8%, 2013-26 +3.7% / 7.5% | ladder: 2013-19 +5.5% / 6.5%, 2020-26 +4.5% / 4.6%, 2013-26 +5.0% / 6.5%
+  L0    | LIVE: 2013-19 +3.0% / 6.0%, 2020-26 +4.8% / 4.9%, 2013-26 +3.9% / 6.0% | ladder: 2013-19 +5.4% / 6.4%, 2020-26 +4.4% / 4.5%, 2013-26 +4.9% / 6.4%
+  L2    | LIVE: 2013-19 +3.1% / 5.8%, 2020-26 +4.8% / 4.9%, 2013-26 +3.9% / 5.8% | ladder: 2013-19 +5.4% / 6.5%, 2020-26 +4.4% / 4.5%, 2013-26 +4.9% / 6.5%
+  L4    | LIVE: 2013-19 +3.1% / 6.0%, 2020-26 +4.8% / 4.9%, 2013-26 +4.0% / 6.0% | ladder: 2013-19 +5.5% / 6.5%, 2020-26 +4.5% / 4.6%, 2013-26 +5.0% / 6.5%

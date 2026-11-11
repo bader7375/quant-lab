@@ -12,7 +12,7 @@ def panel(folder, min_rows=750, jump=np.log(1.6)):
         lr = np.log(d.adjclose).diff().abs(); big = lr[lr > jump]                 # a one-day move above 60%: a split or currency change Yahoo did not adjust
         if len(big): d = d.loc[big.index[-1]:].iloc[1:]; cut += 1                 # keep only the history after the last such jump
         if len(d) < min_rows: continue
-        k = d.adjclose / d.close; D[os.path.basename(f)[:-4]] = pd.DataFrame({"o": d.open * k, "c": d.adjclose, "v": d.volume})
+        k = d.adjclose / d.close; D[os.path.basename(f)[:-4]] = pd.DataFrame({"o": d.open * k, "l": d.low * k, "c": d.adjclose, "v": d.volume})
     if len(D) < 12: return None
     idx = sorted(set().union(*[x.index for x in D.values()])); C = pd.DataFrame({s: D[s].c for s in D}).reindex(idx); O = pd.DataFrame({s: D[s].o for s in D}).reindex(idx); V = pd.DataFrame({s: D[s].v for s in D}).reindex(idx)
     bad = (V <= 0) | V.isna() | C.isna()
@@ -23,7 +23,8 @@ def panel(folder, min_rows=750, jump=np.log(1.6)):
     elig = C.notna() & (C.notna().cumsum() >= 250) & traded
     elig = elig & (elig.sum(1) >= 10).values[:, None]                              # market momentum needs a market: at least 10 eligible stocks that day
     liq = (V.loc[keep] * C).rolling(60, min_periods=20).median()                   # 60-session median value traded (local currency), for the market basket
-    return dict(C=C, O=O, elig=elig, liq=liq, cut=cut, n=len(D))
+    Lw = pd.DataFrame({s: D[s].l for s in D}).reindex(C.index).mask(bad); Lw = Lw.where(Lw <= np.minimum(O, C), np.minimum(O, C))   # the day's low (round 74), never above the open or close
+    return dict(C=C, O=O, L=Lw, elig=elig, liq=liq, cut=cut, n=len(D))
 def book(mk, root):
     P = panel(os.path.join(root, mk))
     if P is None: return None
