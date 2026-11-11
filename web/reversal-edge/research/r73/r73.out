@@ -1,0 +1,74 @@
+== 1-2. same budget, then equal risk (size from 2013-19 only); growth / worst drawdown (return per drawdown)
+LIVE  same budget: 2013-19  +3.1% /  6.1% (0.52) | 2020-26  +4.7% /  4.9% (0.97) | 2023-26  +6.4% /  2.7% (2.39) | 2013-26  +3.9% /  6.1% (0.65)
+      equal risk (x1.00: positions 5.0%; most held 25%): 2013-19  +3.1% /  6.1% (0.52) | 2020-26  +4.7% /  4.9% (0.97) | 2023-26  +6.4% /  2.7% (2.39) | 2013-26  +3.9% /  6.1% (0.65) | trades 68, winners 71%, average +8.7%, worst -21.6% -> -
+C3    same budget: 2013-19  +4.3% /  3.8% (1.11) | 2020-26  +4.1% /  3.5% (1.19) | 2023-26  +4.6% /  1.0% (4.50) | 2013-26  +4.2% /  3.8% (1.09)
+      equal risk (x1.61: positions 8.0%; most held 40%): 2013-19  +6.4% /  6.1% (1.05) | 2020-26  +4.8% /  5.4% (0.90) | 2023-26  +4.7% /  2.0% (2.38) | 2013-26  +5.6% /  6.1% (0.92) | trades 48, winners 75%, average +13.6%, worst -21.6% -> not confirmed (better in 2013-19 only)
+L12   same budget: 2013-19  +3.5% /  3.5% (1.02) | 2020-26  +3.8% /  2.6% (1.49) | 2023-26  +4.7% /  0.5% (9.56) | 2013-26  +3.7% /  3.5% (1.06)
+      equal risk (x1.76: positions 3.7%; most held 44%): 2013-19  +5.6% /  6.1% (0.92) | 2020-26  +4.5% /  4.4% (1.03) | 2023-26  +4.8% /  1.0% (4.87) | 2013-26  +5.1% /  6.1% (0.83) | trades 88, winners 78%, average +13.9%, worst -21.6% -> not confirmed (better in 2013-19 only)
+D2    same budget: 2013-19  +3.7% /  9.7% (0.39) | 2020-26  +6.0% /  5.5% (1.10) | 2023-26  +7.3% /  5.5% (1.34) | 2013-26  +4.8% /  9.7% (0.50)
+      equal risk (x0.62: positions 3.1%, 6.2%; most held 31%): 2013-19  +2.6% /  6.1% (0.44) | 2020-26  +4.8% /  3.4% (1.44) | 2023-26  +6.3% /  3.4% (1.87) | 2013-26  +3.7% /  6.1% (0.61) | trades 68, winners 71%, average +8.7%, worst -21.6% -> not confirmed
+L12D  same budget: 2013-19  +5.5% /  6.1% (0.89) | 2020-26  +4.5% /  4.5% (0.99) | 2023-26  +4.7% /  1.0% (4.67) | 2013-26  +5.0% /  6.1% (0.81)
+      equal risk (x0.99: positions 2.1%, 4.1%; most held 49%): 2013-19  +5.4% /  6.1% (0.89) | 2020-26  +4.5% /  4.5% (1.00) | 2023-26  +4.7% /  1.0% (4.74) | 2013-26  +4.9% /  6.1% (0.81) | trades 88, winners 78%, average +13.9%, worst -21.6% -> not confirmed (better in 2013-19 only)
+
+== 3. yearly walk-forward (each January: equal-risk size and pick from the years before)
+picks: 2016: L12D x0.81, 2017: C3 x1.61, 2018: C3 x1.61, 2019: C3 x1.61, 2020: C3 x1.61, 2021: C3 x1.61, 2022: C3 x1.61, 2023: C3 x1.61, 2024: C3 x1.61, 2025: C3 x1.61, 2026: C3 x1.61
+walk-forward 2016-26:  +5.5% /  5.4% (1.02) | LIVE  +5.3% /  4.9% (1.09) | C3 fixed  +6.4% /  6.1% (1.05) | L12 fixed  +5.5% /  5.7% (0.96) | D2 fixed  +5.1% /  3.4% (1.51) | L12D fixed  +5.2% /  4.5% (1.17)
+   2016-20: walk-forward  +7.2% /  5.4% (1.34) | LIVE  +6.4% /  4.9% (1.31) | L12D fixed  +6.3% /  4.5% (1.41)
+   2021-26: walk-forward  +4.0% /  2.6% (1.57) | LIVE  +4.4% /  4.1% (1.08) | L12D fixed  +4.3% /  1.4% (3.17)
+
+== 4. paired bootstrap over episodes (2,000 draws): share of draws in which the candidate at equal risk beats LIVE
+2013-19 LIVE  growth range +0.8..+6.0%, drawdown range 3.2..8.4%
+2013-19 C3    growth range +3.1..+10.4%, drawdown range 5.6..10.3% | more growth 97%, smaller drawdown 21%, both 21%, better return per drawdown 86%
+2013-19 L12   growth range +2.6..+9.3%, drawdown range 3.6..7.3% | more growth 92%, smaller drawdown 44%, both 42%, better return per drawdown 84%
+2013-19 D2    growth range +0.4..+5.7%, drawdown range 2.0..9.6% | more growth 14%, smaller drawdown 17%, both 2%, better return per drawdown 12%
+2013-19 L12D  growth range +2.5..+9.0%, drawdown range 3.3..7.3% | more growth 90%, smaller drawdown 52%, both 48%, better return per drawdown 88%
+2020-26 LIVE  growth range +3.5..+6.1%, drawdown range 2.7..4.9%
+2020-26 C3    growth range +3.5..+6.5%, drawdown range 2.0..5.4% | more growth 53%, smaller drawdown 29%, both 11%, better return per drawdown 57%
+2020-26 L12   growth range +3.4..+6.1%, drawdown range 1.0..4.4% | more growth 40%, smaller drawdown 100%, both 40%, better return per drawdown 67%
+2020-26 D2    growth range +3.7..+6.1%, drawdown range 2.5..3.4% | more growth 68%, smaller drawdown 93%, both 66%, better return per drawdown 93%
+2020-26 L12D  growth range +3.4..+6.1%, drawdown range 1.0..4.5% | more growth 40%, smaller drawdown 100%, both 40%, better return per drawdown 66%
+2023-26 LIVE  growth range +5.6..+7.4%, drawdown range 0.8..2.7%
+2023-26 C3    growth range +3.7..+5.7%, drawdown range 0.7..2.0% | more growth 7%, smaller drawdown 76%, both 6%, better return per drawdown 35%
+2023-26 L12   growth range +4.4..+5.4%, drawdown range 0.5..1.0% | more growth 0%, smaller drawdown 100%, both 0%, better return per drawdown 88%
+2023-26 D2    growth range +5.4..+7.5%, drawdown range 0.4..3.4% | more growth 34%, smaller drawdown 7%, both 0%, better return per drawdown 7%
+2023-26 L12D  growth range +4.2..+5.2%, drawdown range 0.2..1.0% | more growth 0%, smaller drawdown 100%, both 0%, better return per drawdown 100%
+2013-26 LIVE  growth range +2.4..+5.4%, drawdown range 4.2..8.2%
+2013-26 C3    growth range +3.8..+7.6%, drawdown range 5.6..10.3% | more growth 94%, smaller drawdown 19%, both 19%, better return per drawdown 79%
+2013-26 L12   growth range +3.5..+7.0%, drawdown range 4.4..7.3% | more growth 85%, smaller drawdown 42%, both 37%, better return per drawdown 73%
+2013-26 D2    growth range +2.2..+5.3%, drawdown range 3.4..9.0% | more growth 21%, smaller drawdown 28%, both 7%, better return per drawdown 21%
+2013-26 L12D  growth range +3.4..+6.8%, drawdown range 3.8..7.3% | more growth 82%, smaller drawdown 59%, both 46%, better return per drawdown 78%
+
+== episode by episode: account result inside each sell-off block (start to the next start), LIVE against L12D at equal risk
+     start  depth    live   fable  live_dd  fable_dd  live_trades  fable_trades  fable_deep  fable_days
+2014-11-16  -9.86 -0.0164  0.0723  -0.0504   -0.0608            5            12          10        26.0
+2015-08-06  -5.51 -0.0153  0.0364  -0.0420   -0.0381            9            13          12        47.0
+2016-01-07  -2.79  0.0251  0.0356  -0.0319   -0.0325            5            11           1        33.0
+2016-08-22  -3.82  0.0703  0.1408  -0.0198   -0.0241            5             9           7        14.0
+2017-11-07  -1.93  0.0082  0.0039  -0.0042   -0.0006            2             1           0         0.0
+2018-07-25  -4.61  0.0724  0.0244  -0.0156   -0.0170            5             3           0         7.0
+2019-05-13  -2.19  0.0208  0.0058  -0.0041   -0.0009            2             1           0         0.0
+2019-10-15  -1.33 -0.0000  0.0000   0.0000    0.0000            0             0           0         NaN
+2020-03-08  -5.26  0.0627  0.0491  -0.0487   -0.0446           10            12          10        49.0
+2021-10-07  -4.31  0.0050  0.0020  -0.0123   -0.0050            2             2           0         1.0
+2022-05-23  -3.56 -0.0167  0.0501  -0.0406   -0.0137            5            11           6        28.0
+2022-11-10  -2.21  0.0087 -0.0004  -0.0104   -0.0011            3             1           0         0.0
+2023-07-26  -2.88  0.0000  0.0000   0.0000    0.0000            0             0           0         NaN
+2023-10-08  -1.81  0.0010  0.0004  -0.0009   -0.0002            1             1           0         0.0
+2024-05-30  -1.80  0.0067  0.0028  -0.0075   -0.0025            2             2           0         1.0
+2025-03-10  -5.67  0.0259  0.0028  -0.0266   -0.0099            7             5           0        45.0
+2025-12-14  -3.25  0.0300 -0.0015  -0.0128   -0.0054            5             4           1        37.0
+2026-09-27  -4.42 -0.0000 -0.0000   0.0000    0.0000            0             0           0         NaN
+episodes where L12D made more than LIVE (above interest): 5 of 15 with trades; 2013-19: 4 of 7; 2020-26: 1 of 8
+
+== 5. stress tests on 2013-26 (return per drawdown; L12D at its equal-risk size against LIVE under the same stress)
+0.8% costs                         LIVE  +3.8% /  6.2% (0.61) | L12D  +4.8% /  6.1% (0.80) -> pass
+one session late                   LIVE  +4.0% /  6.1% (0.66) | L12D  +5.0% /  6.8% (0.74) -> pass
+idle money earning nothing         LIVE  +2.2% /  6.1% (0.35) | L12D  +3.1% /  6.1% (0.51) -> pass
+ML order in the slots              LIVE  +3.5% /  6.3% (0.56) | L12D  +4.9% /  6.5% (0.75) -> pass
+neighbour: 10 slots (x0.97)        LIVE  +3.9% /  6.1% (0.65) | L12D  +5.2% /  6.1% (0.85) -> pass
+neighbour: 15 slots (x1.00)        LIVE  +3.9% /  6.1% (0.65) | L12D  +4.4% /  5.0% (0.88) -> pass
+neighbour: depth line -2.0 (x0.96) LIVE  +3.9% /  6.1% (0.65) | L12D  +5.1% /  6.1% (0.84) -> pass
+neighbour: depth line -3.0 (x0.99) LIVE  +3.9% /  6.1% (0.65) | L12D  +4.4% /  6.1% (0.73) -> pass
+neighbour: multiplier 1.5 (x1.28)  LIVE  +3.9% /  6.1% (0.65) | L12D  +5.0% /  6.1% (0.83) -> pass
+neighbour: multiplier 3 (x0.67)    LIVE  +3.9% /  6.1% (0.65) | L12D  +4.8% /  6.0% (0.80) -> pass
+passed 10 of 10 (needs 8 of 10)

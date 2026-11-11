@@ -1,0 +1,41 @@
+episodes since 2013 (market momentum <= -1.18, gaps up to 20 sessions joined): 18
+     start  sessions_stretched  span  depth  market_low_after_start  paper  taken  taken_day0  days_to_fill  avg_paper  avg_taken  worst_taken
+2014-11-16                  52    52  -9.86                  -0.284     68      5           1           3.0      0.221     -0.066       -0.133
+2015-08-06                  65    69  -5.51                  -0.284     61      9           5          47.0      0.022     -0.034       -0.216
+2016-01-07                  47    57  -2.79                  -0.250     75      5           5           0.0      0.215      0.101        0.017
+2016-08-22                  42    56  -3.82                  -0.239     47      5           5           0.0      0.340      0.281        0.146
+2017-11-07                  26    35  -1.93                  -0.063      2      2           2           0.0      0.084      0.084       -0.022
+2018-07-25                  56    81  -4.61                  -0.180     15      5           1           1.0      0.242      0.291        0.079
+2019-05-13                  18    29  -2.19                  -0.050      2      2           2           0.0      0.211      0.211        0.139
+2019-10-15                   3     3  -1.33                  -0.013      0      0           0           NaN        NaN        NaN          NaN
+2020-03-08                  55    55  -5.26                  -0.241     84     10           5          44.0      0.056      0.125       -0.115
+2021-10-07                  61    68  -4.31                  -0.146      2      2           1           1.0      0.050      0.050       -0.052
+2022-05-23                  44    74  -3.56                  -0.144     48      5           5           0.0      0.134     -0.064       -0.155
+2022-11-10                  35    39  -2.21                  -0.127      3      3           3           0.0      0.063      0.063       -0.013
+2023-07-26                   9     9  -2.88                  -0.133      0      0           0           NaN        NaN        NaN          NaN
+2023-10-08                  16    16  -1.81                  -0.077      1      1           1           0.0      0.028      0.028        0.028
+2024-05-30                  24    47  -1.80                  -0.055      2      2           1           1.0      0.074      0.074        0.001
+2025-03-10                  56    67  -5.67                  -0.136     22      7           5          45.0      0.037      0.079       -0.014
+2025-12-14                  44    59  -3.25                  -0.129     11      5           2          35.0      0.104      0.124       -0.091
+2026-09-27                  32    32  -4.42                  -0.173      0      0           0           NaN        NaN        NaN          NaN
+signals outside any episode block: 0
+live 5 x 5%                                  2013-19: growth +3.1% a year (range +0.8% to +6.1%), worst drawdown 6.1% (range 3.2% to 8.2%), blocks 9
+live 5 x 5%                                  2020-26: growth +4.7% a year (range +3.6% to +6.1%), worst drawdown 4.9% (range 2.7% to 4.9%), blocks 11
+live 5 x 5%                                  2023-26: growth +6.4% a year (range +5.7% to +7.4%), worst drawdown 2.7% (range 0.8% to 2.7%), blocks 7
+live 5 x 5%                                  2013-26: growth +3.9% a year (range +2.5% to +5.5%), worst drawdown 6.1% (range 4.2% to 8.2%), blocks 19
+live 5 x 5%, idle money earning nothing      2013-19: growth +2.4% a year (range +0.4% to +4.8%), worst drawdown 6.1% (range 3.2% to 8.8%), blocks 9
+live 5 x 5%, idle money earning nothing      2020-26: growth +1.9% a year (range +0.8% to +3.2%), worst drawdown 4.9% (range 3.0% to 6.4%), blocks 11
+live 5 x 5%, idle money earning nothing      2023-26: growth +1.9% a year (range +0.8% to +3.3%), worst drawdown 3.0% (range 1.0% to 3.0%), blocks 7
+live 5 x 5%, idle money earning nothing      2013-26: growth +2.2% a year (range +1.0% to +3.5%), worst drawdown 6.1% (range 4.8% to 8.8%), blocks 19
+live 5 x 10%                                 2013-19: growth +5.4% a year (range +1.2% to +10.8%), worst drawdown 11.9% (range 6.3% to 16.4%), blocks 9
+live 5 x 10%                                 2020-26: growth +6.5% a year (range +4.5% to +8.9%), worst drawdown 9.6% (range 5.5% to 10.3%), blocks 11
+live 5 x 10%                                 2023-26: growth +8.2% a year (range +6.5% to +10.5%), worst drawdown 5.5% (range 1.6% to 5.5%), blocks 7
+live 5 x 10%                                 2013-26: growth +6.0% a year (range +3.5% to +8.9%), worst drawdown 11.9% (range 8.4% to 15.8%), blocks 19
+taken trades       2013-19:  33 trades in  7 episodes, average +10.1% (range +1.3% to +21.1%), winners 70% (range 49% to 93%)
+taken trades       2020-26:  35 trades in  8 episodes, average +7.3% (range +2.1% to +10.7%), winners 71% (range 50% to 86%)
+taken trades       2023-26:  15 trades in  4 episodes, average +9.0% (range +6.4% to +11.0%), winners 87% (range 83% to 100%)
+taken trades       2013-26:  68 trades in 15 episodes, average +8.7% (range +3.7% to +14.1%), winners 71% (range 57% to 84%)
+all paper trades   2013-19: 270 trades in  7 episodes, average +19.5% (range +10.8% to +27.8%), winners 83% (range 70% to 94%)
+all paper trades   2020-26: 173 trades in  8 episodes, average +7.8% (range +5.1% to +12.2%), winners 72% (range 65% to 84%)
+all paper trades   2023-26:  36 trades in  4 episodes, average +5.9% (range +3.7% to +9.9%), winners 75% (range 65% to 100%)
+all paper trades   2013-26: 443 trades in 15 episodes, average +14.9% (range +8.8% to +21.4%), winners 79% (range 70% to 88%)

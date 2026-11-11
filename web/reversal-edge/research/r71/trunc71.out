@@ -1,0 +1,10 @@
+60 past closes checked (18 week-ends, 89 signals on them): mismatches 0
+features at 2019-08-29: 30 rebuilt on cut data, different from the full build: 0
+features at 2020-09-02: 30 rebuilt on cut data, different from the full build: 0
+features at 2021-08-29: 30 rebuilt on cut data, different from the full build: 0
+features at 2023-01-11: 30 rebuilt on cut data, different from the full build: 0
+features at 2024-01-15: 30 rebuilt on cut data, different from the full build: 0
+features that differ on cut data: none
+ranker C (r27/wfC.py): the model for a quarter is trained on rows up to (h + 2) sessions before the quarter starts; target = open t+1 -> open t+h+1, so the last label ends before the quarter
+market model (r27/mkt27.py): the model for a year is trained on rows up to 22 sessions before the year; target = the next 20 sessions
+exit 0

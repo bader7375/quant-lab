@@ -1,0 +1,52 @@
+round 70 file: 442 paper trades, 69 taken; last signal 2026-03-05
+rebuilt today: 443 paper trades, 68 taken; last signal 2026-03-03 | panel ends 2026-11-09
+paper trades in both: 422; only in round 70: 20; only in the rebuild: 21
+   only round 70: 2014-11-30 2230 taken net -0.026 | ML rank now 0.479, Z -2.73, market model +0.0352, momentum -3.70, liquid True, loss False, exit index 1036 vs panel 3914
+   only round 70: 2014-12-11 1120 not taken net +0.168 | ML rank now 0.414, Z -3.22, market model +0.0426, momentum -4.75, liquid True, loss False, exit index 1045 vs panel 3914
+   only round 70: 2014-12-15 2160 not taken net +0.112 | ML rank now 0.454, Z -2.75, market model +0.0667, momentum -6.79, liquid True, loss False, exit index 1047 vs panel 3914
+   only round 70: 2015-08-26 6010 not taken net +0.090 | ML rank now 0.559, Z -2.78, market model +0.0327, momentum -3.45, liquid True, loss False, exit index 1224 vs panel 3914
+   only round 70: 2016-01-14 6020 not taken net +0.094 | ML rank now 0.483, Z -2.90, market model +0.0576, momentum -1.94, liquid True, loss False, exit index 1318 vs panel 3914
+   only round 70: 2016-01-20 2370 not taken net +0.174 | ML rank now 0.497, Z -3.33, market model +0.0616, momentum -2.21, liquid True, loss False, exit index 1322 vs panel 3914
+   only round 70: 2016-09-28 2210 not taken net +0.315 | ML rank now 0.497, Z -2.63, market model +0.0541, momentum -2.53, liquid True, loss False, exit index 1484 vs panel 3914
+   only round 70: 2018-10-17 4220 not taken net -0.005 | ML rank now 0.447, Z -2.70, market model +0.1392, momentum -3.65, liquid True, loss False, exit index 1991 vs panel 3914
+   only round 70: 2020-03-09 1080 not taken net -0.043 | ML rank now 0.464, Z -2.73, market model +0.0436, momentum -2.72, liquid True, loss False, exit index 2343 vs panel 3914
+   only round 70: 2020-03-11 1810 not taken net +0.087 | ML rank now 0.744, Z -3.27, market model +0.0671, momentum -2.48, liquid True, loss False, exit index 2345 vs panel 3914
+   only round 70: 2020-03-11 2060 not taken net +0.032 | ML rank now 0.440, Z -3.26, market model +0.0671, momentum -2.48, liquid True, loss False, exit index 2345 vs panel 3914
+   only round 70: 2020-03-15 1010 not taken net +0.034 | ML rank now 0.440, Z -3.42, market model +0.0561, momentum -3.74, liquid True, loss False, exit index 2347 vs panel 3914
+   only round 70: 2020-05-07 1080 taken net +0.050 | ML rank now 0.958, Z -1.00, market model +0.0562, momentum -3.07, liquid True, loss False, exit index 2386 vs panel 3914
+   only round 70: 2022-06-19 2240 not taken net +0.290 | ML rank now 0.485, Z -2.98, market model +0.0763, momentum -2.73, liquid True, loss False, exit index 2899 vs panel 3914
+   only round 70: 2022-06-22 4090 not taken net +0.077 | ML rank now 0.827, Z -3.32, market model +0.0662, momentum -2.84, liquid True, loss False, exit index 2902 vs panel 3914
+   only round 70: 2022-07-03 4020 not taken net +0.059 | ML rank now 0.490, Z -2.70, market model +0.0289, momentum -3.11, liquid True, loss False, exit index 2909 vs panel 3914
+   only round 70: 2024-08-08 6002 taken net +0.092 | ML rank now 0.986, Z -2.65, market model +0.0313, momentum -1.80, liquid True, loss False, exit index 3402 vs panel 3914
+   only round 70: 2024-08-08 8120 taken net +0.001 | ML rank now 0.882, Z -2.72, market model +0.0313, momentum -1.80, liquid True, loss False, exit index 3402 vs panel 3914
+   only round 70: 2025-12-28 8030 taken net +0.385 | ML rank now 0.660, Z -2.68, market model -0.0056, momentum -2.96, liquid True, loss False, exit index 3742 vs panel 3914
+   only round 70: 2026-03-05 4321 not taken net +0.012 | ML rank now 0.716, Z -2.67, market model -0.0010, momentum -1.55, liquid True, loss False, exit index 3790 vs panel 3914
+   only rebuild: 2014-12-15 2100 not taken net +0.370 | ML rank 0.550, Z -2.83
+   only rebuild: 2014-12-16 1211 not taken net +0.573 | ML rank 0.521, Z -3.69
+   only rebuild: 2014-12-18 2160 not taken net +0.018 | ML rank 0.693, Z -2.72
+   only rebuild: 2015-08-23 6010 not taken net +0.206 | ML rank 0.563, Z -2.63
+   only rebuild: 2015-08-23 8300 not taken net +0.181 | ML rank 0.542, Z -3.64
+   only rebuild: 2015-10-01 2300 not taken net +0.145 | ML rank 0.615, Z -0.94
+   only rebuild: 2016-01-12 1180 not taken net -0.013 | ML rank 0.503, Z -2.70
+   only rebuild: 2016-01-21 2280 not taken net +0.218 | ML rank 0.538, Z -4.09
+   only rebuild: 2016-10-02 2210 not taken net +0.311 | ML rank 0.590, Z -2.91
+   only rebuild: 2016-10-02 2320 not taken net +0.411 | ML rank 0.507, Z -3.33
+   only rebuild: 2020-03-09 1810 not taken net -0.093 | ML rank 0.554, Z -2.99
+   only rebuild: 2020-03-11 1202 not taken net +0.089 | ML rank 0.512, Z -2.75
+   only rebuild: 2020-03-12 2060 not taken net +0.016 | ML rank 0.571, Z -3.85
+   only rebuild: 2020-03-12 6004 not taken net -0.004 | ML rank 0.595, Z -4.10
+   only rebuild: 2020-03-16 4300 not taken net -0.157 | ML rank 0.518, Z -2.83
+   only rebuild: 2020-03-19 1010 not taken net +0.095 | ML rank 0.620, Z -4.70
+   only rebuild: 2020-03-19 1080 not taken net +0.051 | ML rank 0.593, Z -4.64
+   only rebuild: 2022-06-19 4090 not taken net +0.127 | ML rank 0.526, Z -3.14
+   only rebuild: 2022-06-22 2240 not taken net +0.232 | ML rank 0.685, Z -2.68
+   only rebuild: 2024-08-05 6002 taken net +0.146 | ML rank 0.986, Z -2.98
+   only rebuild: 2024-08-06 8120 taken net +0.001 | ML rank 0.505, Z -2.65
+taken flag differs on: 2
+                 t_old  t_new     n_old     n_new
+date       sym                                   
+2014-11-30 2290  False   True -0.132713 -0.132713
+2020-05-07 4011  False   True  0.137379  0.137379
+net return of common trades: largest difference 0.00 points; mean difference +0.000 points
+round 70: taken 69, average +9.05%, 2013-19 +10.38% (33), 2020-26 +7.82% (36)
+rebuild: taken 68, average +8.66%, 2013-19 +10.06% (33), 2020-26 +7.35% (35)

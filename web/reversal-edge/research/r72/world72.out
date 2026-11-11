@@ -1,0 +1,64 @@
+abudhabi skipped: fewer than 12 usable stocks
+australia     49 stocks (7 cut at a jump), 1988-01-29 to 2026-11-11, episodes since 2001:  22, paper trades   176
+brazil        39 stocks (18 cut at a jump), 2000-01-03 to 2026-11-09, episodes since 2001:  25, paper trades   135
+canada        49 stocks (1 cut at a jump), 1986-01-02 to 2026-11-10, episodes since 2001:  20, paper trades   188
+china         50 stocks (2 cut at a jump), 1991-01-02 to 2026-11-11, episodes since 2001:  29, paper trades   111
+dubai         19 stocks (11 cut at a jump), 2010-02-22 to 2026-11-11, episodes since 2001:   3, paper trades     9
+egypt         20 stocks (13 cut at a jump), 2000-11-27 to 2026-11-09, episodes since 2001:  14, paper trades    69
+france        45 stocks (6 cut at a jump), 1989-01-16 to 2026-11-09, episodes since 2001:  26, paper trades   273
+germany       49 stocks (6 cut at a jump), 1996-10-30 to 2026-11-09, episodes since 2001:  26, paper trades   312
+hongkong      53 stocks (2 cut at a jump), 2000-01-03 to 2026-11-11, episodes since 2001:  23, paper trades   238
+india         73 stocks (31 cut at a jump), 1996-01-01 to 2026-11-11, episodes since 2001:  28, paper trades   279
+indonesia     49 stocks (8 cut at a jump), 2000-06-06 to 2026-11-11, episodes since 2001:  22, paper trades   207
+japan         60 stocks (1 cut at a jump), 1999-05-06 to 2026-11-11, episodes since 2001:  24, paper trades   350
+korea         48 stocks (0 cut at a jump), 2000-01-04 to 2026-11-11, episodes since 2001:  25, paper trades   183
+kuwait        21 stocks (20 cut at a jump), 2008-03-12 to 2026-11-11, episodes since 2001:   8, paper trades    29
+malaysia      37 stocks (3 cut at a jump), 2000-01-03 to 2026-11-11, episodes since 2001:  23, paper trades   120
+mexico        30 stocks (6 cut at a jump), 2000-01-03 to 2026-11-09, episodes since 2001:  20, paper trades    91
+qatar         27 stocks (18 cut at a jump), 2010-02-22 to 2026-11-11, episodes since 2001:  16, paper trades   120
+southafrica   42 stocks (10 cut at a jump), 2000-01-04 to 2026-11-11, episodes since 2001:  25, paper trades   105
+switzerland   31 stocks (8 cut at a jump), 1990-01-03 to 2026-11-10, episodes since 2001:  26, paper trades   198
+taiwan        50 stocks (4 cut at a jump), 2000-01-04 to 2026-11-11, episodes since 2001:  21, paper trades   254
+thailand      46 stocks (7 cut at a jump), 2000-01-04 to 2026-11-11, episodes since 2001:  24, paper trades   172
+turkey        47 stocks (11 cut at a jump), 2000-05-10 to 2026-11-11, episodes since 2001:  24, paper trades   168
+uk            60 stocks (12 cut at a jump), 1988-07-01 to 2026-11-09, episodes since 2001:  31, paper trades   294
+us           117 stocks (13 cut at a jump), 1970-01-02 to 2026-11-10, episodes since 2001:  21, paper trades   482
+
+market-eras counted (base took >= 10 trades): 64 of 72; markets 23
+
+variant    beats A0 in | by era (2001-09, 2010-19, 2020-26) | by region (Gulf, emerging, developed) | median ratio | mean growth / mean drawdown | growth and drawdown as a share of A0 (median)
+A0                      - |                                     |                              |  0.08 | +0.83% /  8.0% | trades 1767, average +5.3%
+P(5,1)      38/ 64 =  59% p=0.084 | 13/20, 13/22, 12/22                 | 1/3, 23/34, 14/27            |  0.11 | +0.74% /  6.7% |   92% /   85% | trades 1477, average +5.6%
+P(5,3)      35/ 64 =  55% p=0.266 | 13/20, 10/22, 12/22                 | 2/3, 21/34, 12/27            |  0.08 | +0.55% /  5.8% |   68% /   70% | trades 1187, average +5.1%
+P(5,5)      34/ 64 =  53% p=0.354 | 12/20, 9/22, 13/22                  | 1/3, 20/34, 13/27            |  0.08 | +0.47% /  5.1% |   58% /   61% | trades 1032, average +5.0%
+P(8,1)      37/ 64 =  58% p=0.130 | 11/20, 13/22, 13/22                 | 1/3, 20/34, 16/27            |  0.11 | +0.61% /  5.3% |   68% /   63% | trades 1756, average +6.1%
+P(8,3)      35/ 64 =  55% p=0.266 | 15/20, 9/22, 11/22                  | 2/3, 19/34, 14/27            |  0.08 | +0.37% /  3.8% |   44% /   46% | trades 1249, average +5.2%
+P(8,5)      36/ 64 =  56% p=0.191 | 13/20, 10/22, 13/22                 | 1/3, 20/34, 15/27            |  0.08 | +0.30% /  3.2% |   39% /   39% | trades 1048, average +4.9%
+P(12,1)     41/ 64 =  64% p=0.016 | 14/20, 13/22, 14/22                 | 1/3, 25/34, 15/27            |  0.12 | +0.48% /  3.8% |   51% /   45% | trades 1884, average +6.6%
+P(12,3)     34/ 64 =  53% p=0.354 | 15/20, 8/22, 11/22                  | 1/3, 19/34, 14/27            |  0.08 | +0.25% /  2.5% |   29% /   31% | trades 1253, average +5.2%
+P(12,5)     36/ 64 =  56% p=0.191 | 13/20, 10/22, 13/22                 | 1/3, 20/34, 15/27            |  0.08 | +0.20% /  2.2% |   27% /   26% | trades 1048, average +4.9%
+B3(5,1)     35/ 64 =  55% p=0.266 | 10/20, 16/22, 9/22                  | 1/3, 20/34, 14/27            |  0.11 | +0.68% /  6.4% |   86% /   83% | trades 2427, average +5.1%
+B3(5,3)     35/ 64 =  55% p=0.266 | 12/20, 10/22, 13/22                 | 2/3, 18/34, 15/27            |  0.09 | +0.52% /  5.4% |   62% /   65% | trades 1835, average +4.8%
+B3(5,5)     33/ 64 =  52% p=0.450 | 12/20, 7/22, 14/22                  | 2/3, 20/34, 11/27            |  0.11 | +0.44% /  4.7% |   55% /   56% | trades 1596, average +5.1%
+M(5,0)      31/ 64 =  48% p=0.646 | 5/20, 12/22, 14/22                  | 1/3, 17/34, 13/27            |  0.08 | +0.69% /  8.5% |   85% /  103% | trades 6820, average +2.2%
+M(5,3)      34/ 64 =  53% p=0.354 | 6/20, 10/22, 18/22                  | 1/3, 18/34, 15/27            |  0.10 | +0.61% /  6.9% |   62% /   82% | trades 26030, average +2.5%
+O-low       31/ 64 =  48% p=0.646 | 8/20, 12/22, 11/22                  | 1/3, 13/34, 17/27            |  0.10 | +0.78% /  7.6% |  100% /  100% | trades 1767, average +5.0%
+O-deep      29/ 64 =  45% p=0.809 | 8/20, 12/22, 9/22                   | 2/3, 14/34, 13/27            |  0.08 | +0.82% /  7.9% |  100% /  100% | trades 1767, average +5.2%
+H30         33/ 64 =  52% p=0.450 | 6/20, 14/22, 13/22                  | 0/3, 14/34, 19/27            |  0.09 | +0.80% /  7.6% |   94% /  100% | trades 1937, average +4.6%
+H60         36/ 64 =  56% p=0.191 | 10/20, 15/22, 11/22                 | 1/3, 18/34, 17/27            |  0.10 | +0.93% /  8.1% |  111% /  100% | trades 1494, average +7.1%
+
+pairs fixed in the plan:
+  A0       beats O-low    in  30/ 64 =  47% (p=0.734); by era 11/20, 9/22, 10/22; median ratio 0.08 vs 0.10; mean growth +0.83% vs +0.78%, mean drawdown 8.0% vs 7.6%
+  A0       beats O-deep   in  31/ 64 =  48% (p=0.646); by era 10/20, 9/22, 12/22; median ratio 0.08 vs 0.08; mean growth +0.83% vs +0.82%, mean drawdown 8.0% vs 7.9%
+  P(5,3)   beats M(5,3)   in  32/ 64 =  50% (p=0.550); by era 14/20, 11/22, 7/22; median ratio 0.08 vs 0.10; mean growth +0.55% vs +0.61%, mean drawdown 5.8% vs 6.9%
+  A0       beats M(5,0)   in  33/ 64 =  52% (p=0.450); by era 15/20, 10/22, 8/22; median ratio 0.08 vs 0.08; mean growth +0.83% vs +0.69%, mean drawdown 8.0% vs 8.5%
+  B3(5,1)  beats P(5,1)   in  29/ 64 =  45% (p=0.809); by era 9/20, 12/22, 8/22; median ratio 0.11 vs 0.11; mean growth +0.68% vs +0.74%, mean drawdown 6.4% vs 6.7%
+  B3(5,3)  beats P(5,3)   in  32/ 64 =  50% (p=0.550); by era 8/20, 12/22, 12/22; median ratio 0.09 vs 0.08; mean growth +0.52% vs +0.55%, mean drawdown 5.4% vs 5.8%
+  B3(5,5)  beats P(5,5)   in  27/ 64 =  42% (p=0.916); by era 8/20, 8/22, 11/22; median ratio 0.11 vs 0.08; mean growth +0.44% vs +0.47%, mean drawdown 4.7% vs 5.1%
+
+H2 first signal day against signals 3+ sessions later: later is higher in 40/61 market-eras; pooled first day +3.1% (1028 trades), later +6.4% (2814); difference range +1.2 to +5.5 points, above zero in 100% of draws; 6+ later +6.6%
+   2001-09: first day +0.9% (294), 3+ later +3.8% (1120)
+   2010-19: first day +3.7% (375), 3+ later +6.7% (739)
+   2020-26: first day +4.3% (359), 3+ later +9.3% (955)
+H6 depth: slope of the trade result on market momentum -0.0276 per unit (range -0.0345 to -0.0212); deeper is better in 100% of draws; -1.18 to -2: 1827 trades +2.8% (57% winners); -2 to -2.53: 921 trades +3.1% (59% winners); -2.53 to -3.5: 881 trades +5.9% (66% winners); below -3.5: 934 trades +12.1% (74% winners)
+exit 0

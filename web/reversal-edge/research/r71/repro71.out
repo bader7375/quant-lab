@@ -1,0 +1,9 @@
+panel: 2010-02-22 to 2026-11-09, 3914 sessions, 273 stocks; liquid on the last day: 157
+live 5 x 5%  2013-19: +3.1% a year, worst drawdown 6.1%, ratio 0.52, Sharpe 0.84
+live 5 x 5%  2020-26: +4.7% a year, worst drawdown 4.9%, ratio 0.97, Sharpe 1.49
+live 5 x 5%  2023-26: +6.4% a year, worst drawdown 2.7%, ratio 2.39, Sharpe 2.66
+live 5 x 5%  2013-26: +3.9% a year, worst drawdown 6.1%, ratio 0.65, Sharpe 1.13
+trades: 68 taken of 443 paper trades; winners 71%, average +8.7%, worst 5% -13.0%, worst -21.6%
+   round 70 said 2013-19: +3.2% / 6.1%  ->  REPRODUCED
+   round 70 said 2020-26: +4.9% / 4.9%  ->  DIFFERENT
+engine vs planbook: {'signals_equal': True, 'paper_trades_equal': True, 'taken_equal': True, 'curve_max_diff': 0.0, 'momentum_equal': True, 'z_equal': True, 'pace2_equal': True, 'pace3_equal': True, 'pace5_equal': True}
