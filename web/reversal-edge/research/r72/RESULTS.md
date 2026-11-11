@@ -63,6 +63,10 @@ The rule abroad is Saudi's price rule with Saudi's lines and nothing fitted: no 
 - Caveat written before the run and still true: market-eras are not independent (2008 and 2020 hit every market), so the p values
   are too small. What carries weight is the same sign in all three eras.
 
+- Counted by market instead (bymarket72.out, added afterwards because market-eras of one market are not independent): L12D beats
+  the base shape in most of a market's eras in 17 of 23 markets, ties in 2, loses in 4 (Germany, Japan, Kuwait, US). Pacing 3 sessions
+  apart does so in 9 of 23.
+
 ## 5. What goes to Saudi (round 73)
 P(12,1), D2 and L12D (passed here), and P(5,3) as the open offer although it failed here. The Saudi rows printed by world72b.py were
 for reference; they are quoted in round 73's plan as "already seen".

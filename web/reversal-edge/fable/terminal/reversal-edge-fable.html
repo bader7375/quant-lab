@@ -287,6 +287,7 @@ function vToday(){
   var big=(nb?("Buy "+nb):"Nothing to buy")+(ns?(". Sell "+ns+"."):(nb?".":". Nothing to sell."));
   var h='<section class="view">';
   if(D.stale) h+='<div class="warn"><b>Old picture.</b> The newest close in the data is '+dt(D.asof)+'. Yahoo has not published a later one yet, or the market was closed.</div>';
+  (D.record_warn||[]).forEach(function(w){ h+='<div class="warn"><b>'+esc(w.sym)+' '+esc(w.name)+' stays in '+(w.rule=="live"?"your book":"the paper ladder")+'.</b> Today\'s replay no longer shows its signal of '+dt(w.signal)+' (a model refit moved a gate that sat on the line). The record stands: sell at the open of '+dt(w.sell)+'.</div>'; });
   h+='<div class="hero"><div class="heroGrid"><div class="block"><div class="eyebrow">Market weather · close of '+dt(D.asof)+'</div><h1 class="word '+(st=="storm"?"storm":st=="deep storm"?"deep":"")+'">'+WORD[st]+'</h1><p class="lead">'+SAY[st]+(E.open?' Session '+E.day+' of the sell-off that began '+dt(E.start)+'.':'')+'</p>'
     +'<div class="chips"><span class="chip '+(W.pm_ok?"ok":"no")+'"><i></i>Market model '+(W.pm_ok?"positive":"negative: no buys")+'</span><span class="chip '+(W.turn?"lamp":"")+'"><i></i>Market turn window '+(W.turn?"open":"closed")+'</span></div></div>'
     +'<div>'+gauge(W.ms)+'</div></div></div>';

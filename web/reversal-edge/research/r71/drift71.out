@@ -1,0 +1,6 @@
+paper trades up to 2026-03-03: run of 9 Nov 443, run of 11 Nov 440; only in the first 4, only in the second 1
+   gone: 2015-10-01 2300 | now ML rank 0.615, market model -0.00106, momentum -4.65, Z -0.94, liquid True, loss False, weekly touch True, daily touch False
+   gone: 2021-11-11 4300 | now ML rank 0.742, market model -0.00019, momentum -2.26, Z -2.74, liquid True, loss False, weekly touch False, daily touch True
+   gone: 2023-10-15 1030 | now ML rank 0.768, market model -0.00010, momentum -1.61, Z -2.64, liquid True, loss False, weekly touch False, daily touch True
+   gone: 2024-08-05 6002 | now ML rank 0.986, market model -0.00186, momentum -1.77, Z -2.98, liquid True, loss False, weekly touch False, daily touch True
+   new: 2024-08-08 6002 | ML rank 0.986, market model +0.03622

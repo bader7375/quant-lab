@@ -10,6 +10,8 @@ MEAN = {"deep storm": "a deep market sell-off; the buy window is open and steps 
         "clouds": "the market is weak but not in a sell-off; no buys", "calm": "no sell-off; no buys, idle money stays in the money-market fund"}
 L += [f"# Fable brief for {pd.Timestamp(X['day']).strftime('%A %d %b %Y')}", "", f"Prices to the {D(X['asof'])} close ({X['stocks']} stocks). Orders are for the 10:00 open."]
 if X.get("stale"): L += ["", f"**Warning: the newest close in the data is {D(X['asof'])}. Yahoo has not published a later one yet, or the market was closed. Treat the lines below as yesterday's picture.**"]
+for w_ in X.get("record_warn", []):
+    L += ["", f"**Note on {w_['sym']} {w_['name']} ({'your plan' if w_['rule'] == 'live' else 'the paper ladder'}):** today's replay no longer shows the signal of {D(w_['signal'])} (a model refit moved a gate that sat on the line). The record stands: it stays in the book until its sale at the open of {D(w_['sell'])}."]
 nb, ns = len(LV["buys"]), len(LV["due"])
 L += ["", "**Today in your live plan: " + (f"BUY {nb}" if nb else "nothing to buy") + ", " + (f"SELL {ns}" if ns else "nothing to sell") + f", {len(LV['held'])} held, {LV['free']} of {LV['slots']} slots free.**"]
 # ---- weather

@@ -68,3 +68,17 @@ It bought early and the better signals came later.
   rule, it costs nothing, and its data starts only in 2023: my advice is to keep it and call it a common-sense guard, not a tested edge.
 - "Weekly signals only" has a better return per drawdown in 74% of the redraws (it buys once a week, a kind of pacing). It did not
   meet the plan's bar and is not proposed; it points the same way as round 72.
+
+## 5. Addendum: past signals also move from one daily run to the next (drift71.out)
+Between the run on prices to 9 Nov and the run on prices to 11 Nov, on the same machine, 4 of 443 past paper trades vanished and 1
+appeared. In every case the market model sat within 0.002 of zero on the signal day (for example -0.0001), and the daily refit put it
+on the other side. The ranker's finished quarters are frozen in a cache; the market model is refit in full every day and is not.
+- Why it matters: the plan book is a replay. A held position whose signal day flips could drop out of tomorrow's list, or change its
+  sell date (6002 in August 2024 moved its entry by three sessions).
+- What the Fable export does about it: it keeps a record of every buy it listed (`fable/ledger.json` in the work folder, and one small
+  document per day in the terminal's database). A recorded position stays in the book until its sale and the brief says so if the
+  replay stops showing it.
+- What I suggest for the live pipeline (not done; it is live): freeze the market model's past values the way the ranker's are frozen.
+- Cross-check done the same day: my rebuild against the live terminal's export for the 10 Nov close (read only): market momentum
+  -2.84 in both, the same closes, the same 30 open paper trades, no signal in either; market model +0.0371 against +0.0359; 12 of 232
+  ML ranks on different sides of the 50% bar.

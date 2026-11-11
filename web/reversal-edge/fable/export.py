@@ -68,6 +68,24 @@ for rule in ("live", "fable"):
                        buys=[dict(sym=cols[b["j"]], name=nm(b["j"])[:30], w=R(b["w"], 4), close=R(Cl[i, b["j"]], 3), sell=sdate(T_ + PB.HOLD), deep=bool(msv <= book.DEEP)) for b in s["buys"]],
                        skipped=[dict(sym=cols[x["j"]], name=nm(x["j"])[:30], why=x["why"]) for x in s["skipped"]], repeats=[dict(sym=cols[x["j"]], name=nm(x["j"])[:30], kind=x["kind"], since=fdate(d[x["since"]])) for x in s["repeats"]],
                        invested=R(sum(p["w"] for p in s["held"]) + sum(b["w"] for b in s["buys"]), 4))
+# ---- the record: what the list told you to buy stays in your book even if a later model refit moves a past gate (round 71: a few
+# past signals flip from one daily run to the next because the market model is refit every day and sits near zero on some days)
+LEDF = os.path.join(WORK, "fable", "ledger.json"); os.makedirs(os.path.dirname(LEDF), exist_ok=True); LED = json.load(open(LEDF)) if os.path.exists(LEDF) else {}; RECW = []; asof = fdate(last); dix = {fdate(x): k for k, x in enumerate(d)}
+for rule, Bk in BOOKS.items():
+    L_ = LED.setdefault(rule, []); have = {(e["sym"], e["signal"]) for e in L_}
+    for b in Bk["buys"]:
+        if (b["sym"], asof) not in have: L_.append(dict(sym=b["sym"], signal=asof, w=b["w"], sell=b["sell"])); have.add((b["sym"], asof))
+    for p in Bk["held"] + Bk["due"]:                                         # a first run or a rebuilt folder: take the replay's positions into the record
+        if (p["sym"], p["signal"]) not in have: L_.append(dict(sym=p["sym"], signal=p["signal"], w=p["w"], sell=p["sell"], from_replay=True)); have.add((p["sym"], p["signal"]))
+    shown = {(p["sym"], p["signal"]) for p in Bk["held"] + Bk["due"]} | {(b["sym"], asof) for b in Bk["buys"]}
+    for e in L_:
+        if (e["sym"], e["signal"]) in shown or e["signal"] not in dix or e["sym"] not in cols: continue
+        i_s = dix[e["signal"]]; d1 = i_s + 1; xo = d1 + PB.HOLD
+        if d1 <= i and xo >= T_:                                             # bought, not yet sold, and missing from today's replay
+            p = row(dict(j=cols.index(e["sym"]), i=i_s, d1=d1, xo=xo, w=e["w"]), "held"); p["record_only"] = True; (Bk["due"] if xo == T_ else Bk["held"]).append(p)
+            RECW.append(dict(rule=rule, sym=e["sym"], name=p["name"], signal=e["signal"], sell=p["sell"]))
+    Bk["free"] = int(Bk["slots"] - len(Bk["held"])); Bk["invested"] = R(sum(p["w"] for p in Bk["held"]) + sum(b["w"] for b in Bk["buys"]), 4)
+json.dump(LED, open(LEDF, "w"), indent=1)
 # the same two rules had they been running through this sell-off (no start date): tells the episode's story; it is a replay, not your account
 REPLAY = {}
 for rule in ("live", "fable"):
@@ -157,7 +175,7 @@ after_close = today.dayofweek in (6, 0, 1, 2, 3) and (now.hour, now.minute) >= (
 expected = today if after_close else today - BD; stale = bool(last < expected)                    # the newest close should be the last finished session
 OUT = dict(v=1, asof=fdate(last), day=fdate(day), made=now.strftime("%Y-%m-%d %H:%M") + " Riyadh", stocks=nlast, stale=stale,
            rule=dict(live=dict(slots=book.LIVE_SLOTS, size=book.LIVE_SIZE, most=.25), fable=dict(slots=book.SLOTS, per_day=1, size=R(book.BASE, 4), deep_size=R(book.BASE * book.MULT, 4), deep=book.DEEP, most=.50, status="paper")),
-           weather=weather, episode=episode, past=past, live=BOOKS["live"], fable=BOOKS["fable"], replay=REPLAY, signals=signals, watch=watch, cards=CARDS, expect=expect, sizing=sizing, record=record, scorecard=scorecard, evidence=evidence, us=us)
+           weather=weather, episode=episode, past=past, live=BOOKS["live"], fable=BOOKS["fable"], record_warn=RECW, replay=REPLAY, signals=signals, watch=watch, cards=CARDS, expect=expect, sizing=sizing, record=record, scorecard=scorecard, evidence=evidence, us=us)
 def clean(x):
     if isinstance(x, dict): return {k: clean(v) for k, v in x.items()}
     if isinstance(x, (list, tuple)): return [clean(v) for v in x]

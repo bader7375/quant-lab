@@ -17,7 +17,7 @@ scheduled tasks are untouched.
 | `../pine/fable_ladder.pine` | TradingView: market weather behind the price, ladder steps, the buy-line price |
 
 Research: `research/r71` (reproduce, no look-ahead, ranges, gate test), `r72` (24 other markets), `r73` (Saudi confirmation at equal
-risk, stress, tails, replay), `r74` (entry timing). Each has PREREG.md written before its run and RESULTS.md.
+risk, stress, tails, replay), `r74` (entry timing), `r75` (the idle-money assumption). The short report is `REPORT.md`. Each has PREREG.md written before its run and RESULTS.md.
 
 ## The two rules side by side
 | | live (plan Z, what you trade) | the Fable ladder (on paper) |
@@ -49,6 +49,9 @@ Research scripts take the work folder from `RE_WORK`, e.g. `RE_WORK=<work folder
 - The price panel holds only stocks listed today (survivorship bias).
 - A fresh refit of the ML ranker and the market model moves the yearly figures by about 0.2 point and can change a few past
   signals (round 71). The `days/` record exists so that what you were told on a day stays what it was.
+- The market model is refit every day, so a past signal that sat on its line can flip between two daily runs (round 71,
+  addendum). `export.py` keeps `ledger.json` in the work folder: a buy it listed stays in the book until its sale, with a note in
+  the brief if the replay stops showing it.
 - Yahoo sometimes serves the last session's daily bar empty for some hours. The export marks the picture as old when the newest
   close is not the last session.
 - `pine/fable_ladder.pine` was written from the scanner's formulas and the existing scripts; it has not been compiled on
