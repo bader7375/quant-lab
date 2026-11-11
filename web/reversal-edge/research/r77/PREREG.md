@@ -49,3 +49,18 @@ supported abroad". It is never switched on by me.
 ## Also built, described and not judged
 An edge score for the scanner: the average 5-session result of a liquid stock by stretch and weather (round 76's map), Saudi
 numbers pulled toward the other markets' numbers in proportion to how few Saudi cases there are.
+
+## Stage D (added 2026-11-11 after stages A-C abroad, before any Saudi account run): should the exit depend on the weather?
+Seen: stage A picked line -2.0, sell at stretch Z >= -0.5, 40 sessions at most (beats L12D in 66% of market-eras; 1.8 times its
+trades). Stage B kept one buy a day, cross day only, most volatile first. Stage C kept storm and deep only (weekly crosses were a
+near miss; calm and clouds at half size tripled the trades and lowered the return per drawdown from 0.215 to 0.185).
+Round 76's edge map says the edge of staying in a trade fades at different points: about stretch Z -1 in cloudy weather, -0.5 in a
+storm, 0 in deep weather, and in calm weather there is none worth the costs. One hurdle (about 0.4% per 5 sessions) gives all four.
+Variants, each against D0 = the stage-C pick:
+- D1: trades opened in deep weather sell at stretch Z >= 0 (storm trades stay at -0.5).
+- D2: D0 plus trades opened in cloudy weather at half size, sold at stretch Z >= -1 or after 20 sessions.
+- D3: D1 and D2 together.
+- D4: D3 plus trades opened in calm weather at half size, sold at stretch Z >= -1.5 or after 10 sessions (the map says this should fail).
+- D5: D3 plus weekly crosses (first weekly close at or below -2.08).
+Pick, as in stages B and C: the variant with the most trades among those that beat D0 in at least 50% of market-eras with a median
+return per drawdown not below D0's. If none, D0 stands. What goes to Saudi: the pick, with D0 always shown beside it.

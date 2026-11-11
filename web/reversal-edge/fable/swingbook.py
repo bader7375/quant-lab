@@ -5,7 +5,7 @@ The rule family (the tested values are in SWING below):
   candidate  a liquid stock whose stretch Z crossed down into the buy zone (first close at or below `line`) and is still in the zone,
              at most `queue` sessions after the cross; only in the allowed market weather; with the market's extra gates when it has them.
   buy        at the next open: the best-ranked candidates not already held, at most `per_day` new positions a day and `slots` at once.
-  size       `base` of the account, times `deep_mult` when the weather at the signal is "deep".
+  size       `base` of the account, times `deep_mult` when the weather at the signal is "deep" (or `sizes`: a multiplier for each weather).
   sell       at the open after the first close with stretch Z at or above `target` (the stretch is gone), or after `cap` sessions.
   re-entry   a sold stock can be bought again on a new cross.
 Signals at the close, trades at the next open; `side` is the cost per side; idle money earns the cash rate."""
@@ -31,13 +31,17 @@ def zone_age(B, line):
     age[0] = np.where(inz[0], 0, 9999); S["inz"][line] = inz; S["age"][line] = age; return inz, age
 
 
-def simulate(B, line=-2.5, target=-1.0, cap=40, slots=12, per_day=1, queue=0, rank="vol", base=1 / 48, deep_mult=2.0, weather=(2, 3), gate=None, weekly=None,
+def simulate(B, line=-2.5, target=-1.0, cap=40, slots=12, per_day=1, queue=0, rank="vol", base=1 / 48, deep_mult=2.0, weather=(2, 3), gate=None, weekly=None, sizes=None, wplan=None,
              side=.002, cash=True, start=None, end=None, late=0, hold_only=False, want_orders=False):
     """-> (daily account curve, trades table). weekly: None, or a weekly line (a first weekly close at or below it is also a candidate
     on that day). hold_only: ignore `target` (sell after `cap` sessions only). late: sessions of delay on every buy and sale (stress).
     want_orders: also return the orders for the open after the last close (dict sells, buys, held)."""
-    S = prep(B); Z, wx = S["Z"], S["wx"]; T, N = Z.shape; Of, Cf, EL = B.Of, B.Cf, B.EL; inz, age = zone_age(B, line)
-    wok = np.isin(wx, weather); cand = inz & (age <= queue) & EL & wok[:, None]
+    S = prep(B); Z, wx = S["Z"], S["wx"]; T, N = Z.shape; Of, Cf, EL = B.Of, B.Cf, B.EL
+    mult0 = np.array([1.0, 1.0, 1.0, deep_mult]) if sizes is None else np.asarray(sizes, float)
+    if wplan is None: wplan = {int(w): (line, None if hold_only else target, cap, float(mult0[int(w)])) for w in weather}     # weather code -> (line, target, cap, size multiplier)
+    cand = np.zeros((T, N), bool); wok = np.isin(wx, list(wplan))
+    for w, (ln, _, _, _) in wplan.items():
+        inz, age = zone_age(B, ln); cand |= inz & (age <= queue) & EL & (wx == w)[:, None]
     if weekly is not None:
         key = ("wk", weekly)
         if key not in S: zw = B.ZW.reindex(columns=B.cols); wf = SW.cross_in(zw.values, weekly); W = np.zeros((T, N), bool); W[np.searchsorted(B.dates.values, zw.index.values)] = wf; S[key] = W
@@ -45,7 +49,8 @@ def simulate(B, line=-2.5, target=-1.0, cap=40, slots=12, per_day=1, queue=0, ra
     if gate is not None: cand = cand & gate
     rk = np.nan_to_num(B.VOL, nan=-9e9) if rank == "vol" else -np.nan_to_num(Z, nan=9e9) if rank == "deep" else rank
     rate = B.rate if cash else np.zeros(T); i0 = 1 if start is None else max(1, int(np.searchsorted(B.dates.values, np.datetime64(start)))); i1 = T if end is None else int(np.searchsorted(B.dates.values, np.datetime64(end), side="right"))
-    eq = np.ones(T); cashv = 1.0; pos = {}; trades = []; flag = {}                 # pos[j] = [shares, d1, entry, w, signal i]; flag[j] = reason, set at a close
+    eq = np.ones(T); cashv = 1.0; pos = {}; trades = []; flag = {}                 # pos[j] = [shares, d1, entry, w, signal i, target, cap]; flag[j] = reason, set at a close
+    wp = lambda ts: wplan.get(int(wx[ts]), wplan[max(wplan)])                     # the plan of the weather at the signal (a weekly candidate in other weather uses the deepest plan's exit)
     queue_ = {}; qs = set(); qb = set()                                           # orders waiting for their open; stocks with a sale / a buy waiting
     def decide(t_close):
         """orders from what is known at close t_close: (sells [(j, why)], buys [j]); they are filled at the open 1 + late sessions later."""
@@ -65,12 +70,12 @@ def simulate(B, line=-2.5, target=-1.0, cap=40, slots=12, per_day=1, queue=0, ra
             for j in buys:
                 qb.discard(j); px = Of[t, j]
                 if np.isfinite(px) and px > 0 and j not in pos and len(pos) < slots:
-                    w = base * (deep_mult if wx[ts] == 3 else 1.0); alloc = w * prev; pos[j] = [alloc / (px * (1 + side)), t, px, w, ts]; cashv -= alloc
+                    _, tg, cp, m_ = wp(ts); w = base * m_; alloc = w * prev; pos[j] = [alloc / (px * (1 + side)), t, px, w, ts, tg, cp]; cashv -= alloc
         eq[t] = cashv + sum(p[0] * Cf[t, j] for j, p in pos.items())
         for j, p in pos.items():                                                   # flags at this close
             if j in flag: continue
-            if not hold_only and np.isfinite(Z[t, j]) and Z[t, j] >= target: flag[j] = 0
-            elif t - p[1] + 1 >= cap: flag[j] = 1
+            if p[5] is not None and np.isfinite(Z[t, j]) and Z[t, j] >= p[5]: flag[j] = 0
+            elif t - p[1] + 1 >= p[6]: flag[j] = 1
         sells, buys = decide(t); last = (sells, buys, t)
         if sells or buys:
             queue_[t + 1 + late] = (sells, buys, t); qs.update(j for j, _ in sells); qb.update(buys)
@@ -78,6 +83,6 @@ def simulate(B, line=-2.5, target=-1.0, cap=40, slots=12, per_day=1, queue=0, ra
     TR = pd.DataFrame(trades, columns=["i", "j", "d1", "ex", "w", "ret", "why"]); curve = pd.Series(eq, index=B.dates)
     if not want_orders: return curve, TR
     sells, buys, ts = last if last is not None else ([], [], T - 1)
-    held = [dict(j=int(j), i=int(p[4]), d1=int(p[1]), entry=float(p[2]), w=float(p[3]), flag=flag.get(j)) for j, p in pos.items()]
-    return curve, TR, dict(i=int(ts), sells=[(int(j), int(w)) for j, w in sells], buys=[dict(j=int(j), w=float(base * (deep_mult if wx[ts] == 3 else 1.0))) for j in buys], held=held,
+    held = [dict(j=int(j), i=int(p[4]), d1=int(p[1]), entry=float(p[2]), w=float(p[3]), target=p[5], cap=int(p[6]), flag=flag.get(j)) for j, p in pos.items()]
+    return curve, TR, dict(i=int(ts), sells=[(int(j), int(w)) for j, w in sells], buys=[dict(j=int(j), w=float(base * wp(ts)[3]), target=wp(ts)[1], cap=int(wp(ts)[2])) for j in buys], held=held,
                            cands=[int(j) for j in np.where(cand[ts])[0]])

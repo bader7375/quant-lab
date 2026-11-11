@@ -1,0 +1,64 @@
+market-eras counted: 64 | reference L12D: median ratio 0.149, growth +0.73% dd 5.4%, trades 1884 | live shape A0: median ratio 0.082, trades 1767
+
+== stage A: line and exit (one buy a day, cross day only, most volatile first, 12 slots)
+L-2.0 Z>=-1 cap20                  | vs L12D 36/64 =  56% p=0.191 (16/20, 13/22, 7/22) | vs A0 48/64 =  75% | median ratio 0.206 | growth +0.68% dd 4.3% | trades 3646 (+3.1%, 72% win, held 10)  PASS-B
+L-2.0 Z>=-1 cap40                  | vs L12D 38/64 =  59% p=0.084 (16/20, 13/22, 9/22) | vs A0 51/64 =  80% | median ratio 0.199 | growth +0.73% dd 4.4% | trades 3580 (+3.4%, 73% win, held 11)  PASS-B
+L-2.0 Z>=-.5 cap20                 | vs L12D 39/64 =  61% p=0.052 (15/20, 14/22, 10/22) | vs A0 50/64 =  78% | median ratio 0.196 | growth +0.77% dd 5.0% | trades 3579 (+3.7%, 70% win, held 14)  PASS-B
+L-2.0 Z>=-.5 cap40                 | vs L12D 42/64 =  66% p=0.008 (15/20, 14/22, 13/22) | vs A0 49/64 =  77% | median ratio 0.215 | growth +0.86% dd 5.2% | trades 3421 (+4.3%, 74% win, held 17)  PASS-A  PASS-B
+L-2.0 Z>=0 cap20                   | vs L12D 38/64 =  59% p=0.084 (14/20, 15/22, 9/22) | vs A0 47/64 =  73% | median ratio 0.175 | growth +0.80% dd 5.6% | trades 3548 (+3.8%, 65% win, held 17)  PASS-B
+L-2.0 Z>=0 cap40                   | vs L12D 38/64 =  59% p=0.084 (9/20, 15/22, 14/22) | vs A0 47/64 =  73% | median ratio 0.230 | growth +0.95% dd 5.9% | trades 3268 (+4.9%, 73% win, held 23)  PASS-B
+L-2.0 time cap20                   | vs L12D 39/64 =  61% p=0.052 (13/20, 14/22, 12/22) | vs A0 44/64 =  69% | median ratio 0.161 | growth +0.84% dd 5.8% | trades 3524 (+4.0%, 62% win, held 20)  PASS-B
+L-2.0 time cap40                   | vs L12D 35/64 =  55% p=0.266 (9/20, 12/22, 14/22) | vs A0 44/64 =  69% | median ratio 0.173 | growth +1.00% dd 6.7% | trades 3055 (+5.8%, 63% win, held 40)  PASS-B
+L-2.5 Z>=-1 cap20                  | vs L12D 39/64 =  61% p=0.052 (16/20, 17/22, 6/22) | vs A0 47/64 =  73% | median ratio 0.182 | growth +0.60% dd 4.2% | trades 2406 (+4.1%, 72% win, held 12)
+L-2.5 Z>=-1 cap40                  | vs L12D 41/64 =  64% p=0.016 (16/20, 16/22, 9/22) | vs A0 50/64 =  78% | median ratio 0.195 | growth +0.65% dd 4.3% | trades 2348 (+4.6%, 74% win, held 13)  PASS-A
+L-2.5 Z>=-.5 cap20                 | vs L12D 36/64 =  56% p=0.191 (12/20, 15/22, 9/22) | vs A0 46/64 =  72% | median ratio 0.169 | growth +0.67% dd 4.6% | trades 2379 (+4.6%, 69% win, held 15)
+L-2.5 Z>=-.5 cap40                 | vs L12D 37/64 =  58% p=0.130 (13/20, 13/22, 11/22) | vs A0 49/64 =  77% | median ratio 0.191 | growth +0.76% dd 4.8% | trades 2277 (+5.4%, 74% win, held 18)
+L-2.5 Z>=0 cap20                   | vs L12D 36/64 =  56% p=0.191 (12/20, 14/22, 10/22) | vs A0 45/64 =  70% | median ratio 0.181 | growth +0.68% dd 5.0% | trades 2373 (+4.6%, 66% win, held 17)
+L-2.5 Z>=0 cap40                   | vs L12D 38/64 =  59% p=0.084 (9/20, 16/22, 13/22) | vs A0 51/64 =  80% | median ratio 0.203 | growth +0.81% dd 5.4% | trades 2213 (+6.0%, 73% win, held 25)
+L-2.5 time cap20                   | vs L12D 31/64 =  48% p=0.646 (8/20, 14/22, 9/22) | vs A0 43/64 =  67% | median ratio 0.162 | growth +0.66% dd 5.2% | trades 2357 (+4.4%, 64% win, held 20)
+L-2.5 time cap40                   | vs L12D 35/64 =  55% p=0.266 (8/20, 11/22, 16/22) | vs A0 44/64 =  69% | median ratio 0.147 | growth +0.85% dd 6.1% | trades 2120 (+6.8%, 64% win, held 40)
+L-3.0 Z>=-1 cap20                  | vs L12D 33/64 =  52% p=0.450 (14/20, 13/22, 6/22) | vs A0 46/64 =  72% | median ratio 0.148 | growth +0.51% dd 3.8% | trades 1539 (+5.0%, 72% win, held 13)
+L-3.0 Z>=-1 cap40                  | vs L12D 39/64 =  61% p=0.052 (14/20, 15/22, 10/22) | vs A0 50/64 =  78% | median ratio 0.182 | growth +0.56% dd 3.8% | trades 1502 (+5.7%, 75% win, held 15)
+L-3.0 Z>=-.5 cap20                 | vs L12D 34/64 =  53% p=0.354 (13/20, 13/22, 8/22) | vs A0 43/64 =  67% | median ratio 0.145 | growth +0.54% dd 4.0% | trades 1529 (+5.2%, 70% win, held 16)
+L-3.0 Z>=-.5 cap40                 | vs L12D 38/64 =  59% p=0.084 (14/20, 14/22, 10/22) | vs A0 49/64 =  77% | median ratio 0.195 | growth +0.62% dd 4.2% | trades 1481 (+6.4%, 76% win, held 20)
+L-3.0 Z>=0 cap20                   | vs L12D 35/64 =  55% p=0.266 (12/20, 15/22, 8/22) | vs A0 42/64 =  66% | median ratio 0.141 | growth +0.54% dd 4.2% | trades 1525 (+5.3%, 66% win, held 18)
+L-3.0 Z>=0 cap40                   | vs L12D 36/64 =  56% p=0.191 (11/20, 13/22, 12/22) | vs A0 49/64 =  77% | median ratio 0.209 | growth +0.67% dd 4.8% | trades 1457 (+7.1%, 74% win, held 26)
+L-3.0 time cap20                   | vs L12D 33/64 =  52% p=0.450 (8/20, 14/22, 11/22) | vs A0 41/64 =  64% | median ratio 0.138 | growth +0.54% dd 4.4% | trades 1512 (+5.2%, 65% win, held 20)
+L-3.0 time cap40                   | vs L12D 33/64 =  52% p=0.450 (9/20, 11/22, 13/22) | vs A0 45/64 =  70% | median ratio 0.167 | growth +0.72% dd 5.3% | trades 1414 (+7.8%, 65% win, held 40)
+
+stage A pick: L-2.0 Z>=-.5 cap40  (PASS-A)
+
+== stage B on the pick: candidates valid for q sessions, order, buys a day
+q0 vol x1                          | vs L12D 42/64 =  66% p=0.008 (15/20, 14/22, 13/22) | vs stage-A pick  0/64 =  50% | median ratio 0.215 | growth +0.86% dd 5.2% | trades 3421 (+4.3%, 74% win, held 17)
+q0 vol x2                          | vs L12D 34/64 =  53% p=0.354 (13/20, 12/22, 9/22) | vs stage-A pick 29/64 =  45% | median ratio 0.179 | growth +0.92% dd 6.2% | trades 4291 (+3.8%, 73% win, held 17)
+q0 vol x3                          | vs L12D 36/64 =  56% p=0.191 (14/20, 14/22, 8/22) | vs stage-A pick 20/64 =  31% | median ratio 0.166 | growth +0.91% dd 6.7% | trades 4633 (+3.7%, 73% win, held 17)
+q0 deep x1                         | vs L12D 45/64 =  70% p=0.001 (16/20, 16/22, 13/22) | vs stage-A pick 28/64 =  44% | median ratio 0.221 | growth +0.84% dd 4.9% | trades 3396 (+4.1%, 74% win, held 17)
+q0 deep x2                         | vs L12D 37/64 =  58% p=0.130 (14/20, 15/22, 8/22) | vs stage-A pick 27/64 =  42% | median ratio 0.193 | growth +0.89% dd 5.9% | trades 4275 (+3.7%, 73% win, held 17)
+q0 deep x3                         | vs L12D 36/64 =  56% p=0.191 (12/20, 15/22, 9/22) | vs stage-A pick 27/64 =  42% | median ratio 0.168 | growth +0.90% dd 6.4% | trades 4623 (+3.6%, 74% win, held 17)
+q3 vol x1                          | vs L12D 39/64 =  61% p=0.052 (13/20, 15/22, 11/22) | vs stage-A pick 31/64 =  48% | median ratio 0.190 | growth +0.95% dd 6.0% | trades 4016 (+4.1%, 73% win, held 17)
+q3 vol x2                          | vs L12D 35/64 =  55% p=0.266 (13/20, 15/22, 7/22) | vs stage-A pick 23/64 =  36% | median ratio 0.166 | growth +0.94% dd 6.8% | trades 4778 (+3.6%, 73% win, held 17)
+q3 vol x3                          | vs L12D 33/64 =  52% p=0.450 (12/20, 14/22, 7/22) | vs stage-A pick 23/64 =  36% | median ratio 0.153 | growth +0.95% dd 7.0% | trades 5044 (+3.6%, 73% win, held 17)
+q3 deep x1                         | vs L12D 41/64 =  64% p=0.016 (15/20, 15/22, 11/22) | vs stage-A pick 32/64 =  50% | median ratio 0.192 | growth +0.92% dd 5.9% | trades 3901 (+4.1%, 74% win, held 18)
+q3 deep x2                         | vs L12D 34/64 =  53% p=0.354 (13/20, 14/22, 7/22) | vs stage-A pick 28/64 =  44% | median ratio 0.148 | growth +0.89% dd 6.6% | trades 4652 (+3.5%, 73% win, held 17)
+q3 deep x3                         | vs L12D 34/64 =  53% p=0.354 (14/20, 14/22, 6/22) | vs stage-A pick 22/64 =  34% | median ratio 0.156 | growth +0.91% dd 6.8% | trades 4947 (+3.5%, 73% win, held 17)
+q10 vol x1                         | vs L12D 38/64 =  59% p=0.084 (15/20, 12/22, 11/22) | vs stage-A pick 34/64 =  53% | median ratio 0.180 | growth +0.99% dd 6.4% | trades 4148 (+4.1%, 73% win, held 17)
+q10 vol x2                         | vs L12D 34/64 =  53% p=0.354 (14/20, 13/22, 7/22) | vs stage-A pick 23/64 =  36% | median ratio 0.152 | growth +0.94% dd 7.1% | trades 4897 (+3.6%, 73% win, held 17)
+q10 vol x3                         | vs L12D 34/64 =  53% p=0.354 (12/20, 15/22, 7/22) | vs stage-A pick 20/64 =  31% | median ratio 0.165 | growth +0.96% dd 7.1% | trades 5182 (+3.6%, 73% win, held 17)
+q10 deep x1                        | vs L12D 41/64 =  64% p=0.016 (15/20, 15/22, 11/22) | vs stage-A pick 28/64 =  44% | median ratio 0.169 | growth +0.92% dd 6.3% | trades 3951 (+4.1%, 73% win, held 18)
+q10 deep x2                        | vs L12D 34/64 =  53% p=0.354 (12/20, 15/22, 7/22) | vs stage-A pick 22/64 =  34% | median ratio 0.148 | growth +0.85% dd 6.9% | trades 4730 (+3.4%, 72% win, held 18)
+q10 deep x3                        | vs L12D 33/64 =  52% p=0.450 (13/20, 15/22, 5/22) | vs stage-A pick 20/64 =  31% | median ratio 0.168 | growth +0.88% dd 7.0% | trades 5047 (+3.4%, 73% win, held 18)
+
+stage B pick: q0 vol x1
+
+== stage C on the pick: weekly crosses, weather (calm and clouds at half size)
+storm+deep                         | vs L12D 42/64 =  66% p=0.008 (15/20, 14/22, 13/22) | vs stage-B pick  0/64 =  50% | median ratio 0.215 | growth +0.86% dd 5.2% | trades 3421 (+4.3%, 74% win, held 17)
++clouds                            | vs L12D 36/64 =  56% p=0.191 (14/20, 14/22, 8/22) | vs stage-B pick 32/64 =  50% | median ratio 0.189 | growth +0.85% dd 5.3% | trades 5230 (+3.3%, 72% win, held 17)
+all weather                        | vs L12D 38/64 =  59% p=0.084 (15/20, 14/22, 9/22) | vs stage-B pick 32/64 =  50% | median ratio 0.185 | growth +0.86% dd 5.4% | trades 9198 (+2.1%, 69% win, held 17)
+weekly storm+deep                  | vs L12D 43/64 =  67% p=0.004 (17/20, 14/22, 12/22) | vs stage-B pick 39/64 =  61% | median ratio 0.211 | growth +0.94% dd 5.5% | trades 3680 (+4.3%, 74% win, held 16)
+weekly +clouds                     | vs L12D 42/64 =  66% p=0.008 (16/20, 15/22, 11/22) | vs stage-B pick 35/64 =  55% | median ratio 0.188 | growth +0.91% dd 5.5% | trades 5636 (+3.2%, 72% win, held 16)
+weekly all weather                 | vs L12D 44/64 =  69% p=0.002 (16/20, 16/22, 12/22) | vs stage-B pick 36/64 =  56% | median ratio 0.183 | growth +0.93% dd 5.6% | trades 9936 (+2.1%, 69% win, held 17)
+
+stage C pick: storm+deep
+
+the rule chosen abroad: {'weekly': None, 'weather': (2, 3), 'queue': 0, 'rank': 'vol', 'per_day': 1, 'line': -2.0, 'cap': 40, 'target': -0.5}
+final: final                              | vs L12D 42/64 =  66% p=0.008 (15/20, 14/22, 13/22) | vs A0 49/64 =  77% | median ratio 0.215 | growth +0.86% dd 5.2% | trades 3421 (+4.3%, 74% win, held 17)
