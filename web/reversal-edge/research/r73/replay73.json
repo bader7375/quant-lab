@@ -1,0 +1,20 @@
+{
+ "fable": {
+  "tested": 93,
+  "listed": 93,
+  "same_trades": true,
+  "same_sizes": true,
+  "sells_on_tested_day": true,
+  "most_positions": 12,
+  "days_checked": 128
+ },
+ "live": {
+  "tested": 73,
+  "listed": 73,
+  "same_trades": true,
+  "same_sizes": true,
+  "sells_on_tested_day": true,
+  "most_positions": 5,
+  "days_checked": 128
+ }
+}
