@@ -318,9 +318,9 @@ function vSelloff(){
   return h+'</section>';
 }
 function rungs(B,rule){
-  var slots=B.slots, rows=B.held.concat(B.due), h='<div class="ladder">';
+  var slots=B.slots, rows=B.held.concat(B.due.map(function(p){var q={};for(var k in p)q[k]=p[k];q.due=true;return q})), h='<div class="ladder">';
   for(var k=slots-1;k>=0;k--){ var p=rows[k];
-    if(p){ var done=Math.min(1,p.held/40); h+='<button class="rung on'+(p.deep&&rule=="fable"?" deep":"")+'" data-sym="'+esc(p.sym)+'"><span class="t">'+esc(p.sym)+' <small style="font-weight:400;color:var(--muted)">'+esc(p.name)+'</small></span><span class="s">'+pct(p.w,1,false)+' · bought '+dt(p.bought)+' at '+px(p.entry)+' · sells '+dt(p.sell)+'</span><span class="v '+cls(p.ret)+'">'+pct(p.ret)+'</span><span class="bar"><i style="width:'+Math.round(100*done)+'%"></i></span></button>'; }
+    if(p){ var done=Math.min(1,p.held/40); h+='<button class="rung on'+(p.deep&&rule=="fable"?" deep":"")+'" data-sym="'+esc(p.sym)+'"><span class="t">'+esc(p.sym)+' <small style="font-weight:400;color:var(--muted)">'+esc(p.name)+'</small></span><span class="s">'+(p.due?'<span class="tag sell">Sell at today\'s open</span> ':'')+pct(p.w,1,false)+' · bought '+dt(p.bought)+' at '+px(p.entry)+(p.due?'':' · sells '+dt(p.sell))+'</span><span class="v '+cls(p.ret)+'">'+pct(p.ret)+'</span><span class="bar"><i style="width:'+Math.round(100*done)+'%"></i></span></button>'; }
     else h+='<div class="rung"><span>'+(rule=="fable"?"free step":"free slot")+'</span></div>'; }
   return h+'</div>';
 }
@@ -354,7 +354,7 @@ function vSizing(){
     +'<div class="rangebar"><div class="lab"><b>Worst drawdown</b><span class="num">'+pct(s.dd[0],1,false)+' to '+pct(s.dd[2],1,false)+' · middle '+pct(s.dd[1],1,false)+'</span></div>'+rbar(s.dd,dmax,"var(--bad)",s.eras["2013-26"][1])+'</div>'
     +'<p class="note">Band: 5th to 95th percentile. Tall mark: the middle redraw. Arrow: what happened in 2013-26. Idle money earns T-bill interest. A redraw can only reuse sell-offs that happened, so it cannot show one worse than the worst so far.</p>'
     +'<div class="scroll"><table class="tb"><thead><tr><th>Period</th><th>Growth a year</th><th>Worst drawdown</th></tr></thead><tbody>'+["2013-19","2020-26","2023-26","2013-26"].map(function(e){return '<tr><td>'+e+'</td><td>'+pct(s.eras[e][0])+'</td><td>'+pct(s.eras[e][1],1,false)+'</td></tr>'}).join("")+'</tbody></table></div></div></div>';
-  if(T){ var k=s.mult, a=sizeRule=="live"?T.era_dd.live:T.era_dd.ladder; h+='<div class="block"><div class="eyebrow">What a bad decade abroad did at this size</div><p class="lead">In 64 market-decades of 23 other markets, the same shape at this size had a worst drawdown of <b class="num">'+pct(a[0]*k,1,false)+'</b> in the middle case, under <b class="num">'+pct(a[1]*k,1,false)+'</b> in nine of ten, and <b class="num">'+pct(a[2]*k,1,false)+'</b> in the worst (2008).</p><p class="note">Price-only rule abroad, idle money earning nothing, scaled from the tested size. Saudi has not had a 2008 inside this record.</p></div>'; }
+  if(T){ var k=s.mult, a=sizeRule=="live"?T.era_dd.live:T.era_dd.ladder; h+='<div class="block"><div class="eyebrow">What a bad decade abroad did at this size</div><p class="lead">In 64 market-decades of 23 other markets, the same shape at this size had a worst drawdown of <b class="num">'+pct(a[0]*k,1,false)+'</b> in the middle case, under <b class="num">'+pct(a[1]*k,1,false)+'</b> in nine of ten, and <b class="num">'+pct(a[2]*k,1,false)+'</b> in the worst (a decade that held 2008).</p><p class="note">Price-only rule abroad, idle money earning nothing, scaled from the tested size. Saudi has not had a 2008 inside this record.</p></div>'; }
   return h+'</section>';
 }
 function vEvidence(){

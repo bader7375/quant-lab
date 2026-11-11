@@ -1,0 +1,30 @@
+{
+ "9404.SR": {
+  "name": "Alinma short-maturity government sukuk ETF",
+  "first": "2020-03-04",
+  "last": "2026-11-11",
+  "years": 6.7,
+  "total_return": 0.11312967735856794,
+  "price_only": 0.0,
+  "tbill": 0.02916747641426909,
+  "dd": 0.09392260744147019,
+  "worst_year": 0.009208604170221069,
+  "median_value": 10389.015023231506,
+  "days_traded": 0.9308894230769231,
+  "biggest_day": 0.16404488694162267
+ },
+ "9403.SR": {
+  "name": "Albilad sovereign sukuk ETF",
+  "first": "2022-02-08",
+  "last": "2026-11-11",
+  "years": 4.8,
+  "total_return": -0.00018249922749469238,
+  "price_only": -0.03039099684801283,
+  "tbill": 0.04018895824954738,
+  "dd": 0.10484655778210872,
+  "worst_year": -0.034363231665796246,
+  "median_value": 150636.75,
+  "days_traded": 0.998280309544282,
+  "biggest_day": 0.039647170587130964
+ }
+}

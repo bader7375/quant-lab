@@ -152,7 +152,9 @@ try:
     us = dict(date=u.get("date"), ms=u.get("ms"), gate=u.get("gate"), window=bool(u30.get("window")), etf=(t27.get("us") or {}).get("etf"), near=[dict(sym=r_.get("sym"), z=r_.get("zc"), note=r_.get("act") or r_.get("note")) for r_ in (u.get("rows") or [])[:6]])
 except Exception as ex: us = dict(error=str(ex)[:120])
 # ---------------------------------------------------------------- write
-nlast = int(np.isfinite(Cl[i]).sum()); stale = bool(last < BD.rollback(today - BD) and now.hour < 16) or bool(last < BD.rollback(today) - BD)
+nlast = int(np.isfinite(Cl[i]).sum())
+after_close = today.dayofweek in (6, 0, 1, 2, 3) and (now.hour, now.minute) >= (15, 45)          # Sunday to Thursday, once Yahoo normally has the close
+expected = today if after_close else today - BD; stale = bool(last < expected)                    # the newest close should be the last finished session
 OUT = dict(v=1, asof=fdate(last), day=fdate(day), made=now.strftime("%Y-%m-%d %H:%M") + " Riyadh", stocks=nlast, stale=stale,
            rule=dict(live=dict(slots=book.LIVE_SLOTS, size=book.LIVE_SIZE, most=.25), fable=dict(slots=book.SLOTS, per_day=1, size=R(book.BASE, 4), deep_size=R(book.BASE * book.MULT, 4), deep=book.DEEP, most=.50, status="paper")),
            weather=weather, episode=episode, past=past, live=BOOKS["live"], fable=BOOKS["fable"], replay=REPLAY, signals=signals, watch=watch, cards=CARDS, expect=expect, sizing=sizing, record=record, scorecard=scorecard, evidence=evidence, us=us)
