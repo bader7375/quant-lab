@@ -557,10 +557,21 @@ function vEdge(){
     +'<p class="note">Read it down a column. In deep weather the edge in the zone is 2% to 4% for 5 sessions and fades as the stretch returns to 0: that is why the swing sells there. In calm and cloudy weather it is about 1% or less and does not grow with the stretch; after costs little is left, and the account did not gain from such trades when tested. "Today" counts the liquid stocks in each row now. Gross of costs; a description of the past, not a forecast.</p></div>';
   return h;
 }
+function vIdeas(){
+  var I=(D.evidence||{}).ideas; if(!I) return '<div class="block"><p class="lead">This export carries no table of tested ideas.</p></div>';
+  var ok=function(y){return y?' <b style="color:var(--good)">pass</b>':''};
+  var h='<div class="block"><h1 class="h2">'+I.tested+' changes tested. None adopted.</h1><p class="lead">Each row changes one thing in the swing. To go forward a change had to win on 24 other markets and on Saudi 2013-19. None did both, so 2020-26 stayed closed.</p></div>'
+    +'<div class="block"><div class="scroll"><table class="tb" style="table-layout:fixed"><thead><tr><th style="width:42%">Change</th><th style="width:27%;white-space:normal">Abroad<br><small>won·lost·same</small></th><th style="width:31%;white-space:normal">Saudi 13-19<br><small>growth, then drawdown</small></th></tr></thead><tbody>'
+    +'<tr><td><b>The swing as it is</b></td><td><small>the base</small></td><td>'+pct(I.base.g)+'<br><small>'+pct(I.base.dd,1,false)+'</small></td></tr>'
+    +I.rows.map(function(r){return '<tr><td style="white-space:normal">'+esc(r.name.replace(/^(\d+[a-z]) /,"").replace(/-(\d)/g,"\u2212$1")).replace(/^./,function(c){return c.toUpperCase()})+'</td><td>'+(r.won==null?'<small>Saudi only</small>':r.won+'·'+r.lost+'·'+r.same+ok(r.pa))+'</td><td>'+pct(r.g)+ok(r.ps)+'<br><small>'+pct(r.dd,1,false)+'</small></td></tr>'}).join("")
+    +'</tbody></table></div><p class="note">Abroad: market-periods (of '+I.counted+') where the change beat the swing, lost to it, or changed nothing. "Pass" abroad needs 60% of all '+I.counted+' and a sign test at 5%. "Pass" on Saudi needs growth not lower, drawdown not higher by more than 0.2 point, and a better return per drawdown.</p></div>'
+    +'<div class="block"><div class="eyebrow">What the failures say</div><ul class="plain"><li><b>More trades cannot be bought with a rule change.</b> Calm-weather dips in an uptrend passed abroad and failed here: 10 to 12 extra trades in 7 years, a higher drawdown.</li><li><b>Size is leverage, not edge.</b> Every bigger-size rule raised growth and drawdown together.</li><li><b>One buy a day stays.</b> Two buys a day in any named state raised the drawdown to 5.7% to 8.9%.</li><li><b>Selling at stretch Z 0 stays.</b> Later sales won on Saudi 2013-19 and lost abroad.</li><li><b>A limit-down close is not a reason to wait.</b> In China, Qatar and Taiwan such crosses were the better buys.</li></ul></div>';
+  return h;
+}
 function vResearch(){
-  var tabs=[["evidence","Evidence"],["selloffs","Sell-offs"],["sizing","Sizing"],["edge","Edge map"]];
+  var tabs=[["evidence","Evidence"],["ideas","Ideas"],["selloffs","Sell-offs"],["sizing","Sizing"],["edge","Edge map"]];
   var h='<section class="view"><div class="block"><div class="eyebrow">Research</div><div class="fchips" role="group" aria-label="Research section">'+tabs.map(function(t){return '<button data-res="'+t[0]+'" aria-pressed="'+(resTab==t[0])+'">'+t[1]+'</button>'}).join("")+'</div></div>';
-  return h+({evidence:vEvidence,selloffs:vSelloffs,sizing:vSizing,edge:vEdge}[resTab]||vEvidence)()+'</section>';
+  return h+({evidence:vEvidence,ideas:vIdeas,selloffs:vSelloffs,sizing:vSizing,edge:vEdge}[resTab]||vEvidence)()+'</section>';
 }
 /* ---------- shell ---------- */
 var VIEWS={today:vToday,scanner:vScanner,chart:vChart,books:vBooks,research:vResearch};

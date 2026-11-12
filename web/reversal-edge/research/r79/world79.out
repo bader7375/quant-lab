@@ -1,1 +1,35 @@
 market-eras counted: 64 | reference L12D: median ratio 0.149, growth +0.73% dd 5.4%, trades 1884 | live shape A0: median ratio 0.082, trades 1767
+market-eras counted: 64 | base swing: median return per drawdown 0.203, growth +0.81%, drawdown 5.4%, trades 2213, winners 73%, average +6.0%, held 25
+1a storm -2.5 / deep -2.0                            | beats base 34/64 =  53%  p=0.354 Holm=1.00 (12/20, 9/22, 13/22) | median ratio 0.200 | growth +0.93% dd 5.5% | trades 2417 (+6.1%, 74% win, held 24)
+1b storm -3.0 / deep -2.5                            | beats base 33/64 =  52%  p=0.450 Holm=1.00 (10/20, 14/22, 9/22) | median ratio 0.215 | growth +0.76% dd 5.1% | trades 1647 (+7.0%, 75% win, held 25)
+1c storm -3.0 / deep -2.0                            | beats base 37/64 =  58%  p=0.130 Holm=1.00 (12/20, 12/22, 13/22) | median ratio 0.235 | growth +0.89% dd 5.2% | trades 1845 (+7.1%, 76% win, held 24)
+2b target falls with time (+0.5 to -1.0)             | beats base 33/64 =  52%  p=0.450 Holm=1.00 (12/20, 13/22, 8/22) | median ratio 0.191 | growth +0.77% dd 5.2% | trades 2229 (+5.7%, 72% win, held 22)
+2c ride the rebound (sell 0.5 under the peak stretch) | beats base 20/64 =  31%  p=0.999 Holm=1.00 (3/20, 5/22, 12/22) | median ratio 0.166 | growth +0.75% dd 5.9% | trades 2150 (+5.7%, 71% win, held 34)
+2d deep buys sell at +1                              | beats base 35/64 =  55%  p=0.266 Holm=1.00 (8/20, 13/22, 14/22) | median ratio 0.163 | growth +0.84% dd 5.9% | trades 2177 (+6.3%, 70% win, held 29)
+2e no sale at 0 while the market is deep             | beats base 30/64 =  47%  p=0.734 Holm=1.00 (4/20, 13/22, 13/22) | median ratio 0.189 | growth +0.80% dd 5.5% | trades 2163 (+6.0%, 72% win, held 27)
+3a largest stock-specific fall first                 | beats base 32/64 =  50%  p=0.550 Holm=1.00 (8/20, 9/22, 15/22) | median ratio 0.184 | growth +0.76% dd 5.0% | trades 2221 (+5.5%, 73% win, held 25)
+3b smallest stock-specific fall first                | beats base 29/64 =  45%  p=0.809 Holm=1.00 (9/20, 11/22, 9/22) | median ratio 0.169 | growth +0.71% dd 5.1% | trades 2209 (+5.1%, 72% win, held 25)
+3c fastest fall first                                | beats base 39/64 =  61%  p=0.052 Holm=1.00 (13/20, 14/22, 12/22) | median ratio 0.187 | growth +0.76% dd 4.7% | trades 2224 (+5.4%, 73% win, held 24)
+3d slowest fall first                                | beats base 33/64 =  52%  p=0.450 Holm=1.00 (8/20, 11/22, 14/22) | median ratio 0.207 | growth +0.74% dd 5.1% | trades 2218 (+5.4%, 73% win, held 25)
+3e rarest stretch first                              | beats base 29/64 =  45%  p=0.809 Holm=1.00 (7/20, 10/22, 12/22) | median ratio 0.171 | growth +0.72% dd 5.0% | trades 2210 (+5.2%, 72% win, held 25)
+4a equal risk (less in volatile stocks)              | beats base 35/64 =  55%  p=0.266 Holm=1.00 (11/20, 13/22, 11/22) | median ratio 0.203 | growth +0.68% dd 4.5% | trades 2213 (+6.0%, 73% win, held 25)
+4b more in volatile stocks                           | beats base 22/64 =  34%  p=0.996 Holm=1.00 (6/20, 9/22, 7/22) | median ratio 0.186 | growth +0.98% dd 7.0% | trades 2195 (+5.8%, 73% win, held 25)
+4c more in the deeper stock                          | beats base 27/64 =  42%  p=0.916 Holm=1.00 (8/20, 10/22, 9/22) | median ratio 0.206 | growth +0.90% dd 6.2% | trades 2206 (+5.9%, 73% win, held 25)
+4d smooth market-depth size (1x to 3x)               | beats base 26/64 =  41%  p=0.948 Holm=1.00 (9/20, 9/22, 8/22) | median ratio 0.183 | growth +1.03% dd 7.2% | trades 2162 (+5.8%, 73% win, held 25)
+4e half size in the first 5 sessions                 | beats base 33/64 =  52%  p=0.450 Holm=1.00 (10/20, 10/22, 13/22) | median ratio 0.218 | growth +0.76% dd 4.9% | trades 2213 (+6.0%, 73% win, held 25)
+5a two buys a day in deep weather                    | beats base 26/64 =  41%  p=0.948 Holm=1.00 (8/20, 9/22, 9/22) | median ratio 0.173 | growth +0.83% dd 6.4% | trades 2376 (+5.7%, 72% win, held 25)
+5b two buys a day when the market is turning         | beats base 28/64 =  44%  p=0.870 Holm=1.00 (10/20, 10/22, 8/22) | median ratio 0.196 | growth +0.82% dd 5.5% | trades 2270 (+5.9%, 73% win, held 25)
+5c two buys on a panic day                           | beats base 24/64 =  38%  p=0.984 Holm=1.00 (6/20, 11/22, 7/22) | median ratio 0.153 | growth +0.80% dd 6.1% | trades 2376 (+5.6%, 72% win, held 25)
+6a calm dips: stock and market in an uptrend         | beats base 43/64 =  67%  p=0.004 Holm=0.12 (15/20, 17/22, 11/22) | median ratio 0.210 | growth +0.83% dd 5.4% | trades 3199 (+4.5%, 70% win, held 21)   PASS
+6b calm dips: market in an uptrend                   | beats base 36/64 =  56%  p=0.191 Holm=1.00 (14/20, 13/22, 9/22) | median ratio 0.207 | growth +0.83% dd 5.5% | trades 3758 (+3.8%, 69% win, held 20)
+6c calm dips: stock in an uptrend                    | beats base 44/64 =  69%  p=0.002 Holm=0.06 (16/20, 17/22, 11/22) | median ratio 0.206 | growth +0.83% dd 5.5% | trades 3762 (+3.9%, 70% win, held 19)   PASS
+7a seasoned stocks only (500 sessions)               | beats base 21/64 =  33%  p=0.998 Holm=1.00 (5/20, 5/22, 11/22) | median ratio 0.195 | growth +0.78% dd 5.4% | trades 2112 (+5.9%, 73% win, held 25)
+10a fast swing (10-session stretch only)             | beats base 22/64 =  34%  p=0.996 Holm=1.00 (15/20, 6/22, 1/22) | median ratio 0.096 | growth +0.32% dd 4.1% | trades 2791 (+2.1%, 65% win, held 10)
+10b also sell on a sharp short bounce                | beats base 25/64 =  39%  p=0.970 Holm=1.00 (15/20, 7/22, 3/22) | median ratio 0.172 | growth +0.66% dd 4.9% | trades 2309 (+4.7%, 72% win, held 18)
+10c plus fast candidates (10-session stretch -3.0)   | beats base 34/64 =  53%  p=0.354 Holm=1.00 (9/20, 14/22, 11/22) | median ratio 0.177 | growth +0.83% dd 5.6% | trades 2595 (+5.3%, 73% win, held 24)
+11a no re-buy for 20 sessions                        | beats base 16/64 =  25%  p=1.000 Holm=1.00 (4/20, 5/22, 7/22) | median ratio 0.190 | growth +0.77% dd 5.3% | trades 2168 (+5.7%, 73% win, held 25)
+12a exposure ceiling by market depth                 | beats base 16/64 =  25%  p=1.000 Holm=1.00 (3/20, 7/22, 6/22) | median ratio 0.206 | growth +0.82% dd 5.4% | trades 2190 (+6.0%, 73% win, held 25)
+13a rotate out a holding at -1.0 or higher           | beats base 23/64 =  36%  p=0.992 Holm=1.00 (7/20, 6/22, 10/22) | median ratio 0.206 | growth +0.84% dd 5.4% | trades 2250 (+6.0%, 73% win, held 24)
+13b rotate out a holding at -0.5 or higher           | beats base 13/64 =  20%  p=1.000 Holm=1.00 (4/20, 3/22, 6/22) | median ratio 0.206 | growth +0.82% dd 5.4% | trades 2230 (+6.0%, 73% win, held 25)
+
+passed abroad: ['6a calm dips: stock and market in an uptrend', '6c calm dips: stock in an uptrend']

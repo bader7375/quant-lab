@@ -63,6 +63,27 @@ Trades by year: 2014: 10, 2015: 15, 2016: 22, 2017: 1, 2018: 5, 2019: 1, 2020: 9
 | 76 | Where is the edge of a cross? | Below about -2.5, in storm and deep weather, on the way down. It is gone by stretch Z 0. None in calm weather |
 | 77 | A swing chosen on 24 other markets (line -2.0, sell at -0.5)? | **Stopped** at the Saudi 2013-19 gate (+2.1% against +3.1%). 2020-26 was not opened for it |
 | 78 | One deeper swing (line -2.5, sell at 0), fixed before 2020-26 was opened? | **Confirmed against the live rule.** Not better than the ladder in both periods |
+| 79 | Can 13 new ideas (36 variants) improve the swing? | **No.** None won both abroad and on Saudi 2013-19. 2020-26 not opened |
+
+## Round 79: can the swing be improved? 36 changes tested, none adopted
+Each change altered one thing. To go forward it had to win on 24 other markets AND on Saudi 2013-19. Saudi 2020-26 stayed closed.
+
+| idea | what happened |
+|---|---|
+| a wider buy zone in deep weather | abroad a wash; Saudi drawdown 9.1-9.3% |
+| later or smarter sales (ride the rebound, deep buys sold at +1, a falling target) | Saudi 2013-19 +4.0% to +4.5%; abroad they lose (31% to 55% of market-periods) |
+| another order of candidates (stock-specific fall, fast fall, rarity) | none beat "most volatile first"; Saudi +2.8% to +3.3% |
+| size from the numbers (volatility, depth, a smooth 1x-3x) | growth and drawdown rise together: leverage, not edge |
+| two buys a day in deep weather, on a turn, on a panic day | more trades; Saudi drawdown 5.7% to 8.9% |
+| **calm-weather dips in an uptrend** | **the only pass abroad** (won 43-44 of 64); Saudi: 10-12 extra trades in 7 years, same growth, drawdown 5.8%. Failed |
+| a SAR 1 million liquidity bar | adds no trade: the ML rank exists only above the 3 million bar |
+| the 10% daily limit (wait after a limit-down close, skip it, or buy it first) | abroad such crosses are the BETTER buys; Saudi results mixed. Not adopted |
+| at most 3 positions an industry | Saudi +3.3%: it only removes good trades |
+| a 10-session swing, a sale on a sharp short bounce | much worse (Saudi +1.8%), or cuts the winners |
+| no re-buy for 20 sessions; a lower ceiling in shallow storms; rotating into the deeper stock | they seldom act; no gain. Rotation won 17 of the 22 market-periods where it acted abroad and never acted on Saudi 2013-19: a lead, not a result |
+
+Base swing on Saudi 2013-19: +3.9% / 5.4%. Full table with every variant: `research/r79/RESULTS.md`, and the Ideas tab of the terminal.
+**More trades cannot be bought with a rule change. The only lever for more reward is position size, and it buys drawdown one for one.**
 
 ## Honesty checks on the swing
 | check | result |
@@ -80,7 +101,7 @@ Trades by year: 2014: 10, 2015: 15, 2016: 22, 2017: 1, 2018: 5, 2019: 1, 2020: 9
 ## What is ready
 | item | state | needs |
 |---|---|---|
-| Fable terminal: Today, Scanner, Chart, Books, Research | published, filled by hand to the 2026-11-11 close | a daily feed (below) |
+| Fable terminal: Today, Scanner, Chart, Books, Research | published, filled by hand to the 2026-11-11 close. The chart did not load prices in the first version (my error: the page tried to change read-only data); fixed and retested with read-only data | a daily feed (below) |
 | Daily export and brief (`fable/run.sh`) | working, about 10 seconds after the live run | |
 | Daily feed: one new scheduled task at 16:55 Riyadh (`fable/SCHEDULE.md`) | written, **not created** | your yes |
 | The swing as your live rule | confirmed against live; on paper since the 2026-11-11 close | your yes, later. I suggest watching it on paper through one sell-off first |

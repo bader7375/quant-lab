@@ -14,6 +14,11 @@ through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2
    exit (rounds 41, 43, 70 had looked at selling at Z 0 inside the 5-slot plan and did not adopt it; the swing differs by one buy a
    day, small positions and re-entry, and its gain is lower drawdown). Runs on paper in the Fable terminal since the 2026-11-11 close. Waiting for the user.
    Also waiting: the 16:55 scheduled task that would feed the Fable terminal daily (fable/SCHEDULE.md; not created).
+   Round 79 (r79/RESULTS.md, 2026-11-12): 13 ideas / 36 variants to improve the swing (zone by weather, later sales, order of candidates,
+   size from volatility or depth, 2 buys a day in a named state, calm-weather dips in an uptrend, liquidity bar, the daily limit, sector
+   cap, 10-session swing, no quick re-buy, exposure ceiling, rotation). Tested abroad first, then Saudi 2013-19; 2020-26 NOT opened.
+   None passed both. The swing stays as it is. Do not repeat these without a new angle. One lead only: rotation into a deeper stock when
+   the book is full won where it acted abroad (17 of 22 market-eras) and never acted on Saudi 2013-19.
 12. OFFERED 2026-11-11 (the Fable edition, rounds 71-74; r73/RESULTS.md): the Fable ladder - the same Z score signals, at most ONE new
    position a day (the most volatile signal), up to 12 positions of 2.1% of the account, 4.2% when market momentum is -2.53 or lower;
    hold 40 sessions, no stop; the account can hold up to 50%. Chosen on 23 foreign markets plus the US (it beats the live shape in 75% of 64

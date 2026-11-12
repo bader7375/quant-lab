@@ -267,6 +267,14 @@ if r78:
                              sound=r78["sound"], boot={e: {k: dict(g=r78["bootstrap"][e][k]["g"], dd=r78["bootstrap"][e][k]["dd"], vs_live=r78["bootstrap"][e][k].get("vs_LIVE"), vs_ladder=r78["bootstrap"][e][k].get("vs_LADDER")) for k in ("LIVE", "LADDER", "SWING")} for e in r78["bootstrap"]},
                              stats=r78["swing_stats"], stress={k: [R(v["cagr"], 4), R(v["dd"], 4), v["trades"]] for k, v in r78["stress"].items()}, stress_above=r78["stress_above_live"], stress_n=len(r78["stress"]), wf=r78["walk_forward"]["picks"],
                              world=(dict(vs_live_shape=w78["swing as tested"]["vsA0"], vs_ladder=w78["swing as tested"]["vsL12D"], costs=w78["swing, 0.8% costs"]["vsA0"], late=w78["swing, one session late"]["vsA0"], vs_hold=w78["swing vs hold"]) if w78 else None))
+i79w = rj("r79", "world79.json"); i79s = rj("r79", "saudi79.json")
+if i79w and i79s:                                                              # round 79: every change to the swing that was tested, pass or fail
+    rows = []
+    for v_, x_ in i79s["variants"].items():
+        if v_ == "base" or "shown, not judged" in v_: continue
+        w_ = i79w["variants"].get(v_)
+        rows.append(dict(name=v_, won=(w_["wins_decided"] if w_ else None), lost=(w_["losses_decided"] if w_ else None), same=(w_["ties"] if w_ else None), pa=bool(w_ and w_["passed"]), g=R(x_["cagr"], 5), dd=R(x_["dd"], 5), n=int(x_["n"]), ps=bool(x_["passed"])))
+    evidence["ideas"] = dict(rows=rows, tested=len(rows), forward=i79s.get("forward", []), base=dict(g=R(i79s["base"]["cagr"], 5), dd=R(i79s["base"]["dd"], 5), n=int(i79s["base"]["n"])), counted=int(i79w["counted"]))
 us = None
 try:
     t27 = json.load(open(os.path.join(WORK, "r27/today27.json"))); u = t27.get("us_scan") or {}; u30 = t27.get("us30") or {}

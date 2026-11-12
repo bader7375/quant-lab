@@ -10,7 +10,7 @@ scheduled tasks are untouched.
 | `REPORT.md` | the short report: before/after by period, what is ready, the open question |
 | `engine.py` | the sell-off book as a pure function of a price panel, for any market (an exact copy of `research/daily/planbook.py` on Saudi data; `research/r71/repro71.py` checks that) |
 | `saudi.py` | loads the Saudi panel from the live work folder |
-| `swing.py`, `swingbook.py` | the swing account, day by day, for any market: crosses into the buy zone, one buy a day, sale when the stretch is gone |
+| `swing.py`, `swingbook.py` | the swing account, day by day, for any market: crosses into the buy zone, one buy a day, sale when the stretch is gone. Optional switches (round 79) are off by default |
 | `swingrule.py` | **the Fable swing rule** with its tested values, in one place for the export, the brief, the terminal and the tests |
 | `book.py` | the ladder rule (and the live rule) replayed to any close |
 | `export.py` | the daily export: weather, orders, the three books, the scanner, chart documents, the edge map, ranges, the scorecard |
@@ -21,7 +21,7 @@ scheduled tasks are untouched.
 
 Research: `research/r71` (reproduce, no look-ahead, ranges, gate test), `r72` (24 other markets), `r73` (the ladder on Saudi), `r74`
 (entry timing), `r75` (the idle-money assumption), `r76` (anatomy of a buy-zone cross), `r77` (the swing chosen abroad: stopped at
-the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule). Each has PREREG.md written before its run and RESULTS.md.
+the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule), `r79` (36 changes to the swing: none adopted). Each has PREREG.md written before its run and RESULTS.md.
 
 ## The three rules side by side
 | | live (plan Z, what you trade) | **the Fable swing (on paper)** | the ladder (on paper) |
@@ -41,7 +41,7 @@ Five views, one page, built for the phone:
 - **Scanner**: every liquid stock with its stretch Z, the close that puts it on the buy line tomorrow, the gates, its state (buy, sell, held, in the zone, near). Search, filters, sorting, your own starred list.
 - **Chart**: candlesticks for any stock you choose, with the buy line and the sell level as prices, the weather behind, the tested swing's buys and sales with their results, crosses that were not bought and why, and the stretch Z below.
 - **Books**: the swing, the live rule and the ladder: orders, positions, the record by year.
-- **Research**: the evidence tables, every sell-off since 2013, a position-size calculator, and the edge map (average next 5 sessions by stretch and weather).
+- **Research**: the evidence tables, every change that was tested and rejected (Ideas), every sell-off since 2013, a position-size calculator, and the edge map (average next 5 sessions by stretch and weather).
 
 ## How the terminal gets its data
 The terminal reads from its own database: `fable/latest` (the export), `chart/market` and `chart/c0` ... `chart/c13` (380 sessions
