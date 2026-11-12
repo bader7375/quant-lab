@@ -1,0 +1,118 @@
+//@version=6
+// Fable swing (reversal edge, rounds 76-78): buy when the stretch Z crosses into the buy zone in a sell-off, sell when the stretch is gone.
+// What it draws on a DAILY chart:
+//   - Background: the market weather. Light = sell-off (market momentum <= -1.18), darker = deep sell-off (<= -2.53).
+//     Market momentum = 60-day sum of the index's daily log returns / (60-day standard deviation measured 60 days earlier x sqrt(60)).
+//     The daily list uses an equal-weight average of the liquid Saudi stocks; this script uses the index you choose (TASI is weighted
+//     by size), so the two can differ a little near the lines.
+//   - BUY labels: the bar whose open is the buy. A buy needs a first close at stretch Z <= -2.5 (the cross into the buy zone) while
+//     the market is in a sell-off. "BUY x2" = a double position (deep sell-off). One paper trade per stock at a time; after a sale a
+//     new cross can be bought again.
+//   - Small orange triangles: another cross in the sell-off while the script's paper trade is still open. The real book often buys
+//     one of these, not the first cross (the first can fail a gate or lose the one-buy-a-day place): on Saudi 2013-26, 61 of the 100
+//     tested buys sit on a BUY label and the other 39 on a triangle (pine/check_fable_swing.py).
+//   - SELL labels: the open after the first close with stretch Z at 0 or higher (the stretch is gone), or after 40 sessions, with the result.
+//   - Dashed lines: the close that would put the stretch Z exactly on the buy line (-2.5) at the next session, and, while a paper
+//     trade is open, the close that would put it on the sell level (0). Exact arithmetic, not a forecast.
+// What it cannot see: the ML rank (50%+), the market model (positive), liquidity, the company's accounts, and the limits of one new
+// position a day and 12 positions across all stocks. The daily Fable brief and terminal are the authority; this is the price part.
+// Not compiled on TradingView from the research session: if it reports an error, send the message.
+indicator("Fable swing", shorttitle = "Fable swing", overlay = true, max_labels_count = 300)
+
+// ---------------------------------------------------------------- inputs
+grpR   = "Rule (tested values)"
+lineB  = input.float(-2.5, "Buy line (stretch Z)", step = 0.05, group = grpR, tooltip = "Tested: -2.5. A shallower line (-2.25) failed the stress test.")
+lineS  = input.float(0.0, "Sell level (stretch Z)", step = 0.05, group = grpR)
+capN   = input.int(40, "Sessions at most", minval = 5, group = grpR)
+grpM   = "Market weather"
+mktSym = input.symbol("TADAWUL:TASI", "Market index", group = grpM)
+gateM  = input.float(-1.18, "Sell-off at momentum <=", step = 0.01, group = grpM)
+deepM  = input.float(-2.53, "Deep sell-off at momentum <=", step = 0.01, group = grpM)
+grpS   = "Sizes (% of the account)"
+stepP  = input.float(2.1, "Normal position", step = 0.1, group = grpS)
+deepP  = input.float(4.2, "Deep position", step = 0.1, group = grpS)
+limitP = input.float(10.0, "Daily price limit (%)", step = 0.5, group = grpS, tooltip = "Saudi stocks: 10%. A line further away than this cannot be reached in one session.")
+showT  = input.bool(true, "Show the table")
+
+// ---------------------------------------------------------------- functions (the scanner's formulas)
+clip(float x, float c) => math.max(math.min(x, c), -c)
+stretchZ(float src, float c) =>
+    float r  = clip(math.log(src / src[1]), c)
+    float sd = ta.stdev(r, 60, false)
+    (math.sum(r, 10) / (sd[10] * math.sqrt(10)) + math.sum(r, 20) / (sd[20] * math.sqrt(20)) + math.sum(r, 60) / (sd[60] * math.sqrt(60))) / 3
+momentum(float src) =>
+    float r  = clip(math.log(src / src[1]), 0.25)
+    float sd = ta.stdev(r, 60, false)
+    math.sum(r, 60) / (sd[60] * math.sqrt(60))
+bandNext(float src, float lvl, float c) =>
+    float r   = clip(math.log(src / src[1]), c)
+    float sd  = ta.stdev(r, 60, false)
+    float d10 = sd[9] * math.sqrt(10)
+    float d20 = sd[19] * math.sqrt(20)
+    float d60 = sd[59] * math.sqrt(60)
+    float a   = (math.sum(r, 9) / d10 + math.sum(r, 19) / d20 + math.sum(r, 59) / d60) / 3
+    float b   = (1 / d10 + 1 / d20 + 1 / d60) / 3
+    float x   = (lvl - a) / b
+    math.abs(x) <= c ? src * math.exp(x) : na
+
+// ---------------------------------------------------------------- the stock and the market (completed bars only)
+bool  isD   = timeframe.isdaily and timeframe.multiplier == 1
+float zD    = stretchZ(close, 0.25)
+bool  inZ   = not na(zD) and zD <= lineB
+bool  cross = inZ and not inZ[1]                               // first close in the buy zone
+float mm    = request.security(mktSym, "D", momentum(close), ignore_invalid_symbol = true)
+bool  storm = not na(mm) and mm <= gateM
+bool  deep  = not na(mm) and mm <= deepM
+bool  sig   = cross and storm                                  // known at this close; the buy is the next open
+
+// ---------------------------------------------------------------- one paper trade per stock at a time
+var int   openBar  = na
+var float entryPx  = na
+var bool  openDeep = false
+var bool  sellNext = false                                     // set at a close: sell at the next open
+bool heldBefore = not na(openBar)                              // held at the previous close
+if sellNext and heldBefore
+    float res = (open / entryPx - 1) * 100
+    label.new(bar_index, high, "SELL " + (res >= 0 ? "+" : "") + str.tostring(res, "#.0") + "%", style = label.style_label_down, color = res >= 0 ? color.new(color.teal, 10) : color.new(color.red, 10), textcolor = color.white, size = size.small)
+    openBar  := na
+    sellNext := false
+if isD and sig[1] and not heldBefore                           // a cross while a trade is open is ignored, as in the tested rule
+    openBar  := bar_index
+    entryPx  := open
+    openDeep := deep[1]
+    label.new(bar_index, low, (openDeep ? "BUY x2  " + str.tostring(deepP, "#.0") + "%" : "BUY  " + str.tostring(stepP, "#.0") + "%"), style = label.style_label_up, color = openDeep ? color.new(#b5600d, 0) : color.new(#1d4f7c, 0), textcolor = color.white, size = size.small)
+// at this close: is the stretch gone, or is this the last allowed session?
+if not na(openBar) and not sellNext
+    if (not na(zD) and zD >= lineS) or (bar_index - openBar + 1 >= capN)
+        sellNext := true
+
+// ---------------------------------------------------------------- plots
+bgcolor(isD and deep ? color.new(#a8361c, 86) : isD and storm ? color.new(#d1842a, 90) : na, title = "Market weather")
+float bB = bandNext(close, lineB, 0.25)
+float bS = bandNext(close, lineS, 0.25)
+bool  reachB = not na(bB) and math.abs(bB / close - 1) * 100 <= limitP
+plot(isD and not inZ and reachB ? bB : na, "Buy-line price (next session)", color = color.new(#b5600d, 10), style = plot.style_linebr, linewidth = 1, offset = 1)
+plot(isD and not na(openBar) and not sellNext ? bS : na, "Sell-level price (next session)", color = color.new(#1d4f7c, 10), style = plot.style_linebr, linewidth = 1, offset = 1)
+plot(not na(openBar) ? entryPx : na, "Entry of the open paper trade", color = color.new(color.gray, 40), style = plot.style_linebr)
+plotshape(isD and sig[1] and heldBefore, "Another cross in the sell-off while the paper trade is open", style = shape.triangleup, location = location.belowbar, color = color.new(#b5600d, 20), size = size.tiny)
+plotshape(isD and cross and not storm, "Cross outside a sell-off (not a signal)", style = shape.circle, location = location.belowbar, color = color.new(color.gray, 40), size = size.tiny)
+
+// ---------------------------------------------------------------- the table
+if showT and barstate.islast
+    var table t = table.new(position.top_right, 2, 5, bgcolor = color.new(color.black, 80), border_width = 1, border_color = color.new(color.gray, 70))
+    string w = na(mm) ? "no market data" : deep ? "DEEP STORM" : storm ? "STORM" : mm <= gateM / 2 ? "CLOUDS" : "CALM"
+    color  wc = deep ? #e0623f : storm ? #e89a3c : color.silver
+    table.cell(t, 0, 0, "Market weather", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 0, w + (na(mm) ? "" : "  " + str.tostring(mm, "#.00")), text_color = wc, text_size = size.small, text_halign = text.align_right)
+    table.cell(t, 0, 1, "Stretch Z", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 1, str.tostring(zD, "#.00"), text_color = inZ ? #e89a3c : color.white, text_size = size.small, text_halign = text.align_right)
+    table.cell(t, 0, 2, "Close for the buy line", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 2, inZ ? "in the buy zone" : reachB ? str.tostring(bB, format.mintick) + " (" + str.tostring((bB / close - 1) * 100, "#.0") + "%)" : "beyond the limit", text_color = color.white, text_size = size.small, text_halign = text.align_right)
+    table.cell(t, 0, 3, "Paper trade", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 3, na(openBar) ? "none" : sellNext ? "SELL at the next open" : "held, sells at a close of " + (na(bS) ? "n/a" : str.tostring(bS, format.mintick)) + " or higher", text_color = sellNext ? #e89a3c : color.white, text_size = size.small, text_halign = text.align_right)
+    table.cell(t, 0, 4, "A buy today would be", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+    table.cell(t, 1, 4, not storm ? "none (no sell-off)" : deep ? str.tostring(deepP, "#.0") + "% (double)" : str.tostring(stepP, "#.0") + "%", text_color = color.white, text_size = size.small, text_halign = text.align_right)
+
+alertcondition(sig, "Fable swing: cross into the buy zone in a sell-off", "{{ticker}}: first close at stretch Z <= -2.5 while the market is in a sell-off. Check the Fable terminal (ML rank, market model, accounts, one buy a day) before buying at the next open.")
+alertcondition(sellNext and not sellNext[1], "Fable swing: the stretch is gone", "{{ticker}}: the paper trade is due to be sold at the next open (stretch Z back at 0 or 40 sessions).")
+alertcondition(deep and not deep[1], "Fable swing: deep storm begins", "Market momentum fell to -2.53 or lower: positions are double size.")

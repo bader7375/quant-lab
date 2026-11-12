@@ -603,7 +603,9 @@ var rz=null, lastW=window.innerWidth; window.addEventListener("resize",function(
 try{ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){ chartDraw(); }); new MutationObserver(function(){ chartDraw(); }).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]}); }catch(x){}
 function gone(msg){ var w=$("#wait"); if(w&&!D) w.textContent=msg; }
 function loadMarket(){ if(!DB) return; DB.doc("chart/market").get().then(function(s){ if(s.exists){ M=s.data(); if(view=="chart") chartMount(); } }).catch(function(){}); }
-function loadChunk(n){ if(!DB) return Promise.resolve(null); if(CHUNK[n]) return Promise.resolve(CHUNK[n]); return DB.doc("chart/c"+n).get().then(function(s){ if(s.exists) CHUNK[n]=s.data(); return CHUNK[n]||null; }).catch(function(){ return null; }); }
+function rows(f,n){ if(!f||!f.length||Array.isArray(f[0])) return f||[]; var o=[]; for(var i=0;i+n<=f.length;i+=n) o.push(f.slice(i,i+n)); return o; }
+function unflat(doc){ var st=(doc&&doc.stocks)||{}; Object.keys(st).forEach(function(k){ st[k].tr=rows(st[k].tr,8); st[k].x=rows(st[k].x,2); }); return doc; }
+function loadChunk(n){ if(!DB) return Promise.resolve(null); if(CHUNK[n]) return Promise.resolve(CHUNK[n]); return DB.doc("chart/c"+n).get().then(function(s){ if(s.exists) CHUNK[n]=unflat(s.data()); return CHUNK[n]||null; }).catch(function(){ return null; }); }
 (window.claude&&window.claude.use?window.claude.use("db"):Promise.resolve(null)).then(function(db){
   if(!db){ gone("This view cannot reach the terminal's data. Open the page inside Claude, signed in."); return; }
   DB=db; DBOK=true; var seen=null;

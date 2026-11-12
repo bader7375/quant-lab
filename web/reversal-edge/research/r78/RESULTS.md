@@ -66,6 +66,8 @@ It made less than the ladder in the long rebounds (2016-08: +5.2% against +14.2%
   ladder in 59% (not significant). Against holding 40 sessions at the same line it wins in 52%: abroad the exit is a coin flip on
   wins, with a lower drawdown (5.4% against 6.1%), more winners (73% against 64%) and shorter holds (25 sessions against 40).
 - No look-ahead: orders rebuilt from data cut at 30 past closes equal what the full run did the next morning (0 mismatches).
+- Replayable (replay78.py, .out): the orders written down at each of 3,351 closes since 2013, each from a run that stops at that
+  close, are exactly the tested book: 100 buys (92 closed trades and 8 open positions) and 92 sales, none missing, none extra.
 
 ## What to make of it
 - The swing is a better way to run your signals than the live rule on every test here, mainly through a lower drawdown.

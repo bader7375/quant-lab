@@ -242,7 +242,7 @@ def chart_doc(j):
         if p["j"] == j: tr.append([int(p["d1"] - a0), None, rp(p["entry"]), None, R(Cl[i, j] / p["entry"] - 1, 4), R(p["w"], 4), -1, int((p["i"], j) in fwd_set)])
     xs = [[int(t - a0), 0 if (t, j) in bought else (-1 if SR.gate_bits(B, t, j) == 0 else int(SR.gate_bits(B, t, j)))] for t in range(a0, T_) if CIN[t, j]]
     return dict(o=[rp(x) for x in Oo[sl, j]], h=[rp(x) for x in Hh[sl, j]], l=[rp(x) for x in Ll[sl, j]], c=[rp(x) for x in Cl[sl, j]], z=[R(x, 2) for x in Zs[sl, j]], bl=[rp(x) for x in BLs[sl, j]], sl=[rp(x) for x in SLs[sl, j]],
-                nbl=rp(BLn[j]), nsl=rp(SLn[j]), tr=tr, x=xs, name=nm(j)[:34], sec=industry(cols[j]))
+                nbl=rp(BLn[j]), nsl=rp(SLn[j]), tr=[v for r in tr for v in r], x=[v for r in xs for v in r], name=nm(j)[:34], sec=industry(cols[j]))    # tr: 8 values a trade, x: 2 values a cross (flat: the database takes no list inside a list)
 extra = {cols.index(p["sym"]) for g_ in (BOOKS["live"], BOOKS["fable"], REPLAY["live"], REPLAY["fable"], SWB, SWR) for p in list(g_.get("held", [])) + list(g_.get("due", []))}
 cj = sorted(set(liqj) | extra, key=lambda j: cols[j]); CH = 12; chart_index = {}; outdir_ = os.path.join(WORK, "fable"); os.makedirs(outdir_, exist_ok=True)
 for f_ in glob.glob(os.path.join(outdir_, "chart_*.json")): os.remove(f_)
@@ -263,7 +263,7 @@ if w72 and w73:
                              tails=w73["tails"], edge=w72["edge_pooled"])
 r78 = rj("r78", "r78_confirm.json"); w78 = rj("r78", "world78.json")
 if r78:
-    evidence["swing"] = dict(eras={k: {e: [R(v["cagr"], 4), R(v["dd"], 4)] for e, v in r78["equal"][k].items()} for k in ("LIVE", "LADDER", "SWING")}, cash={e: R(v, 4) for e, v in r78["cash"].items()}, verdict_live=r78["verdict_live"], verdict_ladder=r78["verdict_ladder"],
+    evidence["swing"] = dict(eras={k: {e: [R(v["cagr"], 5), R(v["dd"], 5)] for e, v in r78["equal"][k].items()} for k in ("LIVE", "LADDER", "SWING")}, cash={e: R(v, 5) for e, v in r78["cash"].items()}, verdict_live=r78["verdict_live"], verdict_ladder=r78["verdict_ladder"],
                              sound=r78["sound"], boot={e: {k: dict(g=r78["bootstrap"][e][k]["g"], dd=r78["bootstrap"][e][k]["dd"], vs_live=r78["bootstrap"][e][k].get("vs_LIVE"), vs_ladder=r78["bootstrap"][e][k].get("vs_LADDER")) for k in ("LIVE", "LADDER", "SWING")} for e in r78["bootstrap"]},
                              stats=r78["swing_stats"], stress={k: [R(v["cagr"], 4), R(v["dd"], 4), v["trades"]] for k, v in r78["stress"].items()}, stress_above=r78["stress_above_live"], stress_n=len(r78["stress"]), wf=r78["walk_forward"]["picks"],
                              world=(dict(vs_live_shape=w78["swing as tested"]["vsA0"], vs_ladder=w78["swing as tested"]["vsL12D"], costs=w78["swing, 0.8% costs"]["vsA0"], late=w78["swing, one session late"]["vsA0"], vs_hold=w78["swing vs hold"]) if w78 else None))

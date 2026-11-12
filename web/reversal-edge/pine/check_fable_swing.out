@@ -1,0 +1,2 @@
+tested buys 100 | shown by the script as a BUY on the same bar 61 | with the same SELL bar 61 | shown as a small triangle (another cross while the script's own paper trade was open) 39 | unexplained 0
+the script's price-only paper trades since 2013: 1311 (the tested book takes 100 of them: gates, one buy a day, 12 positions)

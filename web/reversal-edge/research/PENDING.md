@@ -2,6 +2,18 @@
 LIVE SINCE 2026-11-10 (the user: "Let's go back to previous strategy stretch with ML"): plan Z = the Z score rule (stretch Z touch, ML rank 50%+,
 market model positive, market momentum -1.18 or lower, profitable), 5 positions of 5%, most volatile first, hold 40 sessions, no stop; reported
 through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2026-11-09 only and made no trade.
+13. OFFERED 2026-11-12 (the Fable edition, rounds 76-78; r78/RESULTS.md): the Fable swing - the same gates as the Z score plan; buy at
+   the open after the first close at stretch Z -2.5 or lower (daily only) in a sell-off; ONE new position a day (the most volatile), up
+   to 12 positions of 2.1% of the account, 4.2% when market momentum is -2.53 or lower; SELL at the open after the first close with
+   stretch Z at 0 or higher, or after 40 sessions; a sold stock can be bought again on a new cross. Rule fixed before Saudi 2020-26 was
+   opened. CONFIRMED against live by the strict rule: 2013-19 +3.9% a year / drawdown 5.4% against +3.1% / 6.1%; 2020-26 +4.9% / 2.6%
+   against +4.6% / 4.9%; 2023-26 +6.0% / 1.7% against +6.3% / 2.7%. 92 trades (about 7 a year, almost only in sell-off years), 83% winners,
+   +10.1%, 24 sessions held. NOT better than the ladder (item 12) in both periods; the yearly walk-forward picks the ladder; the plan's
+   "sound" mark missed on one count (13 trades against 14 in 2023-26). Stress: passes costs, a day late, idle money at zero; FAILS with
+   line -2.25 or two buys a day (drawdown 8-9%). Abroad it beats the live shape in 80% of 64 market-eras. Not blind on 2020-26 for the
+   exit (rounds 41, 43, 70 had looked at selling at Z 0 inside the 5-slot plan and did not adopt it; the swing differs by one buy a
+   day, small positions and re-entry, and its gain is lower drawdown). Runs on paper in the Fable terminal since the 2026-11-11 close. Waiting for the user.
+   Also waiting: the 16:55 scheduled task that would feed the Fable terminal daily (fable/SCHEDULE.md; not created).
 12. OFFERED 2026-11-11 (the Fable edition, rounds 71-74; r73/RESULTS.md): the Fable ladder - the same Z score signals, at most ONE new
    position a day (the most volatile signal), up to 12 positions of 2.1% of the account, 4.2% when market momentum is -2.53 or lower;
    hold 40 sessions, no stop; the account can hold up to 50%. Chosen on 23 foreign markets plus the US (it beats the live shape in 75% of 64
