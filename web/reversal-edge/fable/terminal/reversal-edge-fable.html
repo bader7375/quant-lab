@@ -387,9 +387,9 @@ function chartBind(){
 function chartMount(){
   if(!D||!D.chart) return; var idx=D.chart.index||{}; if(!CH.sym||idx[CH.sym]==null){ var first=(D.scan||[])[0]; CH.sym=first?first.sym:Object.keys(idx)[0]; }
   var n=idx[CH.sym], note=document.getElementById("chartnote"); if(n==null){ if(note) note.textContent="No chart data for this stock."; return; }
-  var ready=function(){ var doc=CHUNK[n]; CH.data=doc&&doc.stocks?doc.stocks[CH.sym]:null; if(!CH.data||!M){ if(note) note.textContent=DBOK?"Loading prices…":"Charts need the terminal's data. Open the page inside Claude, signed in."; return; }
+  var ready=function(){ var doc=CHUNK[n]; CH.data=doc&&doc.stocks?doc.stocks[CH.sym]:null; if(!CH.data||!M){ var bad=LOADERR["c"+n]||LOADERR.market; if(note) note.textContent=!DBOK?"Charts need the terminal's data. Open the page inside Claude, signed in.":bad?"The prices for this chart could not be loaded ("+bad+"). Choose the stock again to retry.":(doc&&doc.stocks&&!CH.data)?"No chart data for this stock.":"Loading prices…"; return; }
     if(note) note.textContent=""; var len=CH.range||126; CH.hover=null; CH.view=null; var N=CH.data.c.length; CH.view=[Math.max(0,N-len),N-1]; chartBind(); chartDraw(); chartSide(); };
-  if(CHUNK[n]&&M) ready(); else loadChunk(n).then(ready);
+  if(CHUNK[n]&&M) ready(); else { var sym0=CH.sym; Promise.all([loadChunk(n),loadMarket()]).then(function(){ if(view=="chart"&&CH.sym==sym0) ready(); }); }
 }
 function chartSide(){
   var el=document.getElementById("chartside"), S=CH.data; if(!el||!S) return; var r=null; (D.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r=x }); var W=D.weather, h="";
@@ -602,15 +602,19 @@ route();
 var rz=null, lastW=window.innerWidth; window.addEventListener("resize",function(){ if(window.innerWidth==lastW) return; lastW=window.innerWidth; clearTimeout(rz); rz=setTimeout(render,180); });
 try{ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",function(){ chartDraw(); }); new MutationObserver(function(){ chartDraw(); }).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]}); }catch(x){}
 function gone(msg){ var w=$("#wait"); if(w&&!D) w.textContent=msg; }
-function loadMarket(){ if(!DB) return; DB.doc("chart/market").get().then(function(s){ if(s.exists){ M=s.data(); if(view=="chart") chartMount(); } }).catch(function(){}); }
+var LOADERR={};
+function why(e){ return (e&&(e.code||e.message))||"no answer"; }
+function loadMarket(){ if(!DB) return Promise.resolve(null); if(M) return Promise.resolve(M);
+  return DB.doc("chart/market").get().then(function(s){ if(s.exists){ M=s.data(); delete LOADERR.market; } else LOADERR.market="not written yet"; return M; }).catch(function(e){ LOADERR.market=why(e); return null; }); }
 function rows(f,n){ if(!f||!f.length||Array.isArray(f[0])) return f||[]; var o=[]; for(var i=0;i+n<=f.length;i+=n) o.push(f.slice(i,i+n)); return o; }
-function unflat(doc){ var st=(doc&&doc.stocks)||{}; Object.keys(st).forEach(function(k){ st[k].tr=rows(st[k].tr,8); st[k].x=rows(st[k].x,2); }); return doc; }
-function loadChunk(n){ if(!DB) return Promise.resolve(null); if(CHUNK[n]) return Promise.resolve(CHUNK[n]); return DB.doc("chart/c"+n).get().then(function(s){ if(s.exists) CHUNK[n]=unflat(s.data()); return CHUNK[n]||null; }).catch(function(){ return null; }); }
+function unflat(doc){ var st=(doc&&doc.stocks)||{}, out={n:doc.n,asof:doc.asof,stocks:{}};   /* the store hands out read-only data: build new objects, never change its own */
+  Object.keys(st).forEach(function(k){ var o={}, s0=st[k]; Object.keys(s0).forEach(function(a){ o[a]=s0[a]; }); o.tr=rows(s0.tr,8); o.x=rows(s0.x,2); out.stocks[k]=o; }); return out; }
+function loadChunk(n){ if(!DB) return Promise.resolve(null); if(CHUNK[n]) return Promise.resolve(CHUNK[n]); return DB.doc("chart/c"+n).get().then(function(s){ if(s.exists){ CHUNK[n]=unflat(s.data()); delete LOADERR["c"+n]; } else LOADERR["c"+n]="not written yet"; return CHUNK[n]||null; }).catch(function(e){ LOADERR["c"+n]=why(e); return null; }); }
 (window.claude&&window.claude.use?window.claude.use("db"):Promise.resolve(null)).then(function(db){
   if(!db){ gone("This view cannot reach the terminal's data. Open the page inside Claude, signed in."); return; }
   DB=db; DBOK=true; var seen=null;
   db.doc("fable/latest").onSnapshot(function(s){ if(!s.exists){ gone("No export has been written yet. It arrives after the daily run."); return; }
-    D=s.data(); if(D.swing&&D.swing.rule){ LINE=D.swing.rule.line; TARGET=D.swing.rule.target; } if(D.asof!=seen){ seen=D.asof; CHUNK={}; CH.data=null; loadMarket(); } render(); }, function(){ gone("The data connection stopped. Reload the page."); });
+    D=s.data(); if(D.swing&&D.swing.rule){ LINE=D.swing.rule.line; TARGET=D.swing.rule.target; } if(D.asof!=seen){ seen=D.asof; CHUNK={}; CH.data=null; M=null; LOADERR={}; loadMarket(); } render(); }, function(){ gone("The data connection stopped. Reload the page."); });
   db.collection("days").orderBy("asof","desc").limit(30).onSnapshot(function(q){ LOG=q.docs.map(function(x){return x.data()}); if(D&&view=="books") render(); }, function(){});
 }).catch(function(){ gone("The data could not be loaded. Reload the page."); });
 })();
