@@ -1,0 +1,11 @@
+market-eras counted: 64 | reference L12D: median ratio 0.149, growth +0.73% dd 5.4%, trades 1884 | live shape A0: median ratio 0.082, trades 1767
+market-eras counted: 64
+swing as tested                    | vs L12D 38/64 =  59% p=0.084 (9/20, 16/22, 13/22) | vs A0 51/64 =  80% | median ratio 0.203 | growth +0.81% dd 5.4% | trades 2213 (+6.0%, 73% win, held 25)
+swing, 0.8% costs                  | vs L12D 36/64 =  56% p=0.191 (8/20, 16/22, 12/22) | vs A0 51/64 =  80% | median ratio 0.188 | growth +0.76% dd 5.5% | trades 2213 (+6.0%, 73% win, held 25)
+swing, one session late            | vs L12D 39/64 =  61% p=0.052 (9/20, 16/22, 14/22) | vs A0 50/64 =  78% | median ratio 0.232 | growth +0.79% dd 5.2% | trades 2211 (+5.7%, 73% win, held 25)
+hold 40 in the same engine         | vs L12D 35/64 =  55% p=0.266 (8/20, 11/22, 16/22) | vs A0 44/64 =  69% | median ratio 0.147 | growth +0.85% dd 6.1% | trades 2120 (+6.8%, 64% win, held 40)
+hold 40, 0.8% costs                | vs L12D 30/64 =  47% p=0.734 (6/20, 10/22, 14/22) | vs A0 42/64 =  66% | median ratio 0.138 | growth +0.81% dd 6.2% | trades 2120 (+6.8%, 64% win, held 40)
+hold 40, one session late          | vs L12D 37/64 =  58% p=0.130 (7/20, 12/22, 18/22) | vs A0 45/64 =  70% | median ratio 0.159 | growth +0.88% dd 6.0% | trades 2115 (+6.8%, 64% win, held 41)
+swing beats hold-40 under 0.8% costs: 33/64 = 52% (p=0.450)
+swing beats hold-40 under one session late: 32/64 = 50% (p=0.550)
+swing beats hold-40 as tested: 33/64 = 52% (p=0.450); by era ['10/20', '15/22', '8/22']

@@ -1,0 +1,70 @@
+== Saudi, live gates, confirm: growth a year / worst drawdown (return per drawdown); idle money alone: 2013-19 +0.8%, 2020-26 +2.9%, 2023-26 +4.6%, 2013-26 +1.8%
+LIVE 5 x 5%                    2013-19  +3.1% /  6.1% (0.52) | 2020-26  +4.6% /  4.9% (0.93) | 2023-26  +6.3% /  2.7% (2.35) | 2013-26  +3.8% /  6.1% (0.63) | trades 2013-19 33 (70% win, +10.1%), 2020-26 33 (70% win, +7.1%), 2023-26 14 (86% win, +9.1%), 2013-26 66 (70% win, +8.6%)
+LADDER 12 x 2.1/4.2%           2013-19  +5.4% /  6.1% (0.87) | 2020-26  +4.4% /  4.5% (0.98) | 2023-26  +4.7% /  1.0% (4.63) | 2013-26  +4.9% /  6.1% (0.80) | trades 2013-19 49 (80% win, +18.4%), 2020-26 37 (76% win, +7.7%), 2023-26 12 (83% win, +2.1%), 2013-26 86 (78% win, +13.8%)
+core (storm and deep)          2013-19  +3.9% /  5.4% (0.72) | 2020-26  +4.9% /  2.6% (1.87) | 2023-26  +6.0% /  1.7% (3.51) | 2013-26  +4.4% /  5.4% (0.81) | trades 2013-19 54 (8/yr, 83% win, +11.1%, held 23, worst -19.7%), 2020-26 38 (5/yr, 82% win, +8.6%, held 25, worst -10.8%), 2023-26 13 (3/yr, 92% win, +10.1%, held 23, worst -2.0%), 2013-26 92 (7/yr, 83% win, +10.1%, held 24, worst -19.7%)
+core + clouds layer            2013-19  +3.9% /  5.7% (0.67) | 2020-26  +4.8% /  2.7% (1.77) | 2023-26  +6.0% /  1.7% (3.51) | 2013-26  +4.3% /  5.7% (0.76) | trades 2013-19 58 (8/yr, 81% win, +10.0%, held 23, worst -25.8%), 2020-26 42 (6/yr, 76% win, +7.4%, held 24, worst -20.3%), 2023-26 13 (3/yr, 92% win, +10.1%, held 23, worst -2.0%), 2013-26 100 (7/yr, 79% win, +8.9%, held 24, worst -25.8%)
+core + clouds and calm layer   2013-19  +3.9% /  5.7% (0.68) | 2020-26  +4.9% /  2.4% (2.00) | 2023-26  +6.0% /  1.7% (3.51) | 2013-26  +4.4% /  5.7% (0.76) | trades 2013-19 70 (10/yr, 77% win, +8.6%, held 20, worst -25.8%), 2020-26 50 (7/yr, 76% win, +6.8%, held 22, worst -20.3%), 2023-26 15 (4/yr, 87% win, +8.7%, held 21, worst -3.2%), 2013-26 120 (9/yr, 77% win, +7.8%, held 21, worst -25.8%)
+
+== the rule fixed in the design step: core (storm and deep)
+AGAINST YOUR RULES: against LIVE CONFIRMED (2013-19 better, 2020-26 better); against the ladder: not better in both eras
+AS A SWING SYSTEM: NOT SOUND | 2013-19: growth +3.9% vs idle money +0.8%, drawdown 5.4% vs LIVE 6.1%, winners 83%, trades 54 vs 33 | 2020-26: growth +4.9% vs idle money +2.9%, drawdown 2.6% vs LIVE 4.9%, winners 82%, trades 38 vs 33 | 2023-26: growth +6.0% vs idle money +4.6%, drawdown 1.7% vs LIVE 2.7%, winners 92%, trades 13 vs 14
+swing trades by year: {2014: 10, 2015: 15, 2016: 22, 2017: 1, 2018: 5, 2019: 1, 2020: 9, 2021: 1, 2022: 15, 2024: 2, 2025: 7, 2026: 4}
+
+yearly walk-forward picks: 2016: LADDER, 2017: LADDER, 2018: LADDER, 2019: LADDER, 2020: LADDER, 2021: LADDER, 2022: LADDER, 2023: LADDER, 2024: LADDER, 2025: LADDER, 2026: LADDER
+walk-forward 2016-26  +5.2% /  4.5% (1.16) | LIVE  +5.2% /  4.9% (1.07) | LADDER  +5.2% /  4.5% (1.16) | SWING  +4.7% /  2.6% (1.83)
+
+== ranges (2,000 paired redraws of whole sell-offs)
+2013-19 LIVE    growth +0.7..+6.0%, drawdown 3.2..8.5% | vs LADDER: more growth 11%, smaller drawdown 52%, better ratio 13%
+2013-19 LADDER  growth +2.5..+8.9%, drawdown 3.3..7.6% | vs LIVE: more growth 89%, smaller drawdown 48%, better ratio 87%
+2013-19 SWING   growth +2.1..+6.0%, drawdown 2.4..6.8% | vs LIVE: more growth 66%, smaller drawdown 69%, better ratio 83% | vs LADDER: more growth 9%, smaller drawdown 100%, better ratio 36%
+2020-26 LIVE    growth +3.2..+6.0%, drawdown 2.7..4.9% | vs LADDER: more growth 60%, smaller drawdown 0%, better ratio 35%
+2020-26 LADDER  growth +3.3..+6.0%, drawdown 1.0..4.5% | vs LIVE: more growth 40%, smaller drawdown 100%, better ratio 65%
+2020-26 SWING   growth +3.8..+6.2%, drawdown 1.5..2.7% | vs LIVE: more growth 62%, smaller drawdown 99%, better ratio 99% | vs LADDER: more growth 81%, smaller drawdown 76%, better ratio 77%
+2023-26 LIVE    growth +5.5..+7.3%, drawdown 0.9..2.7% | vs LADDER: more growth 100%, smaller drawdown 0%, better ratio 0%
+2023-26 LADDER  growth +4.2..+5.1%, drawdown 0.3..1.0% | vs LIVE: more growth 0%, smaller drawdown 100%, better ratio 100%
+2023-26 SWING   growth +5.6..+6.8%, drawdown 0.3..1.7% | vs LIVE: more growth 31%, smaller drawdown 80%, better ratio 80% | vs LADDER: more growth 100%, smaller drawdown 36%, better ratio 36%
+2013-26 LIVE    growth +2.4..+5.5%, drawdown 4.2..8.2% | vs LADDER: more growth 19%, smaller drawdown 42%, better ratio 22%
+2013-26 LADDER  growth +3.3..+6.9%, drawdown 3.8..7.6% | vs LIVE: more growth 81%, smaller drawdown 58%, better ratio 78%
+2013-26 SWING   growth +3.2..+5.7%, drawdown 2.4..6.8% | vs LIVE: more growth 71%, smaller drawdown 65%, better ratio 88% | vs LADDER: more growth 25%, smaller drawdown 100%, better ratio 71%
+
+== sell-off by sell-off (account result above interest)
+     start  depth    live  ladder   swing  swing_trades
+2014-11-16  -9.86 -0.0164  0.0731  0.0704            14
+2015-08-06  -5.51 -0.0153  0.0307  0.0136            11
+2016-01-07  -2.79  0.0251  0.0360  0.0302            13
+2016-08-22  -3.82  0.0703  0.1424  0.0522             9
+2017-11-07  -1.93  0.0082  0.0039  0.0026             1
+2018-07-25  -4.61  0.0724  0.0247  0.0381             5
+2019-05-13  -2.19  0.0208  0.0058  0.0042             1
+2019-10-15  -1.33  0.0000  0.0000  0.0000             0
+2020-03-08  -5.26  0.0627  0.0496  0.0490             9
+2021-10-07  -4.31 -0.0026 -0.0011 -0.0011             1
+2022-05-23  -3.56 -0.0167  0.0507  0.0287            12
+2022-11-10  -2.21  0.0087 -0.0004  0.0011             3
+2023-07-26  -2.88  0.0000  0.0000  0.0000             0
+2023-10-08  -1.81  0.0000 -0.0000 -0.0000             0
+2024-05-30  -1.80  0.0040  0.0017  0.0047             2
+2025-03-10  -5.67  0.0259  0.0028  0.0154             6
+2025-12-14  -3.25  0.0300 -0.0014  0.0213             5
+2026-09-27  -4.42 -0.0000 -0.0000  0.0113             0
+
+== stress tests, 2013-26 (the swing under each stress; LIVE and the ladder as tested beside it)
+  as tested                           +4.4% /  5.4% (0.81) | LIVE  +3.8% /  6.1% (0.63) | LADDER  +4.9% /  6.1% (0.80)
+  0.8% costs                          +4.3% /  5.4% (0.78) | trades 92
+  one session late                    +4.1% /  5.1% (0.80) | trades 92
+  idle money earning nothing          +2.5% /  5.4% (0.47) | trades 92
+  line -2.25                          +3.7% /  8.0% (0.46) | trades 95
+  line -2.75                          +4.5% /  5.8% (0.78) | trades 86
+  sell at -0.5                        +3.8% /  5.4% (0.70) | trades 93
+  sell at +0.5                        +4.9% /  5.8% (0.85) | trades 90
+  30 sessions at most                 +4.2% /  5.4% (0.78) | trades 92
+  60 sessions at most                 +4.5% /  5.4% (0.83) | trades 92
+  2 buys a day                        +4.7% /  9.0% (0.52) | trades 122
+  8 slots (same total)                +4.9% /  8.0% (0.61) | trades 81
+  16 slots (same total)               +3.7% /  4.1% (0.92) | trades 92
+  most volatile first -> deepest first  +4.0% /  4.7% (0.85) | trades 88
+  with weekly crosses                 +4.8% /  6.2% (0.78) | trades 108
+  LIVE under the same stresses: 0.8% costs  +3.7% /  6.2% (0.60) | idle money earning nothing  +2.1% /  6.1% (0.34)
+  variants with a return per drawdown above LIVE as tested: 10 of 14
+
+cut-data check: orders rebuilt from data cut at 30 past closes against what the full run did the next morning: mismatches 0
