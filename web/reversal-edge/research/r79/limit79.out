@@ -1,0 +1,6 @@
+china    limit-down close  n=   15 | swing trade (sold at stretch 0 or 40 sessions, net) +17.3% (+6.3 to +24.6) | first 5 sessions +11.8% (+7.1 to +16.1) | winners 87% | held 27
+china    other crosses     n=  149 | swing trade (sold at stretch 0 or 40 sessions, net)  +7.3% (+5.1 to +9.7) | first 5 sessions  +4.3% (+3.1 to +5.6) | winners 79% | held 25
+qatar    limit-down close  n=   30 | swing trade (sold at stretch 0 or 40 sessions, net) +12.6% (+9.3 to +15.3) | first 5 sessions  +6.6% (+5.4 to +9.0) | winners 93% | held 24
+qatar    other crosses     n=  165 | swing trade (sold at stretch 0 or 40 sessions, net)  +7.5% (+4.8 to +9.5) | first 5 sessions  +2.7% (+1.0 to +4.4) | winners 81% | held 21
+taiwan   limit-down close  n=   26 | swing trade (sold at stretch 0 or 40 sessions, net) +13.2% (+3.4 to +15.3) | first 5 sessions  +9.5% (+3.5 to +10.5) | winners 96% | held 19
+taiwan   other crosses     n=  140 | swing trade (sold at stretch 0 or 40 sessions, net)  +7.0% (+5.0 to +8.0) | first 5 sessions  -0.4% (-2.5 to +2.4) | winners 89% | held 20

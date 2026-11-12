@@ -94,3 +94,12 @@ round-trip costs, idle money at interest in Saudi and at zero abroad, as before.
 - Saudi 2020-26 has been opened twice in this project (rounds 73 and 78) and many times before it. A third look is worth less
   than the first. That is why an idea must first win abroad, where it has not been looked at, and on Saudi 2013-19.
 - 18 Saudi sell-offs. Today's stocks only. The gates exist only in Saudi.
+
+## Addendum 1 (2026-11-12, after the limit-down event table abroad, before any Saudi run)
+The event table for idea 8 (limit79.out) came out the opposite way to my guess: in China, Qatar and Taiwan a cross on a
+limit-down close was a BETTER buy than the other crosses (+12.6% to +17.3% a trade against +7.0% to +7.5%; 15, 30 and 26 cases).
+So waiting or skipping (8a, 8b) should lose. They are still run on Saudi 2013-19 as planned, and one variant is added, fixed now:
+- **8c** (S): a candidate that crossed on a limit-down close goes first, before the most volatile.
+Same pass marks. It can only count as "Saudi-only evidence", with the event table abroad as support.
+Also stated now: I run every idea on Saudi 2013-19, including those that fail abroad, so the report shows both sides. The rule
+for going forward does not change (both passes needed).
