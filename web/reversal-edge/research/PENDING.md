@@ -12,6 +12,11 @@ Round 71 (r71/RESULTS.md, the user asked for another indicator like stretch Z): 
 12. OFFERED 2026-11-13 (round 71): compute traded value from the raw close instead of the dividend-adjusted close (removes a mild
    look-ahead in the liquidity filter and stops old signals changing after dividends); needs the ranker and the market model refit;
    first estimate: 2013-19 drawdown 7.6% instead of 6.1%, 2020-26 unchanged. Waiting for the user.
+TERMINAL v33 (2026-11-13, the user: "Keep the original strategy just add the new one as indicator in the chart"): Industry Z panel (round 72's
+   H3: the average stretch Z of the other liquid stocks of the same industry, at least 3), legend reading and a sentence in the Z-touch
+   plan text. Context only; the live rule is unchanged. Computed in the browser from the stored daily bars (from 2019). Data finding:
+   91 stored Saudi stocks (Aramco 2222 and the newer listings added 2026-10-24) are not in the 15:48 data task's list, so their stored
+   prices stopped on 2026-10-22; their charts are stale and Industry Z for their industries uses fewer stocks. OFFERED: add them to the task.
 Round 72 (r72/RESULTS.md, the user's four momentum helpers, pre-registered): pulse acceleration (H1), prior momentum (H2), industry-wide
    stretch (H3) and RSI with heavy volume (H4), alone, combined, as a slot order (Capitulation Score) and with 6-ATR / -25% stops.
    None passes; every filter lowers the sleeve's Sharpe and Calmar in 2013-19. H3 has a real event-level edge in Saudi but the live rule
