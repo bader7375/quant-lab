@@ -326,7 +326,7 @@ function rbCol(w){ return w=="strong"?"var(--good)":(w=="weak"?"var(--bad)":"var
 function futSlots(){ return (CH.o.cone&&CH.cone&&CH.view&&CH.data&&CH.view[1]==CH.data.c.length-1)?CH.cone.h[CH.cone.h.length-1]+1:0; }
 function indexAt(cv,x){ var q=chartGeom(cv), a=CH.view[0], b=CH.view[1], bw=q.PW/(b-a+1+futSlots()); return Math.max(a,Math.min(b,a+Math.floor((x-2)/bw))); }
 function chartDraw(){
-  var cv=document.getElementById("cv"); if(!cv) return; var S=CH.data; if(!S||!M||!CH.view) return;
+  var cv=document.getElementById("cv"); if(!cv) return; var S=CH.data; if(!S||!M||!CH.view) return; if(cv.clientWidth<=40) return;   /* not laid out yet: the size watcher draws it when it is */
   var q=chartGeom(cv), W=q.W, Hp=q.Hp, Hz=q.Hz, H=q.H, dpr=window.devicePixelRatio||1;
   if(cv.width!=Math.round(W*dpr)||cv.height!=Math.round(H*dpr)){ cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); cv.style.height=H+"px"; }
   var g=cv.getContext("2d"); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
@@ -397,6 +397,8 @@ function chartReadout(k){
 }
 function chartBind(){
   var cv=document.getElementById("cv"); if(!cv) return; var pts={}, start=null, moved=false, pinch=null;
+  /* redraw whenever the displayed width stops matching the drawn width (rotation, a window resize, a panel opening) */
+  if(window.ResizeObserver){ if(CH.ro) CH.ro.disconnect(); CH.ro=new ResizeObserver(function(){ var c2=document.getElementById("cv"); if(c2&&c2.clientWidth>40&&Math.abs(Math.round(c2.clientWidth*(window.devicePixelRatio||1))-c2.width)>1) chartDraw(); }); CH.ro.observe(cv.parentNode); }
   cv.onpointerdown=function(e){ try{cv.setPointerCapture(e.pointerId)}catch(x){} pts[e.pointerId]=e.clientX; var ids=Object.keys(pts); if(ids.length==1){ start={x:e.clientX,v:CH.view.slice()}; moved=false; } else if(ids.length==2){ pinch={d:Math.abs(pts[ids[0]]-pts[ids[1]])||1,v:CH.view.slice()}; } };
   cv.onpointermove=function(e){ if(!CH.data) return; var r=cv.getBoundingClientRect();
     if(pts[e.pointerId]!=null){ pts[e.pointerId]=e.clientX; var ids=Object.keys(pts);
