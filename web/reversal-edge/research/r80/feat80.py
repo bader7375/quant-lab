@@ -1,4 +1,7 @@
-"""Rebound Odds (research round 80): for a stretched stock, the chance that a buy at the next open ends in profit.
+"""Round 80 research library: every candidate input that was tried for the indicator, and the win-odds formula of step 1 (not kept).
+The product uses fable/rebound.py (Rebound Edge: three inputs). This file is kept so that select80.py and the scratch looks can be rerun.
+
+Rebound Odds (the first design): for a stretched stock, the chance that a buy at the next open ends in profit.
 
 A case   = a liquid stock on a day its stretch Z closed at or below LINE (-1.5).
 The trade = buy at the next open; sell at the open after the first close with stretch Z >= 0, or after 40 sessions (the swing's sale).
@@ -6,7 +9,6 @@ Odds     = 1 / (1 + exp(-score)); score = a weighted sum of a few readings known
            markets only (no Saudi case), so the same formula runs here, on any market, and in TradingView.
 Everything in this file uses data up to the close it describes."""
 import json, os, numpy as np, pandas as pd
-import swing as SW, swingbook as SBk
 
 LINE, TARGET, CAP, COST = -1.5, 0.0, 40, .004
 HORIZONS = (1, 2, 3, 5, 8, 10, 15, 20, 30, 40)             # sessions after the buy at which the cone is read
@@ -17,7 +19,9 @@ WORDS = dict(Z="stretch Z", MS="market momentum", ZMS="stretch Z x market moment
              RANGEX="range expansion", CLV3="close position in the day's range", CRASH5="crash days in the last 5", Z2="stretch Z squared", MS2="market momentum squared",
              MZ10="market 10-session stretch", MZ20="market 20-session stretch", MDD="market fall from its 250-session high", BREADTH="share of liquid stocks stretched below -2",
              MVX="market volatility expansion", MCORR="how much stocks move together (20 sessions)")
-HERE = os.path.dirname(os.path.abspath(__file__)); MODEL_FILE = os.path.join(HERE, "odds_model.json")
+HERE = os.path.dirname(os.path.abspath(__file__)); MODEL_FILE = os.path.join(HERE, "select80_model.json")
+import sys; sys.path.insert(0, os.path.join(HERE, "../../fable"))
+import swing as SW, swingbook as SBk
 
 
 def features(B, O=None, H=None, L=None):
@@ -71,6 +75,7 @@ def cases(B, F, start=None, end=None, extra=None):
     I, J = np.where(ok); X = SW.run_exits(B, I, J, target=TARGET, cap=CAP); done = X["ex"] >= 0; I, J = I[done], J[done]
     out = dict(i=I, j=J, date=d[I].values, month=(d[I].year * 12 + d[I].month).values, d1=X["d1"][done], ex=X["ex"][done], held=X["held"][done], net=X["ret"][done] - COST, dip=X["mae"][done], why=X["why"][done])
     for k in BASE + EXTRA: out[k] = F[k][I, J]
+    out["vol"] = B.VOL[I, J]
     e = B.Of[X["d1"][done], J]; T = B.T
     for h in HORIZONS: t = X["d1"][done] + h - 1; out[f"p{h}"] = np.where(t < T, B.Cf[np.minimum(t, T - 1), J] / e - 1, np.nan)
     if extra:

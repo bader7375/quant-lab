@@ -94,3 +94,22 @@ So the indicator changes, before Saudi is touched:
    (b) the share of wins in every edge band with 100 or more cases is within 10 points of the band's stated share;
    (c) the worst dip was deeper than the stated "bad dip" (the 1-in-10 dip) in 5% to 20% of cases.
 The ceiling check (item 7) is answered: the trees do not beat the formula. Everything else in the plan stands.
+
+## Amendment 2 (2026-11-13, after the Saudi 2013-19 step, before 2020-26 is opened)
+What Saudi 2013-19 showed (saudi80_design.out, first run):
+- Mark 1 passes with M19 (no Saudi data in it): top third of edge +7.7% a trade, bottom third -3.7%.
+- **Mark 2 fails** with M19: its lead over stretch Z alone (+0.077) and over market momentum alone (+0.041) is positive, but both
+  5th percentiles are below zero (-0.023, -0.008). So the chart formula can be at best DESCRIPTIVE. That stands whatever follows.
+- The Saudi adjustment: saudi edge = -5.1% + 1.44 x edge, +4.0% for a stock that passes the live gates (range +0.4% to +6.9%: kept).
+- The companion tables of the other markets do not fit Saudi's weak states: in the lowest band Saudi won 51% of the time where
+  the table says 66%, and the dip was deeper than the "1-in-10 dip" in 32% of cases. In the strong bands they fit.
+Two things are therefore fixed now, before 2020-26 is opened:
+1. **Saudi companion tables.** Win share, sessions, dip and cone for Saudi come from Saudi cases grouped in ten bands of the
+   Saudi-adjusted edge, each pulled toward the other markets' band with the same edge (weight 300 cases, as for the edge map).
+   For the tests they are built from cases whose trade ended by 2019-12-31. Mark 3 is tested against these tables.
+2. **A second, clearly separate verdict for the terminal version** (Saudi-adjusted edge, which knows the gates). On 2013-19 it is
+   fitted, so only 2020-26 can test it: marks 1 and 2 with the adjusted edge, and mark 3. If all pass it is called
+   **USEFUL IN THE TERMINAL (one test period)**; else it carries the chart formula's word. The chart formula's verdict follows
+   the plan unchanged.
+After the confirm step the product's Saudi adjustment and tables are refitted by the same recipe on all Saudi cases to date
+(as M19 becomes the live copy). The report shows the tested and the refitted numbers side by side.

@@ -1,0 +1,22 @@
+Saudi design: 13167 cases (liquid, stretch Z -1.5 or lower), 2013-01-01 to 2019-12-19; wins 65.3%, average net +2.90%; passing the live gates: 38%
+[M19, no Saudi data] mark 1 (it separates): top third +7.66% vs bottom third -3.72% = +11.38 points, range +7.39 to +14.88 -> PASS
+[M19, no Saudi data] mark 2 (it beats what you have): rank correlation with the net result: edge 0.329 (0.229 to 0.421) | stretch Z alone 0.251, lead +0.077 (5th pct -0.023) | market momentum alone 0.288, lead +0.041 (5th pct -0.008) -> FAIL
+
+Saudi adjustment (2013-19 only): saudi edge = -5.11% + 1.44 x edge + +4.00% when the stock passes the gates   | gate term tried: +4.00% (range +0.39 to +6.94) -> kept; slope range 0.86 to 2.10
+[terminal version: Saudi-adjusted edge (fitted on these cases: shown, not a test)] mark 1 (it separates): top third +9.01% vs bottom third -3.02% = +12.03 points, range +8.23 to +15.22 -> PASS
+[terminal version: Saudi-adjusted edge (fitted on these cases: shown, not a test)] mark 2 (it beats what you have): rank correlation with the net result: edge 0.366 (0.264 to 0.446) | stretch Z alone 0.251, lead +0.115 (5th pct +0.015) | market momentum alone 0.288, lead +0.078 (5th pct +0.006) -> PASS
+[Saudi-adjusted edge, Saudi tables (built from these cases)] thirds of edge: stated -2.3% -> realized -3.0% (wins 50%, 4389) | stated +2.6% -> realized +2.7% (wins 67%, 4389) | stated +8.3% -> realized +9.0% (wins 79%, 4389)
+   band 0:  1317 cases | edge  -4.3% ->  -1.6% | wins 56% (stated 58%) | sessions 24 (23) | typical dip -6.2% (stated -5.2%) | deeper than the stated bad dip: 12%
+   band 1:  1317 cases | edge  -2.2% ->  -5.0% | wins 42% (stated 46%) | sessions 34 (31) | typical dip -11.0% (stated -9.4%) | deeper than the stated bad dip: 15%
+   band 2:  1316 cases | edge  -1.0% ->  -3.3% | wins 49% (stated 52%) | sessions 30 (28) | typical dip -11.0% (stated -9.3%) | deeper than the stated bad dip: 15%
+   band 3:  1317 cases | edge  +0.3% ->  +0.5% | wins 63% (stated 64%) | sessions 23 (22) | typical dip -6.7% (stated -6.3%) | deeper than the stated bad dip: 12%
+   band 4:  1316 cases | edge  +1.7% ->  +0.9% | wins 65% (stated 66%) | sessions 22 (21) | typical dip -5.6% (stated -5.7%) | deeper than the stated bad dip: 11%
+   band 5:  1317 cases | edge  +3.3% ->  +3.4% | wins 66% (stated 67%) | sessions 26 (25) | typical dip -8.0% (stated -7.3%) | deeper than the stated bad dip: 10%
+   band 6:  1317 cases | edge  +5.0% ->  +6.8% | wins 76% (stated 75%) | sessions 23 (22) | typical dip -5.8% (stated -6.1%) | deeper than the stated bad dip: 10%
+   band 7:  1316 cases | edge  +6.4% ->  +7.7% | wins 78% (stated 77%) | sessions 21 (21) | typical dip -5.6% (stated -5.6%) | deeper than the stated bad dip: 10%
+   band 8:  1317 cases | edge  +8.0% ->  +8.8% | wins 78% (stated 77%) | sessions 25 (25) | typical dip -5.3% (stated -5.4%) | deeper than the stated bad dip: 9%
+   band 9:  1317 cases | edge +11.4% -> +10.9% | wins 82% (stated 81%) | sessions 25 (25) | typical dip -4.8% (stated -4.9%) | deeper than the stated bad dip: 8%
+   all bands: worst dip deeper than the stated bad dip in 11% of cases (stated 10%)
+[Saudi-adjusted] inside the swing's own candidates (313): higher-edge half +12.9% (89% wins) vs lower-edge half +12.5% (88%); rank correlation +0.136. No pass mark; not a filter.
+[Saudi-adjusted] by weather: calm 2539: stated -2.6% -> -3.4% (52% wins) | clouds 1305: stated -1.0% -> -7.3% (36% wins) | storm 3869: stated +2.2% -> +5.7% (73% wins) | deep 5454: stated +6.8% -> +6.3% (73% wins)
+rank correlation by year (200+ cases): 2013 +0.16 (305)  2014 +0.50 (2543)  2015 +0.29 (3711)  2016 +0.57 (3261)  2017 +0.36 (1059)  2018 +0.36 (1279)  2019 +0.46 (1009)

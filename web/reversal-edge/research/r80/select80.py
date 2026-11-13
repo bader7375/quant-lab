@@ -1,9 +1,9 @@
 """Round 80 (PREREG.md), step 1: choose the inputs, fit the two frozen copies of the formula, build the companion tables, and score
 the formula out-of-market on the other markets. No Saudi data is read here.
-Usage: RE_WORK=<work folder> python3 select80.py     -> select80.json, fable/odds_model.json (m19 and live)"""
+Usage: RE_WORK=<work folder> python3 select80.py     -> select80.json, select80_model.json (the win-odds formula of step 1; not kept for the product)"""
 import os, sys, json, time, numpy as np, pandas as pd, warnings; warnings.filterwarnings("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, "../../fable")); sys.path.insert(0, HERE)
-import odds as OD, eval80 as EV
+import feat80 as OD, eval80 as EV
 WORK = os.environ["RE_WORK"]; D = pd.read_parquet(os.path.join(WORK, "r80_world_cases.parquet")); D = D[np.isfinite(D.Z) & np.isfinite(D.MS)].reset_index(drop=True)
 D19 = D[D.exdate <= "2019-12-31"].reset_index(drop=True); MK = sorted(D19.market.unique()); rng = np.random.default_rng(80)
 print(f"cases: {len(D)} in {D.market.nunique()} markets; trade ended by 2019-12-31: {len(D19)} (win {100 * D19.win.mean():.1f}%, average net {100 * D19.net.mean():+.2f}%)")
