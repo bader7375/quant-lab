@@ -1,0 +1,27 @@
+Saudi confirm: 14673 cases (liquid, stretch Z -1.5 or lower), 2020-01-06 to 2026-11-05; wins 68.2%, average net +2.89%; passing the live gates: 24%
+[M19, no Saudi data] mark 1 (it separates): top third +8.89% vs bottom third -2.37% = +11.25 points, range +7.85 to +13.33 -> PASS
+[M19, no Saudi data] mark 2 (it beats what you have): rank correlation with the net result: edge 0.437 (0.290 to 0.521) | stretch Z alone 0.207, lead +0.230 (5th pct +0.143) | market momentum alone 0.437, lead +0.000 (5th pct -0.024) -> FAIL
+[terminal version: Saudi-adjusted edge (frozen on 2013-19: a test)] mark 1 (it separates): top third +8.24% vs bottom third -2.25% = +10.48 points, range +7.12 to +12.62 -> PASS
+[terminal version: Saudi-adjusted edge (frozen on 2013-19: a test)] mark 2 (it beats what you have): rank correlation with the net result: edge 0.425 (0.282 to 0.504) | stretch Z alone 0.207, lead +0.218 (5th pct +0.136) | market momentum alone 0.437, lead -0.012 (5th pct -0.052) -> FAIL
+[Saudi-adjusted edge, Saudi tables (frozen on 2013-19)] thirds of edge: stated -2.7% -> realized -2.2% (wins 50%, 4891) | stated +0.7% -> realized +2.7% (wins 70%, 4891) | stated +6.2% -> realized +8.2% (wins 84%, 4891)
+   band 0:  1276 cases | edge  -4.6% ->  -3.0% | wins 47% (stated 58%) | sessions 30 (23) | typical dip -7.8% (stated -5.5%) | deeper than the stated bad dip: 12%
+   band 1:  2629 cases | edge  -2.3% ->  -2.7% | wins 49% (stated 46%) | sessions 29 (31) | typical dip -8.9% (stated -9.7%) | deeper than the stated bad dip: 5%
+   band 2:  2332 cases | edge  -1.0% ->  +0.6% | wins 61% (stated 52%) | sessions 23 (28) | typical dip -7.4% (stated -8.8%) | deeper than the stated bad dip: 4%
+   band 3:  1369 cases | edge  +0.3% ->  +2.5% | wins 70% (stated 64%) | sessions 21 (22) | typical dip -6.3% (stated -5.5%) | deeper than the stated bad dip: 5%
+   band 4:  1795 cases | edge  +1.7% ->  +3.5% | wins 75% (stated 66%) | sessions 18 (21) | typical dip -4.8% (stated -5.0%) | deeper than the stated bad dip: 5%
+   band 5:  1598 cases | edge  +3.3% ->  +5.0% | wins 75% (stated 67%) | sessions 18 (25) | typical dip -3.9% (stated -6.0%) | deeper than the stated bad dip: 6%
+   band 6:  1363 cases | edge  +5.0% ->  +5.9% | wins 81% (stated 75%) | sessions 18 (22) | typical dip -3.8% (stated -5.0%) | deeper than the stated bad dip: 6%
+   band 7:   917 cases | edge  +6.4% ->  +8.5% | wins 89% (stated 77%) | sessions 18 (21) | typical dip -3.0% (stated -4.7%) | deeper than the stated bad dip: 4%
+   band 8:   608 cases | edge  +7.9% -> +10.7% | wins 88% (stated 77%) | sessions 18 (25) | typical dip -2.3% (stated -5.1%) | deeper than the stated bad dip: 2%
+   band 9:   786 cases | edge +11.2% -> +14.9% | wins 92% (stated 81%) | sessions 22 (25) | typical dip -1.9% (stated -5.2%) | deeper than the stated bad dip: 1%
+   all bands: worst dip deeper than the stated bad dip in 5% of cases (stated 10%)
+[Saudi-adjusted] inside the swing's own candidates (231): higher-edge half +9.4% (78% wins) vs lower-edge half +6.2% (83%); rank correlation +0.246. No pass mark; not a filter.
+[Saudi-adjusted] by weather: calm 2779: stated -3.2% -> -3.1% (48% wins) | clouds 2472: stated -1.2% -> -2.4% (49% wins) | storm 3863: stated +0.9% -> +2.9% (70% wins) | deep 5559: stated +5.3% -> +8.2% (86% wins)
+rank correlation by year (200+ cases): 2020 +0.44 (2207)  2021 +0.58 (1882)  2022 +0.55 (3370)  2023 +0.19 (920)  2024 +0.39 (1109)  2025 +0.33 (3370)  2026 +0.33 (1815)
+
+mark 3 (honest about its numbers): (a) thirds rise -2.2% < +2.7% < +8.2%: yes | (b) wins within 10 points of the stated share in every band with 100+ cases: NO (largest gap 12 points) | (c) dips deeper than the stated bad dip: 5% (5% to 20%): yes -> FAIL
+[2023-26 check, M19] mark 1 (it separates): top third +3.35% vs bottom third -2.33% = +5.68 points, range +3.11 to +8.23 -> PASS
+[2023-26 check, M19] mark 2 (it beats what you have): rank correlation with the net result: edge 0.261 (0.158 to 0.354) | stretch Z alone 0.006, lead +0.255 (5th pct +0.141) | market momentum alone 0.301, lead -0.040 (5th pct -0.067) -> FAIL
+
+VERDICT, chart formula: DESCRIPTIVE  (mark 1: 2013-19 pass, 2020-26 pass; mark 2: 2013-19 fail, 2020-26 fail; mark 3: fail)
+VERDICT, terminal version (Saudi-adjusted, knows the gates; tested on 2020-26 only): DESCRIPTIVE  (mark 1 pass, mark 2 fail, mark 3 fail)

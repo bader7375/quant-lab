@@ -1,0 +1,18 @@
+Saudi cases to date: 27840
+tested (2013-19, on M19):   saudi edge = -5.11% + 1.44 x edge +4.00% with the gates
+product (all cases, live):  saudi edge = -3.81% + 1.24 x edge +3.21% with the gates   | gate term tried +3.21% (range +1.07 to +5.07) -> kept; slope range 0.96 to 1.65
+zones (thirds of the Saudi cases): weak below +0.2%, strong above +4.7%
+product Saudi table by edge band: edge -> result, wins, sessions, typical dip and 1-in-10 dip (in units of the stock's 20-session swing) | Saudi alone before the pull toward other markets
+  0:  2784 cases |  -3.9% ->  -1.9% | wins 53% | 26 sessions | dip -0.82 / -2.93 | Saudi alone:  -2.1%, 52%
+  1:  2784 cases |  -1.6% ->  -2.9% | wins 49% | 30 sessions | dip -1.12 / -3.15 | Saudi alone:  -3.2%, 47%
+  2:  2784 cases |  -0.6% ->  -3.1% | wins 50% | 29 sessions | dip -1.22 / -3.52 | Saudi alone:  -3.5%, 48%
+  3:  2784 cases |  +0.4% ->  +0.1% | wins 61% | 23 sessions | dip -0.88 / -3.09 | Saudi alone:  +0.1%, 60%
+  4:  2784 cases |  +1.7% ->  +1.8% | wins 68% | 22 sessions | dip -0.72 / -2.77 | Saudi alone:  +1.8%, 67%
+  5:  2784 cases |  +3.2% ->  +3.5% | wins 73% | 20 sessions | dip -0.59 / -2.17 | Saudi alone:  +3.6%, 73%
+  6:  2784 cases |  +4.5% ->  +5.5% | wins 75% | 21 sessions | dip -0.48 / -1.99 | Saudi alone:  +5.7%, 75%
+  7:  2784 cases |  +6.1% ->  +7.3% | wins 81% | 20 sessions | dip -0.40 / -1.60 | Saudi alone:  +7.4%, 81%
+  8:  2784 cases |  +7.6% ->  +8.2% | wins 80% | 21 sessions | dip -0.37 / -1.52 | Saudi alone:  +8.3%, 80%
+  9:  2784 cases | +11.5% -> +11.3% | wins 84% | 23 sessions | dip -0.28 / -1.20 | Saudi alone: +11.0%, 84%
+
+the formula (live copy, other markets): edge % = -0.93 -0.97 x Z -1.72 x MS -0.060 x Z x MS
+for Saudi: edge % = -4.96 -1.21 x Z -2.14 x MS -0.075 x Z x MS +3.21 when the stock passes the gates
