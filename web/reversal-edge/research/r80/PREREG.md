@@ -66,3 +66,31 @@ chance; still shown, labelled so). **NOT VALID** = 1 fails: not shipped.
 Signals at the close, the buy at the next open, 0.4% costs. No look-ahead: features use data up to that close; a cut-data check
 recomputes the odds at 30 past closes from data cut there. Overlapping cases move together, so every range resamples whole months.
 Saudi 2020-26 has been opened in rounds 73 and 78; a third look is worth less. Today's stocks only.
+
+## Amendment 1 (2026-11-13, after step 1 abroad, before any Saudi run)
+What step 1 showed on the other markets (trades ended by 2019; select80.out, and two scratch looks, explore80.py):
+- **The chance of a win hardly moves.** Across tenths of the win formula it runs from 65% to 77% (AUC 0.54). Boosted trees with
+  every input did WORSE than a no-skill forecast out-of-market. And the win formula ranks results worse than market momentum
+  alone (rank correlation 0.145 against 0.203). A "chance of a win" indicator would say little.
+- **The size of the result does move.** A formula for the expected net result from stretch Z, market momentum and their product
+  cuts the out-of-market error by 2.4% (better in 20 of 23 markets), ranks results better than market momentum alone (0.222
+  against 0.205) and is honest by tenths (stated -0.2% to +7.5%, realized +0.6% to +8.9%).
+- **No extra input holds up.** 19 candidates (stock: volatility, zone age, overnight share, fall from the high, residual, speed,
+  range, close position, crash days; market: its own 10- and 20-session stretch, its fall from the high, breadth, volatility
+  expansion, co-movement, momentum change, sell-off age; squares). Three lower the squared error a hair in 17-18 markets and
+  LOWER the rank correlation. Boosted trees are worse than the three-input formula (1.6% against 2.4-2.6%).
+So the indicator changes, before Saudi is touched:
+1. **Name and headline: Rebound Edge** = the expected net result of the trade, in %. The chance of a win becomes a companion.
+2. **Formula**: linear, inputs stretch Z, market momentum, their product; fitted on the net result clipped at the 1st and 99th
+   percentile of the fitting cases; every market weighs the same. An extra input would be added only if it lowered the
+   out-of-market squared error in 17 markets AND raised the rank correlation; none does, so there are none.
+3. **Companions in units of the stock's own volatility**: the dip and the cone are stored by edge band as multiples of the
+   stock's 20-session normal swing (60-session daily volatility x sqrt(20)), and turned into % with each stock's own volatility.
+   Win share and sessions come from the band.
+4. **Saudi adjustment**: saudi edge = a + b x edge + c for a stock that passes the live gates; fitted on Saudi 2013-19 only
+   (clipped net result); c kept only if its 5%-95% range excludes 0.
+5. **Pass marks** 1 and 2 stand as written (they were already about the net result). Mark 3 becomes, on 2020-26 after the Saudi
+   adjustment: (a) the realized average result rises from the bottom to the middle to the top third of stated edge;
+   (b) the share of wins in every edge band with 100 or more cases is within 10 points of the band's stated share;
+   (c) the worst dip was deeper than the stated "bad dip" (the 1-in-10 dip) in 5% to 20% of cases.
+The ceiling check (item 7) is answered: the trees do not beat the formula. Everything else in the plan stands.

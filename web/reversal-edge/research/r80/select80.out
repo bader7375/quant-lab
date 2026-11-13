@@ -1,0 +1,61 @@
+cases: 214081 in 24 markets; trade ended by 2019-12-31: 140838 (win 71.2%, average net +2.97%)
+no-skill log loss 0.60001 | base formula 0.59946 (better in 18 of 23 markets)
+
+step 1: candidates (gain in average out-of-market log loss, markets better of 23)
+  crash days in the last 5                   +0.00076  17
+  relative volatility                        +0.00066  15
+  market momentum, 5-session change          +0.00061  15
+  market momentum squared                    +0.00040  13
+  close position in the day's range          +0.00013  16
+  sell-off age                               +0.00012  13
+  fall from the 250-session high             +0.00011  15
+  stretch Z squared                          +0.00003  13
+  speed (10- minus 60-session stretch)       -0.00005  12
+  residual stretch                           -0.00006   8
+  zone age                                   -0.00007   8
+  overnight stretch                          -0.00017  11
+  range expansion                            -0.00038   2
+  -> added: crash days in the last 5  (log loss now 0.59871)
+
+step 2: candidates (gain in average out-of-market log loss, markets better of 23)
+  market momentum, 5-session change          +0.00074  14
+  market momentum squared                    +0.00048  13
+  relative volatility                        +0.00044  15
+  fall from the 250-session high             +0.00025  14
+  close position in the day's range          +0.00013  16
+  sell-off age                               +0.00009  13
+  stretch Z squared                          +0.00001  13
+  speed (10- minus 60-session stretch)       +0.00000  12
+  zone age                                   -0.00003  11
+  residual stretch                           -0.00004   9
+  overnight stretch                          -0.00021   8
+  range expansion                            -0.00031   8
+  -> none meets the mark (17 of 24 markets and 0.0005). Stop.
+
+inputs of the formula: ['stretch Z', 'market momentum', 'stretch Z x market momentum', 'crash days in the last 5']
+
+ceiling check (30s): gain over no-skill, formula 0.00130 | boosted trees with every input -0.01215 | the formula gets nan% of the trees' gain (mark: 80%)
+
+step 1, other markets, out-of-market odds: AUC 0.544 | top third +4.38% vs bottom third +1.93%: +2.45 points (5th pct +1.75)
+rank correlation with the net result: odds 0.145 | stretch Z alone 0.092 (lead +0.053, 5th pct +0.032) | market momentum alone 0.203 (lead -0.058, 5th pct -0.071)
+stated odds -> share of wins, by tenth: 65->65  68->67  69->70  70->70  71->71  72->73  73->72  73->71  74->74  77->79
+by market (AUC, top third minus bottom third): australia 0.56 +2.2  brazil 0.59 +5.4  canada 0.54 +2.6  china 0.53 +0.6  egypt 0.59 +4.7  france 0.54 +2.9  germany 0.55 +3.9  hongkong 0.53 +1.3  india 0.59 +5.2  indonesia 0.57 +5.8  japan 0.56 +2.2  korea 0.56 +1.8  kuwait 0.46 -1.4  malaysia 0.59 +2.3  mexico 0.52 -0.5  qatar 0.57 +0.8  southafrica 0.58 +4.7  switzerland 0.54 +3.2  taiwan 0.50 +0.9  thailand 0.48 -1.3  turkey 0.54 +2.9  uk 0.58 +3.5  us 0.56 +2.8
+markets with a positive spread: 20 of 23
+
+M19 (trades ended by 2019): 140838 cases | live copy: 214081 cases | the two copies' odds on all cases: correlation 0.9034, average gap 2.5 points
+weights per one standard deviation of each input (M19 | live):
+  stretch Z                                  -0.028 | +0.051
+  market momentum                            -0.257 | -0.402
+  stretch Z x market momentum                -0.139 | -0.063
+  crash days in the last 5                   -0.097 | -0.096
+M19 companion table by odds band (other markets): band odds -> wins, average gain, typical dip, bad dip (1 in 10), sessions
+  0: 65% -> 64%, +2.4%, -6.0%, -27.2%, 23
+  1: 68% -> 67%, +1.4%, -4.5%, -22.2%, 20
+  2: 69% -> 70%, +1.9%, -3.9%, -19.4%, 19
+  3: 70% -> 70%, +1.7%, -4.3%, -20.4%, 19
+  4: 71% -> 71%, +2.3%, -4.6%, -20.6%, 20
+  5: 72% -> 73%, +3.1%, -4.5%, -20.7%, 19
+  6: 73% -> 72%, +3.0%, -4.8%, -21.9%, 20
+  7: 73% -> 71%, +2.6%, -5.6%, -25.3%, 20
+  8: 74% -> 74%, +4.0%, -4.8%, -24.3%, 19
+  9: 77% -> 80%, +7.3%, -4.9%, -24.8%, 18
