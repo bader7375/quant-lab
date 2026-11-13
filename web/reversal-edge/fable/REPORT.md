@@ -64,6 +64,7 @@ Trades by year: 2014: 10, 2015: 15, 2016: 22, 2017: 1, 2018: 5, 2019: 1, 2020: 9
 | 77 | A swing chosen on 24 other markets (line -2.0, sell at -0.5)? | **Stopped** at the Saudi 2013-19 gate (+2.1% against +3.1%). 2020-26 was not opened for it |
 | 78 | One deeper swing (line -2.5, sell at 0), fixed before 2020-26 was opened? | **Confirmed against the live rule.** Not better than the ladder in both periods |
 | 79 | Can 13 new ideas (36 variants) improve the swing? | **No.** None won both abroad and on Saudi 2013-19. 2020-26 not opened |
+| 80 | Can an indicator say what a stretched stock is worth buying for? | **Yes as a description, no as a new edge.** Rebound Edge separates in every test; it does not beat market momentum alone |
 
 ## Round 79: can the swing be improved? 36 changes tested, none adopted
 Each change altered one thing. To go forward it had to win on 24 other markets AND on Saudi 2013-19. Saudi 2020-26 stayed closed.
@@ -85,6 +86,25 @@ Each change altered one thing. To go forward it had to win on 24 other markets A
 Base swing on Saudi 2013-19: +3.9% / 5.4%. Full table with every variant: `research/r79/RESULTS.md`, and the Ideas tab of the terminal.
 **More trades cannot be bought with a rule change. The only lever for more reward is position size, and it buys drawdown one for one.**
 
+## Round 80: Rebound Edge, an indicator for taking the trade (2026-11-13)
+For a stock with stretch Z -1.5 or lower it gives the average net result of a buy at the next open in past cases with the same
+market momentum and stretch, plus the share that ended in profit, the dip on the way, the sessions, and a cone on the chart.
+Formula for Saudi: edge % = -4.96 - 1.21 x Z - 2.14 x M - 0.075 x Z x M, + 3.21 when the stock passes the gates.
+
+| test | top third of edge | bottom third | rank link: edge / momentum alone / stretch alone |
+|---|---|---|---|
+| 23 other markets, out-of-market | +5.5% | +1.2% | 0.22 / 0.21 / 0.12 |
+| Saudi 2013-19 (no Saudi data in the formula) | +7.7% | -3.7% | 0.33 / 0.29 / 0.25 |
+| Saudi 2020-26 (opened once) | +8.9% | -2.4% | 0.44 / 0.44 / 0.21 |
+| Saudi 2023-26 | +3.4% | -2.3% | 0.26 / 0.30 / 0.01 |
+
+**Verdict: descriptive.** It separates good setups from bad ones in every test. It ranks them no better than market momentum
+alone. It is the weather gauge and the stretch turned into numbers (result, chance, dip, time), not a new edge, and not a
+filter for the swing's signals. What it makes plain: stretched stocks lost money in calm and cloudy weather in both periods
+(-3.4% and -7.3% in 2013-19; -3.1% and -2.4% in 2020-26) and paid in a sell-off (+5.7% / +6.3%; +2.9% / +8.2%).
+On the way I tested and dropped a chance-of-win indicator (the chance runs only from 65% to 77%) and 19 extra readings.
+Details: `research/r80/RESULTS.md`.
+
 ## Honesty checks on the swing
 | check | result |
 |---|---|
@@ -103,7 +123,8 @@ Base swing on Saudi 2013-19: +3.9% / 5.4%. Full table with every variant: `resea
 |---|---|---|
 | Fable terminal: Today, Scanner, Chart, Books, Research | published, filled by hand to the 2026-11-11 close. The chart did not load prices in the first version (my error: the page tried to change read-only data); fixed and retested with read-only data | a daily feed (below) |
 | Daily export and brief (`fable/run.sh`) | working, about 10 seconds after the live run | |
-| Daily feed: one new scheduled task at 16:55 Riyadh (`fable/SCHEDULE.md`) | written, **not created** | your yes |
+| Daily feed: one new scheduled task at 16:55 Riyadh (`fable/SCHEDULE.md`) | written, **not created**: you said no on 2026-11-13 | nothing; the terminal is filled by hand |
+| Rebound Edge: terminal (chart pane, cone, card, scanner), brief, `pine/rebound_edge.pine` | built and tested; verdict descriptive | paste the Pine script into TradingView and send me any error |
 | The swing as your live rule | confirmed against live; on paper since the 2026-11-11 close | your yes, later. I suggest watching it on paper through one sell-off first |
 | The ladder | on paper | nothing now |
 | Pacing 3 sessions apart (round 70 offer) | failed abroad | my advice: close it with a no |

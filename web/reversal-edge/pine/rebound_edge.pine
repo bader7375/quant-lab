@@ -1,0 +1,117 @@
+//@version=6
+// Rebound Edge (reversal edge, round 80). For a stretched stock (stretch Z -1.5 or lower): the average net result, in %, of a buy
+// at the next open in past cases with the same market momentum and stretch. The trade is sold at the open after the first close
+// with stretch Z back at 0, or after 40 sessions; 0.4% costs are taken off.
+// What it draws:
+//   - Pane: a column on every session the stock is stretched. Red = weak (below 0.2%), grey = fair, green = strong (4.7% or more).
+//   - Table: the edge, and from Saudi cases with a like edge: profit in 100, typical sessions, the typical dip and the 1-in-10 dip
+//     (in % for THIS stock, from its own volatility).
+//   - Cone, on the price chart: where such cases stood 1 to 40 sessions after the buy (middle line, 25-75% and 10-90% bands).
+// How it was made: fitted on 23 foreign markets and US large caps (214,081 cases), then adjusted on 27,840 Saudi cases.
+// What it is NOT: a new source of edge. Tested on Saudi 2013-19 and 2020-26 it separates good setups from bad ones (top third
+// +7.7% / +8.9% a trade, bottom third -3.7% / -2.4%) but it ranks them no better than market momentum alone. Verdict: descriptive.
+// Differences from the Fable terminal: the terminal uses the equal-weight average of liquid Saudi stocks for market momentum; this
+// script uses the index you choose (TASI is weighted by size), so readings differ a little. It cannot see your gates: tick the
+// input when the terminal says the stock passes them (that is worth 3.2 points).
+// Not compiled on TradingView from the research session: if it reports an error, send the message.
+indicator("Rebound Edge", shorttitle = "Rebound Edge", overlay = false, max_lines_count = 100)
+
+grpM   = "Market"
+mktSym = input.symbol("TADAWUL:TASI", "Market index", group = grpM)
+grpG   = "Your gates (the script cannot see them)"
+gated  = input.bool(true, "The stock passes the gates (ML rank 50%+, market model positive, not loss-making)", group = grpG)
+grpV   = "View"
+showC  = input.bool(true, "Cone on the price chart", group = grpV)
+showT  = input.bool(true, "Table", group = grpV)
+
+// ---------------------------------------------------------------- the scanner's formulas
+clip(float x, float lo, float hi) => math.max(math.min(x, hi), lo)
+stretchZ(float src) =>
+    float r  = clip(math.log(src / src[1]), -0.25, 0.25)
+    float sd = ta.stdev(r, 60, false)
+    (math.sum(r, 10) / (sd[10] * math.sqrt(10)) + math.sum(r, 20) / (sd[20] * math.sqrt(20)) + math.sum(r, 60) / (sd[60] * math.sqrt(60))) / 3
+momentum(float src) =>
+    float r  = clip(math.log(src / src[1]), -0.25, 0.25)
+    float sd = ta.stdev(r, 60, false)
+    math.sum(r, 60) / (sd[60] * math.sqrt(60))
+
+bool  isD  = timeframe.isdaily and timeframe.multiplier == 1
+float zD   = stretchZ(close)
+float mm   = request.security(mktSym, "D", momentum(close), ignore_invalid_symbol = true)
+float dr   = clip(math.log(close / close[1]), -0.25, 0.25)
+float unit = ta.stdev(dr, 60, false) * math.sqrt(20)              // the stock's normal 20-session swing
+
+// ---------------------------------------------------------------- the formula (Saudi weights, in %)
+float zc   = clip(zD, -7.72, -1.50)
+float mc   = clip(mm, -8.73, 2.09)
+float zmc  = clip(zD * mm, -4.70, 53.09)
+float edge = -4.9636 + (-1.2071) * zc + (-2.1440) * mc + (-0.0748) * zmc + (gated ? 3.2079 : 0.0)
+bool  on   = isD and not na(zD) and not na(mm) and zD <= -1.5
+float weak   = 0.22
+float strong = 4.72
+
+plot(on ? edge : na, "Rebound Edge (%)", style = plot.style_columns, color = edge < weak ? color.new(color.red, 20) : edge >= strong ? color.new(color.teal, 10) : color.new(color.gray, 30))
+hline(0, "0", color = color.new(color.gray, 50), linestyle = hline.style_solid)
+hline(strong, "Strong", color = color.new(color.teal, 40), linestyle = hline.style_dotted)
+
+// ---------------------------------------------------------------- companions: Saudi cases in ten bands of edge
+var float[] bEdge = array.from(-2.256, -1.079, -0.091, 0.922, 2.500, 3.783, 5.334, 6.763, 8.518)
+var float[] bWin  = array.from(53, 49, 50, 61, 68, 73, 75, 81, 80, 84)
+var float[] bDays = array.from(26, 30, 29, 23, 22, 20, 21, 20, 21, 23)
+var float[] bDip  = array.from(-0.823, -1.118, -1.221, -0.876, -0.724, -0.588, -0.483, -0.399, -0.370, -0.279)
+var float[] bBad  = array.from(-2.931, -3.149, -3.522, -3.086, -2.770, -2.167, -1.991, -1.602, -1.517, -1.199)
+var int[]   hz    = array.from(1, 2, 3, 5, 8, 10, 15, 20, 30, 40)
+// the cone in units of the stock's 20-session swing: 10 bands x 10 horizons
+var float[] c10 = array.from(-0.316, -0.468, -0.586, -0.774, -0.972, -1.146, -1.400, -1.620, -2.016, -2.412, -0.326, -0.488, -0.637, -0.880, -1.131, -1.355, -1.681, -2.055, -2.355, -2.505, -0.375, -0.570, -0.682, -0.988, -1.389, -1.629, -2.148, -2.245, -2.466, -2.659, -0.378, -0.603, -0.798, -1.089, -1.414, -1.467, -1.764, -1.845, -1.976, -2.237, -0.421, -0.578, -0.792, -1.047, -1.169, -1.238, -1.410, -1.563, -1.721, -2.121, -0.329, -0.538, -0.717, -0.835, -0.924, -0.972, -0.993, -1.118, -1.338, -1.584, -0.348, -0.521, -0.641, -0.740, -0.815, -0.843, -0.923, -0.951, -1.014, -1.297, -0.305, -0.476, -0.547, -0.642, -0.711, -0.722, -0.627, -0.698, -0.704, -0.834, -0.273, -0.406, -0.499, -0.565, -0.619, -0.682, -0.678, -0.638, -0.650, -0.887, -0.360, -0.441, -0.484, -0.503, -0.462, -0.481, -0.452, -0.418, -0.199, -0.371)
+var float[] c25 = array.from(-0.159, -0.227, -0.283, -0.387, -0.474, -0.522, -0.709, -0.828, -1.113, -1.393, -0.173, -0.256, -0.323, -0.461, -0.610, -0.718, -0.902, -1.189, -1.390, -1.483, -0.192, -0.295, -0.354, -0.471, -0.651, -0.775, -1.087, -1.322, -1.504, -1.609, -0.176, -0.276, -0.344, -0.493, -0.681, -0.733, -0.853, -0.899, -0.968, -0.932, -0.206, -0.271, -0.342, -0.443, -0.540, -0.560, -0.676, -0.718, -0.847, -0.894, -0.152, -0.249, -0.287, -0.339, -0.380, -0.383, -0.368, -0.407, -0.507, -0.648, -0.152, -0.212, -0.256, -0.295, -0.289, -0.296, -0.316, -0.305, -0.297, -0.403, -0.132, -0.201, -0.205, -0.257, -0.245, -0.221, -0.121, -0.115, 0.006, -0.011, -0.110, -0.169, -0.198, -0.215, -0.184, -0.207, -0.172, -0.064, -0.042, -0.196, -0.148, -0.161, -0.166, -0.161, -0.096, -0.044, -0.030, 0.039, 0.335, 0.226)
+var float[] c50 = array.from(-0.025, -0.033, -0.040, -0.054, -0.050, -0.038, -0.060, -0.125, -0.256, -0.323, -0.036, -0.042, -0.050, -0.082, -0.144, -0.190, -0.285, -0.426, -0.419, -0.394, -0.030, -0.048, -0.051, -0.076, -0.166, -0.224, -0.367, -0.374, -0.376, -0.434, -0.019, -0.020, -0.016, -0.045, -0.120, -0.116, -0.136, -0.042, 0.070, 0.169, -0.015, 0.000, 0.002, 0.020, 0.035, 0.057, 0.072, 0.067, 0.195, 0.262, 0.000, 0.002, 0.015, 0.046, 0.107, 0.150, 0.261, 0.284, 0.337, 0.346, 0.000, 0.035, 0.080, 0.147, 0.184, 0.201, 0.271, 0.389, 0.533, 0.524, 0.000, 0.026, 0.067, 0.126, 0.205, 0.288, 0.362, 0.472, 0.749, 0.844, 0.031, 0.055, 0.076, 0.148, 0.209, 0.252, 0.304, 0.452, 0.698, 0.665, 0.009, 0.068, 0.116, 0.213, 0.311, 0.403, 0.429, 0.507, 0.872, 0.832)
+var float[] c75 = array.from(0.105, 0.171, 0.223, 0.311, 0.385, 0.464, 0.552, 0.578, 0.607, 0.753, 0.102, 0.166, 0.214, 0.269, 0.314, 0.317, 0.345, 0.313, 0.463, 0.630, 0.118, 0.189, 0.231, 0.265, 0.276, 0.262, 0.289, 0.432, 0.539, 0.677, 0.143, 0.229, 0.272, 0.344, 0.366, 0.424, 0.552, 0.719, 0.927, 1.158, 0.142, 0.248, 0.314, 0.425, 0.539, 0.606, 0.739, 0.826, 1.119, 1.307, 0.149, 0.257, 0.318, 0.434, 0.609, 0.688, 0.931, 0.985, 1.179, 1.257, 0.148, 0.281, 0.388, 0.524, 0.633, 0.732, 0.994, 1.136, 1.397, 1.473, 0.165, 0.285, 0.376, 0.517, 0.683, 0.811, 0.914, 1.050, 1.536, 1.752, 0.182, 0.296, 0.373, 0.520, 0.649, 0.740, 0.899, 1.072, 1.594, 1.822, 0.173, 0.305, 0.436, 0.657, 0.851, 0.914, 0.954, 1.044, 1.495, 1.650)
+var float[] c90 = array.from(0.275, 0.433, 0.520, 0.728, 0.936, 1.006, 1.201, 1.342, 1.706, 1.990, 0.257, 0.418, 0.517, 0.653, 0.843, 0.889, 1.050, 1.097, 1.356, 1.678, 0.284, 0.432, 0.526, 0.638, 0.704, 0.748, 0.972, 1.224, 1.493, 1.685, 0.322, 0.488, 0.595, 0.724, 0.843, 0.907, 1.237, 1.476, 1.802, 2.125, 0.333, 0.512, 0.625, 0.815, 0.983, 1.101, 1.333, 1.568, 2.008, 2.304, 0.337, 0.512, 0.626, 0.862, 1.076, 1.221, 1.526, 1.737, 2.026, 2.448, 0.342, 0.548, 0.661, 0.928, 1.134, 1.340, 1.705, 1.939, 2.252, 2.617, 0.350, 0.551, 0.694, 0.926, 1.212, 1.371, 1.552, 1.731, 2.357, 2.771, 0.379, 0.564, 0.674, 0.957, 1.159, 1.269, 1.590, 1.758, 2.492, 2.999, 0.364, 0.594, 0.810, 1.098, 1.423, 1.396, 1.499, 1.646, 2.236, 2.554)
+bandOf(float e) =>
+    int k = 0
+    for i = 0 to array.size(bEdge) - 1
+        if e >= array.get(bEdge, i)
+            k := i + 1
+    k
+
+var line[] cone = array.new_line()
+drawPath(float[] q, int band, color col, int wd) =>
+    float y0 = close
+    int   x0 = bar_index
+    for i = 0 to array.size(hz) - 1
+        float y1 = close * (1 + array.get(q, band * array.size(hz) + i) * unit)
+        int   x1 = bar_index + array.get(hz, i)
+        array.push(cone, line.new(x0, y0, x1, y1, xloc = xloc.bar_index, color = col, width = wd, force_overlay = true))
+        y0 := y1
+        x0 := x1
+
+if barstate.islast
+    for l in cone
+        line.delete(l)
+    array.clear(cone)
+    if on and showC and not na(unit)
+        int b = bandOf(edge)
+        drawPath(c10, b, color.new(#1d4f7c, 70), 1)
+        drawPath(c90, b, color.new(#1d4f7c, 70), 1)
+        drawPath(c25, b, color.new(#1d4f7c, 40), 1)
+        drawPath(c75, b, color.new(#1d4f7c, 40), 1)
+        drawPath(c50, b, color.new(#1d4f7c, 0), 2)
+    if showT
+        var table t = table.new(position.top_right, 2, 6, bgcolor = color.new(color.black, 80), border_width = 1, border_color = color.new(color.gray, 70))
+        string word = not on ? "not stretched" : edge < weak ? "WEAK" : edge >= strong ? "STRONG" : "FAIR"
+        color  wc   = not on ? color.silver : edge < weak ? #e0623f : edge >= strong ? #3fb59a : color.white
+        int    b2   = on ? bandOf(edge) : 0
+        table.cell(t, 0, 0, "Rebound Edge", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+        table.cell(t, 1, 0, on ? (edge >= 0 ? "+" : "") + str.tostring(edge, "#.0") + "%  " + word : word, text_color = wc, text_size = size.small, text_halign = text.align_right)
+        table.cell(t, 0, 1, "Stretch Z / market momentum", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+        table.cell(t, 1, 1, str.tostring(zD, "#.00") + " / " + (na(mm) ? "n/a" : str.tostring(mm, "#.00")), text_color = color.white, text_size = size.small, text_halign = text.align_right)
+        table.cell(t, 0, 2, "Ended in profit", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+        table.cell(t, 1, 2, on ? str.tostring(array.get(bWin, b2), "#") + " in 100" : "", text_color = color.white, text_size = size.small, text_halign = text.align_right)
+        table.cell(t, 0, 3, "Sessions, typical", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+        table.cell(t, 1, 3, on ? str.tostring(array.get(bDays, b2), "#") : "", text_color = color.white, text_size = size.small, text_halign = text.align_right)
+        table.cell(t, 0, 4, "Typical dip on the way", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+        table.cell(t, 1, 4, on and not na(unit) ? str.tostring(100 * array.get(bDip, b2) * unit, "#.0") + "%" : "", text_color = color.white, text_size = size.small, text_halign = text.align_right)
+        table.cell(t, 0, 5, "1 case in 10 dipped below", text_color = color.silver, text_size = size.small, text_halign = text.align_left)
+        table.cell(t, 1, 5, on and not na(unit) ? str.tostring(100 * array.get(bBad, b2) * unit, "#.0") + "%" : "", text_color = color.white, text_size = size.small, text_halign = text.align_right)
+
+alertcondition(on and edge >= strong and not (on[1] and edge[1] >= strong), "Rebound Edge turns strong", "{{ticker}}: Rebound Edge is strong. Descriptive only: check the Fable terminal (gates, one buy a day) before any buy.")

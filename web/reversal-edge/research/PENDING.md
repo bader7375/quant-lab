@@ -2,6 +2,15 @@
 LIVE SINCE 2026-11-10 (the user: "Let's go back to previous strategy stretch with ML"): plan Z = the Z score rule (stretch Z touch, ML rank 50%+,
 market model positive, market momentum -1.18 or lower, profitable), 5 positions of 5%, most volatile first, hold 40 sessions, no stop; reported
 through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2026-11-09 only and made no trade.
+14. BUILT 2026-11-13 at the user's request ("build a very advanced indicator to help with taking the trade"): Rebound Edge (round 80,
+   r80/RESULTS.md; fable/rebound.py; pine/rebound_edge.pine; the Fable terminal's chart, scanner and Research tab). For a stock with
+   stretch Z -1.5 or lower: the expected net result of a buy at the next open (sold at stretch Z 0 or after 40 sessions), with the share
+   of wins, the dip, the sessions and a cone. Formula fitted on 23 other markets (214,081 cases), adjusted on Saudi. Verdict by the
+   pre-registered marks: DESCRIPTIVE. It separates (Saudi 2013-19 top third +7.7% / bottom third -3.7%; 2020-26, opened once, +8.9% /
+   -2.4%) but ranks results no better than market momentum alone (rank correlation 0.437 against 0.437 in 2020-26). NOT a filter for the
+   swing's signals. Dead ends added: a chance-of-win indicator (the chance barely moves: 65-77%; trees worse than no-skill); 19 extra
+   stock and market readings (volatility, zone age, overnight share, residual, speed, range, close position, crash days, breadth,
+   market stretches, co-movement, sell-off age): none adds across markets. The 16:55 scheduled task: the user said NO on 2026-11-13.
 13. OFFERED 2026-11-12 (the Fable edition, rounds 76-78; r78/RESULTS.md): the Fable swing - the same gates as the Z score plan; buy at
    the open after the first close at stretch Z -2.5 or lower (daily only) in a sell-off; ONE new position a day (the most volatile), up
    to 12 positions of 2.1% of the account, 4.2% when market momentum is -2.53 or lower; SELL at the open after the first close with
@@ -13,7 +22,7 @@ through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2
    line -2.25 or two buys a day (drawdown 8-9%). Abroad it beats the live shape in 80% of 64 market-eras. Not blind on 2020-26 for the
    exit (rounds 41, 43, 70 had looked at selling at Z 0 inside the 5-slot plan and did not adopt it; the swing differs by one buy a
    day, small positions and re-entry, and its gain is lower drawdown). Runs on paper in the Fable terminal since the 2026-11-11 close. Waiting for the user.
-   Also waiting: the 16:55 scheduled task that would feed the Fable terminal daily (fable/SCHEDULE.md; not created).
+   The 16:55 scheduled task that would feed the Fable terminal daily (fable/SCHEDULE.md): the user said no on 2026-11-13; not created.
    Round 79 (r79/RESULTS.md, 2026-11-12): 13 ideas / 36 variants to improve the swing (zone by weather, later sales, order of candidates,
    size from volatility or depth, 2 buys a day in a named state, calm-weather dips in an uptrend, liquidity bar, the daily limit, sector
    cap, 10-session swing, no quick re-buy, exposure ceiling, rotation). Tested abroad first, then Saudi 2013-19; 2020-26 NOT opened.

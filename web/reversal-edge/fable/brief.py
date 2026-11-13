@@ -55,8 +55,14 @@ if SWX:
         L.append(f"- Had it run through this sell-off (a replay): {len(SRP['held']) + len(SRP['due'])} positions, {p0(SRP['invested'], 0)} of the account in stocks, {pc(SRP['pnl'], 2)} of the account so far" + (f"; it would sell {', '.join(p['sym'] for p in SRP['due'])} today" if SRP["due"] else "") + ".")
     near = [r for r in X["scan"] if r["st"] in ("near", "zone", "cand")][:6]
     if near:
-        L += ["", "Scanner, nearest the buy zone:", "", "| Stock | Stretch Z | Last close | Buy line (tomorrow's close) | Needs | ML rank | Loss-making |", "|---|---|---|---|---|---|---|"]
-        L += [f"| **{r['sym']}** {r['name'][:24]} | {r['z']:.2f} | {r['c']:.2f} | {r['line']:.2f} | {'in the zone' if r['inz'] else pc(r['need'])} | {p0(r['ml'], 0)} | {'yes' if r['loss'] else 'no'} |" for r in near]
+        RBX = X.get("rebound")
+        def rbtxt(r):
+            if not RBX or r.get("re") is None: return "not stretched"
+            k = sum(r["re"] >= e_ for e_ in RBX["band_edges"]); b_ = RBX["bands"][k]; return f"{pc(r['re'])}, {round(100 * b_['win'])} in 100" + (f", dip {pc(b_['dz'] * r['ru'])}" if r.get("ru") else "")
+        L += ["", "Scanner, nearest the buy zone:", "", "| Stock | Stretch Z | Last close | Buy line (tomorrow's close) | Needs | ML rank | Loss-making | Rebound Edge |", "|---|---|---|---|---|---|---|---|"]
+        L += [f"| **{r['sym']}** {r['name'][:24]} | {r['z']:.2f} | {r['c']:.2f} | {r['line']:.2f} | {'in the zone' if r['inz'] else pc(r['need'])} | {p0(r['ml'], 0)} | {'yes' if r['loss'] else 'no'} | {rbtxt(r)} |" for r in near]
+        if RBX: L += ["", f"Rebound Edge (for stocks with stretch Z {RBX['line']} or lower): the average result of a buy at the next open in past cases with the same market momentum and stretch, the share that ended in profit, and the typical dip on the way. "
+                          f"Today {RBX['stretched']} liquid stocks are stretched; {RBX['strong']} have a strong edge ({pc(RBX['zones'][1])} or more). It describes; it ranks setups no better than market momentum alone."]
     es = X.get("evidence", {}).get("swing")
     if es: L += ["", f"Tested record: {es['stats']['2013-26']['n']} swings since 2013, {p0(es['stats']['2013-26']['win'], 0)} winners, {pc(es['stats']['2013-26']['avg'])} each, about {es['stats']['2013-26']['held']:.0f} sessions each. Against your live rule it passed the strict test in both periods; "
                      "it is on paper since " + D(SR_["start"]) + "."]

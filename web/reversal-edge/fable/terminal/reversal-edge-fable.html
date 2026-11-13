@@ -195,9 +195,11 @@ button.srow:hover .t{text-decoration:underline;text-underline-offset:3px}
 .star{color:var(--muted);font-size:18px}.star[aria-pressed="true"]{color:var(--lamp);border-color:var(--lamp)}
 .chartbox{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
 .chartbox canvas{display:block;width:100%;touch-action:pan-y;cursor:crosshair}
+.edgecard{display:flex;align-items:center;gap:14px;margin:6px 0 14px}.edgecard b{font:500 40px/1 var(--mono);letter-spacing:-.02em}.edgecard span{font-size:13.5px;line-height:1.35;color:var(--ink2)}.edgecard em{display:block;font-style:normal;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
 .readout{display:flex;flex-wrap:wrap;gap:2px 12px;padding:10px 12px 4px;font:12px var(--mono);color:var(--ink2);font-variant-numeric:tabular-nums;min-height:46px}
 .readout b{color:var(--ink);font-weight:600}
 .cbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.cbar .fchips{flex-wrap:wrap;min-width:0;max-width:100%}
 .trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .trio .panel{padding:10px 12px;display:grid;gap:3px}.trio .panel b{font:500 19px/1.1 var(--mono);color:var(--ink)}.trio .panel span{font-size:12px;color:var(--muted)}
 .years{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;align-items:end;max-width:560px}
@@ -233,7 +235,7 @@ table.heat td{text-align:center}table.heat td:first-child{text-align:left;font-f
 (function(){
 "use strict";
 var D=null, LOG=[], view="today", bookRule="swing", sizeRule="swing", sizeIdx={live:2,fable:2,swing:2}, acct=0;
-var M=null, CHUNK={}, DB=null, DBOK=false, CH={sym:null,data:null,view:null,hover:null,range:126,o:{bl:true,sl:true,tr:true,wx:true}}, FAV=[], scanF="all", scanSort="need", scanQ="", resTab="evidence", LINE=-2.5, TARGET=0;
+var M=null, CHUNK={}, DB=null, DBOK=false, CH={sym:null,data:null,view:null,hover:null,range:126,cone:null,o:{bl:true,sl:true,tr:true,wx:true,cone:true}}, FAV=[], scanF="all", scanSort="need", scanQ="", resTab="evidence", LINE=-2.5, TARGET=0;
 try{ acct=+localStorage.getItem("fable.acct")||0; bookRule=localStorage.getItem("fable.book")||"swing"; FAV=JSON.parse(localStorage.getItem("fable.fav")||"[]")||[]; CH.sym=localStorage.getItem("fable.sym")||null; }catch(e){}
 var $=function(s){return document.querySelector(s)}, main=$("#main");
 var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
@@ -315,29 +317,36 @@ function cssv(n){ return getComputedStyle(document.documentElement).getPropertyV
 function mdate(k){ var v=M&&M.d?M.d[k]:null; if(!v) return ""; var s=String(v); return s.slice(0,4)+"-"+s.slice(4,6)+"-"+s.slice(6,8); }
 function niceStep(x){ var p=Math.pow(10,Math.floor(Math.log(x)/Math.LN10)), f=x/p; return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p; }
 function setView(a,len){ var n=CH.data.c.length; len=Math.max(20,Math.min(n,len)); a=Math.max(0,Math.min(n-len,a)); CH.view=[a,a+len-1]; }
-function chartGeom(cv){ var W=cv.clientWidth, Hp=W<500?300:400, Hz=W<500?96:120, G=12, AX=52, BX=20; return {W:W,Hp:Hp,Hz:Hz,G:G,AX:AX,BX:BX,H:Hp+G+Hz+BX,PW:W-AX-4}; }
-function indexAt(cv,x){ var q=chartGeom(cv), a=CH.view[0], b=CH.view[1], bw=q.PW/(b-a+1); return Math.max(a,Math.min(b,a+Math.floor((x-2)/bw))); }
+function chartGeom(cv){ var W=cv.clientWidth, Hp=W<500?300:400, Hz=W<500?96:120, He=W<500?72:90, G=12, AX=52, BX=20; return {W:W,Hp:Hp,Hz:Hz,He:He,G:G,AX:AX,BX:BX,Hall:Hp+G+Hz+G+He,H:Hp+G+Hz+G+He+BX,PW:W-AX-4}; }
+/* Rebound Edge of a scanner row: null when the stock is not stretched. Band = how many band edges the edge has reached. */
+function rbRead(r){ var RB=D&&D.rebound; if(!RB||!r||r.re==null) return null; var k=0; while(k<RB.band_edges.length&&r.re>=RB.band_edges[k]) k++; var b=RB.bands[k], u=r.ru;
+  return {e:r.re,band:k,win:b.win,days:b.days,dip:u!=null?b.dz*u:null,bad:u!=null?b.dzb*u:null,cone:b.cone,u:u,g:r.rg,word:r.re<RB.zones[0]?"weak":(r.re>=RB.zones[1]?"strong":"fair")}; }
+function rbCol(w){ return w=="strong"?"var(--good)":(w=="weak"?"var(--bad)":"var(--ink2)"); }
+/* sessions drawn to the right of the last candle for the cone (0 when the cone is off or the view does not end at the last bar) */
+function futSlots(){ return (CH.o.cone&&CH.cone&&CH.view&&CH.data&&CH.view[1]==CH.data.c.length-1)?CH.cone.h[CH.cone.h.length-1]+1:0; }
+function indexAt(cv,x){ var q=chartGeom(cv), a=CH.view[0], b=CH.view[1], bw=q.PW/(b-a+1+futSlots()); return Math.max(a,Math.min(b,a+Math.floor((x-2)/bw))); }
 function chartDraw(){
   var cv=document.getElementById("cv"); if(!cv) return; var S=CH.data; if(!S||!M||!CH.view) return;
   var q=chartGeom(cv), W=q.W, Hp=q.Hp, Hz=q.Hz, H=q.H, dpr=window.devicePixelRatio||1;
   if(cv.width!=Math.round(W*dpr)||cv.height!=Math.round(H*dpr)){ cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); cv.style.height=H+"px"; }
   var g=cv.getContext("2d"); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
-  var a=CH.view[0], b=CH.view[1], nb=b-a+1, bw=q.PW/nb, X=function(k){return 2+(k-a+.5)*bw}, k, v;
+  var a=CH.view[0], b=CH.view[1], nb=b-a+1, fut=futSlots(), bw=q.PW/(nb+fut), X=function(k){return 2+(k-a+.5)*bw}, k, v;
   var c={ink:cssv("--ink"),ink2:cssv("--ink2"),mut:cssv("--muted"),line:cssv("--line"),good:cssv("--good"),bad:cssv("--bad"),lamp:cssv("--lamp"),sea:cssv("--sea"),storm:cssv("--storm"),deep:cssv("--deep"),panel:cssv("--panel"),bg:cssv("--bg")};
   var lo=Infinity, hi=-Infinity; for(k=a;k<=b;k++){ if(S.l[k]!=null&&S.h[k]!=null){ lo=Math.min(lo,S.l[k]); hi=Math.max(hi,S.h[k]); } }
   if(!isFinite(lo)){ g.fillStyle=c.mut; g.font="13px sans-serif"; g.fillText("No prices in this window.",12,24); return; }
   var lo0=lo, hi0=hi;
   if(CH.o.bl) for(k=a;k<=b;k++){ v=S.bl[k]; if(v!=null&&v>=lo0*.85) lo=Math.min(lo,v); }
   if(CH.o.sl) for(k=a;k<=b;k++){ v=S.sl[k]; if(v!=null&&v<=hi0*1.15&&v>=lo0*.85){ hi=Math.max(hi,v); lo=Math.min(lo,v); } }
+  if(fut){ ["q10","q90"].forEach(function(qn){ CH.cone.q[qn].forEach(function(r_){ var pv=Math.max(lo0*.75,Math.min(hi0*1.25,CH.cone.p0*(1+r_))); lo=Math.min(lo,pv); hi=Math.max(hi,pv); }); }); }
   var pad=(hi-lo)*.07||hi*.02; lo-=pad; hi+=pad; var Y=function(p){return 6+(hi-p)/(hi-lo)*(Hp-12)};
   var zlo=-4, zhi=2.5; for(k=a;k<=b;k++){ v=S.z[k]; if(v!=null){ zlo=Math.min(zlo,v); zhi=Math.max(zhi,v); } } zlo=Math.max(zlo,-9); var Z0=Hp+q.G, Yz=function(z){return Z0+4+(zhi-Math.max(zlo,Math.min(zhi,z)))/(zhi-zlo)*(Hz-8)};
   /* weather columns */
-  if(CH.o.wx){ for(k=a;k<=b;k++){ var w=M.wx[k]; if(w>=2){ g.globalAlpha=w==3?.17:.10; g.fillStyle=w==3?c.deep:c.storm; g.fillRect(X(k)-bw/2,0,bw+.6,Hp+q.G+Hz); } } g.globalAlpha=1; }
+  if(CH.o.wx){ for(k=a;k<=b;k++){ var w=M.wx[k]; if(w>=2){ g.globalAlpha=w==3?.17:.10; g.fillStyle=w==3?c.deep:c.storm; g.fillRect(X(k)-bw/2,0,bw+.6,q.Hall); } } g.globalAlpha=1; }
   /* grid and price labels */
   g.font="11px "+cssv("--mono"); g.textBaseline="middle"; g.lineWidth=1; var st=niceStep((hi-lo)/5), p0=Math.ceil(lo/st)*st;
   for(var p=p0;p<=hi;p+=st){ g.strokeStyle=c.line; g.beginPath(); g.moveTo(2,Math.round(Y(p))+.5); g.lineTo(2+q.PW,Math.round(Y(p))+.5); g.stroke(); g.fillStyle=c.mut; g.textAlign="left"; g.fillText(p>=100?p.toFixed(0):p.toFixed(st<.1?2:st<1?2:1),q.PW+8,Y(p)); }
   /* month labels */
-  g.textAlign="center"; var lastM=-1, lastX=-99; for(k=a;k<=b;k++){ var dd=String(M.d[k]||""), mo=+dd.slice(4,6); if(mo!=lastM){ lastM=mo; var xx=X(k); if(k>a&&xx-lastX>44){ g.strokeStyle=c.line; g.beginPath(); g.moveTo(Math.round(xx-bw/2)+.5,Hp+q.G+Hz); g.lineTo(Math.round(xx-bw/2)+.5,Hp+q.G+Hz+4); g.stroke(); g.fillStyle=c.mut; g.fillText(MON[mo-1]+(mo==1?" "+dd.slice(2,4):""),Math.max(16,Math.min(q.PW-12,xx)),H-9); lastX=xx; } } }
+  g.textAlign="center"; var lastM=-1, lastX=-99; for(k=a;k<=b;k++){ var dd=String(M.d[k]||""), mo=+dd.slice(4,6); if(mo!=lastM){ lastM=mo; var xx=X(k); if(k>a&&xx-lastX>44){ g.strokeStyle=c.line; g.beginPath(); g.moveTo(Math.round(xx-bw/2)+.5,q.Hall); g.lineTo(Math.round(xx-bw/2)+.5,q.Hall+4); g.stroke(); g.fillStyle=c.mut; g.fillText(MON[mo-1]+(mo==1?" "+dd.slice(2,4):""),Math.max(16,Math.min(q.PW-12,xx)),H-9); lastX=xx; } } }
   /* buy line and sell level */
   var path=function(arr,color,dash,wd){ g.strokeStyle=color; g.lineWidth=wd||1.4; g.setLineDash(dash||[]); g.beginPath(); var pen=false; for(var i=a;i<=b;i++){ var y=arr[i]; if(y==null||y<lo||y>hi){ pen=false; continue; } if(pen) g.lineTo(X(i),Y(y)); else g.moveTo(X(i),Y(y)); pen=true; } g.stroke(); g.setLineDash([]); };
   if(CH.o.sl) path(S.sl,c.sea,[2,3],1.2); if(CH.o.bl) path(S.bl,c.lamp,[5,4],1.6);
@@ -346,6 +355,12 @@ function chartDraw(){
   for(k=a;k<=b;k++){ var o=S.o[k], h=S.h[k], l=S.l[k], cl=S.c[k]; if(cl==null) continue; if(o==null) o=cl; if(h==null) h=Math.max(o,cl); if(l==null) l=Math.min(o,cl);
     var up=cl>=o, x=X(k); g.strokeStyle=g.fillStyle=up?c.good:c.bad; g.lineWidth=1; g.beginPath(); g.moveTo(Math.round(x)+.5,Y(h)); g.lineTo(Math.round(x)+.5,Y(l)); g.stroke();
     var y1=Y(Math.max(o,cl)), y2=Y(Math.min(o,cl)); g.fillRect(x-body/2,y1,body,Math.max(1,y2-y1)); }
+  /* the cone: where similar past cases stood 1 to 40 sessions after the buy (10-90% and 25-75% bands, middle line) */
+  if(fut){ var cn=CH.cone, n1=S.c.length-1, cx=[X(n1)].concat(cn.h.map(function(h_){return X(n1+h_)})), cp=function(qn){return [cn.p0].concat(cn.q[qn].map(function(r_){return Math.max(lo,Math.min(hi,cn.p0*(1+r_)))}))};
+    var cband=function(q1,q2,al){ var A=cp(q1), B2=cp(q2), i; g.globalAlpha=al; g.fillStyle=c.sea; g.beginPath(); for(i=0;i<cx.length;i++){ if(i) g.lineTo(cx[i],Y(B2[i])); else g.moveTo(cx[i],Y(B2[i])); } for(i=cx.length-1;i>=0;i--) g.lineTo(cx[i],Y(A[i])); g.closePath(); g.fill(); g.globalAlpha=1; };
+    cband("q10","q90",.11); cband("q25","q75",.17); var cm=cp("q50"); g.strokeStyle=c.sea; g.lineWidth=1.6; g.beginPath(); for(var ci=0;ci<cx.length;ci++){ if(ci) g.lineTo(cx[ci],Y(cm[ci])); else g.moveTo(cx[ci],Y(cm[ci])); } g.stroke();
+    var xe=Math.round(X(n1)+bw/2)+.5; g.strokeStyle=c.line; g.lineWidth=1; g.setLineDash([2,3]); g.beginPath(); g.moveTo(xe,0); g.lineTo(xe,Hp); g.stroke(); g.setLineDash([]);
+    g.fillStyle=c.sea; g.font="600 10px "+cssv("--sans"); g.textAlign="right"; g.fillText("40 SESSIONS AHEAD",q.PW-2,12); g.textAlign="left"; g.font="11px "+cssv("--mono"); }
   /* crosses into the zone that were not bought */
   if(CH.o.tr){ S.x.forEach(function(e){ var i=e[0]; if(i<a||i>b||e[1]==0||S.l[i]==null) return; var x=X(i), y=Y(S.l[i])+9; g.beginPath(); g.arc(x,y,3.2,0,6.283); if(e[1]<0){ g.strokeStyle=c.lamp; g.lineWidth=1.6; g.stroke(); } else { g.fillStyle=c.mut; g.fill(); } });
   /* swing trades of the tested book */
@@ -360,8 +375,16 @@ function chartDraw(){
   [[LINE,c.lamp,[5,4]],[TARGET,c.sea,[2,3]]].forEach(function(e){ g.strokeStyle=e[1]; g.lineWidth=1.2; g.setLineDash(e[2]); g.beginPath(); g.moveTo(2,Yz(e[0])); g.lineTo(2+q.PW,Yz(e[0])); g.stroke(); g.setLineDash([]); g.fillStyle=e[1]; g.textAlign="left"; g.fillText(String(e[0]).replace("-","−"),q.PW+8,Yz(e[0])); });
   g.strokeStyle=c.ink; g.lineWidth=1.5; g.beginPath(); var pen=false; for(k=a;k<=b;k++){ v=S.z[k]; if(v==null){ pen=false; continue; } if(pen) g.lineTo(X(k),Yz(v)); else g.moveTo(X(k),Yz(v)); pen=true; } g.stroke();
   g.fillStyle=c.mut; g.textAlign="left"; g.font="600 10px "+cssv("--sans"); g.fillText("STRETCH Z",6,Z0+10); g.font="11px "+cssv("--mono");
+  /* Rebound Edge pane: a bar on every session the stock was stretched; red below the weak line, green above the strong line */
+  var E0=Z0+Hz+q.G, zs=(D.rebound&&D.rebound.zones)||[0,.05], emin=-.05, emax=.10; for(k=a;k<=b;k++){ v=S.e[k]; if(v!=null){ emin=Math.min(emin,v); emax=Math.max(emax,v); } } emin=Math.max(emin,-.15); emax=Math.min(emax,.25);
+  var Ye=function(e_){return E0+4+(emax-Math.max(emin,Math.min(emax,e_)))/(emax-emin)*(q.He-8)};
+  g.strokeStyle=c.line; g.lineWidth=1; g.beginPath(); g.moveTo(2,Math.round(Ye(0))+.5); g.lineTo(2+q.PW,Math.round(Ye(0))+.5); g.stroke();
+  g.strokeStyle=c.good; g.setLineDash([2,3]); g.beginPath(); g.moveTo(2,Ye(zs[1])); g.lineTo(2+q.PW,Ye(zs[1])); g.stroke(); g.setLineDash([]);
+  for(k=a;k<=b;k++){ v=S.e[k]; if(v==null) continue; g.fillStyle=v<zs[0]?c.bad:(v>=zs[1]?c.good:c.mut); var ey0=Ye(0), ey1=Ye(v), ew=Math.max(1.5,Math.min(12,bw*.68)); g.fillRect(X(k)-ew/2,Math.min(ey0,ey1),ew,Math.max(1,Math.abs(ey1-ey0))); }
+  g.textAlign="left"; g.fillStyle=c.mut; g.fillText("0",q.PW+8,Ye(0)); g.fillStyle=c.good; g.fillText("+"+Math.round(100*zs[1])+"%",q.PW+8,Ye(zs[1]));
+  g.fillStyle=c.mut; g.font="600 10px "+cssv("--sans"); g.fillText("REBOUND EDGE",6,E0+10); g.font="11px "+cssv("--mono");
   /* crosshair */
-  var hk=CH.hover; if(hk!=null&&hk>=a&&hk<=b){ var hx=Math.round(X(hk))+.5; g.strokeStyle=c.mut; g.lineWidth=1; g.setLineDash([2,2]); g.beginPath(); g.moveTo(hx,0); g.lineTo(hx,Hp+q.G+Hz); g.stroke(); g.setLineDash([]);
+  var hk=CH.hover; if(hk!=null&&hk>=a&&hk<=b){ var hx=Math.round(X(hk))+.5; g.strokeStyle=c.mut; g.lineWidth=1; g.setLineDash([2,2]); g.beginPath(); g.moveTo(hx,0); g.lineTo(hx,q.Hall); g.stroke(); g.setLineDash([]);
     if(S.c[hk]!=null){ var yy=Y(S.c[hk]); g.fillStyle=c.ink; g.fillRect(q.PW+4,yy-9,q.AX-6,18); g.fillStyle=c.bg; g.textAlign="left"; g.fillText(px(S.c[hk]),q.PW+8,yy); } }
   chartReadout(hk!=null?hk:S.c.length-1);
 }
@@ -370,7 +393,7 @@ function chartReadout(k){
   var note=""; S.tr.forEach(function(t){ if(t[0]==k) note="bought at "+px(t[2])+" ("+pct(t[5],1,false)+" of the account)"; if(t[1]==k) note="sold at "+px(t[3])+", "+pct(t[4])+" ("+(t[6]==0?"the stretch was gone":"40 sessions")+")"; });
   S.x.forEach(function(e){ if(e[0]==k&&e[1]!=0) note="crossed into the buy zone: not bought, "+(e[1]<0?"one buy a day or no free slot":gbText(e[1])); });
   el.innerHTML='<span><b>'+dt(mdate(k))+'</b></span>'+(cl!=null?'<span>O '+px(S.o[k]!=null?S.o[k]:cl)+' H '+px(S.h[k])+' L '+px(S.l[k])+' C <b>'+px(cl)+'</b>'+(pc?' <span class="'+cls(cl/pc-1)+'">'+pct(cl/pc-1)+'</span>':'')+'</span>':'<span>no trade</span>')
-    +'<span>Z <b>'+(S.z[k]!=null?String(S.z[k]).replace("-","−"):"n/a")+'</b></span><span style="color:var(--lamp)">buy line '+px(S.bl[k])+'</span><span style="color:var(--sea)">sell level '+px(S.sl[k])+'</span><span>'+wn+'</span>'+(note?'<span style="flex-basis:100%;color:var(--ink)">'+note+'</span>':'');
+    +'<span>Z <b>'+(S.z[k]!=null?String(S.z[k]).replace("-","−"):"n/a")+'</b></span>'+(S.e[k]!=null?'<span>edge <b>'+pct(S.e[k])+'</b></span>':'')+'<span style="color:var(--lamp)">buy line '+px(S.bl[k])+'</span><span style="color:var(--sea)">sell level '+px(S.sl[k])+'</span><span>'+wn+'</span>'+(note?'<span style="flex-basis:100%;color:var(--ink)">'+note+'</span>':'');
 }
 function chartBind(){
   var cv=document.getElementById("cv"); if(!cv) return; var pts={}, start=null, moved=false, pinch=null;
@@ -378,7 +401,7 @@ function chartBind(){
   cv.onpointermove=function(e){ if(!CH.data) return; var r=cv.getBoundingClientRect();
     if(pts[e.pointerId]!=null){ pts[e.pointerId]=e.clientX; var ids=Object.keys(pts);
       if(ids.length==2&&pinch){ var dd=Math.abs(pts[ids[0]]-pts[ids[1]])||1, len=Math.round((pinch.v[1]-pinch.v[0]+1)*pinch.d/dd), mid=(pinch.v[0]+pinch.v[1])/2; setView(Math.round(mid-len/2),len); moved=true; chartDraw(); return; }
-      if(start){ var dx=e.clientX-start.x; if(Math.abs(dx)>6) moved=true; if(moved){ var len2=start.v[1]-start.v[0]+1, bw=chartGeom(cv).PW/len2; setView(start.v[0]-Math.round(dx/bw),len2); CH.hover=null; chartDraw(); return; } } }
+      if(start){ var dx=e.clientX-start.x; if(Math.abs(dx)>6) moved=true; if(moved){ var len2=start.v[1]-start.v[0]+1, bw=chartGeom(cv).PW/(len2+futSlots()); setView(start.v[0]-Math.round(dx/bw),len2); CH.hover=null; chartDraw(); return; } } }
     if(e.pointerType=="mouse"||pts[e.pointerId]!=null){ CH.hover=indexAt(cv,e.clientX-r.left); chartDraw(); } };
   var end=function(e){ var had=pts[e.pointerId]!=null; delete pts[e.pointerId]; if(!Object.keys(pts).length){ if(had&&!moved&&e.type=="pointerup"){ var r=cv.getBoundingClientRect(); CH.hover=indexAt(cv,e.clientX-r.left); chartDraw(); } start=null; pinch=null; } };
   cv.onpointerup=end; cv.onpointercancel=end; cv.onpointerleave=function(e){ if(e.pointerType=="mouse"&&pts[e.pointerId]==null){ CH.hover=null; chartDraw(); } };
@@ -388,11 +411,20 @@ function chartMount(){
   if(!D||!D.chart) return; var idx=D.chart.index||{}; if(!CH.sym||idx[CH.sym]==null){ var first=(D.scan||[])[0]; CH.sym=first?first.sym:Object.keys(idx)[0]; }
   var n=idx[CH.sym], note=document.getElementById("chartnote"); if(n==null){ if(note) note.textContent="No chart data for this stock."; return; }
   var ready=function(){ var doc=CHUNK[n]; CH.data=doc&&doc.stocks?doc.stocks[CH.sym]:null; if(!CH.data||!M){ var bad=LOADERR["c"+n]||LOADERR.market; if(note) note.textContent=!DBOK?"Charts need the terminal's data. Open the page inside Claude, signed in.":bad?"The prices for this chart could not be loaded ("+bad+"). Choose the stock again to retry.":(doc&&doc.stocks&&!CH.data)?"No chart data for this stock.":"Loading prices…"; return; }
-    if(note) note.textContent=""; var len=CH.range||126; CH.hover=null; CH.view=null; var N=CH.data.c.length; CH.view=[Math.max(0,N-len),N-1]; chartBind(); chartDraw(); chartSide(); };
+    if(note) note.textContent=""; var len=CH.range||126; CH.hover=null; CH.view=null; var N=CH.data.c.length; CH.view=[Math.max(0,N-len),N-1];
+    var r0=null; (D.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r0=x }); var rr=rbRead(r0), p0=CH.data.c[N-1]; CH.cone=null;
+    if(rr&&rr.u!=null&&p0!=null){ var cq={}; Object.keys(rr.cone).forEach(function(qn){ cq[qn]=rr.cone[qn].map(function(v){return v*rr.u}); }); CH.cone={h:D.rebound.horizons,q:cq,p0:p0}; }
+    chartBind(); chartDraw(); chartSide(); };
   if(CHUNK[n]&&M) ready(); else { var sym0=CH.sym; Promise.all([loadChunk(n),loadMarket()]).then(function(){ if(view=="chart"&&CH.sym==sym0) ready(); }); }
 }
 function chartSide(){
   var el=document.getElementById("chartside"), S=CH.data; if(!el||!S) return; var r=null; (D.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r=x }); var W=D.weather, h="";
+  var RB=D.rebound, rb=rbRead(r);
+  if(RB){ if(rb){ var wc=rbCol(rb.word);
+      h+='<div class="block"><div class="eyebrow">Rebound Edge · what usually followed</div><div class="edgecard"><b class="num" style="color:'+wc+'">'+pct(rb.e)+'</b><span><em style="color:'+wc+'">'+rb.word+'</em>the average result of a buy at the next open in past cases like this one, after costs</span></div>'
+        +'<div class="facts"><div class="fact"><b>'+Math.round(100*rb.win)+' in 100</b><span>ended in profit</span></div><div class="fact"><b>'+Math.round(rb.days)+'</b><span>sessions, typical</span></div><div class="fact"><b>'+(rb.dip!=null?pct(rb.dip):"n/a")+'</b><span>typical dip on the way</span></div><div class="fact"><b>'+(rb.bad!=null?pct(rb.bad):"n/a")+'</b><span>1 case in 10 dipped below this</span></div></div>'
+        +'<p class="note">Cases with the same market momentum and stretch: '+RB.cases_saudi.toLocaleString()+' in Saudi, '+RB.cases_world.toLocaleString()+' in '+RB.markets+' other markets.'+(RB.gate?(rb.g?' This stock passes your gates.':' This stock does not pass your gates (that costs '+(100*RB.gate).toFixed(1)+' points).'):'')+' The trade is sold when the stretch Z is back at 0, or after 40 sessions. <b>Descriptive:</b> it separates good setups from bad ones, and it ranks them no better than market momentum alone. Not a forecast for this stock.</p></div>'; }
+    else h+='<div class="block"><div class="eyebrow">Rebound Edge</div><p class="note">Read only when a liquid stock is stretched: stretch Z '+String(RB.line).replace("-","−")+' or lower.'+(r?' '+esc(r.sym)+' is at '+String(r.z).replace("-","−")+'.':'')+'</p></div>'; }
   if(r){ var inz=r.inz, say=inz?('In the buy zone for '+(r.age==0?'the first session: it crossed at this close':r.age+' sessions')+'. The swing sells when it closes at or above <b class="num">'+px(r.sellpx)+'</b> (stretch Z 0).'):(r.need!=null&&r.need>=-.1?('A close at or below <b class="num">'+px(r.line)+'</b> tomorrow ('+pct(r.need)+') crosses into the buy zone.'):'The buy line for tomorrow is <b class="num">'+px(r.line)+'</b>, more than the 10% daily limit away.');
     var G=[[D.scan_sum.window,"Storm or deep weather","market momentum −1.18 or lower",String(W.ms)],[W.pm_ok,"Market model positive","a 20-session market forecast",pct(W.pm)],[r.ml!=null&&r.ml>=.5,"ML rank 50% or higher","the ranker's view of the stock",pct(r.ml,0,false)],[!r.loss,"Latest annual result not a loss","",r.loss?"loss":"profit"]];
     h+='<div class="block"><div class="eyebrow">'+esc(r.sec||"")+' · where it stands</div><p class="lead">Stretch Z <b class="num">'+String(r.z).replace("-","−")+'</b> (line '+String(LINE).replace("-","−")+'). '+say+'</p>'
@@ -416,7 +448,7 @@ function vToday(){
   if(D.stale) h+='<div class="warn"><b>Old picture.</b> The newest close in the data is '+dt(D.asof)+'. Yahoo has not published a later one yet, or the market was closed.</div>';
   (D.record_warn||[]).forEach(function(w){ h+='<div class="warn"><b>'+esc(w.sym)+' '+esc(w.name)+' stays in '+(w.rule=="live"?"your book":"the paper book")+'.</b> Today\'s replay no longer shows its signal of '+dt(w.signal)+' (a model refit moved a gate that sat on the line). The record stands'+(w.overdue?': sell it at the next open.':': sell by the open of '+dt(w.sell)+'.')+'</div>'; });
   h+='<div class="hero"><div class="heroGrid"><div class="block"><div class="eyebrow">Market weather · close of '+dt(D.asof)+'</div><h1 class="word '+(st=="storm"?"storm":st=="deep storm"?"deep":"")+'">'+WORD[st]+'</h1><p class="lead">'+SAY[st]+(E.open?' Session '+E.day+' of the sell-off that began '+dt(E.start)+'.':'')+'</p>'
-    +'<div class="chips"><span class="chip '+(SS.window?"lamp":"")+'"><i></i>Buy window '+(SS.window?"open":"closed")+'</span><span class="chip '+(W.pm_ok?"ok":"no")+'"><i></i>Market model '+(W.pm_ok?"positive":"negative: no buys")+'</span><span class="chip"><i></i>'+SS.inzone+' in the buy zone · '+SS.near+' near</span></div></div>'
+    +'<div class="chips"><span class="chip '+(SS.window?"lamp":"")+'"><i></i>Buy window '+(SS.window?"open":"closed")+'</span><span class="chip '+(W.pm_ok?"ok":"no")+'"><i></i>Market model '+(W.pm_ok?"positive":"negative: no buys")+'</span><span class="chip"><i></i>'+SS.inzone+' in the buy zone · '+SS.near+' near</span>'+(D.rebound?'<span class="chip"><i></i>'+D.rebound.stretched+' stretched · '+D.rebound.strong+' with a strong Rebound Edge</span>':'')+'</div></div>'
     +'<div>'+gauge(W.ms)+'</div></div></div>';
   h+='<div class="verdict"><div class="eyebrow">Fable swing · paper book · orders for the 10:00 open of '+dt(D.day)+'</div><div class="big">'+sayOrders(SW.buys.length,SW.due.length)+'</div>';
   if(SW.buys.length||SW.due.length) h+='<div class="rows">'+orderRows(SW.due,"sell",true)+orderRows(SW.buys,"buy",true)+'</div>';
@@ -439,19 +471,19 @@ function scanRow(r){
   var flags=[]; if(r.ml!=null&&r.ml<.5) flags.push("ML "+pct(r.ml,0,false)); if(r.loss) flags.push("loss-making");
   var sub=r.inz?("in the zone"+(r.age?" "+r.age+" sessions":", crossed today")+" · sells at "+px(r.sellpx)):(r.need!=null?"needs "+pct(r.need)+" to cross":"");
   return '<button class="srow" data-chart="'+esc(r.sym)+'"><span class="t">'+(FAV.indexOf(r.sym)>=0?'<span style="color:var(--lamp)">★</span> ':'')+esc(r.sym)+'<small>'+esc(r.name)+'</small></span><span class="z '+(r.inz?"in":"")+'">'+String(r.z).replace("-","−")+'</span><span class="v">'+px(r.line)+'<small>buy line</small></span>'
-    +'<span class="s">'+(r.st?'<span class="st '+r.st+'">'+STN[r.st]+'</span> ':'')+sub+(flags.length?' · <span style="color:var(--bad)">'+flags.join(", ")+'</span>':'')+(r.e!=null?' · edge '+pct(r.e):'')+'</span></button>';
+    +'<span class="s">'+(r.st?'<span class="st '+r.st+'">'+STN[r.st]+'</span> ':'')+sub+(flags.length?' · <span style="color:var(--bad)">'+flags.join(", ")+'</span>':'')+(r.re!=null?' · <b style="font-weight:600;color:'+rbCol(rbRead(r).word)+'">edge '+pct(r.re)+'</b>':'')+'</span></button>';
 }
 function vScanner(){
   var SS=D.scan_sum, rows=(D.scan||[]).slice(), q=scanQ.trim().toLowerCase(), cnt=function(f){return (D.scan||[]).filter(f).length};
-  var F={all:function(){return true},zone:function(r){return r.inz},near:function(r){return r.st=="near"},held:function(r){return r.st=="held"||r.st=="sell"||r.st=="buy"||r.rp},fav:function(r){return FAV.indexOf(r.sym)>=0}};
+  var F={all:function(){return true},zone:function(r){return r.inz},near:function(r){return r.st=="near"},str:function(r){return r.re!=null},held:function(r){return r.st=="held"||r.st=="sell"||r.st=="buy"||r.rp},fav:function(r){return FAV.indexOf(r.sym)>=0}};
   rows=rows.filter(F[scanF]||F.all); if(q) rows=rows.filter(function(r){return r.sym.toLowerCase().indexOf(q)>=0||(r.name||"").toLowerCase().indexOf(q)>=0||(r.sec||"").toLowerCase().indexOf(q)>=0});
-  var S={need:function(a,b){return (b.need==null?-9:b.need)-(a.need==null?-9:a.need)},z:function(a,b){return a.z-b.z},chg:function(a,b){return (a.chg||0)-(b.chg||0)},up:function(a,b){return (b.chg||0)-(a.chg||0)},edge:function(a,b){return (b.e||-9)-(a.e||-9)},code:function(a,b){return a.sym<b.sym?-1:1}};
+  var S={need:function(a,b){return (b.need==null?-9:b.need)-(a.need==null?-9:a.need)},z:function(a,b){return a.z-b.z},chg:function(a,b){return (a.chg||0)-(b.chg||0)},up:function(a,b){return (b.chg||0)-(a.chg||0)},edge:function(a,b){return (b.re==null?-9:b.re)-(a.re==null?-9:a.re)},code:function(a,b){return a.sym<b.sym?-1:1}};
   if(scanSort=="need") rows.sort(function(a,b){ return (a.inz?0:1)-(b.inz?0:1) || (a.inz?a.z-b.z:S.need(a,b)) }); else rows.sort(S[scanSort]);
   var chip=function(k,lab,n){return '<button data-scanf="'+k+'" aria-pressed="'+(scanF==k)+'">'+lab+' <span class="num" style="opacity:.7">'+n+'</span></button>'};
   var h='<section class="view"><div class="block"><div class="eyebrow">Scanner · '+SS.n+' liquid stocks · close of '+dt(D.asof)+'</div><h1 class="h2">'+(SS.window?(SS.inzone?SS.inzone+" in the buy zone, "+SS.crossed+" crossed today":"No stock is in the buy zone"):"The buy window is closed")+'</h1>'
     +'<p class="lead">The buy zone is stretch Z at '+String(LINE).replace("-","−")+' or lower. The buy line is the close that would put a stock exactly there tomorrow. '+(SS.window?(SS.pm_ok?"Weather and market model allow buys today.":"The market model is negative: no buys today."):"A cross only counts in storm or deep weather.")+'</p></div>'
-    +'<div class="block"><div class="fchips" role="group" aria-label="Filter">'+chip("all","All",SS.n)+chip("zone","In the zone",SS.inzone)+chip("near","Near",SS.near)+chip("held","Held",cnt(F.held))+chip("fav","My stocks",cnt(F.fav))+'</div>'
-    +'<div class="tools"><input class="inp" id="scan-q" placeholder="Code, name or sector" value="'+esc(scanQ)+'" aria-label="Search the scanner"><select class="inp" id="scan-sort" aria-label="Sort" style="width:auto"><option value="need"'+(scanSort=="need"?" selected":"")+'>Nearest the line</option><option value="z"'+(scanSort=="z"?" selected":"")+'>Deepest stretch</option><option value="chg"'+(scanSort=="chg"?" selected":"")+'>Fell most today</option><option value="up"'+(scanSort=="up"?" selected":"")+'>Rose most today</option><option value="edge"'+(scanSort=="edge"?" selected":"")+'>Edge score</option><option value="code"'+(scanSort=="code"?" selected":"")+'>Code</option></select></div></div>'
+    +'<div class="block"><div class="fchips" role="group" aria-label="Filter">'+chip("all","All",SS.n)+chip("zone","In the zone",SS.inzone)+chip("near","Near",SS.near)+chip("str","Stretched",cnt(F.str))+chip("held","Held",cnt(F.held))+chip("fav","My stocks",cnt(F.fav))+'</div>'
+    +'<div class="tools"><input class="inp" id="scan-q" placeholder="Code, name or sector" value="'+esc(scanQ)+'" aria-label="Search the scanner"><select class="inp" id="scan-sort" aria-label="Sort" style="width:auto"><option value="need"'+(scanSort=="need"?" selected":"")+'>Nearest the line</option><option value="z"'+(scanSort=="z"?" selected":"")+'>Deepest stretch</option><option value="chg"'+(scanSort=="chg"?" selected":"")+'>Fell most today</option><option value="up"'+(scanSort=="up"?" selected":"")+'>Rose most today</option><option value="edge"'+(scanSort=="edge"?" selected":"")+'>Rebound Edge</option><option value="code"'+(scanSort=="code"?" selected":"")+'>Code</option></select></div></div>'
     +'<div class="block"><div class="shead"><span>Stock</span><span>Z</span><span>Buy line</span></div><div class="rows" id="scan-rows">'+(rows.length?rows.slice(0,scanF=="all"&&!q?60:400).map(scanRow).join(""):'<p class="note" style="padding:14px 0">Nothing matches.</p>')+'</div>'
     +(scanF=="all"&&!q&&rows.length>60?'<p class="note">Showing the 60 nearest of '+rows.length+'. Search or filter to see the rest.</p>':'')+'<p class="note">Tap a stock for its chart. Edge is the average next 5 sessions of a gated stock with that stretch in today\'s weather; it describes the past, it does not forecast the stock.</p></div>';
   return h+'</section>';
@@ -470,10 +502,10 @@ function vChart(){
   var r=null; (D.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r=x }); var fav=FAV.indexOf(CH.sym)>=0, rb=function(n,l){return '<button data-range="'+n+'" aria-pressed="'+(CH.range==n)+'">'+l+'</button>'}, tg=function(k,l){return '<button data-tog="'+k+'" aria-pressed="'+!!CH.o[k]+'">'+l+'</button>'};
   var h='<section class="view"><div class="block"><div class="eyebrow">Chart · candles with the swing\'s signals</div><div class="pick"><button class="step" id="sym-prev" aria-label="Previous stock">‹</button><select class="inp" id="sym" aria-label="Choose a stock">'+symOptions()+'</select><button class="step" id="sym-next" aria-label="Next stock">›</button><button class="star" id="sym-fav" aria-pressed="'+fav+'" aria-label="'+(fav?"Remove from":"Add to")+' my stocks">★</button></div>'
     +(r?'<div class="chips"><span class="chip"><b class="num" style="color:var(--ink)">'+px(r.c)+'</b>&nbsp;<span class="'+cls(r.chg)+'">'+pct(r.chg)+'</span></span>'+(r.st?'<span class="st '+r.st+'">'+STN[r.st]+'</span>':'')+'<span class="chip">Z '+String(r.z).replace("-","−")+'</span><span class="chip">buy line '+px(r.line)+(r.need!=null&&!r.inz?" ("+pct(r.need)+")":"")+'</span></div>':'')+'</div>'
-    +'<div class="block"><div class="chartbox"><div class="readout" id="readout"></div><canvas id="cv" height="440" aria-label="Candlestick chart of '+esc(CH.sym)+'"></canvas></div><div class="cbar"><div class="seg" role="group" aria-label="Range">'+rb(63,"3M")+rb(126,"6M")+rb(252,"1Y")+rb(380,"All")+'</div><div class="fchips" role="group" aria-label="Show">'+tg("bl","Buy line")+tg("sl","Sell level")+tg("tr","Trades")+tg("wx","Weather")+'</div></div>'
+    +'<div class="block"><div class="chartbox"><div class="readout" id="readout"></div><canvas id="cv" height="440" aria-label="Candlestick chart of '+esc(CH.sym)+'"></canvas></div><div class="cbar"><div class="seg" role="group" aria-label="Range">'+rb(63,"3M")+rb(126,"6M")+rb(252,"1Y")+rb(380,"All")+'</div><div class="fchips" role="group" aria-label="Show">'+tg("bl","Buy line")+tg("sl","Sell level")+tg("tr","Trades")+tg("wx","Weather")+tg("cone","Cone")+'</div></div>'
     +'<p class="note" id="chartnote">Loading prices…</p>'
-    +'<div class="chips"><span class="chip"><i style="background:var(--lamp)"></i>buy line: the close that puts stretch Z at '+String(LINE).replace("-","−")+'</span><span class="chip"><i style="background:var(--sea)"></i>sell level: stretch Z 0</span><span class="chip">▲ bought · ▼ sold</span><span class="chip"><i style="background:none;border:1.6px solid var(--lamp)"></i>crossed, not bought</span><span class="chip"><i style="background:var(--storm)"></i>storm · deep</span></div>'
-    +'<p class="note">Drag to move, pinch or scroll to zoom, tap a candle to read it. Prices are adjusted for dividends. Trades are the tested swing book replayed on this history; your paper record starts '+dt(D.swing.rule.start)+'.</p></div>'
+    +'<div class="chips"><span class="chip"><i style="background:var(--lamp)"></i>buy line: the close that puts stretch Z at '+String(LINE).replace("-","−")+'</span><span class="chip"><i style="background:var(--sea)"></i>sell level: stretch Z 0</span><span class="chip">▲ bought · ▼ sold</span><span class="chip"><i style="background:none;border:1.6px solid var(--lamp)"></i>crossed, not bought</span><span class="chip"><i style="background:var(--storm)"></i>storm · deep</span><span class="chip"><i style="background:var(--sea);opacity:.45"></i>cone: where similar past cases stood, 1 to 40 sessions on</span></div>'
+    +'<p class="note">Drag to move, pinch or scroll to zoom, tap a candle to read it. Prices are adjusted for dividends. Trades are the tested swing book replayed on this history; your paper record starts '+dt(D.swing.rule.start)+'. The bottom pane is the Rebound Edge on every session the stock was stretched; the cone shows only when it is stretched now.</p></div>'
     +'<div id="chartside"></div>';
   return h+'</section>';
 }
@@ -547,11 +579,32 @@ function vEvidence(){
   h+='<div class="block"><div class="eyebrow">Words</div><div class="gloss">'+[["Stretch Z","How far a stock has fallen or risen, in units of its own normal swing (average of its 10-, 20- and 60-session moves)."],["Buy zone","Stretch Z at −2.5 or lower. The cross is the first close in it."],["Buy line","The close that would put a stock exactly on −2.5 at the next session."],["Sell level","The close at which the stretch Z is back at 0: the stretch is gone."],["Market momentum","The stretch idea for the whole market over 60 sessions. Storm: −1.18 or lower. Deep: −2.53 or lower."],["Market model","A 20-session market forecast, refit every January. Negative means no buys."],["ML rank","Where a stock stands among all stocks in a model's ranking; 50% or higher passes."],["Worst drawdown","The largest fall of the whole account from a high to a later low."],["Range","Where the result landed in 9 of 10 redraws of the sell-offs."]].map(function(g){return '<div><b>'+g[0]+'</b><span>'+g[1]+'</span></div>'}).join("")+'</div></div>';
   return h;
 }
+function vRebound(){
+  var RB=D.rebound, T=(D.evidence||{}).rebound; if(!RB) return "";
+  var f=RB.raw, sg=function(v,d){return (v>=0?"+ ":"− ")+Math.abs(100*v).toFixed(d==null?2:d)}, mn=function(x){return String(x).replace("-","−")};
+  var h='<div class="block"><h1 class="h2">Rebound Edge</h1><p class="lead">For a stretched stock: the average result of a buy at the next open in past cases with the same market momentum and stretch, after costs. The stretch Z says how far a stock has fallen. The Rebound Edge says what usually followed.</p></div>'
+    +'<div class="block"><div class="eyebrow">The formula · fitted on '+RB.markets+' other markets'+(RB.saudi?', then adjusted to Saudi':'')+'</div><p class="lead num" style="font-size:14px;line-height:1.6">edge % = '+mn((100*f.c0).toFixed(2))+' '+sg(f.Z)+' × Z '+sg(f.MS)+' × M '+sg(f.ZMS,3)+' × Z × M'+(f.gate?'<br>'+sg(f.gate)+' when the stock passes your gates':'')+'</p>'
+    +'<p class="note">Z = stretch Z, read at '+mn(RB.line)+' or lower. M = market momentum. Both are negative in a sell-off, so a deeper stretch and a deeper sell-off raise the edge. Weak below '+pct(RB.zones[0],1)+', strong from '+pct(RB.zones[1],1)+'.</p></div>'
+    +'<div class="block"><div class="eyebrow">What followed, by size of the edge · '+RB.cases_saudi.toLocaleString()+' Saudi cases</div><div class="scroll"><table class="tb"><thead><tr><th>Edge</th><th>Result</th><th>Profit<br><small>in 100</small></th><th>Sessions</th><th>Typical dip</th></tr></thead><tbody>'
+    +RB.bands.map(function(b){return '<tr><td>'+pct(b.edge,1)+'</td><td class="'+cls(b.gain)+'">'+pct(b.gain,1)+'</td><td>'+Math.round(100*b.win)+'</td><td>'+Math.round(b.days)+'</td><td>'+pct(b.dz*.0894,1)+'</td></tr>'}).join("")
+    +'</tbody></table></div><p class="note">Ten groups of equal size, each pulled a little toward the other markets. "Typical dip" is for a stock that moves 2% a day; the chart uses each stock\'s own volatility.</p></div>';
+  if(T){ var ab=T.abroad, row=function(lab,sub,x){return '<tr><td>'+lab+'<br><small>'+sub+'</small></td><td class="up">'+pct(x.top,1)+'</td><td class="'+cls(x.bottom)+'">'+pct(x.bottom,1)+'</td><td>'+x.corr.toFixed(2)+'·'+x.corr_ms.toFixed(2)+'·'+x.corr_z.toFixed(2)+'</td></tr>'};
+    h+='<div class="block"><div class="eyebrow">How it was tested</div><p class="lead"><b>Verdict: descriptive.</b> It separates good setups from bad ones in every test. It does not rank them better than market momentum alone. So it is your weather gauge and the stretch turned into numbers you can act on, not a new source of edge.</p>'
+      +'<div class="scroll"><table class="tb" style="table-layout:fixed"><thead><tr><th style="width:31%">Test</th><th style="width:15%;white-space:normal">Top third</th><th style="width:16%;white-space:normal">Bottom third</th><th style="width:38%;white-space:normal">Rank link<br><small>edge · momentum · stretch</small></th></tr></thead><tbody>'
+      +row(ab.markets+" other markets","each scored by a formula fitted on the others",ab)+row("Saudi 2013-19",T.design.cases.toLocaleString()+" cases; no Saudi data in the formula",T.design)+row("Saudi 2020-26",T.confirm.cases.toLocaleString()+" cases; opened once",T.confirm)+row("Saudi 2023-26","the last four years",T.late)
+      +'</tbody></table></div><p class="note">Top and bottom third: the average result of the cases with the highest and the lowest edge. Rank link: how well a reading orders the results, from 0 (not at all) to 1 (perfectly). Abroad the top third beat the bottom third in '+ab.pos+' of '+ab.markets+' markets.</p></div>'
+      +'<div class="block"><div class="eyebrow">Stretched stocks by market weather · Saudi</div><div class="scroll"><table class="tb"><thead><tr><th>Weather</th><th>2013-19</th><th>2020-26</th><th>Profit<br><small>in 100, 2020-26</small></th></tr></thead><tbody>'
+      +T.weather.map(function(w,k){var d0=T.weather_design[k]||{};return '<tr><td>'+w.w+'</td><td class="'+cls(d0.realized)+'">'+pct(d0.realized,1)+'</td><td class="'+cls(w.realized)+'">'+pct(w.realized,1)+'</td><td>'+Math.round(100*w.wins)+'</td></tr>'}).join("")
+      +'</tbody></table></div><p class="note">The average result of buying a stretched liquid stock at the next open. In calm and cloudy weather the dip lost money in both periods. It paid in a sell-off.</p></div>'
+      +'<div class="block"><div class="eyebrow">Limits</div><ul class="plain"><li><b>Not a filter for the swing\'s signals.</b> Inside them the higher-edge half made '+pct(T.inside.design.top,1)+' against '+pct(T.inside.design.bottom,1)+' in 2013-19 and '+pct(T.inside.confirm.top,1)+' against '+pct(T.inside.confirm.bottom,1)+' in 2020-26. Too uneven to act on.</li>'
+      +'<li><b>Its win shares missed by up to 12 points in 2020-26.</b> Strong setups won more often than it said, the weakest less often. The tables now use every year.</li><li><b>The chance of a win barely moves.</b> I tried 22 readings and boosted trees; none predicted wins across markets. The size of the result is what changes.</li><li>18 Saudi sell-offs. Today\'s stocks only.</li></ul></div>'; }
+  return h;
+}
 function vEdge(){
   var E=D.edge, lab=E.labels, W=["Calm","Clouds","Storm","Deep"], m={}, mx=0, wnow={"calm":0,"clouds":1,"clearing":1,"storm":2,"deep storm":3}[D.weather.state], cnt={};
   E.rows.forEach(function(r){ m[r.w+"|"+r.k]=r; mx=Math.max(mx,Math.abs(r.e||0)) }); var edges=[-99,-3.5,-3,-2.5,-2,-1.5,-1,-.5,0,.5,1,2,99];
   (D.scan||[]).forEach(function(r){ for(var k=0;k<12;k++){ if(r.z>=edges[k]&&r.z<edges[k+1]){ cnt[k]=(cnt[k]||0)+1; break; } } });
-  var h='<div class="block"><h1 class="h2">Where the edge lives</h1><p class="lead">The average next 5 sessions of a liquid stock that passes the gates, by its stretch and the market weather that day. Saudi 2013-26, pulled toward 24 other markets where Saudi cases are few.</p></div>'
+  var h=vRebound()+'<div class="block"><div class="eyebrow">The older map</div><h2 class="h2">Where the edge lives</h2><p class="lead">The average next 5 sessions of a liquid stock that passes the gates, by its stretch and the market weather that day. Saudi 2013-26, pulled toward 24 other markets where Saudi cases are few.</p></div>'
     +'<div class="block"><div class="scroll"><table class="tb heat"><thead><tr><th>Stretch Z</th>'+W.map(function(x){return '<th>'+x+'</th>'}).join("")+'<th>Today</th></tr></thead><tbody>'
     +lab.map(function(l,k){return '<tr><td>'+l.replace(/-/g,"−").replace("..−"," to −").replace(".."," to ")+'</td>'+[0,1,2,3].map(function(w){var r=m[w+"|"+k]; if(!r||r.e==null) return '<td><small>n/a</small></td>'; var a=Math.min(.55,Math.abs(r.e)/mx*.9); return '<td style="background:color-mix(in srgb,'+(r.e>=0?"var(--good)":"var(--bad)")+' '+Math.round(100*a)+'%,transparent)'+(w==wnow?";outline:1px solid var(--line)":"")+'">'+pct(r.e)+'</td>'}).join("")+'<td>'+(cnt[k]||"")+'</td></tr>'}).join("")+'</tbody></table></div>'
     +'<p class="note">Read it down a column. In deep weather the edge in the zone is 2% to 4% for 5 sessions and fades as the stretch returns to 0: that is why the swing sells there. In calm and cloudy weather it is about 1% or less and does not grow with the stretch; after costs little is left, and the account did not gain from such trades when tested. "Today" counts the liquid stocks in each row now. Gross of costs; a description of the past, not a forecast.</p></div>';
@@ -569,7 +622,7 @@ function vIdeas(){
   return h;
 }
 function vResearch(){
-  var tabs=[["evidence","Evidence"],["ideas","Ideas"],["selloffs","Sell-offs"],["sizing","Sizing"],["edge","Edge map"]];
+  var tabs=[["evidence","Evidence"],["edge","Rebound Edge"],["ideas","Ideas"],["selloffs","Sell-offs"],["sizing","Sizing"]];
   var h='<section class="view"><div class="block"><div class="eyebrow">Research</div><div class="fchips" role="group" aria-label="Research section">'+tabs.map(function(t){return '<button data-res="'+t[0]+'" aria-pressed="'+(resTab==t[0])+'">'+t[1]+'</button>'}).join("")+'</div></div>';
   return h+({evidence:vEvidence,ideas:vIdeas,selloffs:vSelloffs,sizing:vSizing,edge:vEdge}[resTab]||vEvidence)()+'</section>';
 }
@@ -619,7 +672,7 @@ function loadMarket(){ if(!DB) return Promise.resolve(null); if(M) return Promis
   return DB.doc("chart/market").get().then(function(s){ if(s.exists){ M=s.data(); delete LOADERR.market; } else LOADERR.market="not written yet"; return M; }).catch(function(e){ LOADERR.market=why(e); return null; }); }
 function rows(f,n){ if(!f||!f.length||Array.isArray(f[0])) return f||[]; var o=[]; for(var i=0;i+n<=f.length;i+=n) o.push(f.slice(i,i+n)); return o; }
 function unflat(doc){ var st=(doc&&doc.stocks)||{}, out={n:doc.n,asof:doc.asof,stocks:{}};   /* the store hands out read-only data: build new objects, never change its own */
-  Object.keys(st).forEach(function(k){ var o={}, s0=st[k]; Object.keys(s0).forEach(function(a){ o[a]=s0[a]; }); o.tr=rows(s0.tr,8); o.x=rows(s0.x,2); out.stocks[k]=o; }); return out; }
+  Object.keys(st).forEach(function(k){ var o={}, s0=st[k]; Object.keys(s0).forEach(function(a){ o[a]=s0[a]; }); o.tr=rows(s0.tr,8); o.x=rows(s0.x,2); var n=(s0.c||[]).length, e=new Array(n), ev=s0.ev||[], i; for(i=0;i<n;i++) e[i]=null; for(i=0;i+1<ev.length;i+=2) if(ev[i]<n) e[ev[i]]=ev[i+1]/100; o.e=e; out.stocks[k]=o; }); return out; }
 function loadChunk(n){ if(!DB) return Promise.resolve(null); if(CHUNK[n]) return Promise.resolve(CHUNK[n]); return DB.doc("chart/c"+n).get().then(function(s){ if(s.exists){ CHUNK[n]=unflat(s.data()); delete LOADERR["c"+n]; } else LOADERR["c"+n]="not written yet"; return CHUNK[n]||null; }).catch(function(e){ LOADERR["c"+n]=why(e); return null; }); }
 (window.claude&&window.claude.use?window.claude.use("db"):Promise.resolve(null)).then(function(db){
   if(!db){ gone("This view cannot reach the terminal's data. Open the page inside Claude, signed in."); return; }

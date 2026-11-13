@@ -221,6 +221,15 @@ for w_ in range(4):
         v = ms_ if mw is None else mw if ms_ is None else (Sn[w_, k] * ms_ + KSH * mw) / (Sn[w_, k] + KSH); EMAP[w_, k] = v
         edge_rows.append(dict(w=w_, k=k, e=R(v, 4), saudi=R(ms_, 4), n=int(Sn[w_, k]), world=R(mw, 4)))
 def edge_of(j): return R(EMAP[wnow, int(np.digitize(Zs[i, j], EDG) - 1)], 4) if wnow >= 0 and np.isfinite(Zs[i, j]) else None
+# ---- Rebound Edge (round 80): the expected net result of a buy at the next open, for every stretched liquid stock
+import rebound as RBD
+RM, RALL = RBD.load("live"); RSA = RALL.get("saudi"); RF = RBD.inputs(B); REDGE = RBD.edge(RM, RF, saudi=RSA, gated=G_)
+REDGE = np.where((np.nan_to_num(RF["Z"], nan=9.) <= RBD.LINE) & np.isfinite(RF["MS"]) & PB.EL, REDGE, np.nan); RUNIT = RF["unit"]; RT = RSA or RM      # the tables in use: Saudi's when they exist
+def rb_of(j):
+    """Rebound Edge of stock j at this close: (edge, unit, companions) or (None, unit, None) when the stock is not stretched."""
+    e = REDGE[i, j]; u = RUNIT[i, j]; u = R(u, 4) if np.isfinite(u) else None
+    if not np.isfinite(e): return None, u, None
+    c_ = RBD.companions(RT, float(e), RUNIT[i, j]); return R(e, 4), u, dict(win=R(c_["win"], 3), days=R(c_["days"], 0), dip=R(c_["dip"], 4), dip_bad=R(c_["dip_bad"], 4))
 # ---- the scanner: every liquid stock at this close
 inzL, ageL = SBk.zone_age(B, SR.LINE); fw_h = {p["sym"] for p in SWB["held"]}; fw_s = {p["sym"] for p in SWB["due"]}; fw_b = {b["sym"] for b in SWB["buys"]}; rp_h = {p["sym"] for p in SWR["held"] + SWR["due"]}; cand_now = set(cols[j] for j in ORF["cands"])
 scan = []; liqj = [j for j in range(len(cols)) if PB.EL[i, j] and np.isfinite(Zs[i, j])]
@@ -228,7 +237,8 @@ for j in liqj:
     s_ = cols[j]; c = Cl[i, j]; z = float(Zs[i, j]); need = BLn[j] / c - 1 if np.isfinite(BLn[j]) else None; inz = bool(inzL[i, j]); bits = SR.gate_bits(B, i, j)
     st_ = "sell" if s_ in fw_s else "held" if s_ in fw_h else "buy" if s_ in fw_b else "cand" if s_ in cand_now else "zone" if inz else "near" if need is not None and need >= -.05 else ""
     scan.append(dict(sym=s_, name=nm(j)[:26], sec=industry(s_), c=R(c, 3), chg=R(c / Cl[i - 1, j] - 1, 4), z=R(z, 2), zp=R(Zs[i - 1, j], 2), line=R(BLn[j], 3), need=R(need, 4), inz=inz, age=int(ageL[i, j]) if inz else None,
-                     cross=bool(inz and ageL[i, j] == 0), ml=R(PB.PCTv[i, j], 2), loss=bool(PB.LOSS[i, j]), vr=R(VOLP[i, j], 2), gb=int(bits), e=edge_of(j), st=st_, rp=bool(s_ in rp_h), sellpx=R(SLn[j], 3)))
+                     cross=bool(inz and ageL[i, j] == 0), ml=R(PB.PCTv[i, j], 2), loss=bool(PB.LOSS[i, j]), vr=R(VOLP[i, j], 2), gb=int(bits), e=edge_of(j), st=st_, rp=bool(s_ in rp_h), sellpx=R(SLn[j], 3),
+                     re=rb_of(j)[0], ru=rb_of(j)[1], rg=bool(G_[i, j])))
 scan.sort(key=lambda r: (r["z"] if r["z"] is not None else 9))
 scan_sum = dict(n=len(scan), inzone=int(sum(r["inz"] for r in scan)), crossed=int(sum(r["cross"] for r in scan)), cands=int(len(cand_now)), near=int(sum(r["st"] == "near" for r in scan)), window=bool(wnow in SR.WPLAN), pm_ok=bool(pmv > 0))
 # ---- chart data: the last NB sessions of every liquid stock (and every stock a book holds), in a few documents
@@ -242,7 +252,7 @@ def chart_doc(j):
         if p["j"] == j: tr.append([int(p["d1"] - a0), None, rp(p["entry"]), None, R(Cl[i, j] / p["entry"] - 1, 4), R(p["w"], 4), -1, int((p["i"], j) in fwd_set)])
     xs = [[int(t - a0), 0 if (t, j) in bought else (-1 if SR.gate_bits(B, t, j) == 0 else int(SR.gate_bits(B, t, j)))] for t in range(a0, T_) if CIN[t, j]]
     return dict(o=[rp(x) for x in Oo[sl, j]], h=[rp(x) for x in Hh[sl, j]], l=[rp(x) for x in Ll[sl, j]], c=[rp(x) for x in Cl[sl, j]], z=[R(x, 2) for x in Zs[sl, j]], bl=[rp(x) for x in BLs[sl, j]], sl=[rp(x) for x in SLs[sl, j]],
-                nbl=rp(BLn[j]), nsl=rp(SLn[j]), tr=[v for r in tr for v in r], x=[v for r in xs for v in r], name=nm(j)[:34], sec=industry(cols[j]))    # tr: 8 values a trade, x: 2 values a cross (flat: the database takes no list inside a list)
+                nbl=rp(BLn[j]), nsl=rp(SLn[j]), tr=[v for r in tr for v in r], x=[v for r in xs for v in r], ev=[v for t in range(a0, T_) if np.isfinite(REDGE[t, j]) for v in (int(t - a0), round(float(100 * REDGE[t, j]), 1))], name=nm(j)[:34], sec=industry(cols[j]))    # tr: 8 values a trade, x: 2 values a cross (flat: the database takes no list inside a list)
 extra = {cols.index(p["sym"]) for g_ in (BOOKS["live"], BOOKS["fable"], REPLAY["live"], REPLAY["fable"], SWB, SWR) for p in list(g_.get("held", [])) + list(g_.get("due", []))}
 cj = sorted(set(liqj) | extra, key=lambda j: cols[j]); CH = 12; chart_index = {}; outdir_ = os.path.join(WORK, "fable"); os.makedirs(outdir_, exist_ok=True)
 for f_ in glob.glob(os.path.join(outdir_, "chart_*.json")): os.remove(f_)
@@ -275,6 +285,20 @@ if i79w and i79s:                                                              #
         w_ = i79w["variants"].get(v_)
         rows.append(dict(name=v_, won=(w_["wins_decided"] if w_ else None), lost=(w_["losses_decided"] if w_ else None), same=(w_["ties"] if w_ else None), pa=bool(w_ and w_["passed"]), g=R(x_["cagr"], 5), dd=R(x_["dd"], 5), n=int(x_["n"]), ps=bool(x_["passed"])))
     evidence["ideas"] = dict(rows=rows, tested=len(rows), forward=i79s.get("forward", []), base=dict(g=R(i79s["base"]["cagr"], 5), dd=R(i79s["base"]["dd"], 5), n=int(i79s["base"]["n"])), counted=int(i79w["counted"]))
+r80d = rj("r80", "saudi80_design.json"); r80c = rj("r80", "saudi80_confirm.json"); r80f = rj("r80", "fit80.json")
+rnd = lambda v, k=4: [R(x, k) for x in v]
+rebound = dict(line=RBD.LINE, horizons=list(RBD.HORIZONS), band_edges=rnd(RT["band_edges"], 5), zones=rnd(RT["zones"], 4), saudi=bool(RSA), gate=R(RSA["c"], 4) if RSA else 0.0,
+               bands=[dict(edge=R(b["edge"], 4), gain=R(b["gain"], 4), win=R(b["win"], 3), days=R(b["days"], 0), dz=R(b["dipz_med"], 3), dzb=R(b["dipz_bad"], 3), cone={q: rnd(v, 3) for q, v in b["cone"].items()}, n=int(b["n"])) for b in RT["bands"]],
+               raw={k: (R(v, 5) if not isinstance(v, dict) else {a_: rnd(b_, 2) for a_, b_ in v.items()}) for k, v in (RSA["raw"] if RSA else RM["raw"]).items()}, cases_world=int(RM["cases"]), markets=int(RM["markets"]), cases_saudi=int(RSA["cases"]) if RSA else 0,
+               stretched=int(np.isfinite(REDGE[i]).sum()), strong=int((REDGE[i] >= RT["zones"][1]).sum()), against=int((REDGE[i] < 0).sum()))
+if r80d and r80c and r80f:
+    def mk_(x): sp = x["separation"]; bt = x["beats"]; return dict(top=R(sp[3], 4), bottom=R(sp[4], 4), lo=R(sp[1], 4), hi=R(sp[2], 4), corr=R(bt["odds"], 3), corr_z=R(bt["stretch"]["corr"], 3), corr_ms=R(bt["momentum"]["corr"], 3), lead_ms=R(bt["momentum"]["lead"], 3), lead_ms_p5=R(bt["momentum"]["lead_p5"], 3), m1=bool(x["mark1"]), m2=bool(x["mark2"]))
+    s1 = r80f["step1"]
+    evidence["rebound"] = dict(verdict=r80c["verdict"], verdict_terminal=r80c["verdict_terminal"], abroad=dict(top=R(s1["separation"][3], 4), bottom=R(s1["separation"][4], 4), pos=int(sum(v["spread"] > 0 for v in s1["by_market"].values())), markets=int(s1["markets"]), corr=R(s1["corr_edge"], 3), corr_ms=R(s1["corr_ms"], 3), corr_z=R(s1["corr_z"], 3)),
+                               design=dict(cases=int(r80d["cases"]), **mk_(r80d["m19"])), confirm=dict(cases=int(r80c["cases"]), **mk_(r80c["m19"])), late=mk_(r80c["m19_2023_26"]), mark3=r80c["mark3"],
+                               weather=[dict(w=x["weather"], n=int(x["n"]), stated=R(x["stated"], 4), realized=R(x["realized"], 4), wins=R(x["wins"], 3)) for x in r80c["weather"]],
+                               weather_design=[dict(w=x["weather"], n=int(x["n"]), realized=R(x["realized"], 4), wins=R(x["wins"], 3)) for x in r80d["weather"]],
+                               thirds=[dict(stated=R(x["stated"], 4), realized=R(x["realized"], 4), wins=R(x["wins"], 3)) for x in r80c["table"]["thirds"]], inside=dict(design=r80d["inside"], confirm=r80c["inside"]))
 us = None
 try:
     t27 = json.load(open(os.path.join(WORK, "r27/today27.json"))); u = t27.get("us_scan") or {}; u30 = t27.get("us30") or {}
@@ -286,7 +310,7 @@ after_close = today.dayofweek in (6, 0, 1, 2, 3) and (now.hour, now.minute) >= (
 expected = today if after_close else today - BD; stale = bool(last < expected)                    # the newest close should be the last finished session
 OUT = dict(v=1, asof=fdate(last), day=fdate(day), made=now.strftime("%Y-%m-%d %H:%M") + " Riyadh", stocks=nlast, stale=stale,
            rule=dict(live=dict(slots=book.LIVE_SLOTS, size=book.LIVE_SIZE, most=.25), fable=dict(slots=book.SLOTS, per_day=1, size=R(book.BASE, 4), deep_size=R(book.BASE * book.MULT, 4), deep=book.DEEP, most=.50, status="paper")),
-           weather=weather, episode=episode, past=past, live=BOOKS["live"], fable=BOOKS["fable"], swing=swing, scan=scan, scan_sum=scan_sum, edge=dict(rows=edge_rows, labels=ELAB, k=KSH), chart=dict(index=chart_index, chunks=int(max(chart_index.values()) + 1) if chart_index else 0, bars=NB), record_warn=RECW, replay=REPLAY, signals=signals, watch=watch, cards=CARDS, expect=expect, sizing=sizing, record=record, scorecard=scorecard, evidence=evidence, us=us)
+           weather=weather, episode=episode, past=past, live=BOOKS["live"], fable=BOOKS["fable"], swing=swing, scan=scan, scan_sum=scan_sum, rebound=rebound, edge=dict(rows=edge_rows, labels=ELAB, k=KSH), chart=dict(index=chart_index, chunks=int(max(chart_index.values()) + 1) if chart_index else 0, bars=NB), record_warn=RECW, replay=REPLAY, signals=signals, watch=watch, cards=CARDS, expect=expect, sizing=sizing, record=record, scorecard=scorecard, evidence=evidence, us=us)
 def clean(x):
     if isinstance(x, dict): return {k: clean(v) for k, v in x.items()}
     if isinstance(x, (list, tuple)): return [clean(v) for v in x]

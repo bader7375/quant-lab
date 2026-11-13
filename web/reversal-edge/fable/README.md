@@ -12,16 +12,18 @@ scheduled tasks are untouched.
 | `saudi.py` | loads the Saudi panel from the live work folder |
 | `swing.py`, `swingbook.py` | the swing account, day by day, for any market: crosses into the buy zone, one buy a day, sale when the stretch is gone. Optional switches (round 79) are off by default |
 | `swingrule.py` | **the Fable swing rule** with its tested values, in one place for the export, the brief, the terminal and the tests |
+| `rebound.py`, `rebound_model.json` | **Rebound Edge**, the indicator (round 80): for a stretched stock, the expected result of a buy at the next open, with the share of wins, the dip, the sessions and a cone. The formula was fitted on other markets only |
 | `book.py` | the ladder rule (and the live rule) replayed to any close |
 | `export.py` | the daily export: weather, orders, the three books, the scanner, chart documents, the edge map, ranges, the scorecard |
 | `brief.py` | the daily brief in plain sentences, written from that export |
 | `run.sh` | export + brief, after the live pipeline has refreshed the data |
 | `terminal/reversal-edge-fable.html` | the phone terminal (a Claude artifact): https://claude.ai/artifact/ToMGcTrUag47xRoF1jEZv7 |
 | `../pine/fable_swing.pine`, `../pine/fable_ladder.pine` | TradingView: market weather behind the price, the buys and sales of each rule, the buy-line and sell-level prices |
+| `../pine/rebound_edge.pine` | TradingView: the Rebound Edge pane, its table and its cone. Written by `pine/make_rebound_edge.py` from the model file |
 
 Research: `research/r71` (reproduce, no look-ahead, ranges, gate test), `r72` (24 other markets), `r73` (the ladder on Saudi), `r74`
 (entry timing), `r75` (the idle-money assumption), `r76` (anatomy of a buy-zone cross), `r77` (the swing chosen abroad: stopped at
-the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule), `r79` (36 changes to the swing: none adopted). Each has PREREG.md written before its run and RESULTS.md.
+the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule), `r79` (36 changes to the swing: none adopted), `r80` (Rebound Edge: tested, verdict descriptive). Each has PREREG.md written before its run and RESULTS.md.
 
 ## The three rules side by side
 | | live (plan Z, what you trade) | **the Fable swing (on paper)** | the ladder (on paper) |
@@ -35,11 +37,23 @@ the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule)
 | the same stock again | after its 40 sessions | on a new cross after the sale | after its 40 sessions |
 | trades since 2013, winners, average, held | 66, 70%, +8.6%, 40 sessions | **92, 83%, +10.1%, 24 sessions** | 86, 78%, +13.8%, 40 sessions |
 
+## Rebound Edge, the indicator
+| | |
+|---|---|
+| what it reads | a liquid stock whose stretch Z closed at -1.5 or lower |
+| what it says | the average net result of buying at the next open and selling when the stretch Z is back at 0 (or after 40 sessions), in past cases with the same market momentum and stretch |
+| formula for Saudi | edge % = -4.96 - 1.21 x Z - 2.14 x M - 0.075 x Z x M, + 3.21 when the stock passes the gates (Z = stretch Z, M = market momentum) |
+| with it | profit in 100, typical sessions, the typical dip and the 1-in-10 dip (from the stock's own volatility), a cone |
+| zones | weak below +0.2%, strong from +4.7% |
+| tested | 23 other markets out-of-market; Saudi 2013-19 with no Saudi data in the formula; Saudi 2020-26 opened once |
+| verdict | **descriptive**: it separates good setups from bad ones in every test (Saudi 2020-26: top third +8.9% a trade, bottom third -2.4%) and ranks them no better than market momentum alone |
+| not | a filter for the swing's signals, or a new source of edge |
+
 ## The terminal
 Five views, one page, built for the phone:
 - **Today**: the market weather, the swing's orders for the 10:00 open, your live plan, the stocks nearest the buy zone.
 - **Scanner**: every liquid stock with its stretch Z, the close that puts it on the buy line tomorrow, the gates, its state (buy, sell, held, in the zone, near). Search, filters, sorting, your own starred list.
-- **Chart**: candlesticks for any stock you choose, with the buy line and the sell level as prices, the weather behind, the tested swing's buys and sales with their results, crosses that were not bought and why, and the stretch Z below.
+- **Chart**: candlesticks for any stock you choose, with the buy line and the sell level as prices, the weather behind, the tested swing's buys and sales with their results, crosses that were not bought and why, the stretch Z below, the Rebound Edge under it, and a cone of where similar past cases stood 1 to 40 sessions on.
 - **Books**: the swing, the live rule and the ladder: orders, positions, the record by year.
 - **Research**: the evidence tables, every change that was tested and rejected (Ideas), every sell-off since 2013, a position-size calculator, and the edge map (average next 5 sessions by stretch and weather).
 
@@ -65,6 +79,8 @@ Research scripts take the work folder from `RE_WORK`, e.g. `RE_WORK=<work folder
 RE_WORK=<work folder> python3 research/r78/r78.py confirm        # the swing against the live rule and the ladder, ranges, stress, cut-data check
 RE_WORK=<work folder> python3 research/r78/replay78.py           # following the daily orders reproduces the tested trades (3,351 days: exact)
 RE_WORK=<work folder> python3 pine/check_fable_swing.py          # the TradingView script's logic against the tested book
+RE_WORK=<work folder> python3 research/r80/trunc80.py            # Rebound Edge uses no future data (30 past closes)
+RE_WORK=<work folder> python3 pine/check_rebound_edge.py         # the TradingView script's arithmetic against the product
 ```
 
 ## Known limits
@@ -80,5 +96,5 @@ RE_WORK=<work folder> python3 pine/check_fable_swing.py          # the TradingVi
   the brief if the replay stops showing it.
 - Yahoo sometimes serves the last session's daily bar empty for some hours. The export marks the picture as old when the newest
   close is not the last session.
-- `pine/fable_swing.pine` and `pine/fable_ladder.pine` were written from the scanner's formulas and the existing scripts; they have
+- `pine/rebound_edge.pine`, `pine/fable_swing.pine` and `pine/fable_ladder.pine` were written from the scanner's formulas and the existing scripts; they have
   not been compiled on TradingView from this session. Their logic is checked in Python, their syntax is not.
