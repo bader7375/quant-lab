@@ -174,6 +174,7 @@ def live():
     assert PB.T_ == T_ and list(PB.cols) == list(cols) and PB.dates[-1] == last, 'plan book and list use different data'
     psz = SET["z_size"] if KIND == "Z" else SET["mr_size"]; mrsz = f"{100 * psz:.0f}%"; lab = "Z score" if KIND == "Z" else "Market returned"
     ST = PB.state(loss=True, week_complete=bool(wk_ok), start=SET["plan_start"] or None, kind=KIND)
+    REC = PB.record(kind=KIND, w=psz) if PLAN in ("A", "Z") else None             # round 71: the record recomputed from the data on every run
     cand = [(j, t) for j, t in cand if not (t == 1 and j in ST["blocked"])]; top = cand[:3]   # a signal while the stock's paper trade is open is not a new trade
     FA = accounts(); half = pmv <= 0; size = "2.5%" if half else "5%"
     L = [f"**Saudi {dict(A='plan A list', Z='Z score list').get(PLAN, 'top 3')} for {day.strftime('%A %d %b %Y')}** (prices to the {fmt_d(last)} close; buy at the 10:00 open)", ""]
@@ -187,11 +188,11 @@ def live():
     if PLAN == "A":
         L += ["", f"**Your plan: A** (round 67): buy only the **Market returned** signals, **{mrsz} of the account each**, at most 5 at once (most volatile first), "
                   "hold 40 sessions, no stop. Keep all idle money in a SAR money-market fund. ML leaders and breakouts are shown at the end for reference only. "
-                  "Tested on the whole account (idle money at T-bill interest): 2013-19 +6.8% a year, worst drawdown 9.7%; 2020-26 +6.5%, 6.3%; 2016-26 +8.7%, 6.3%."]
+                  f"Tested on the whole account (idle money at T-bill interest, recomputed today): {REC['acct']}."]
     elif PLAN == "Z":
         L += ["", f"**Your plan: Z score** (stretch Z with ML): buy the **Z score** signals, **{mrsz} of the account each**, at most 5 at once (most volatile first), "
                   "hold 40 sessions, no stop. Keep idle money in a SAR money-market fund. ML leaders and breakouts are shown at the end for reference only. "
-                  "Tested on the whole account (idle money at T-bill interest, round 70): 2013-19 +3.2% a year, worst drawdown 6.1%; 2020-26 +4.9%, 4.9%."]
+                  f"Tested on the whole account (idle money at T-bill interest, recomputed today): {REC['acct']}."]
     elif not SET["zscore"]: L += ["", "Z score signals are switched off (settings.json): the list below has no Z score picks."]
     L0 = L; L = []
     L += ["", "| # | Stock | Setup | Last close | Plan | Latest accounts |", "|---|---|---|---|---|---|"]
@@ -257,13 +258,12 @@ def live():
             if xs: L += ["", txt + ": " + ", ".join(f"{nmj(j)} (signal {fmt_d(dates[s0])})" for j, s0 in xs) + "."]
         if PLAN in ("A", "Z") and not buys: L += ["", "**Nothing to buy in your plan at this close.**" + ("" if len(keep) else " Idle money stays in the money-market fund.")]
         if KIND == "A":
-            L += ["", "Plan record as traded (5 slots, most volatile first, round 68): 2013-19 26 trades, 73% winners, +16.8% per trade, worst -12.6%; "
-                  "2020-26 25 trades, 84%, +9.4%, worst -12.3%. About 4 trades a year and none in 5 of the 14 years; it misses fast V-shaped rebounds "
+            L += ["", f"Plan record as traded (5 slots, most volatile first): {REC['trades']}. About 4 trades a year and none in 5 of the 14 years; it misses fast V-shaped rebounds "
                   "(April 2025) and lost in late 2015. No stop: 36 stop rules were tested (round 69) and none improved the plan; a position typically "
                   "closes about 6% below its entry at some point before it ends, and the plan's worst periods were about -10% of the account."]
         else:
-            L += ["", "Plan record as traded (5 slots, most volatile first, round 70): 2013-19 33 trades, 70% winners, +10.4% per trade, worst -21.6%; "
-                  "2020-26 36 trades, 72%, +7.8%, worst -15.5%. Trades in every year since 2014 (1 to 10 a year). About 3 in 10 trades lose."]
+            L += ["", f"Plan record as traded (5 slots, most volatile first): {REC['trades']}. Trades in every year since 2014 (1 to 10 a year). About 3 in 10 trades lose. "
+                  "Round 71 tested 8 more stretch-style indicators (own, sector, overnight, panic, liquidity shock, limit-down, breadth, oil): none improved the plan."]
     MRB = L
     L = L0 + (MRB + ["", "---", "", "**For reference only, not in your plan** (ML leaders / breakouts: they add losing years and deeper drawdowns, round 67):"] + TOPB
               if PLAN in ("A", "Z") else TOPB + MRB)

@@ -7,6 +7,11 @@ through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2
    growth than live in 2020-26 at the same size (+4.2% vs +4.9%), so it did not pass the advance rule; the yearly re-choice supports it.
    At 8% positions (exploratory): +5.6% a year over 2013-26 at the live rule's 6.1% drawdown. Waiting for the user (pacing yes/no, 5% or 8%).
    Round 70 also retired options 1 (ML bar 70%: now worse) and 4 (split exit: no gain in the verified engine).
+Round 71 (r71/RESULTS.md, the user asked for another indicator like stretch Z): 8 stretch-style indicators tested; none improves the plan.
+   The liquidity shock (price moving on thin trading) tells good signals from bad ones (t 5.2) but a 5-slot account cannot use it.
+12. OFFERED 2026-11-13 (round 71): compute traded value from the raw close instead of the dividend-adjusted close (removes a mild
+   look-ahead in the liquidity filter and stops old signals changing after dividends); needs the ranker and the market model refit;
+   first estimate: 2013-19 drawdown 7.6% instead of 6.1%, 2020-26 unchanged. Waiting for the user.
 WAS LIVE 2026-11-09 to 2026-11-10 (round 67, r67/RESULTS.md, the user's choice "Let put A"): plan A - buy only Market returned signals (option 7),
 10% of the account each, at most 5, most volatile first, hold 40 sessions, no stop; Z score signals off (they run as the shadow book);
 ML leaders / breakouts shown for reference only; idle money in a SAR money-market fund. Switches: daily/settings.json.

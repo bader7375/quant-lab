@@ -217,3 +217,12 @@ def stop_fn(spec, A=None, late=0, worse=0.0, hold=HOLD):
         if worse and xo < n: fill = (fill if np.isfinite(fill) else Of_[xo, j]) * (1 - worse)
         return (xo, fill, "stop: " + kind, intr)
     return f
+def record(kind="Z", w=.05, loss=True):
+    """The plan's record from the data (closed paper trades since 2013): account growth / worst drawdown by era and trades by era, as text."""
+    i0 = np.searchsorted(dates.values, np.datetime64("2013-01-01")); SH = shadow(signals(loss)); SH = SH[(SH.ex < T_) & (SH.i >= i0)]
+    PL = plan(SH, gate=GATE if kind == "A" else ALL); eq = account(PL, w=w); tk = PL[PL.taken]; n = trade_net(tk); y = dates[tk.i.values].year; parts = []
+    for a, b in (("2013", "2019"), ("2020", "2026")):
+        o = perf(eq, f"{a}-01-01", f"{b}-12-31"); m = (y >= int(a)) & (y <= int(b)); x = n[m]
+        parts.append((f"{a}-{b[2:]} {100 * o['cagr']:+.1f}% a year, worst drawdown {100 * o['dd']:.1f}%",
+                      f"{a}-{b[2:]} {m.sum()} trades, {100 * (x > 0).mean():.0f}% winners, {100 * x.mean():+.1f}% per trade, worst {100 * x.min():+.1f}%"))
+    return dict(acct="; ".join(p[0] for p in parts), trades="; ".join(p[1] for p in parts))

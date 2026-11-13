@@ -77,3 +77,6 @@ every paper trade of the Z score rule, 5 slots, most volatile first): held posit
 signals with the reason; the market-turn window is context; ML leaders / breakouts for reference. Verified account (r70/z70a.out, 5 x 5%, T-bill
 interest on idle money): 2013-19 +3.2% a year / drawdown 6.1%, 2020-26 +4.9% / 4.9%; 69 trades, 71% winners, +9.0% per trade. Terminal v32.
 planbook.py also gained: shadow(exit_fn, renew), plan(pre_cap, pace, half), account per-row weights and half exits (round 70 tests).
+
+Round 71 (2026-11-13): planbook.record(kind, w) recomputes the plan's record (account growth / drawdown and trades by era) from the data;
+the list quotes it instead of fixed numbers, because the walk-forward market model's past values can move after data updates.
