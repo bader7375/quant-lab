@@ -12,6 +12,10 @@ Round 71 (r71/RESULTS.md, the user asked for another indicator like stretch Z): 
 12. OFFERED 2026-11-13 (round 71): compute traded value from the raw close instead of the dividend-adjusted close (removes a mild
    look-ahead in the liquidity filter and stops old signals changing after dividends); needs the ranker and the market model refit;
    first estimate: 2013-19 drawdown 7.6% instead of 6.1%, 2020-26 unchanged. Waiting for the user.
+Round 72 (r72/RESULTS.md, the user's four momentum helpers, pre-registered): pulse acceleration (H1), prior momentum (H2), industry-wide
+   stretch (H3) and RSI with heavy volume (H4), alone, combined, as a slot order (Capitulation Score) and with 6-ATR / -25% stops.
+   None passes; every filter lowers the sleeve's Sharpe and Calmar in 2013-19. H3 has a real event-level edge in Saudi but the live rule
+   already captures it; H4 hurts; buying at once beats waiting for a bounce. Era 1 (2004-12) not run: the Kaggle library is missing.
 WAS LIVE 2026-11-09 to 2026-11-10 (round 67, r67/RESULTS.md, the user's choice "Let put A"): plan A - buy only Market returned signals (option 7),
 10% of the account each, at most 5, most volatile first, hold 40 sessions, no stop; Z score signals off (they run as the shadow book);
 ML leaders / breakouts shown for reference only; idle money in a SAR money-market fund. Switches: daily/settings.json.
