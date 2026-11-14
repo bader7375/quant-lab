@@ -49,10 +49,14 @@ if SWX:
     if not SBK["due"] and not SBK["buys"]: L.append("- Today on paper: nothing to buy, nothing to sell." + (f" Buy window {'open' if SS['window'] else 'closed'}; {SS['inzone']} of {SS['n']} liquid stocks are in the buy zone, {SS['near']} within 5% of it."))
     if SBK["skipped"]: L.append("- Crossed and not bought: " + "; ".join(f"{x['sym']} {x['name']} ({x['why']})" for x in SBK["skipped"]) + ".")
     if SBK["held"]:
-        L += ["", "| Held (paper) | Bought | Entry | Last | So far | Sells at a close of | At the latest |", "|---|---|---|---|---|---|---|"] + [f"| **{p['sym']}** {p['name']} | {D(p['bought'])} | {p['entry']:.2f} | {p['last']:.2f} | {pc(p['ret'])} | {p['sellpx']:.2f} or higher | {D(p['latest'])} |" for p in SBK["held"]]
+        het = lambda p: (f"{pc(p['he']['edge'])}, {round(100 * p['he']['up'])} in 100 sold above today's close" if p.get("he") else "n/a")
+        L += ["", "| Held (paper) | Bought | Entry | Last | So far | Sells at a close of | At the latest | Hold Edge |", "|---|---|---|---|---|---|---|---|"] + [f"| **{p['sym']}** {p['name']} | {D(p['bought'])} | {p['entry']:.2f} | {p['last']:.2f} | {pc(p['ret'])} | {p['sellpx']:.2f} or higher | {D(p['latest'])} | {het(p)} |" for p in SBK["held"]]
+        L += ["", "Hold Edge: the average result of the rest of the trade, from today's close to the sale, in past trades that stood where this one stands. It describes; selling on it made the account worse when tested."]
     else: L.append(f"- Paper book since {D(SBK['start'])}: no position, {SBK['free']} of {SBK['slots']} steps free.")
     if E["open"] and (SRP["held"] or SRP["due"]):
         L.append(f"- Had it run through this sell-off (a replay): {len(SRP['held']) + len(SRP['due'])} positions, {p0(SRP['invested'], 0)} of the account in stocks, {pc(SRP['pnl'], 2)} of the account so far" + (f"; it would sell {', '.join(p['sym'] for p in SRP['due'])} today" if SRP["due"] else "") + ".")
+        hs = [p for p in SRP["held"] if p.get("he")]
+        if hs: L += ["", "The replay's open positions, with their Hold Edge (the rest of the trade from today's close):", "", "| Stock | Sessions held | So far | Hold Edge | Sold above today's close | Sessions to the sale |", "|---|---|---|---|---|---|"] + [f"| **{p['sym']}** {p['name'][:24]} | {p['held']} | {pc(p['ret'])} | {pc(p['he']['edge'])} | {round(100 * p['he']['up'])} in 100 | about {p['he']['togo']:.0f} |" for p in hs]
     near = [r for r in X["scan"] if r["st"] in ("near", "zone", "cand")][:6]
     if near:
         RBX = X.get("rebound")

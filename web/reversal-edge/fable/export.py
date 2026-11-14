@@ -162,7 +162,7 @@ eqF, TRF, ORF = SR.run(B, start=SR.START)                                     # 
 BLn = band_next(C_, SR.LINE).iloc[-1].values; SLn = band_next(C_, SR.TARGET).iloc[-1].values     # tomorrow's close for stretch Z = the buy line / the sell level
 def spos(p):
     j = p["j"]; e = p["entry"]; k = int(i - p["d1"] + 1)
-    return dict(sym=cols[j], name=nm(j)[:30], w=R(p["w"], 4), signal=fdate(d[p["i"]]), bought=fdate(d[p["d1"]]), entry=R(e, 3), last=R(Cl[i, j], 3), ret=R(Cl[i, j] / e - 1, 4), held=k, left=int(p["cap"] - k), z=R(Zs[i, j], 2),
+    return dict(sym=cols[j], name=nm(j)[:30], w=R(p["w"], 4), signal=fdate(d[p["i"]]), si=int(p["i"]), bought=fdate(d[p["d1"]]), entry=R(e, 3), last=R(Cl[i, j], 3), ret=R(Cl[i, j] / e - 1, 4), held=k, left=int(p["cap"] - k), z=R(Zs[i, j], 2),
                 sellpx=R(SLn[j], 3), latest=sdate(p["d1"] + p["cap"]), deep=bool(wxA[p["i"]] == 3), why=({0: "the stretch is gone", 1: "40 sessions done"}.get(p["flag"]) if p["flag"] is not None else None))
 def sbook(OR, TR, start):
     sells = {j for j, _ in OR["sells"]}; heldj = {p["j"] for p in OR["held"]}; held = [spos(p) for p in OR["held"] if p["j"] not in sells]; due = [spos(p) for p in OR["held"] if p["j"] in sells]; bj = [b["j"] for b in OR["buys"]]
@@ -230,6 +230,21 @@ def rb_of(j):
     e = REDGE[i, j]; u = RUNIT[i, j]; u = R(u, 4) if np.isfinite(u) else None
     if not np.isfinite(e): return None, u, None
     c_ = RBD.companions(RT, float(e), RUNIT[i, j]); return R(e, 4), u, dict(win=R(c_["win"], 3), days=R(c_["days"], 0), dip=R(c_["dip"], 4), dip_bad=R(c_["dip_bad"], 4))
+# ---- Hold Edge (round 82): for every open position of the swing books, what the rest of the trade is worth from this close
+import holdedge as HED
+HM, HALL = HED.load("live"); HSA = HALL.get("saudi"); HT = HSA or HM
+def he_of(p):
+    """Hold Edge of an open swing position at this close, and where its result so far stands against like trades (the cone of its buy)."""
+    j = cols.index(p["sym"]); k = int(p["held"]); x = HED.read(HM, HSA, float(Zs[i, j]), float(MS[i]), k, gated=bool(G_[i, j]), unit=RUNIT[i, j])
+    if x is None: return None
+    out = dict(edge=R(x["edge"], 4), up=R(x["up"], 3), togo=R(x["togo"], 0), fur=R(x["fur"], 4), fur_bad=R(x["fur_bad"], 4), word=("weak" if x["edge"] < HT["zones"][0] else "strong" if x["edge"] >= HT["zones"][1] else "fair"))
+    si = p.get("si"); e0 = REDGE[si, j] if si is not None else np.nan; u0 = RUNIT[si, j] if si is not None else np.nan
+    if np.isfinite(e0) and np.isfinite(u0) and u0 > 0 and p.get("ret") is not None:
+        b = RT["bands"][int(RBD.band_of(RT, float(e0)))]; q = {a: float(np.interp(k, list(RBD.HORIZONS), b["cone"][a])) * u0 for a in ("q10", "q25", "q75", "q90")}; r_ = p["ret"]
+        out["track"] = int(0 if r_ < q["q10"] else 1 if r_ < q["q25"] else 2 if r_ <= q["q75"] else 3 if r_ <= q["q90"] else 4); out["mid"] = [R(q["q25"], 4), R(q["q75"], 4)]
+    return out
+for bk_ in (SWB, SWR):
+    for p_ in bk_["held"]: p_["he"] = he_of(p_)
 # ---- the scanner: every liquid stock at this close
 inzL, ageL = SBk.zone_age(B, SR.LINE); fw_h = {p["sym"] for p in SWB["held"]}; fw_s = {p["sym"] for p in SWB["due"]}; fw_b = {b["sym"] for b in SWB["buys"]}; rp_h = {p["sym"] for p in SWR["held"] + SWR["due"]}; cand_now = set(cols[j] for j in ORF["cands"])
 scan = []; liqj = [j for j in range(len(cols)) if PB.EL[i, j] and np.isfinite(Zs[i, j])]
@@ -299,6 +314,17 @@ if r80d and r80c and r80f:
                                weather=[dict(w=x["weather"], n=int(x["n"]), stated=R(x["stated"], 4), realized=R(x["realized"], 4), wins=R(x["wins"], 3)) for x in r80c["weather"]],
                                weather_design=[dict(w=x["weather"], n=int(x["n"]), realized=R(x["realized"], 4), wins=R(x["wins"], 3)) for x in r80d["weather"]],
                                thirds=[dict(stated=R(x["stated"], 4), realized=R(x["realized"], 4), wins=R(x["wins"], 3)) for x in r80c["table"]["thirds"]], inside=dict(design=r80d["inside"], confirm=r80c["inside"]))
+r82d = rj("r82", "saudi82_design.json"); r82c = rj("r82", "saudi82_confirm.json"); r82f = rj("r82", "fit82.json"); r82a = rj("r82", "acct82.json")
+hold = dict(saudi=bool(HSA), zones=rnd(HT["zones"], 4), gate=R(HSA["c"], 4) if HSA else 0.0, raw={k: (R(v, 5) if not isinstance(v, dict) else None) for k, v in (HSA["raw"] if HSA else HM.get("raw", {})).items() if k != "clips"},
+            bands=[dict(edge=R(b["edge"], 4), rest=R(b["rest"], 4), up=R(b["up"], 3), togo=R(b["togo"], 0), fz=R(b["furz_med"], 3), fzb=R(b["furz_bad"], 3)) for b in HT["bands"]], cases=int(HSA["cases"]) if HSA else 0, trades=int(HSA.get("trades", 0)) if HSA else 0, cases_world=int(HM["cases"]), markets=int(HM["markets"]))
+if r82d and r82c and r82f and r82a:
+    def mk2(x): sp = x["separation"]; bt = x["beats"]; return dict(top=R(sp[3], 4), bottom=R(sp[4], 4), corr=R(bt["odds"], 3), corr_z=R(bt["stretch"]["corr"], 3), corr_ms=R(bt["momentum"]["corr"], 3), corr_nc=R(bt["noclock"]["corr"], 3))
+    s1 = r82f["step1"]; wd = {(x["n"], x["state"]): x for x in r82c["water"]}
+    evidence["hold"] = dict(verdict=r82c["verdict"], abroad=dict(top=R(s1["separation"][3], 4), bottom=R(s1["separation"][4], 4), corr=R(s1["corr"], 3), corr_z=R(s1["corr_z"], 3), corr_ms=R(s1["corr_ms"], 3), corr_nc=R(s1["corr_noclock"], 3), pos=int(sum(v["spread"] > 0 for v in s1["by_market"].values())), markets=int(s1["markets"])),
+                            design=dict(cases=int(r82d["cases"]), **mk2(r82d["m19"])), confirm=dict(cases=int(r82c["cases"]), **mk2(r82c["m19"])), late=mk2(r82c["m19_2023_26"]), gap=R(r82c["mark3"]["gap"], 3),
+                            water=[dict(n=int(x["n"]), state=x["state"], d=R(x["rest"], 4), du=R(x["up"], 3), c=R(wd[(x["n"], x["state"])]["rest"], 4) if (x["n"], x["state"]) in wd else None, cu=R(wd[(x["n"], x["state"])]["up"], 3) if (x["n"], x["state"]) in wd else None) for x in r82d["water"]],
+                            weather=[dict(w=x["weather"], d=R(x["realized"], 4), c=R(y["realized"], 4), cu=R(y["up"], 3)) for x, y in zip(r82d["weather"], r82c["weather"])],
+                            acct=[dict(rule=k, a=[R(v["perf"]["2013-19"]["cagr"], 4), R(v["perf"]["2013-19"]["dd"], 4)], b=[R(v["perf"]["2020-26"]["cagr"], 4), R(v["perf"]["2020-26"]["dd"], 4)], won=(r82a["world"].get(k) or {}).get("won"), lost=(r82a["world"].get(k) or {}).get("lost")) for k, v in r82a["saudi"].items()])
 us = None
 try:
     t27 = json.load(open(os.path.join(WORK, "r27/today27.json"))); u = t27.get("us_scan") or {}; u30 = t27.get("us30") or {}
@@ -310,7 +336,7 @@ after_close = today.dayofweek in (6, 0, 1, 2, 3) and (now.hour, now.minute) >= (
 expected = today if after_close else today - BD; stale = bool(last < expected)                    # the newest close should be the last finished session
 OUT = dict(v=1, asof=fdate(last), day=fdate(day), made=now.strftime("%Y-%m-%d %H:%M") + " Riyadh", stocks=nlast, stale=stale,
            rule=dict(live=dict(slots=book.LIVE_SLOTS, size=book.LIVE_SIZE, most=.25), fable=dict(slots=book.SLOTS, per_day=1, size=R(book.BASE, 4), deep_size=R(book.BASE * book.MULT, 4), deep=book.DEEP, most=.50, status="paper")),
-           weather=weather, episode=episode, past=past, live=BOOKS["live"], fable=BOOKS["fable"], swing=swing, scan=scan, scan_sum=scan_sum, rebound=rebound, edge=dict(rows=edge_rows, labels=ELAB, k=KSH), chart=dict(index=chart_index, chunks=int(max(chart_index.values()) + 1) if chart_index else 0, bars=NB), record_warn=RECW, replay=REPLAY, signals=signals, watch=watch, cards=CARDS, expect=expect, sizing=sizing, record=record, scorecard=scorecard, evidence=evidence, us=us)
+           weather=weather, episode=episode, past=past, live=BOOKS["live"], fable=BOOKS["fable"], swing=swing, scan=scan, scan_sum=scan_sum, rebound=rebound, hold=hold, edge=dict(rows=edge_rows, labels=ELAB, k=KSH), chart=dict(index=chart_index, chunks=int(max(chart_index.values()) + 1) if chart_index else 0, bars=NB), record_warn=RECW, replay=REPLAY, signals=signals, watch=watch, cards=CARDS, expect=expect, sizing=sizing, record=record, scorecard=scorecard, evidence=evidence, us=us)
 def clean(x):
     if isinstance(x, dict): return {k: clean(v) for k, v in x.items()}
     if isinstance(x, (list, tuple)): return [clean(v) for v in x]

@@ -2,6 +2,18 @@
 LIVE SINCE 2026-11-10 (the user: "Let's go back to previous strategy stretch with ML"): plan Z = the Z score rule (stretch Z touch, ML rank 50%+,
 market model positive, market momentum -1.18 or lower, profitable), 5 positions of 5%, most volatile first, hold 40 sessions, no stop; reported
 through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2026-11-09 only and made no trade.
+15. BUILT 2026-11-14 at the user's request ("Let's create another indicator"): Hold Edge (round 82, r82/RESULTS.md; fable/holdedge.py;
+   pine/hold_edge.pine; the Fable terminal's Books, chart card and Research tab). For an open trade: the average result of the rest of
+   the trade from today's close to the sale, from the stretch Z now, market momentum now and the sessions left. Verdict: DESCRIPTIVE,
+   and NOT an exit rule: selling when it turned negative made the account worse (Saudi 2013-19 +3.0% / 5.4% against +3.9% / 5.4%;
+   abroad lost 48 market-eras to 15). The stop question, settled in both periods: trades down 10% or more after 5 or 10 sessions went on
+   to make +6% to +16% from there; on other markets the result so far adds nothing once the stretch now and the market now are known.
+   Do not repeat: an exit read from an indicator; the path so far as an input.
+   LIVE LIST (the user's yes, 2026-11-14): a Rebound Edge column in the plan's BUY table. Commit 51e79e0 on claude/nice-gates-8aa4yb
+   (daily/top3.py, rebound_edge.py, rebound_edge.json, README). The live session was asked to copy the three files into its work
+   folder and is asking the user to confirm there; until then the column appears only after the next rebuild of that folder.
+   NOTE: the live branch has its own research/r71 and r72 folders (other rounds, same numbers as this branch's r71 and r72). A merge of
+   the two branches will need one side renamed.
 14. BUILT 2026-11-13 at the user's request ("build a very advanced indicator to help with taking the trade"): Rebound Edge (round 80,
    r80/RESULTS.md; fable/rebound.py; pine/rebound_edge.pine; the Fable terminal's chart, scanner and Research tab). For a stock with
    stretch Z -1.5 or lower: the expected net result of a buy at the next open (sold at stretch Z 0 or after 40 sessions), with the share
