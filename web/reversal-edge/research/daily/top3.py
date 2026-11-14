@@ -239,13 +239,19 @@ def live():
         if len(due_p): L += ["", "**SELL at today's open** (40 sessions done): " + "; ".join(f"**{cols[r.j]}** {nm.get(cols[r.j], '')[:18]} ({pc(Cl[i, r.j] / Of[r.d1, r.j] - 1)} so far)" for r in due_p.itertuples()) + "."]
         buys = [j for j, a in ST["new"] if a == "buy"]; nos = [j for j, a in ST["new"] if a == "noslot"]; wait = [j for j, a in ST["new"] if a == "wait"]; held_back = [j for j, a in ST["new"] if a == "rule"]
         if buys:
-            L += ["", "**BUY at today's open:**", "", "| # | Stock | Setup | Last close | Plan | Latest accounts |", "|---|---|---|---|---|---|"]
+            try: import rebound_edge as _RE                                         # round 80, the user's yes on 2026-11-14: one extra column; it changes no signal
+            except Exception: _RE = None
+            _rc = lambda j_: (_RE.cell(float(ZC.iloc[i, j_]), float(PB.MS[i]), float(PB.VOL[i, j_])) if _RE is not None else "n/a")
+            L += ["", "**BUY at today's open:**", "", "| # | Stock | Setup | Last close | Rebound Edge | Plan | Latest accounts |", "|---|---|---|---|---|---|---|"]
             for n, j in enumerate(buys, 1):
                 s_ = cols[j]; wk_ = not ZFIRST[i, j]
+                try: re_ = _rc(j)
+                except Exception: re_ = "n/a"
                 setup = (f"{lab} (weekly candles): weekly stretch Z {ZWV[i, j]:.2f}" if wk_ else f"{lab}: stretch Z {ZC.iloc[i, j]:.2f}") + f", ML {100 * PB.PCTv[i, j]:.0f}%" + _vt(i, j)
                 if KIND == "Z": setup += "; after the market turn" if ST["turn"] else "; before the market turn"
-                L.append(f"| {n} | **{s_}** {nm.get(s_, s_)[:28]} ({industry(s_)}) | {setup} | {Cl[i, j]:.2f} | {mrsz} of the account. Hold 40 sessions (sell at the open around {fmt_d(day + 40 * BD)}). No stop. | {FA.get(s_, '—')} |")
+                L.append(f"| {n} | **{s_}** {nm.get(s_, s_)[:28]} ({industry(s_)}) | {setup} | {Cl[i, j]:.2f} | {re_} | {mrsz} of the account. Hold 40 sessions (sell at the open around {fmt_d(day + 40 * BD)}). No stop. | {FA.get(s_, '—')} |")
                 log_rows.append(dict(signal=str(last.date()), sym=s_, tier=tierk, close=round(float(Cl[i, j]), 4), atr=round(float(A[i, j]), 4), ml=round(float(PB.PCTv[i, j]), 3), pm=round(pmv, 5)))
+            if _RE is not None: L += ["", _RE.NOTE]
         elif ST["gate"]: L += ["", f"No new {'Z score' if KIND == 'Z' else 'market-returned'} signal at this close."]
         if nos: L += ["", f"Not bought, no free slot ({PB.SLOTS} positions is the tested limit): " + ", ".join(nmj(j) for j in nos) + "."]
         if held_back: L += ["", "Not bought, held back by the plan's own limits: " + ", ".join(nmj(j) for j in held_back) + "."]

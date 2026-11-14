@@ -77,3 +77,7 @@ every paper trade of the Z score rule, 5 slots, most volatile first): held posit
 signals with the reason; the market-turn window is context; ML leaders / breakouts for reference. Verified account (r70/z70a.out, 5 x 5%, T-bill
 interest on idle money): 2013-19 +3.2% a year / drawdown 6.1%, 2020-26 +4.9% / 4.9%; 69 trades, 71% winners, +9.0% per trade. Terminal v32.
 planbook.py also gained: shadow(exit_fn, renew), plan(pre_cap, pace, half), account per-row weights and half exits (round 70 tests).
+Change 2026-11-14 (round 80; the user's yes to "one extra column to your live daily list"): the BUY table of the plan book has a
+**Rebound Edge** column (`rebound_edge.py`, numbers in `rebound_edge.json`): the average result of a buy at the next open in past
+cases with the same market momentum and stretch, how many in 100 ended in profit, the typical dip. It changes no signal, no size,
+no export; if anything in it fails the cell reads "n/a" and the list is written as before. Tested as descriptive only (r80, r81).
