@@ -80,3 +80,7 @@ planbook.py also gained: shadow(exit_fn, renew), plan(pre_cap, pace, half), acco
 
 Round 71 (2026-11-13): planbook.record(kind, w) recomputes the plan's record (account growth / drawdown and trades by era) from the data;
 the list quotes it instead of fixed numbers, because the walk-forward market model's past values can move after data updates.
+Change 2026-11-14 (round 80; the user's yes to "one extra column to your live daily list"): the BUY table of the plan book has a
+**Rebound Edge** column (`rebound_edge.py`, numbers in `rebound_edge.json`): the average result of a buy at the next open in past
+cases with the same market momentum and stretch, how many in 100 ended in profit, the typical dip. It changes no signal, no size,
+no export; if anything in it fails the cell reads "n/a" and the list is written as before. Tested as descriptive only (r80, r81).
