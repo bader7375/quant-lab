@@ -1,0 +1,42 @@
+=== us100 2010-17 (choice) ===
+  E1 gap >= 3% on 3x volume              hold20  n   221 (28/y) win 61% avg +1.37% | random +1.37% edge +0.00 (t +0.0) | SPY +0.79% | hold 20
+  E1 gap >= 3% on 3x volume              hold40  n   218 (28/y) win 61% avg +3.63% | random +2.96% edge +0.67 (t +0.7) | SPY +2.09% | hold 40
+  E1 gap >= 3% on 3x volume              trail3  n   216 (27/y) win 47% avg +2.74% | random +2.17% edge +0.57 (t +0.7) | SPY +1.35% | hold 34
+  E1 gap >= 5% on 3x volume              hold20  n   138 (18/y) win 62% avg +1.72% | random +1.48% edge +0.23 (t +0.3) | SPY +0.97% | hold 20
+  E1 gap >= 5% on 3x volume              hold40  n   135 (17/y) win 62% avg +4.61% | random +3.33% edge +1.28 (t +0.9) | SPY +2.40% | hold 40
+  E1 gap >= 5% on 3x volume              trail3  n   135 (17/y) win 53% avg +4.13% | random +2.71% edge +1.43 (t +1.2) | SPY +1.61% | hold 39
+  >> E1 chosen: E1 gap >= 5% on 3x volume / trail3
+  E2 52-week-high breakout on 2x volume  hold20  n   889 (112/y) win 61% avg +1.31% | random +1.11% edge +0.20 (t +1.0) | SPY +0.67% | hold 20
+  E2 52-week-high breakout on 2x volume  hold40  n   805 (101/y) win 63% avg +2.86% | random +2.58% edge +0.28 (t +0.9) | SPY +1.59% | hold 40
+  E2 52-week-high breakout on 2x volume  trail3  n   804 (101/y) win 48% avg +1.83% | random +1.81% edge +0.02 (t +0.1) | SPY +0.96% | hold 31
+  >> E2 chosen: E2 52-week-high breakout on 2x volume / hold20
+  E3 leader pullback (RSI2<10)           hold20  n   876 (110/y) win 63% avg +2.20% | random +1.55% edge +0.65 (t +2.8) | SPY +1.07% | hold 20
+  E3 leader pullback (RSI2<10)           hold40  n   709 (89/y) win 67% avg +3.95% | random +3.08% edge +0.87 (t +2.3) | SPY +2.31% | hold 40
+  E3 leader pullback (RSI2<10)           trail3  n   692 (87/y) win 52% avg +3.55% | random +2.79% edge +0.76 (t +2.0) | SPY +1.91% | hold 30
+  >> E3 chosen: E3 leader pullback (RSI2<10) / hold20
+  E4 +4% day on 3x volume                hold20  n   437 (55/y) win 62% avg +1.84% | random +1.46% edge +0.38 (t +1.0) | SPY +0.93% | hold 20
+  E4 +4% day on 3x volume                hold40  n   427 (54/y) win 63% avg +3.49% | random +3.07% edge +0.42 (t +0.7) | SPY +2.09% | hold 40
+  E4 +4% day on 3x volume                trail3  n   425 (54/y) win 49% avg +2.43% | random +2.15% edge +0.28 (t +0.6) | SPY +1.40% | hold 34
+  >> E4 chosen: E4 +4% day on 3x volume / hold20
+
+=== chosen variants: confirmation ===
+  E1 E1 gap >= 5% on 3x volume / trail3 | us100 2010-17: n   135 (17/y) win 53% avg +4.13% | random +2.33% edge +1.81 (t +1.5) | SPY +1.61% | hold 39
+  E1 E1 gap >= 5% on 3x volume / trail3 | us100 2018-26: n   151 (17/y) win 49% avg +3.17% | random +2.65% edge +0.51 (t +0.6) | SPY +2.41% | hold 32
+  E1 E1 gap >= 5% on 3x volume / trail3 | KDD17 2007-16: n    24 (3/y) win 54% avg +2.76% | random -0.79% edge +3.56 (t +1.1) | SPY -1.69% | hold 36
+  E1 E1 gap >= 5% on 3x volume / trail3 | CMIN-US 2018-21: n    52 (14/y) win 58% avg +7.15% | random +5.94% edge +1.21 (t +0.7) | SPY +6.07% | hold 39
+  ACCEPT E1: False
+  E2 E2 52-week-high breakout on 2x volume / hold20 | us100 2010-17: n   889 (112/y) win 61% avg +1.31% | random +1.09% edge +0.22 (t +1.1) | SPY +0.67% | hold 20
+  E2 E2 52-week-high breakout on 2x volume / hold20 | us100 2018-26: n   725 (83/y) win 56% avg +0.95% | random +0.72% edge +0.23 (t +0.8) | SPY +0.44% | hold 20
+  E2 E2 52-week-high breakout on 2x volume / hold20 | KDD17 2007-16: n   296 (30/y) win 55% avg +0.39% | random +5.61% edge -5.21 (t -2.5) | SPY +0.36% | hold 20
+  E2 E2 52-week-high breakout on 2x volume / hold20 | CMIN-US 2018-21: n   272 (70/y) win 55% avg +1.22% | random +1.56% edge -0.34 (t -0.7) | SPY +1.39% | hold 20
+  ACCEPT E2: False
+  E3 E3 leader pullback (RSI2<10) / hold20 | us100 2010-17: n   876 (110/y) win 63% avg +2.20% | random +1.52% edge +0.67 (t +2.9) | SPY +1.07% | hold 20
+  E3 E3 leader pullback (RSI2<10) / hold20 | us100 2018-26: n   996 (114/y) win 57% avg +1.21% | random +0.97% edge +0.24 (t +0.9) | SPY +0.72% | hold 20
+  E3 E3 leader pullback (RSI2<10) / hold20 | KDD17 2007-16: n   482 (49/y) win 58% avg +3.29% | random +1.69% edge +1.59 (t +0.9) | SPY +0.81% | hold 20
+  E3 E3 leader pullback (RSI2<10) / hold20 | CMIN-US 2018-21: n   335 (86/y) win 60% avg +1.65% | random +1.42% edge +0.23 (t +0.5) | SPY +1.22% | hold 20
+  ACCEPT E3: False
+  E4 E4 +4% day on 3x volume / hold20 | us100 2010-17: n   437 (55/y) win 62% avg +1.84% | random +1.42% edge +0.42 (t +1.1) | SPY +0.93% | hold 20
+  E4 E4 +4% day on 3x volume / hold20 | us100 2018-26: n   416 (48/y) win 61% avg +1.94% | random +1.28% edge +0.66 (t +1.7) | SPY +0.85% | hold 20
+  E4 E4 +4% day on 3x volume / hold20 | KDD17 2007-16: n   133 (13/y) win 53% avg -0.14% | random +4.62% edge -4.76 (t -1.6) | SPY -0.02% | hold 20
+  E4 E4 +4% day on 3x volume / hold20 | CMIN-US 2018-21: n   124 (32/y) win 64% avg +2.67% | random +1.84% edge +0.83 (t +1.1) | SPY +1.40% | hold 20
+  ACCEPT E4: False

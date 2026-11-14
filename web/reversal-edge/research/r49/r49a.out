@@ -1,0 +1,54 @@
+
+== DESIGN   (live: n 272 win  83% avg +18.9% w5 -11.4% | taken  35 +1.8%/y DD  6.4% ratio 0.28 Sh 0.53)
+shadowG4 live                  n 191 win  86% avg +20.7% w5 -11.4% | taken  25 +2.3%/y DD  6.8% ratio 0.34 Sh 0.76
+shadowG4 stop12                n 224 win  62% avg +12.5% w5 -14.2% | taken  40 +2.9%/y DD  7.2% ratio 0.40 Sh 0.86
+shadowG4 split                 n 191 win  86% avg +20.7% w5 -11.4% | taken  57 +2.2%/y DD  5.1% ratio 0.42 Sh 0.80
+shadowG4 split stop12          n 224 win  62% avg +12.5% w5 -14.2% | taken  91 +2.3%/y DD  6.1% ratio 0.37 Sh 0.76
+shadowG4 ML70                  n 134 win  88% avg +23.4% w5  -9.9% | taken  25 +2.8%/y DD  6.8% ratio 0.41 Sh 0.93
+shadowG4 ML70 stop12           n 154 win  62% avg +14.3% w5 -13.1% | taken  40 +2.9%/y DD  7.8% ratio 0.37 Sh 0.88
+shadowG4 ML70 split            n 134 win  88% avg +23.4% w5  -9.9% | taken  57 +2.4%/y DD  5.4% ratio 0.44 Sh 0.88
+shadowG4 ML70 split stop12     n 154 win  62% avg +14.3% w5 -13.1% | taken  86 +2.1%/y DD  7.0% ratio 0.30 Sh 0.71
+
+== CONFIRM   (live: n 194 win  72% avg  +7.4% w5 -12.4% | taken  41 +1.5%/y DD  4.4% ratio 0.34 Sh 0.47)
+shadowG4 live                  n 113 win  86% avg +11.9% w5  -6.0% | taken  28 +1.9%/y DD  3.3% ratio 0.57 Sh 0.68
+shadowG4 stop12                n 126 win  75% avg  +8.9% w5 -12.4% | taken  32 +1.1%/y DD  3.8% ratio 0.29 Sh 0.42
+shadowG4 split                 n 113 win  86% avg +11.9% w5  -6.0% | taken  55 +1.5%/y DD  3.0% ratio 0.52 Sh 0.65
+shadowG4 split stop12          n 126 win  75% avg  +8.9% w5 -12.4% | taken  64 +1.0%/y DD  3.8% ratio 0.27 Sh 0.43
+shadowG4 ML70                  n  81 win  85% avg +12.6% w5  -4.3% | taken  24 +1.6%/y DD  3.7% ratio 0.43 Sh 0.58
+shadowG4 ML70 stop12           n  91 win  75% avg  +9.3% w5 -12.4% | taken  27 +0.8%/y DD  4.3% ratio 0.18 Sh 0.31
+shadowG4 ML70 split            n  81 win  85% avg +12.6% w5  -4.3% | taken  46 +1.5%/y DD  3.0% ratio 0.50 Sh 0.63
+shadowG4 ML70 split stop12     n  91 win  75% avg  +9.3% w5 -12.4% | taken  54 +0.9%/y DD  4.3% ratio 0.20 Sh 0.37
+
+== 2023-26   (live: n  56 win  66% avg  +4.2% w5 -13.1% | taken  21 +1.4%/y DD  4.4% ratio 0.33 Sh 0.53)
+shadowG4 live                  n  16 win  81% avg  +6.6% w5  -6.1% | taken  10 +0.7%/y DD  3.0% ratio 0.24 Sh 0.38
+shadowG4 stop12                n  17 win  71% avg  +4.4% w5 -12.4% | taken  11 +0.4%/y DD  3.4% ratio 0.12 Sh 0.25
+shadowG4 split                 n  16 win  81% avg  +6.6% w5  -6.1% | taken  20 +0.8%/y DD  2.3% ratio 0.36 Sh 0.60
+shadowG4 split stop12          n  17 win  71% avg  +4.4% w5 -12.4% | taken  22 +0.6%/y DD  2.7% ratio 0.21 Sh 0.43
+shadowG4 ML70                  n  11 win  82% avg  +6.1% w5  -4.6% | taken   9 +0.8%/y DD  2.5% ratio 0.34 Sh 0.45
+shadowG4 ML70 stop12           n  11 win  73% avg  +4.0% w5 -12.4% | taken   9 +0.6%/y DD  2.5% ratio 0.26 Sh 0.38
+shadowG4 ML70 split            n  11 win  82% avg  +6.1% w5  -4.6% | taken  18 +1.1%/y DD  1.5% ratio 0.70 Sh 0.74
+shadowG4 ML70 split stop12     n  11 win  73% avg  +4.0% w5 -12.4% | taken  18 +0.9%/y DD  1.5% ratio 0.57 Sh 0.64
+
+DESIGN pick: shadowG4 ML70 split (ratio 0.44 vs live 0.28) | CONFIRM ratio 0.50 vs 0.34, return +1.5% vs +1.5% -> True
+us100: 115 stocks, 2000-01-03..2026-11-02, eligible on 2026-11-02: 115
+
+US sell-off swing (live: 2005-09 ratio -0.09 | 2010-17 ratio 0.12 | 2018-26 ratio 0.48):
+== US 2005-09
+  shadowG4 live            n 120 win  39% avg  -4.2% w5 -41.4% | taken  13 -1.1%/y DD 10.8% ratio -0.10 Sh -0.32
+  shadowG4 stop12          n 206 win  29% avg  -3.5% w5 -14.1% | taken  24 -0.4%/y DD  8.9% ratio -0.04 Sh -0.09
+  shadowG4 split           n 120 win  39% avg  -4.2% w5 -41.4% | taken  23 -0.8%/y DD 10.6% ratio -0.08 Sh -0.25
+  shadowG4 split stop12    n 206 win  29% avg  -3.5% w5 -14.1% | taken  55 +0.0%/y DD  8.0% ratio 0.01 Sh 0.01
+== US 2010-17
+  shadowG4 live            n  73 win  79% avg  +8.0% w5  -7.3% | taken  23 +1.1%/y DD  3.2% ratio 0.33 Sh 0.62
+  shadowG4 stop12          n 102 win  67% avg  +4.0% w5 -12.3% | taken  24 +1.0%/y DD  4.3% ratio 0.23 Sh 0.54
+  shadowG4 split           n  73 win  79% avg  +8.0% w5  -7.3% | taken  53 +1.1%/y DD  1.9% ratio 0.58 Sh 0.72
+  shadowG4 split stop12    n 102 win  67% avg  +4.0% w5 -12.3% | taken  57 +1.0%/y DD  2.3% ratio 0.43 Sh 0.58
+== US 2018-26
+  shadowG4 live            n 215 win  81% avg +12.8% w5  -7.5% | taken  34 +0.9%/y DD  6.0% ratio 0.15 Sh 0.27
+  shadowG4 stop12          n 270 win  59% avg  +7.6% w5 -12.1% | taken  45 +1.2%/y DD  5.3% ratio 0.22 Sh 0.39
+  shadowG4 split           n 215 win  81% avg +12.8% w5  -7.5% | taken  70 +1.0%/y DD  5.4% ratio 0.18 Sh 0.32
+  shadowG4 split stop12    n 270 win  59% avg  +7.6% w5 -12.1% | taken 101 +1.0%/y DD  5.4% ratio 0.19 Sh 0.37
+US check for 'shadowG4 split': 2010-17 0.58 vs 0.12, 2018-26 0.18 vs 0.48 -> False
+
+DECISION (addendum A): Saudi-only: shadowG4 ML70 split
+Shadow versions passing the bar in both eras (context): shadowG4 live, shadowG4 split, shadowG4 ML70, shadowG4 ML70 split

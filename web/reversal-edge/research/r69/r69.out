@@ -1,0 +1,136 @@
+How far trades fall before they end (no stop; lowest close / lowest low below the entry, 2013-26)
+  plan trades taken: 51 trades | lowest close: median -6.4%, worst tenth below -16.6% | winners' lowest close: median -5.6%, worst tenth below -12.3%, deepest -19.2% | losers' median -11.1%
+      closed 10%+ below the entry at some point:  16 trades (31%); 56% still ended as winners; average final result +3.9% (a stop there would lock in about -11% or worse)
+      closed 15%+ below the entry at some point:   6 trades (12%); 17% still ended as winners; average final result -3.4% (a stop there would lock in about -16% or worse)
+      closed 20%+ below the entry at some point:   2 trades (4%); 0% still ended as winners; average final result -9.8% (a stop there would lock in about -21% or worse)
+  all signals in a turn window (U2): 298 trades | lowest close: median -5.6%, worst tenth below -16.8% | winners' lowest close: median -4.2%, worst tenth below -13.7%, deepest -30.9% | losers' median -13.2%
+      closed 10%+ below the entry at some point:  80 trades (27%); 59% still ended as winners; average final result +4.8% (a stop there would lock in about -11% or worse)
+      closed 15%+ below the entry at some point:  43 trades (14%); 53% still ended as winners; average final result +1.3% (a stop there would lock in about -16% or worse)
+      closed 20%+ below the entry at some point:  16 trades (5%); 31% still ended as winners; average final result -5.1% (a stop there would lock in about -21% or worse)
+      closed 25%+ below the entry at some point:   8 trades (3%); 25% still ended as winners; average final result -7.3% (a stop there would lock in about -26% or worse)
+  all paper trades (U3): 442 trades | lowest close: median -6.0%, worst tenth below -17.6% | winners' lowest close: median -4.2%, worst tenth below -13.3%, deepest -30.9% | losers' median -13.3%
+      closed 10%+ below the entry at some point: 133 trades (30%); 51% still ended as winners; average final result +3.0% (a stop there would lock in about -11% or worse)
+      closed 15%+ below the entry at some point:  70 trades (16%); 40% still ended as winners; average final result -1.1% (a stop there would lock in about -16% or worse)
+      closed 20%+ below the entry at some point:  27 trades (6%); 19% still ended as winners; average final result -8.3% (a stop there would lock in about -21% or worse)
+      closed 25%+ below the entry at some point:  12 trades (3%); 17% still ended as winners; average final result -10.9% (a stop there would lock in about -26% or worse)
+
+U1 plan A account (growth per year, worst drawdown, ratio) and trades taken 2013-26; U2 every in-window signal 2013-26
+  no stop                          13-19  +6.8% DD  9.8% r 0.69 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  51 win  78% avg +13.2% w5   -9.4% worst  -12.6% stopped   0% | U2 n 298 win  85% avg +17.4% w5   -9.9% worst  -21.6% stopped   0%
+  A 8% on close                    13-19  +5.5% DD 15.5% r 0.36 | 20-26  +5.5% DD  7.6% r 0.73 | 23-26  +6.1% DD  3.1% r 2.00 | taken n  76 win  55% avg  +7.4% w5  -17.0% worst  -20.0% stopped  42% | U2 n 298 win  60% avg +10.1% w5  -15.3% worst  -24.2% stopped  38%
+  A 10% on close                   13-19  +7.3% DD 13.9% r 0.52 | 20-26  +5.8% DD  6.9% r 0.84 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  69 win  61% avg +10.1% w5  -17.4% worst  -21.8% stopped  32% | U2 n 298 win  69% avg +12.7% w5  -15.6% worst  -24.2% stopped  27%
+  A 12% on close                   13-19  +7.3% DD 13.5% r 0.54 | 20-26  +5.5% DD  6.9% r 0.80 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  65 win  66% avg +10.4% w5  -17.8% worst  -27.3% stopped  23% | U2 n 298 win  73% avg +13.4% w5  -17.3% worst  -27.3% stopped  21%
+  A 15% on close                   13-19  +6.9% DD 10.9% r 0.63 | 20-26  +6.6% DD  6.8% r 0.98 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  58 win  78% avg +12.2% w5  -18.0% worst  -22.0% stopped  12% | U2 n 298 win  78% avg +14.6% w5  -18.0% worst  -27.3% stopped  14%
+  A 20% on close                   13-19  +7.0% DD  9.8% r 0.71 | 20-26  +6.6% DD  6.8% r 0.98 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  53 win  79% avg +13.4% w5  -12.0% worst  -22.0% stopped   4% | U2 n 298 win  84% avg +16.4% w5  -17.4% worst  -30.4% stopped   5%
+  A 25% on close                   13-19  +6.8% DD  9.8% r 0.69 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  51 win  78% avg +13.2% w5   -9.4% worst  -12.6% stopped   0% | U2 n 298 win  85% avg +16.9% w5  -11.6% worst  -30.1% stopped   3%
+  B 8% stop order                  13-19  +3.5% DD 17.4% r 0.20 | 20-26  +5.7% DD  7.1% r 0.80 | 23-26  +6.1% DD  3.1% r 2.00 | taken n  89 win  44% avg  +4.8% w5  -10.3% worst  -14.2% stopped  54% | U2 n 298 win  44% avg  +5.1% w5  -10.2% worst  -15.4% stopped  55%
+  B 10% stop order                 13-19  +5.9% DD 14.2% r 0.42 | 20-26  +6.0% DD  6.9% r 0.87 | 23-26  +6.1% DD  3.1% r 2.00 | taken n  80 win  55% avg  +7.6% w5  -11.2% worst  -14.2% stopped  42% | U2 n 298 win  57% avg  +8.1% w5  -12.0% worst  -16.8% stopped  42%
+  B 12% stop order                 13-19  +6.9% DD 14.8% r 0.47 | 20-26  +5.6% DD  7.5% r 0.75 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  73 win  60% avg  +9.0% w5  -13.4% worst  -18.6% stopped  33% | U2 n 298 win  65% avg +10.7% w5  -13.1% worst  -20.4% stopped  31%
+  B 15% stop order                 13-19  +6.6% DD 13.2% r 0.50 | 20-26  +6.1% DD  6.9% r 0.89 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  64 win  69% avg +10.4% w5  -15.4% worst  -20.0% stopped  20% | U2 n 298 win  75% avg +13.7% w5  -15.4% worst  -20.4% stopped  18%
+  B 20% stop order                 13-19  +7.5% DD 10.3% r 0.73 | 20-26  +6.6% DD  6.7% r 0.98 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  57 win  79% avg +13.2% w5  -20.4% worst  -20.8% stopped  11% | U2 n 298 win  82% avg +15.6% w5  -20.4% worst  -27.3% stopped   9%
+  B 25% stop order                 13-19  +6.8% DD  9.8% r 0.69 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  51 win  78% avg +13.2% w5   -9.4% worst  -12.6% stopped   0% | U2 n 298 win  83% avg +16.2% w5  -14.9% worst  -30.4% stopped   4%
+  C 2 ATR on close                 13-19  +6.9% DD 15.4% r 0.45 | 20-26  +5.6% DD  6.7% r 0.84 | 23-26  +6.1% DD  3.1% r 2.00 | taken n  70 win  60% avg  +9.4% w5  -17.6% worst  -27.3% stopped  34% | U2 n 298 win  68% avg +13.1% w5  -16.2% worst  -27.3% stopped  27%
+  C 3 ATR on close                 13-19  +6.4% DD 14.6% r 0.44 | 20-26  +6.6% DD  6.8% r 0.98 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  64 win  70% avg +10.8% w5  -20.5% worst  -30.1% stopped  22% | U2 n 298 win  78% avg +14.9% w5  -17.6% worst  -30.4% stopped  16%
+  C 4 ATR on close                 13-19  +7.6% DD  9.8% r 0.77 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  54 win  80% avg +13.6% w5  -14.3% worst  -20.9% stopped   6% | U2 n 298 win  82% avg +15.6% w5  -18.1% worst  -30.4% stopped  10%
+  C 5 ATR on close                 13-19  +7.0% DD  9.8% r 0.71 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  52 win  79% avg +13.3% w5  -11.9% worst  -20.9% stopped   2% | U2 n 298 win  84% avg +16.8% w5  -11.9% worst  -26.4% stopped   5%
+  C 6 ATR on close                 13-19  +6.8% DD  9.8% r 0.69 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  51 win  78% avg +13.2% w5   -9.4% worst  -12.6% stopped   0% | U2 n 298 win  85% avg +17.2% w5  -11.2% worst  -35.2% stopped   2%
+  D under the 10-day low -0%       13-19  +4.4% DD 14.5% r 0.31 | 20-26  +4.0% DD  8.1% r 0.49 | 23-26  +6.1% DD  3.1% r 1.99 | taken n 125 win  46% avg  +3.0% w5  -15.1% worst  -20.4% stopped  69% | U2 n 298 win  46% avg  +3.5% w5  -12.2% worst  -20.4% stopped  70%
+  D under the 10-day low -3%       13-19  +6.1% DD 13.9% r 0.44 | 20-26  +5.7% DD  6.3% r 0.91 | 23-26  +6.1% DD  3.1% r 2.00 | taken n 103 win  53% avg  +5.9% w5  -14.2% worst  -20.0% stopped  55% | U2 n 298 win  51% avg  +5.8% w5  -12.5% worst  -20.4% stopped  58%
+  D under the 10-day low -6%       13-19  +4.8% DD 15.5% r 0.31 | 20-26  +5.2% DD  7.7% r 0.68 | 23-26  +6.1% DD  3.1% r 2.00 | taken n  83 win  51% avg  +5.9% w5  -16.0% worst  -20.0% stopped  48% | U2 n 298 win  53% avg  +7.2% w5  -15.0% worst  -24.2% stopped  47%
+  E time 10: below entry           13-19  +5.2% DD 13.9% r 0.37 | 20-26  +5.6% DD  6.3% r 0.89 | 23-26  +6.1% DD  3.1% r 1.99 | taken n  66 win  55% avg  +7.7% w5  -10.0% worst  -15.3% stopped  42% | U2 n 298 win  69% avg +13.9% w5  -11.4% worst  -34.7% stopped  29%
+  E time 15: below entry           13-19  +7.0% DD 10.7% r 0.65 | 20-26  +5.3% DD  6.3% r 0.85 | 23-26  +6.1% DD  3.1% r 1.99 | taken n  60 win  63% avg +10.5% w5   -9.0% worst  -18.0% stopped  30% | U2 n 298 win  69% avg +14.3% w5   -9.2% worst  -30.6% stopped  29%
+  E time 20: below entry           13-19  +6.6% DD 10.4% r 0.64 | 20-26  +5.7% DD  6.3% r 0.90 | 23-26  +6.1% DD  3.1% r 1.99 | taken n  58 win  64% avg +10.8% w5   -9.3% worst  -11.3% stopped  29% | U2 n 298 win  69% avg +13.6% w5   -9.6% worst  -34.1% stopped  29%
+  E time 10: below -5%             13-19  +5.7% DD 13.1% r 0.44 | 20-26  +6.3% DD  6.3% r 1.01 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  58 win  71% avg +10.3% w5  -11.8% worst  -15.3% stopped  17% | U2 n 298 win  79% avg +15.8% w5  -11.6% worst  -34.7% stopped  13%
+  E time 20: below -5%             13-19  +6.6% DD  9.8% r 0.67 | 20-26  +6.0% DD  6.3% r 0.95 | 23-26  +6.1% DD  3.1% r 2.00 | taken n  54 win  74% avg +11.8% w5  -10.0% worst  -12.6% stopped  13% | U2 n 298 win  76% avg +14.7% w5  -11.3% worst  -34.1% stopped  16%
+  F market below its 20-day low    13-19  +4.3% DD 17.7% r 0.25 | 20-26  +3.5% DD  7.2% r 0.48 | 23-26  +5.4% DD  2.1% r 2.57 | taken n 139 win  46% avg  +2.4% w5  -13.8% worst  -20.0% stopped  78% | U2 n 298 win  44% avg  +2.5% w5  -12.5% worst  -20.0% stopped  74%
+  F market -3% from the signal     13-19  +6.7% DD 16.3% r 0.41 | 20-26  +5.0% DD  7.0% r 0.72 | 23-26  +6.1% DD  3.1% r 1.99 | taken n 102 win  50% avg  +6.0% w5  -17.6% worst  -24.2% stopped  58% | U2 n 298 win  55% avg  +7.7% w5  -13.8% worst  -24.2% stopped  54%
+  F market -5% from the signal     13-19  +7.2% DD 16.3% r 0.44 | 20-26  +5.1% DD  7.0% r 0.74 | 23-26  +6.1% DD  3.1% r 1.99 | taken n  93 win  51% avg  +7.0% w5  -16.5% worst  -22.0% stopped  53% | U2 n 298 win  56% avg  +8.4% w5  -14.0% worst  -24.2% stopped  45%
+  F market -8% from the signal     13-19  +7.6% DD 13.9% r 0.55 | 20-26  +3.8% DD  6.5% r 0.59 | 23-26  +6.1% DD  3.1% r 1.99 | taken n  74 win  50% avg  +7.9% w5  -15.7% worst  -27.3% stopped  46% | U2 n 298 win  61% avg  +9.6% w5  -16.6% worst  -30.4% stopped  35%
+  G breakeven after +10%           13-19  +6.7% DD  9.8% r 0.68 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.02 | taken n  53 win  77% avg +12.5% w5   -9.0% worst  -12.6% stopped   6% | U2 n 298 win  78% avg +14.2% w5   -9.5% worst  -21.6% stopped  15%
+  G breakeven after +15%           13-19  +6.8% DD  9.8% r 0.69 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  51 win  78% avg +13.2% w5   -9.4% worst  -12.6% stopped   0% | U2 n 298 win  82% avg +15.9% w5  -10.1% worst  -21.6% stopped   5%
+  H trailing 3 ATR                 13-19  +5.9% DD 12.6% r 0.47 | 20-26  +6.6% DD  6.7% r 0.99 | 23-26  +6.3% DD  3.0% r 2.08 | taken n  65 win  65% avg +10.0% w5  -16.1% worst  -30.1% stopped  45% | U2 n 298 win  67% avg +10.6% w5  -16.4% worst  -30.4% stopped  39%
+  H trailing 4 ATR                 13-19  +8.0% DD 10.0% r 0.80 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  58 win  76% avg +13.1% w5  -15.3% worst  -18.3% stopped  19% | U2 n 298 win  79% avg +14.6% w5  -16.7% worst  -30.4% stopped  17%
+  H trailing 5 ATR                 13-19  +7.3% DD 10.0% r 0.73 | 20-26  +6.3% DD  6.3% r 1.00 | 23-26  +6.2% DD  3.1% r 2.03 | taken n  54 win  78% avg +13.2% w5  -12.4% worst  -20.9% stopped  11% | U2 n 298 win  83% avg +16.3% w5  -15.0% worst  -27.1% stopped   9%
+  I market low + 20% on close      13-19  +4.3% DD 17.7% r 0.25 | 20-26  +3.5% DD  7.2% r 0.48 | 23-26  +5.4% DD  2.1% r 2.57 | taken n 139 win  46% avg  +2.4% w5  -13.8% worst  -20.0% stopped  78% | U2 n 298 win  44% avg  +2.5% w5  -12.5% worst  -20.0% stopped  74%
+  I market low + 15% on close      13-19  +4.3% DD 17.7% r 0.25 | 20-26  +3.5% DD  7.2% r 0.48 | 23-26  +5.4% DD  2.1% r 2.57 | taken n 139 win  46% avg  +2.4% w5  -13.8% worst  -20.0% stopped  78% | U2 n 298 win  44% avg  +2.5% w5  -13.0% worst  -20.0% stopped  74%
+
+U2 by era (average trade, worst 5%, share stopped, share of the stopped trades that would have ended as winners without the stop)
+  A 8% on close                    2013-19 avg +11.3% (no stop +20.1%) w5  -15.9% ( -11.5%) stopped  44% shaken-out winners  64% | 2020-26 avg  +8.0% (no stop +12.6%) w5  -14.5% (  -4.0%) stopped  28% shaken-out winners  68%
+  A 10% on close                   2013-19 avg +14.4% (no stop +20.1%) w5  -16.8% ( -11.5%) stopped  33% shaken-out winners  56% | 2020-26 avg  +9.7% (no stop +12.6%) w5  -14.1% (  -4.0%) stopped  16% shaken-out winners  71%
+  A 12% on close                   2013-19 avg +15.0% (no stop +20.1%) w5  -17.9% ( -11.5%) stopped  26% shaken-out winners  56% | 2020-26 avg +10.5% (no stop +12.6%) w5  -14.3% (  -4.0%) stopped  11% shaken-out winners  75%
+  A 15% on close                   2013-19 avg +16.4% (no stop +20.1%) w5  -18.3% ( -11.5%) stopped  19% shaken-out winners  53% | 2020-26 avg +11.6% (no stop +12.6%) w5  -13.2% (  -4.0%) stopped   6% shaken-out winners  57%
+  A 20% on close                   2013-19 avg +18.9% (no stop +20.1%) w5  -19.2% ( -11.5%) stopped   7% shaken-out winners  31% | 2020-26 avg +12.1% (no stop +12.6%) w5   -4.9% (  -4.0%) stopped   3% shaken-out winners  33%
+  A 25% on close                   2013-19 avg +19.5% (no stop +20.1%) w5  -14.0% ( -11.5%) stopped   4% shaken-out winners  14% | 2020-26 avg +12.3% (no stop +12.6%) w5   -4.9% (  -4.0%) stopped   1% shaken-out winners 100%
+  B 8% stop order                  2013-19 avg  +4.2% (no stop +20.1%) w5  -10.9% ( -11.5%) stopped  66% shaken-out winners  74% | 2020-26 avg  +6.8% (no stop +12.6%) w5   -8.4% (  -4.0%) stopped  37% shaken-out winners  75%
+  B 10% stop order                 2013-19 avg  +7.4% (no stop +20.1%) w5  -12.4% ( -11.5%) stopped  53% shaken-out winners  69% | 2020-26 avg  +9.1% (no stop +12.6%) w5  -10.4% (  -4.0%) stopped  23% shaken-out winners  64%
+  B 12% stop order                 2013-19 avg +11.1% (no stop +20.1%) w5  -14.1% ( -11.5%) stopped  40% shaken-out winners  64% | 2020-26 avg  +9.9% (no stop +12.6%) w5  -12.4% (  -4.0%) stopped  15% shaken-out winners  69%
+  B 15% stop order                 2013-19 avg +14.9% (no stop +20.1%) w5  -15.4% ( -11.5%) stopped  25% shaken-out winners  56% | 2020-26 avg +11.6% (no stop +12.6%) w5  -15.4% (  -4.0%) stopped   6% shaken-out winners  57%
+  B 20% stop order                 2013-19 avg +17.7% (no stop +20.1%) w5  -20.4% ( -11.5%) stopped  12% shaken-out winners  39% | 2020-26 avg +12.1% (no stop +12.6%) w5   -4.9% (  -4.0%) stopped   3% shaken-out winners  33%
+  B 25% stop order                 2013-19 avg +18.5% (no stop +20.1%) w5  -25.4% ( -11.5%) stopped   6% shaken-out winners  50% | 2020-26 avg +12.3% (no stop +12.6%) w5   -4.9% (  -4.0%) stopped   1% shaken-out winners 100%
+  C 2 ATR on close                 2013-19 avg +15.3% (no stop +20.1%) w5  -16.8% ( -11.5%) stopped  31% shaken-out winners  56% | 2020-26 avg  +9.3% (no stop +12.6%) w5  -14.5% (  -4.0%) stopped  19% shaken-out winners  81%
+  C 3 ATR on close                 2013-19 avg +16.6% (no stop +20.1%) w5  -18.0% ( -11.5%) stopped  23% shaken-out winners  42% | 2020-26 avg +11.8% (no stop +12.6%) w5   -7.5% (  -4.0%) stopped   5% shaken-out winners  60%
+  C 4 ATR on close                 2013-19 avg +17.7% (no stop +20.1%) w5  -19.2% ( -11.5%) stopped  15% shaken-out winners  36% | 2020-26 avg +12.2% (no stop +12.6%) w5   -4.9% (  -4.0%) stopped   2% shaken-out winners  50%
+  C 5 ATR on close                 2013-19 avg +19.5% (no stop +20.1%) w5  -15.3% ( -11.5%) stopped   7% shaken-out winners  15% | 2020-26 avg +12.2% (no stop +12.6%) w5   -4.9% (  -4.0%) stopped   2% shaken-out winners  50%
+  C 6 ATR on close                 2013-19 avg +19.9% (no stop +20.1%) w5  -11.6% ( -11.5%) stopped   4% shaken-out winners   0% | 2020-26 avg +12.6% (no stop +12.6%) w5   -4.0% (  -4.0%) stopped   0% shaken-out winners nan%
+  D under the 10-day low -0%       2013-19 avg  +4.3% (no stop +20.1%) w5  -12.8% ( -11.5%) stopped  71% shaken-out winners  78% | 2020-26 avg  +2.2% (no stop +12.6%) w5   -9.9% (  -4.0%) stopped  69% shaken-out winners  85%
+  D under the 10-day low -3%       2013-19 avg  +6.3% (no stop +20.1%) w5  -12.7% ( -11.5%) stopped  62% shaken-out winners  76% | 2020-26 avg  +4.8% (no stop +12.6%) w5  -10.7% (  -4.0%) stopped  50% shaken-out winners  81%
+  D under the 10-day low -6%       2013-19 avg  +6.9% (no stop +20.1%) w5  -15.2% ( -11.5%) stopped  55% shaken-out winners  75% | 2020-26 avg  +7.6% (no stop +12.6%) w5  -14.1% (  -4.0%) stopped  33% shaken-out winners  72%
+  E time 10: below entry           2013-19 avg +17.2% (no stop +20.1%) w5  -11.5% ( -11.5%) stopped  26% shaken-out winners  53% | 2020-26 avg  +8.2% (no stop +12.6%) w5  -10.0% (  -4.0%) stopped  35% shaken-out winners  76%
+  E time 15: below entry           2013-19 avg +17.5% (no stop +20.1%) w5  -10.0% ( -11.5%) stopped  30% shaken-out winners  54% | 2020-26 avg  +8.8% (no stop +12.6%) w5   -7.8% (  -4.0%) stopped  26% shaken-out winners  82%
+  E time 20: below entry           2013-19 avg +15.4% (no stop +20.1%) w5  -10.9% ( -11.5%) stopped  37% shaken-out winners  58% | 2020-26 avg +10.7% (no stop +12.6%) w5   -7.5% (  -4.0%) stopped  16% shaken-out winners  76%
+  E time 10: below -5%             2013-19 avg +18.6% (no stop +20.1%) w5  -11.6% ( -11.5%) stopped  14% shaken-out winners  37% | 2020-26 avg +10.9% (no stop +12.6%) w5  -10.0% (  -4.0%) stopped  12% shaken-out winners  77%
+  E time 20: below -5%             2013-19 avg +16.5% (no stop +20.1%) w5  -11.6% ( -11.5%) stopped  21% shaken-out winners  62% | 2020-26 avg +11.6% (no stop +12.6%) w5   -7.5% (  -4.0%) stopped   7% shaken-out winners  62%
+  F market below its 20-day low    2013-19 avg  +4.1% (no stop +20.1%) w5  -13.3% ( -11.5%) stopped  66% shaken-out winners  82% | 2020-26 avg  -0.2% (no stop +12.6%) w5   -9.7% (  -4.0%) stopped  87% shaken-out winners  88%
+  F market -3% from the signal     2013-19 avg  +9.9% (no stop +20.1%) w5  -13.9% ( -11.5%) stopped  53% shaken-out winners  69% | 2020-26 avg  +3.8% (no stop +12.6%) w5  -11.0% (  -4.0%) stopped  56% shaken-out winners  84%
+  F market -5% from the signal     2013-19 avg +10.6% (no stop +20.1%) w5  -14.3% ( -11.5%) stopped  42% shaken-out winners  76% | 2020-26 avg  +4.5% (no stop +12.6%) w5  -11.0% (  -4.0%) stopped  50% shaken-out winners  82%
+  F market -8% from the signal     2013-19 avg +10.2% (no stop +20.1%) w5  -18.0% ( -11.5%) stopped  40% shaken-out winners  76% | 2020-26 avg  +8.6% (no stop +12.6%) w5  -14.2% (  -4.0%) stopped  25% shaken-out winners  81%
+  G breakeven after +10%           2013-19 avg +15.3% (no stop +20.1%) w5  -11.2% ( -11.5%) stopped  20% shaken-out winners  89% | 2020-26 avg +12.2% (no stop +12.6%) w5   -2.8% (  -4.0%) stopped   6% shaken-out winners  50%
+  G breakeven after +15%           2013-19 avg +17.8% (no stop +20.1%) w5  -11.5% ( -11.5%) stopped   8% shaken-out winners 100% | 2020-26 avg +12.6% (no stop +12.6%) w5   -4.0% (  -4.0%) stopped   0% shaken-out winners nan%
+  H trailing 3 ATR                 2013-19 avg +10.8% (no stop +20.1%) w5  -18.0% ( -11.5%) stopped  50% shaken-out winners  71% | 2020-26 avg +10.1% (no stop +12.6%) w5   -7.5% (  -4.0%) stopped  20% shaken-out winners  82%
+  H trailing 4 ATR                 2013-19 avg +16.1% (no stop +20.1%) w5  -18.0% ( -11.5%) stopped  25% shaken-out winners  48% | 2020-26 avg +12.0% (no stop +12.6%) w5   -6.4% (  -4.0%) stopped   4% shaken-out winners  75%
+  H trailing 5 ATR                 2013-19 avg +18.6% (no stop +20.1%) w5  -17.2% ( -11.5%) stopped  13% shaken-out winners  32% | 2020-26 avg +12.2% (no stop +12.6%) w5   -4.9% (  -4.0%) stopped   2% shaken-out winners  50%
+  I market low + 20% on close      2013-19 avg  +4.1% (no stop +20.1%) w5  -13.3% ( -11.5%) stopped  66% shaken-out winners  82% | 2020-26 avg  -0.2% (no stop +12.6%) w5   -9.7% (  -4.0%) stopped  87% shaken-out winners  88%
+  I market low + 15% on close      2013-19 avg  +4.1% (no stop +20.1%) w5  -14.0% ( -11.5%) stopped  67% shaken-out winners  80% | 2020-26 avg  -0.2% (no stop +12.6%) w5   -9.7% (  -4.0%) stopped  87% shaken-out winners  88%
+
+Decision (conditions 1 growth kept, 2 drawdown not worse, 3 per-trade average kept and worst-5% better; in 2013-19 / 2020-26)
+  A 8% on close                    2013-19 ---  2020-26 ---
+  A 10% on close                   2013-19 Y--  2020-26 ---
+  A 12% on close                   2013-19 Y--  2020-26 ---
+  A 15% on close                   2013-19 Y--  2020-26 Y--
+  A 20% on close                   2013-19 YY-  2020-26 Y--
+  A 25% on close                   2013-19 YY-  2020-26 YY-
+  B 8% stop order                  2013-19 ---  2020-26 ---
+  B 10% stop order                 2013-19 ---  2020-26 ---
+  B 12% stop order                 2013-19 Y--  2020-26 ---
+  B 15% stop order                 2013-19 Y--  2020-26 Y--
+  B 20% stop order                 2013-19 Y--  2020-26 Y--
+  B 25% stop order                 2013-19 YY-  2020-26 YY-
+  C 2 ATR on close                 2013-19 Y--  2020-26 ---
+  C 3 ATR on close                 2013-19 ---  2020-26 Y--
+  C 4 ATR on close                 2013-19 YY-  2020-26 YY-
+  C 5 ATR on close                 2013-19 YY-  2020-26 YY-
+  C 6 ATR on close                 2013-19 YY-  2020-26 YY-
+  D under the 10-day low -0%       2013-19 ---  2020-26 ---
+  D under the 10-day low -3%       2013-19 ---  2020-26 -Y-
+  D under the 10-day low -6%       2013-19 ---  2020-26 ---
+  E time 10: below entry           2013-19 ---  2020-26 -Y-
+  E time 15: below entry           2013-19 Y--  2020-26 -Y-
+  E time 20: below entry           2013-19 Y--  2020-26 -Y-
+  E time 10: below -5%             2013-19 ---  2020-26 YY-
+  E time 20: below -5%             2013-19 YY-  2020-26 -Y-
+  F market below its 20-day low    2013-19 ---  2020-26 ---
+  F market -3% from the signal     2013-19 Y--  2020-26 ---
+  F market -5% from the signal     2013-19 Y--  2020-26 ---
+  F market -8% from the signal     2013-19 Y--  2020-26 ---
+  G breakeven after +10%           2013-19 YY-  2020-26 YYY
+  G breakeven after +15%           2013-19 YY-  2020-26 YY-
+  H trailing 3 ATR                 2013-19 ---  2020-26 Y--
+  H trailing 4 ATR                 2013-19 YY-  2020-26 YY-
+  H trailing 5 ATR                 2013-19 YY-  2020-26 YY-
+  I market low + 20% on close      2013-19 ---  2020-26 ---
+  I market low + 15% on close      2013-19 ---  2020-26 ---
+  stops meeting all three in 2013-19: none | pick: None | CONFIRMED in 2020-26: False
+  stops meeting all three in both eras: none
+  insurance rule (growth within 0.2 points in both eras, then the best worst trade in U2): candidates 13; named: B 15% stop order
+     B 15% stop order: U2 worst trade -20.4% vs -21.6% without; account 13-19  +6.6% DD 13.2% r 0.50 | 20-26  +6.1% DD  6.9% r 0.89 (no stop  +6.8% DD  9.8% r 0.69 |  +6.3% DD  6.3% r 1.00)
+
+Honesty check, yearly re-choice 2016-26:  +8.7% DD  7.8% r 1.10 vs no stop  +8.6% DD  6.3% r 1.37 -> WORSE than no stop; choices: 2016: H trailing 4 ATR; 2017: H trailing 4 ATR; 2018: H trailing 4 ATR; 2019: H trailing 4 ATR; 2020: H trailing 4 ATR; 2021: H trailing 4 ATR; 2022: H trailing 4 ATR; 2023: H trailing 4 ATR; 2024: H trailing 4 ATR; 2025: H trailing 4 ATR; 2026: H trailing 4 ATR

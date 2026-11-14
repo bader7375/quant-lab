@@ -1,0 +1,46 @@
+T1 - all Z score signals, net per trade (40 sessions, 0.4% costs) by thirds within the signals
+  2013-19: 268 signals
+    by volatility low: n 89 +11.6% win 67% worst5 -11.5% | mid: n 91 +21.5% win 89% worst5 -10.1% | high: n 88 +24.2% win 91% worst5 -11.4%
+    by ML rank    low: n 90 +16.4% win 76% worst5 -14.0% | mid: n 89 +19.8% win 82% worst5 -7.3% | high: n 89 +21.1% win 90% worst5 -10.5%
+    joint regression: volatility pct +23.0 pts (t +7.3), ML pct +11.3 pts (t +2.2) per 0 -> 1 move
+  2020-26: 188 signals
+    by volatility low: n 63 +6.6% win 71% worst5 -10.9% | mid: n 62 +6.5% win 66% worst5 -11.5% | high: n 63 +9.3% win 76% worst5 -11.6%
+    by ML rank    low: n 63 +5.9% win 70% worst5 -9.8% | mid: n 63 +9.1% win 75% worst5 -7.3% | high: n 62 +7.5% win 69% worst5 -13.8%
+    joint regression: volatility pct +3.5 pts (t +1.5), ML pct +2.9 pts (t +0.4) per 0 -> 1 move
+  correlation of volatility pct and ML pct within the signals: +0.23
+
+T2 - Z score account, 5 slots x 5%, hold 40 (return per year, max drawdown, ratio)
+  L ML rank (live)               2013-19 +1.6%/y DD 6.5% r 0.24 | 2020-26 +1.4%/y DD 5.3% r 0.27 | 2023-26 +1.1%/y DD 5.3% r 0.21 | 2016-20 +3.9%/y DD 4.4% r 0.89 | 2021-26 +0.9%/y DD 5.3% r 0.16
+  V volatility first             2013-19 +2.4%/y DD 6.3% r 0.39 | 2020-26 +1.9%/y DD 5.0% r 0.37 | 2023-26 +1.6%/y DD 3.9% r 0.40 | 2016-20 +5.1%/y DD 5.0% r 1.03 | 2021-26 +1.2%/y DD 4.2% r 0.28
+  B ML + volatility (50/50)      2013-19 +2.5%/y DD 6.6% r 0.37 | 2020-26 +1.5%/y DD 5.5% r 0.28 | 2023-26 +1.3%/y DD 5.5% r 0.24 | 2016-20 +5.2%/y DD 5.0% r 1.03 | 2021-26 +1.0%/y DD 5.5% r 0.18
+  B25 (25% ML, 75% vol)          2013-19 +2.5%/y DD 6.3% r 0.40 | 2020-26 +1.7%/y DD 5.0% r 0.34 | 2023-26 +1.6%/y DD 3.9% r 0.40 | 2016-20 +5.0%/y DD 5.0% r 0.99 | 2021-26 +1.2%/y DD 4.2% r 0.28
+  B75 (75% ML, 25% vol)          2013-19 +1.6%/y DD 6.6% r 0.24 | 2020-26 +1.6%/y DD 5.2% r 0.31 | 2023-26 +1.4%/y DD 5.2% r 0.28 | 2016-20 +3.9%/y DD 4.4% r 0.89 | 2021-26 +1.1%/y DD 5.2% r 0.21
+  random order (100 seeds, ratio)  2013-19 r 0.25 (5-95%: 0.14-0.36) | 2020-26 r 0.29 (5-95%: 0.20-0.40) | 2023-26 r 0.28 (5-95%: 0.13-0.50) | 2016-20 r 0.92 (5-95%: 0.70-1.13) | 2021-26 r 0.19 (5-95%: 0.11-0.30)
+  walk-forward among L / V / B, re-chosen yearly from 2013..last year (ratio):  2016-20 r 1.03 | 2021-26 r 0.28  choices: {2016: 'V', 2017: 'V', 2018: 'V', 2019: 'V', 2020: 'V', 2021: 'V', 2022: 'V', 2023: 'V', 2024: 'V', 2025: 'V', 2026: 'V'}
+
+T3 - stress (2020-26 ratio vs live under the same stress)
+  0.8% costs         V volatility first           2013-19 r 0.36  2020-26 r 0.35 vs live 0.24 -> pass
+  0.8% costs         B ML + volatility (50/50)    2013-19 r 0.34  2020-26 r 0.25 vs live 0.24 -> pass
+  10 slots           V volatility first           2013-19 r 0.22  2020-26 r 0.30 vs live 0.30 -> pass
+  10 slots           B ML + volatility (50/50)    2013-19 r 0.26  2020-26 r 0.30 vs live 0.30 -> pass
+  20-day volatility  V volatility first           2013-19 r 0.38  2020-26 r 0.36 vs live 0.27 -> pass
+  20-day volatility  B ML + volatility (50/50)    2013-19 r 0.26  2020-26 r 0.29 vs live 0.27 -> pass
+  120-day volatility V volatility first           2013-19 r 0.39  2020-26 r 0.37 vs live 0.27 -> pass
+  120-day volatility B ML + volatility (50/50)    2013-19 r 0.34  2020-26 r 0.31 vs live 0.27 -> pass
+  V volatility first: 4 of 4 | B ML + volatility (50/50): 4 of 4
+
+T4 - signal days with more candidates than free slots: 74 of 93 entry days (80%); signals 456, taken by live 70
+  V volatility first           takes 70 trades, 18 of them not taken by live (26%)
+  B ML + volatility (50/50)    takes 70 trades, 12 of them not taken by live (17%)
+
+T6 - trades taken, 2013-26: count, winners, average, average loss, worst 5%
+  L ML rank (live)             n 70  win 64%  avg +5.9%  avg loss -8.0%  worst5 -13.9%
+  V volatility first           n 70  win 71%  avg +8.5%  avg loss -7.8%  worst5 -12.2%
+  B ML + volatility (50/50)    n 70  win 67%  avg +7.9%  avg loss -8.8%  worst5 -13.9%
+
+T5 - Market returned set (shadow book), same orders
+  L ML rank (live)               2013-19 +2.7%/y DD 5.5% r 0.50 | 2020-26 +1.8%/y DD 3.3% r 0.55 | 2023-26 +0.8%/y DD 2.2% r 0.36
+  V volatility first             2013-19 +3.1%/y DD 5.1% r 0.62 | 2020-26 +1.7%/y DD 3.3% r 0.53 | 2023-26 +0.8%/y DD 2.2% r 0.36
+  B ML + volatility (50/50)      2013-19 +3.3%/y DD 5.5% r 0.60 | 2020-26 +1.8%/y DD 3.1% r 0.56 | 2023-26 +0.8%/y DD 2.2% r 0.36
+
+Decision: V (volatility first, ML stays the >= 50% filter) recommended. B beats live in all eras: True; V beats live in all eras: True; B >= V in 0 of 3; ML adds information inside the signals (t >= 2 both halves): False

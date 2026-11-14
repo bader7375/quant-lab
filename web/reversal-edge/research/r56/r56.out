@@ -1,0 +1,35 @@
+
+== Saudi 5-minute Z swing (ML >= 0.5, market model > 0, liquid): 246 stocks, 3595 five-minute bars 2026-08-13 .. 2026-11-05; sell-off window open 32% of bars
+  line -2.00 30 min (intraday)        | DESIGN n   2 win   0% net -0.46% (random -0.43%) before costs -0.06% || CONFIRM n 207 win  19% net -0.67% (random -0.77%) before costs -0.27%
+  line -2.00 1 hour (intraday)        | DESIGN n   2 win   0% net -0.41% (random -0.48%) before costs -0.01% || CONFIRM n 173 win  18% net -0.99% (random -1.07%) before costs -0.59%
+  line -2.00 3 hours (intraday)       | DESIGN n   2 win   0% net -0.16% (random -0.55%) before costs +0.24% || CONFIRM n 135 win  17% net -1.77% (random -1.81%) before costs -1.37%
+  line -2.00 ~1 session (overnight)   | DESIGN n   2 win   0% net -0.52% (random -0.54%) before costs -0.12% || CONFIRM n 116 win  40% net -0.82% (random -0.94%) before costs -0.42%
+  line -2.00 ~2 sessions (overnight)  | DESIGN n   2 win   0% net -1.35% (random -0.88%) before costs -0.95% || CONFIRM n  91 win  47% net -0.32% (random -0.26%) before costs +0.08%
+  line -2.62 30 min (intraday)        | DESIGN n   1 win   0% net -0.62% (random -0.36%) before costs -0.22% || CONFIRM n  88 win  20% net -0.60% (random -0.73%) before costs -0.20%
+  line -2.62 1 hour (intraday)        | DESIGN n   1 win   0% net -0.55% (random -0.30%) before costs -0.15% || CONFIRM n  76 win  17% net -1.16% (random -1.11%) before costs -0.76%
+  line -2.62 3 hours (intraday)       | DESIGN n   1 win   0% net -1.35% (random -0.50%) before costs -0.95% || CONFIRM n  66 win  17% net -1.79% (random -1.96%) before costs -1.39%
+  line -2.62 ~1 session (overnight)   | DESIGN n   1 win   0% net -0.62% (random -0.33%) before costs -0.22% || CONFIRM n  61 win  51% net -0.23% (random -0.55%) before costs +0.17%
+  line -2.62 ~2 sessions (overnight)  | DESIGN n   1 win   0% net -1.06% (random -1.49%) before costs -0.66% || CONFIRM n  53 win  57% net +1.23% (random +0.39%) before costs +1.63%
+  line -3.00 30 min (intraday)        | DESIGN n   1 win   0% net -0.77% (random -0.28%) before costs -0.37% || CONFIRM n  53 win  21% net -0.60% (random -0.81%) before costs -0.20%
+  line -3.00 1 hour (intraday)        | DESIGN n   1 win   0% net -0.03% (random -0.23%) before costs +0.37% || CONFIRM n  46 win  15% net -1.20% (random -1.16%) before costs -0.80%
+  line -3.00 3 hours (intraday)       | DESIGN n   1 win 100% net +0.71% (random -0.61%) before costs +1.11% || CONFIRM n  40 win   8% net -1.95% (random -1.97%) before costs -1.55%
+  line -3.00 ~1 session (overnight)   | DESIGN n   1 win 100% net +1.09% (random -0.51%) before costs +1.49% || CONFIRM n  39 win  59% net +0.06% (random -0.35%) before costs +0.46%
+  line -3.00 ~2 sessions (overnight)  | DESIGN n   1 win 100% net +1.58% (random -0.78%) before costs +1.98% || CONFIRM n  37 win  68% net +2.68% (random +2.01%) before costs +3.08%
+Daily Z swing signals Oct 1 - Nov 5: 0 completed trades (most 40-day holds are still open, so no fair per-trade comparison yet)
+
+== US 5-minute Z swing (no ML / market-model gate): 115 stocks, 4681 five-minute bars 2026-08-13 .. 2026-11-05; sell-off window open 15% of bars
+  line -2.00 30 min (intraday)        | DESIGN n 259 win  34% net -0.19% (random -0.11%) before costs -0.09% || CONFIRM n 178 win  40% net -0.09% (random -0.08%) before costs +0.01%
+  line -2.00 1 hour (intraday)        | DESIGN n 237 win  35% net -0.18% (random -0.10%) before costs -0.08% || CONFIRM n 165 win  50% net -0.05% (random -0.09%) before costs +0.05%
+  line -2.00 3 hours (intraday)       | DESIGN n 221 win  43% net -0.09% (random -0.07%) before costs +0.01% || CONFIRM n 159 win  50% net -0.00% (random -0.10%) before costs +0.10%
+  line -2.00 ~1 session (overnight)   | DESIGN n 216 win  45% net -0.03% (random -0.13%) before costs +0.07% || CONFIRM n 130 win  54% net +0.31% (random +0.14%) before costs +0.41%
+  line -2.00 ~2 sessions (overnight)  | DESIGN n 206 win  47% net -0.19% (random -0.37%) before costs -0.09% || CONFIRM n 118 win  59% net +0.54% (random +0.66%) before costs +0.64%
+  line -2.62 30 min (intraday)        | DESIGN n 146 win  30% net -0.17% (random -0.12%) before costs -0.07% || CONFIRM n 106 win  60% net +0.09% (random -0.02%) before costs +0.19%
+  line -2.62 1 hour (intraday)        | DESIGN n 136 win  35% net -0.18% (random -0.11%) before costs -0.08% || CONFIRM n 101 win  64% net +0.20% (random -0.05%) before costs +0.30%
+  line -2.62 3 hours (intraday)       | DESIGN n 135 win  42% net -0.13% (random -0.11%) before costs -0.03% || CONFIRM n 100 win  56% net +0.13% (random -0.13%) before costs +0.23%
+  line -2.62 ~1 session (overnight)   | DESIGN n 133 win  46% net -0.01% (random -0.10%) before costs +0.09% || CONFIRM n  95 win  53% net +0.16% (random -0.03%) before costs +0.26%
+  line -2.62 ~2 sessions (overnight)  | DESIGN n 131 win  47% net -0.15% (random -0.41%) before costs -0.05% || CONFIRM n  78 win  58% net +0.68% (random +0.52%) before costs +0.78%
+  line -3.00 30 min (intraday)        | DESIGN n  99 win  32% net -0.18% (random -0.11%) before costs -0.08% || CONFIRM n  79 win  56% net +0.14% (random -0.06%) before costs +0.24%
+  line -3.00 1 hour (intraday)        | DESIGN n  92 win  38% net -0.23% (random -0.10%) before costs -0.13% || CONFIRM n  78 win  63% net +0.27% (random -0.11%) before costs +0.37%
+  line -3.00 3 hours (intraday)       | DESIGN n  90 win  39% net -0.22% (random -0.09%) before costs -0.12% || CONFIRM n  77 win  53% net +0.16% (random -0.18%) before costs +0.26%
+  line -3.00 ~1 session (overnight)   | DESIGN n  88 win  43% net -0.13% (random -0.15%) before costs -0.03% || CONFIRM n  75 win  52% net +0.08% (random -0.07%) before costs +0.18%
+  line -3.00 ~2 sessions (overnight)  | DESIGN n  87 win  43% net -0.37% (random -0.64%) before costs -0.27% || CONFIRM n  60 win  57% net +0.57% (random +0.56%) before costs +0.67%

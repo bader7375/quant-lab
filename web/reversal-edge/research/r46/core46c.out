@@ -1,0 +1,19 @@
+Saudi: 30 measures x 3909 days x 273 stocks; 9 market states
+us100: 115 stocks, 2000-01-03..2026-11-02, eligible on 2026-11-02: 115
+Saudi Core ML sleeve alone, then inside Core v2 (ML half size + trend breakouts):
+  today's ML sleeve (rebuilt)    sleeve  DESIGN  CAGR  +8.2% Sh 0.61 DD  -25% | CONFIRM CAGR +18.2% Sh 1.55 DD  -11% | 2023-26 CAGR  +9.9% Sh 1.22 DD  -10%
+                                 Core v2 DESIGN  CAGR +11.4% Sh 0.94 DD  -20% | CONFIRM CAGR +22.9% Sh 1.54 DD  -23% | 2023-26 CAGR +10.2% Sh 0.87 DD  -23%
+  A: near 1-year high, hold 20   sleeve  DESIGN  CAGR  +2.1% Sh 0.24 DD  -29% | CONFIRM CAGR +15.2% Sh 1.48 DD  -14% | 2023-26 CAGR  +6.6% Sh 0.85 DD  -14%
+                                 Core v2 DESIGN  CAGR  +8.2% Sh 0.75 DD  -21% | CONFIRM CAGR +21.5% Sh 1.49 DD  -26% | 2023-26 CAGR  +8.9% Sh 0.77 DD  -26%
+  B: near 1-year high, hold 40   sleeve  DESIGN  CAGR  +5.6% Sh 0.54 DD  -28% | CONFIRM CAGR +11.3% Sh 1.08 DD  -17% | 2023-26 CAGR  +7.2% Sh 0.81 DD  -15%
+                                 Core v2 DESIGN  CAGR  +9.4% Sh 0.84 DD  -22% | CONFIRM CAGR +20.4% Sh 1.39 DD  -26% | 2023-26 CAGR +10.4% Sh 0.83 DD  -26%
+  (check) live Core v2 weights   Core v2 DESIGN  CAGR +11.4% Sh 0.94 DD  -20% | CONFIRM CAGR +22.9% Sh 1.54 DD  -23% | 2023-26 CAGR +10.2% Sh 0.87 DD  -23%
+
+US 100 ML sleeve (top 10, 4 tranches):
+  today's-style ML sleeve        US 2005 CAGR +14.3% Sh 0.57 DD  -57% | US 2010 CAGR +30.1% Sh 1.35 DD  -28% | US 2018 CAGR +30.9% Sh 1.05 DD  -40%
+  A: near 1-year high, hold 20   US 2005 CAGR  +2.8% Sh 0.24 DD  -46% | US 2010 CAGR +19.0% Sh 1.28 DD  -14% | US 2018 CAGR +14.2% Sh 0.81 DD  -28%
+  B: near 1-year high, hold 40   US 2005 CAGR  +3.5% Sh 0.27 DD  -45% | US 2010 CAGR +18.8% Sh 1.23 DD  -16% | US 2018 CAGR +14.6% Sh 0.82 DD  -31%
+A: near 1-year high, hold 20: Saudi Core v2 better in both eras: False | US better in 2010-17 and 2018-26: False -> passes: False
+B: near 1-year high, hold 40: Saudi Core v2 better in both eras: False | US better in 2010-17 and 2018-26: False -> passes: False
+
+DECISION: none adopted as a candidate change to the Core ML sleeve

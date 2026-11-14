@@ -1,0 +1,15 @@
+const C={surface:"#1a1a19",ink:"#fff",ink2:"#c3c2b7",muted:"#898781",grid:"#2c2c2a",axis:"#383835",blue:"#3987e5",red:"#e66767",violet:"#9085e9",good:"#0ca30c",warn:"#fab219",crit:"#d03b3b",
+ mean:{primary:"#fff",kalman:"#199e70",ou:"#c98500",trend:"#d55181",sma20:"#008300",ema20:"#6fbf6f",factor:"#d95926"},
+ fam:{stochastic:"#3987e5",deviation:"#d95926",volatility:"#199e70",tail:"#c98500",market:"#d55181",micro:"#008300",confluence:"#9085e9"}};
+const ML={primary:"traded mean",kalman:"Kalman fair value",ou:"OU mean (price)",trend:"Trend regression",sma20:"SMA 20",ema20:"EMA 20",factor:"Market-residual fair value"};
+const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
+const isF=Number.isFinite, fmt=(v,d=3,suf="")=>v==null||!isF(v)?"—":(+v).toFixed(d)+suf, pct=(v,d=1)=>v==null||!isF(v)?"—":(v*100).toFixed(d)+"%";
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const zc=z=>{if(z==null||!isF(z))return rgba(C.muted,.35);const a=Math.abs(z);if(a<1)return rgba(C.muted,.45);return rgba(z<0?C.blue:C.red,a<2?.55:a<3?.8:1)};
+const base=(h,extra={})=>Object.assign({paper_bgcolor:C.surface,plot_bgcolor:C.surface,height:h,font:{family:"Inter,system-ui,sans-serif",color:C.ink2,size:11},margin:{l:52,r:14,t:28,b:28},
+ hoverlabel:{bgcolor:"#111110",bordercolor:C.axis,font:{family:"JetBrains Mono,monospace",size:11,color:C.ink}},legend:{orientation:"h",x:0,y:1.02,yanchor:"bottom",font:{size:10},bgcolor:"rgba(0,0,0,0)"},
+ xaxis:{gridcolor:C.grid,linecolor:C.axis,tickfont:{color:C.muted,size:10}},yaxis:{gridcolor:C.grid,linecolor:C.axis,zeroline:false,tickfont:{color:C.muted,size:10}}},extra);
+const CFG={displaylogo:false,responsive:true,modeBarButtonsToRemove:["lasso2d","select2d","autoScale2d"]};
+const $=id=>document.getElementById(id);
+const store=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}};
+

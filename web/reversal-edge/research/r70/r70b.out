@@ -1,0 +1,37 @@
+(1) Saudi: every paper trade by sessions since the first signal of its sell-off
+   2013-19: first day: n  46 win  78% avg +12.0% | sessions 1-5: n 111 win  81% avg +18.9% | 6-15: n  97 win  90% avg +24.8% | 16-40: n  10 win  80% avg +11.2% | clusters 7
+   2020-26: first day: n  42 win  55% avg  +3.6% | sessions 1-5: n  64 win  62% avg  +3.2% | 6-15: n  18 win  89% avg +12.4% | 16-40: n  42 win  98% avg +16.8% | clusters 10
+us100: 115 stocks, 2000-01-03..2026-11-09, eligible on 2026-11-09: 115
+
+(2) US sell-off swing (115 large caps, window open, hold 40): every trade by sessions since the first signal of its cluster
+   2005-26: first day: n 225 win  67% avg  +7.6% | sessions 1-5: n 323 win  65% avg  +5.1% | 6+: n 275 win  72% avg  +8.0% | 6-15: n 149 win  66% avg  +7.3% | 16-40: n  65 win  83% avg  +7.6%
+   2005-09: first day: n  34 win  44% avg  -2.5% | sessions 1-5: n  92 win  54% avg  +0.7% | 6+: n  70 win  49% avg  -0.2% | 6-15: n  38 win  47% avg  +1.2% | 16-40: n  14 win  71% avg  +1.1%
+   2010-17: first day: n  80 win  62% avg  +3.1% | sessions 1-5: n  86 win  55% avg  -1.5% | 6+: n  54 win  87% avg  +9.9% | 6-15: n  36 win  89% avg  +8.1% | 16-40: n   7 win 100% avg +17.5%
+   2018-26: first day: n 111 win  77% avg +14.1% | sessions 1-5: n 145 win  77% avg +11.7% | 6+: n 151 win  77% avg +11.1% | 6-15: n  75 win  65% avg +10.1% | 16-40: n  44 win  84% avg  +8.2%
+   pre-registered check: signals 6+ sessions in +8.0% vs first-day +7.6% -> SUPPORTED; US clusters: 20
+
+(3) trades taken by era (count, winners, average, worst)
+   live                           2013-19: n  33 win  70% avg +10.4% worst -21.6% | 2020-26: n  36 win  72% avg  +7.8% worst -15.5% | years with a trade: 13 of 14
+   A at most 2 before the turn    2013-19: n  32 win  72% avg +12.5% worst -21.6% | 2020-26: n  33 win  79% avg  +9.1% worst -9.9% | years with a trade: 13 of 14
+   A at most 0 (plan A)           2013-19: n  26 win  73% avg +16.8% worst -12.6% | 2020-26: n  25 win  84% avg  +9.4% worst -12.3% | years with a trade: 8 of 14
+   B from session 5               2013-19: n  26 win  85% avg +21.3% worst -11.6% | 2020-26: n  16 win  81% avg +10.2% worst -9.1% | years with a trade: 8 of 14
+   B from session 10              2013-19: n  18 win  94% avg +26.2% worst -9.9% | 2020-26: n  11 win 100% avg +15.2% worst +1.9% | years with a trade: 6 of 14
+   C 3 sessions between buys      2013-19: n  27 win  74% avg +17.9% worst -21.6% | 2020-26: n  23 win  74% avg  +7.7% worst -11.8% | years with a trade: 13 of 14
+   C 5 sessions between buys      2013-19: n  23 win  83% avg +14.6% worst -21.6% | 2020-26: n  18 win  72% avg  +8.2% worst -9.9% | years with a trade: 13 of 14
+   D momentum <= -2.0             2013-19: n  29 win  66% avg +13.4% worst -21.6% | 2020-26: n  27 win  78% avg +10.6% worst -23.1% | years with a trade: 9 of 14
+   E5 hold 60                     2013-19: n  29 win  76% avg +18.5% worst -21.2% | 2020-26: n  28 win  68% avg +10.1% worst -11.5% | years with a trade: 13 of 14
+
+(4) EXPLORATORY (not in the plan): each variant sized so that its 2013-19 worst drawdown equals the live rule's (6.1%); size found on 2013-19 only
+   live 5.0%                                2013-19  +3.2% DD  6.1% r 0.53 | 2020-26  +4.9% DD  4.9% r 1.01 | 2023-26  +6.8% DD  2.7% r 2.57 | 2013-26  +4.1% DD  6.1% r 0.67 | 2016-26  +5.4% DD  4.9% r 1.12
+   A at most 2 before the turn 5.3%         2013-19  +3.8% DD  6.1% r 0.62 | 2020-26  +5.2% DD  3.3% r 1.56 | 2023-26  +6.5% DD  1.2% r 5.59 | 2013-26  +4.5% DD  6.1% r 0.73 | 2016-26  +6.0% DD  3.4% r 1.77 | 2020-26 growth not lower and drawdown not higher than live: True
+   A at most 0 (plan A) 6.1%                2013-19  +4.5% DD  6.1% r 0.75 | 2020-26  +5.0% DD  3.9% r 1.29 | 2023-26  +5.6% DD  1.9% r 2.99 | 2013-26  +4.7% DD  6.1% r 0.78 | 2016-26  +6.2% DD  3.9% r 1.60 | 2020-26 growth not lower and drawdown not higher than live: True
+   B from session 5 6.6%                    2013-19  +6.0% DD  6.1% r 0.99 | 2020-26  +4.5% DD  5.3% r 0.84 | 2023-26  +5.0% DD  1.8% r 2.83 | 2013-26  +5.2% DD  6.1% r 0.87 | 2016-26  +6.3% DD  6.1% r 1.04 | 2020-26 growth not lower and drawdown not higher than live: False
+   B from session 10 6.8%                   2013-19  +5.3% DD  6.0% r 0.88 | 2020-26  +4.6% DD  2.6% r 1.79 | 2023-26  +4.6% DD  0.4% r 12.32 | 2013-26  +5.0% DD  6.0% r 0.82 | 2016-26  +5.3% DD  2.9% r 1.81 | 2020-26 growth not lower and drawdown not higher than live: False
+   C 3 sessions between buys 8.0%           2013-19  +6.3% DD  6.1% r 1.05 | 2020-26  +4.9% DD  4.2% r 1.17 | 2023-26  +5.2% DD  1.9% r 2.67 | 2013-26  +5.6% DD  6.1% r 0.93 | 2016-26  +6.4% DD  6.1% r 1.06 | 2020-26 growth not lower and drawdown not higher than live: True
+   C 5 sessions between buys 9.6%           2013-19  +5.5% DD  6.1% r 0.90 | 2020-26  +4.9% DD  4.0% r 1.24 | 2023-26  +5.6% DD  1.8% r 3.13 | 2013-26  +5.2% DD  6.1% r 0.85 | 2016-26  +5.9% DD  6.0% r 0.98 | 2020-26 growth not lower and drawdown not higher than live: True
+   D momentum <= -2.0 5.5%                  2013-19  +3.8% DD  6.1% r 0.63 | 2020-26  +5.2% DD  4.5% r 1.17 | 2023-26  +6.2% DD  2.9% r 2.11 | 2013-26  +4.5% DD  6.1% r 0.74 | 2016-26  +6.0% DD  4.5% r 1.35 | 2020-26 growth not lower and drawdown not higher than live: True
+   E5 hold 60 5.3%                          2013-19  +4.8% DD  6.1% r 0.78 | 2020-26  +5.0% DD  5.2% r 0.97 | 2023-26  +6.7% DD  4.4% r 1.53 | 2013-26  +4.9% DD  6.1% r 0.80 | 2016-26  +6.1% DD  5.2% r 1.19 | 2020-26 growth not lower and drawdown not higher than live: False
+   C 3 + A 2 (combination) 8.0%             2013-19  +6.3% DD  6.1% r 1.05 | 2020-26  +4.9% DD  4.2% r 1.17 | 2023-26  +5.2% DD  1.9% r 2.67 | 2013-26  +5.6% DD  6.1% r 0.93 | 2016-26  +6.4% DD  6.1% r 1.06 | 2020-26 growth not lower and drawdown not higher than live: True
+   C 2 sessions between buys 6.7%           2013-19  +5.0% DD  6.1% r 0.83 | 2020-26  +4.3% DD  4.1% r 1.03 | 2023-26  +5.3% DD  1.5% r 3.40 | 2013-26  +4.7% DD  6.1% r 0.76 | 2016-26  +5.2% DD  4.9% r 1.06 | 2020-26 growth not lower and drawdown not higher than live: False
+   C 10 sessions between buys 11.8%         2013-19  +4.5% DD  6.1% r 0.74 | 2020-26  +5.2% DD  3.9% r 1.34 | 2023-26  +6.1% DD  1.6% r 3.92 | 2013-26  +4.8% DD  6.1% r 0.79 | 2016-26  +5.7% DD  3.9% r 1.47 | 2020-26 growth not lower and drawdown not higher than live: True
+   A at most 3 before the turn 5.3%         2013-19  +3.9% DD  6.1% r 0.63 | 2020-26  +5.3% DD  3.7% r 1.45 | 2023-26  +6.9% DD  1.7% r 3.98 | 2013-26  +4.6% DD  6.1% r 0.75 | 2016-26  +6.0% DD  3.7% r 1.64 | 2020-26 growth not lower and drawdown not higher than live: True

@@ -1,0 +1,184 @@
+signals 761; live_trades rows 456
+check: no-wait/no-stop reproduces the live trades: 456 rows, 456 matched, max |net diff| 0.00e+00
+
+==== DESIGN (live: traded  64% entry  +0.0% | win  82% avg +19.1% worst5  -11.5% stops   0% early  70% | +1.6%/y DD  6.5% ratio  0.24)
+  T3 reversal day / 1.5 ATR under low      traded  64% entry  +3.0% | win  75% avg +16.2% worst5  -12.7% stops  11% early  58% | +3.0%/y DD  4.8% ratio  0.63
+  T3 reversal day / 1.0 ATR under low      traded  65% entry  +3.0% | win  69% avg +14.5% worst5  -13.9% stops  19% early  57% | +3.0%/y DD  4.8% ratio  0.63
+  T3 reversal day / 6% under low           traded  65% entry  +3.0% | win  68% avg +14.2% worst5  -15.1% stops  19% early  57% | +3.0%/y DD  5.0% ratio  0.60
+  T7 above 5d avg / 4% under low           traded  66% entry  +3.1% | win  69% avg +14.6% worst5  -13.1% stops  19% early  53% | +2.9%/y DD  5.7% ratio  0.52
+  T7 above 5d avg / 1.0 ATR under low      traded  65% entry  +3.0% | win  72% avg +15.8% worst5  -13.1% stops  15% early  53% | +2.9%/y DD  5.7% ratio  0.51
+  T7 above 5d avg / 1.5 ATR under low      traded  65% entry  +2.9% | win  78% avg +17.4% worst5  -12.0% stops   8% early  54% | +2.7%/y DD  5.3% ratio  0.50
+  T7 above 5d avg / 2% under low           traded  67% entry  +3.1% | win  65% avg +14.0% worst5  -11.9% stops  24% early  52% | +2.7%/y DD  5.4% ratio  0.50
+  T1 bounce 3% / 0.5 ATR under low         traded  75% entry  +0.9% | win  57% avg +12.2% worst5  -12.5% stops  37% early  46% | +2.7%/y DD  5.4% ratio  0.49
+  T3 reversal day / 2% under low           traded  68% entry  +3.2% | win  62% avg +12.4% worst5  -13.0% stops  29% early  56% | +2.9%/y DD  6.2% ratio  0.47
+  T2 bounce 5% / 2% under low              traded  72% entry  +1.1% | win  58% avg +12.0% worst5  -12.5% stops  36% early  46% | +2.9%/y DD  6.2% ratio  0.47
+  T4 Z turn 0.5 / 2% under low             traded  71% entry  +1.5% | win  62% avg +13.4% worst5  -11.3% stops  30% early  47% | +2.9%/y DD  6.4% ratio  0.46
+  T1 bounce 3% / 2% under low              traded  76% entry  +0.9% | win  55% avg +11.3% worst5  -12.2% stops  40% early  46% | +2.5%/y DD  5.4% ratio  0.46
+  T2 bounce 5% / 0.5 ATR under low         traded  71% entry  +1.0% | win  61% avg +13.0% worst5  -12.6% stops  32% early  47% | +2.9%/y DD  6.4% ratio  0.45
+  T5 Z turn 1.0 / 1.5 ATR under low        traded  63% entry  +3.5% | win  81% avg +17.0% worst5  -11.8% stops   6% early  51% | +2.5%/y DD  5.5% ratio  0.45
+  T7 above 5d avg / 6% under low           traded  65% entry  +3.0% | win  72% avg +15.5% worst5  -14.4% stops  15% early  53% | +2.8%/y DD  6.3% ratio  0.45
+  T2 bounce 5% / 1.5 ATR under low         traded  68% entry  +1.0% | win  74% avg +15.9% worst5  -14.5% stops  17% early  48% | +2.3%/y DD  5.5% ratio  0.43
+  T7 above 5d avg / 0.5 ATR under low      traded  67% entry  +3.0% | win  67% avg +14.5% worst5  -12.3% stops  22% early  52% | +2.6%/y DD  6.2% ratio  0.42
+  T6 swing low / none                      traded  60% entry  +3.5% | win  84% avg +18.9% worst5   -7.9% stops   0% early  50% | +2.3%/y DD  5.5% ratio  0.42
+  T7 above 5d avg / none                   traded  63% entry  +2.8% | win  82% avg +18.3% worst5  -10.3% stops   0% early  54% | +2.3%/y DD  5.5% ratio  0.41
+  T5 Z turn 1.0 / none                     traded  63% entry  +3.5% | win  84% avg +17.7% worst5   -8.8% stops   0% early  51% | +2.3%/y DD  5.6% ratio  0.41
+  T3 reversal day / 4% under low           traded  66% entry  +3.1% | win  64% avg +12.8% worst5  -14.3% stops  24% early  57% | +2.7%/y DD  6.6% ratio  0.41
+  T1 bounce 3% / 6% under low              traded  72% entry  +0.7% | win  63% avg +13.0% worst5  -14.3% stops  30% early  48% | +2.4%/y DD  5.8% ratio  0.41
+  T2 bounce 5% / none                      traded  63% entry  +1.0% | win  85% avg +18.9% worst5   -8.7% stops   0% early  49% | +2.3%/y DD  5.7% ratio  0.40
+  T3 reversal day / none                   traded  62% entry  +3.0% | win  81% avg +17.7% worst5   -8.6% stops   0% early  59% | +2.3%/y DD  5.8% ratio  0.39
+  T3 reversal day / 0.5 ATR under low      traded  67% entry  +3.1% | win  63% avg +12.9% worst5  -13.9% stops  26% early  56% | +2.8%/y DD  7.0% ratio  0.39
+  T1 bounce 3% / 1.0 ATR under low         traded  72% entry  +0.7% | win  64% avg +13.5% worst5  -14.3% stops  30% early  48% | +2.3%/y DD  6.1% ratio  0.38
+  T4 Z turn 0.5 / none                     traded  64% entry  +1.2% | win  84% avg +19.0% worst5   -8.5% stops   0% early  49% | +2.0%/y DD  5.3% ratio  0.38
+  T6 swing low / 1.5 ATR under low         traded  62% entry  +3.5% | win  80% avg +18.0% worst5  -11.5% stops   8% early  50% | +2.4%/y DD  6.3% ratio  0.37
+  T2 bounce 5% / 6% under low              traded  69% entry  +1.0% | win  66% avg +14.1% worst5  -14.1% stops  25% early  48% | +2.6%/y DD  7.1% ratio  0.37
+  T6 swing low / 0.5 ATR under low         traded  63% entry  +3.6% | win  72% avg +15.6% worst5  -13.5% stops  19% early  49% | +2.3%/y DD  6.2% ratio  0.37
+  T6 swing low / 2% under low              traded  64% entry  +3.6% | win  70% avg +15.1% worst5  -13.9% stops  22% early  49% | +2.3%/y DD  6.2% ratio  0.36
+  T1 bounce 3% / 4% under low              traded  73% entry  +0.9% | win  60% avg +12.1% worst5  -13.6% stops  36% early  47% | +2.3%/y DD  6.3% ratio  0.36
+  T4 Z turn 0.5 / 1.5 ATR under low        traded  66% entry  +1.3% | win  78% avg +17.6% worst5  -11.2% stops  12% early  48% | +2.2%/y DD  6.1% ratio  0.35
+  T2 bounce 5% / 1.0 ATR under low         traded  69% entry  +1.0% | win  68% avg +14.5% worst5  -14.0% stops  25% early  48% | +2.6%/y DD  7.3% ratio  0.35
+  T6 swing low / 1.0 ATR under low         traded  62% entry  +3.6% | win  76% avg +16.7% worst5  -13.3% stops  13% early  50% | +2.2%/y DD  6.3% ratio  0.35
+  T4 Z turn 0.5 / 4% under low             traded  68% entry  +1.5% | win  68% avg +14.4% worst5  -13.0% stops  24% early  48% | +2.6%/y DD  7.2% ratio  0.35
+  T2 bounce 5% / 4% under low              traded  70% entry  +1.0% | win  63% avg +12.9% worst5  -13.3% stops  31% early  48% | +2.5%/y DD  7.1% ratio  0.35
+  T6 swing low / 4% under low              traded  63% entry  +3.7% | win  73% avg +15.8% worst5  -14.6% stops  17% early  50% | +2.2%/y DD  6.3% ratio  0.35
+  T4 Z turn 0.5 / 0.5 ATR under low        traded  70% entry  +1.5% | win  65% avg +14.1% worst5  -11.7% stops  27% early  47% | +2.4%/y DD  7.1% ratio  0.34
+  T5 Z turn 1.0 / 1.0 ATR under low        traded  64% entry  +3.6% | win  77% avg +15.7% worst5  -13.4% stops  12% early  50% | +2.4%/y DD  7.0% ratio  0.34
+  T5 Z turn 1.0 / 2% under low             traded  66% entry  +3.8% | win  70% avg +13.4% worst5  -13.5% stops  22% early  50% | +2.3%/y DD  6.8% ratio  0.33
+  T5 Z turn 1.0 / 4% under low             traded  65% entry  +3.7% | win  72% avg +13.8% worst5  -14.3% stops  18% early  50% | +2.2%/y DD  6.9% ratio  0.32
+  T5 Z turn 1.0 / 6% under low             traded  65% entry  +3.7% | win  74% avg +14.8% worst5  -15.0% stops  13% early  50% | +2.3%/y DD  7.2% ratio  0.32
+  T1 bounce 3% / 1.5 ATR under low         traded  71% entry  +0.6% | win  70% avg +14.7% worst5  -14.9% stops  23% early  48% | +1.9%/y DD  5.8% ratio  0.32
+  T4 Z turn 0.5 / 1.0 ATR under low        traded  67% entry  +1.4% | win  72% avg +16.1% worst5  -12.2% stops  19% early  48% | +2.3%/y DD  7.2% ratio  0.32
+  T5 Z turn 1.0 / 0.5 ATR under low        traded  66% entry  +3.7% | win  71% avg +13.9% worst5  -13.5% stops  20% early  50% | +2.2%/y DD  7.0% ratio  0.31
+  T6 swing low / 6% under low              traded  63% entry  +3.6% | win  74% avg +16.0% worst5  -15.4% stops  15% early  50% | +2.0%/y DD  6.9% ratio  0.30
+  T4 Z turn 0.5 / 6% under low             traded  67% entry  +1.4% | win  71% avg +15.5% worst5  -13.8% stops  20% early  48% | +2.1%/y DD  7.7% ratio  0.27
+  T0 no wait / none                        traded  64% entry  +0.0% | win  82% avg +19.1% worst5  -11.5% stops   0% early  70% | +1.6%/y DD  6.5% ratio  0.24
+  T1 bounce 3% / none                      traded  64% entry  +0.8% | win  85% avg +18.5% worst5   -8.5% stops   0% early  49% | +1.3%/y DD  5.3% ratio  0.24
+  T0 no wait / 2% under low                traded  74% entry  +0.0% | win  26% avg  +4.0% worst5  -10.7% stops  73% early  67% | +1.2%/y DD 11.0% ratio  0.11
+  T0 no wait / 0.5 ATR under low           traded  74% entry  +0.0% | win  30% avg  +5.1% worst5  -10.8% stops  69% early  68% | +1.1%/y DD 13.4% ratio  0.08
+  T0 no wait / 1.5 ATR under low           traded  80% entry  +0.0% | win  46% avg  +8.5% worst5  -12.2% stops  50% early  69% | +1.1%/y DD 14.3% ratio  0.08
+  T0 no wait / 6% under low                traded  80% entry  +0.0% | win  37% avg  +5.8% worst5  -12.4% stops  61% early  68% | +1.0%/y DD 15.1% ratio  0.07
+  T0 no wait / 4% under low                traded  78% entry  +0.0% | win  32% avg  +5.0% worst5  -10.8% stops  67% early  69% | +0.3%/y DD 16.5% ratio  0.02
+  T0 no wait / 1.0 ATR under low           traded  80% entry  +0.0% | win  38% avg  +6.4% worst5  -11.3% stops  60% early  68% | -0.2%/y DD 16.4% ratio -0.01
+
+==== CONFIRM (live: traded  55% entry  +0.0% | win  71% avg  +7.4% worst5  -11.7% stops   0% early  51% | +1.2%/y DD  5.3% ratio  0.23)
+  T1 bounce 3% / 2% under low              traded  63% entry  +0.7% | win  55% avg  +4.4% worst5  -12.7% stops  39% early  41% | +1.2%/y DD  4.0% ratio  0.31
+  T1 bounce 3% / 1.0 ATR under low         traded  59% entry  +0.9% | win  61% avg  +4.9% worst5  -15.1% stops  29% early  39% | +1.1%/y DD  3.7% ratio  0.29
+  T2 bounce 5% / none                      traded  52% entry  +2.4% | win  66% avg  +6.4% worst5  -12.6% stops   0% early  45% | +1.4%/y DD  4.9% ratio  0.28
+  T1 bounce 3% / 4% under low              traded  60% entry  +0.8% | win  59% avg  +4.8% worst5  -14.0% stops  31% early  40% | +1.2%/y DD  4.2% ratio  0.28
+  T1 bounce 3% / none                      traded  54% entry  +1.1% | win  69% avg  +7.3% worst5  -13.6% stops   0% early  38% | +1.2%/y DD  4.4% ratio  0.26
+  T1 bounce 3% / 0.5 ATR under low         traded  62% entry  +0.7% | win  55% avg  +4.1% worst5  -13.0% stops  38% early  41% | +1.0%/y DD  4.0% ratio  0.25
+  T0 no wait / none                        traded  55% entry  +0.0% | win  71% avg  +7.4% worst5  -11.7% stops   0% early  51% | +1.2%/y DD  5.3% ratio  0.23
+  T1 bounce 3% / 6% under low              traded  59% entry  +1.0% | win  63% avg  +5.1% worst5  -15.4% stops  26% early  39% | +1.0%/y DD  4.5% ratio  0.23
+  T1 bounce 3% / 1.5 ATR under low         traded  57% entry  +1.0% | win  64% avg  +5.2% worst5  -16.1% stops  21% early  40% | +1.0%/y DD  4.7% ratio  0.21
+  T2 bounce 5% / 6% under low              traded  56% entry  +2.3% | win  61% avg  +4.4% worst5  -15.7% stops  24% early  45% | +0.9%/y DD  5.2% ratio  0.18
+  T2 bounce 5% / 1.0 ATR under low         traded  56% entry  +2.1% | win  61% avg  +4.5% worst5  -15.2% stops  25% early  46% | +0.8%/y DD  5.2% ratio  0.16
+  T7 above 5d avg / 6% under low           traded  55% entry  +0.5% | win  66% avg  +6.3% worst5  -15.2% stops  16% early  34% | +0.8%/y DD  5.1% ratio  0.15
+  T2 bounce 5% / 4% under low              traded  57% entry  +2.1% | win  58% avg  +4.1% worst5  -14.3% stops  30% early  45% | +0.7%/y DD  5.3% ratio  0.13
+  T6 swing low / 4% under low              traded  54% entry  +1.8% | win  58% avg  +5.0% worst5  -15.8% stops  23% early  39% | +0.6%/y DD  5.2% ratio  0.11
+  T6 swing low / 1.0 ATR under low         traded  53% entry  +1.7% | win  59% avg  +5.4% worst5  -14.8% stops  20% early  38% | +0.4%/y DD  4.7% ratio  0.10
+  T6 swing low / 2% under low              traded  55% entry  +1.8% | win  55% avg  +4.4% worst5  -14.4% stops  31% early  39% | +0.4%/y DD  4.9% ratio  0.09
+  T2 bounce 5% / 2% under low              traded  59% entry  +2.0% | win  55% avg  +3.8% worst5  -13.0% stops  35% early  46% | +0.4%/y DD  4.9% ratio  0.09
+  T7 above 5d avg / 1.0 ATR under low      traded  55% entry  +0.5% | win  65% avg  +6.1% worst5  -14.5% stops  19% early  35% | +0.4%/y DD  5.2% ratio  0.08
+  T6 swing low / 6% under low              traded  53% entry  +1.8% | win  61% avg  +5.5% worst5  -16.0% stops  17% early  38% | +0.4%/y DD  5.2% ratio  0.08
+  T4 Z turn 0.5 / 4% under low             traded  60% entry  +1.4% | win  56% avg  +3.6% worst5  -15.7% stops  31% early  45% | +0.5%/y DD  7.1% ratio  0.07
+  T2 bounce 5% / 0.5 ATR under low         traded  58% entry  +2.0% | win  55% avg  +3.6% worst5  -13.3% stops  35% early  46% | +0.4%/y DD  5.1% ratio  0.07
+  T7 above 5d avg / 1.5 ATR under low      traded  55% entry  +0.5% | win  66% avg  +6.2% worst5  -12.9% stops  14% early  35% | +0.4%/y DD  5.7% ratio  0.07
+  T6 swing low / none                      traded  52% entry  +1.8% | win  65% avg  +6.5% worst5  -15.2% stops   0% early  38% | +0.4%/y DD  6.1% ratio  0.06
+  T4 Z turn 0.5 / 6% under low             traded  58% entry  +1.5% | win  59% avg  +4.1% worst5  -16.1% stops  24% early  44% | +0.5%/y DD  7.5% ratio  0.06
+  T4 Z turn 0.5 / 0.5 ATR under low        traded  62% entry  +1.3% | win  52% avg  +3.3% worst5  -15.2% stops  36% early  46% | +0.4%/y DD  6.8% ratio  0.06
+  T3 reversal day / 4% under low           traded  59% entry  +2.4% | win  57% avg  +3.4% worst5  -15.9% stops  30% early  43% | +0.4%/y DD  6.7% ratio  0.06
+  T6 swing low / 1.5 ATR under low         traded  53% entry  +1.8% | win  62% avg  +5.6% worst5  -13.4% stops  14% early  38% | +0.2%/y DD  4.9% ratio  0.05
+  T4 Z turn 0.5 / 1.0 ATR under low        traded  59% entry  +1.4% | win  58% avg  +4.2% worst5  -15.4% stops  27% early  45% | +0.3%/y DD  6.7% ratio  0.05
+  T6 swing low / 0.5 ATR under low         traded  55% entry  +1.8% | win  54% avg  +4.3% worst5  -14.7% stops  31% early  40% | +0.2%/y DD  4.8% ratio  0.04
+  T4 Z turn 0.5 / 2% under low             traded  62% entry  +1.3% | win  51% avg  +3.1% worst5  -15.2% stops  37% early  46% | +0.3%/y DD  6.9% ratio  0.04
+  T3 reversal day / none                   traded  54% entry  +2.6% | win  64% avg  +4.7% worst5  -15.7% stops   0% early  44% | +0.3%/y DD  7.8% ratio  0.04
+  T7 above 5d avg / 4% under low           traded  56% entry  +0.5% | win  63% avg  +5.5% worst5  -15.7% stops  22% early  34% | +0.2%/y DD  5.8% ratio  0.04
+  T7 above 5d avg / none                   traded  53% entry  +0.5% | win  69% avg  +6.9% worst5  -13.3% stops   0% early  34% | +0.3%/y DD  6.1% ratio  0.04
+  T5 Z turn 1.0 / 4% under low             traded  53% entry  +2.3% | win  62% avg  +5.1% worst5  -15.9% stops  21% early  42% | +0.2%/y DD  5.7% ratio  0.03
+  T2 bounce 5% / 1.5 ATR under low         traded  54% entry  +2.3% | win  62% avg  +4.5% worst5  -16.3% stops  19% early  46% | +0.2%/y DD  5.7% ratio  0.03
+  T3 reversal day / 6% under low           traded  58% entry  +2.6% | win  60% avg  +3.7% worst5  -16.5% stops  24% early  43% | +0.2%/y DD  7.1% ratio  0.03
+  T3 reversal day / 1.0 ATR under low      traded  58% entry  +2.5% | win  59% avg  +3.8% worst5  -15.5% stops  25% early  43% | +0.2%/y DD  6.7% ratio  0.03
+  T4 Z turn 0.5 / none                     traded  54% entry  +1.6% | win  63% avg  +5.2% worst5  -15.2% stops   0% early  46% | +0.2%/y DD  8.4% ratio  0.03
+  T3 reversal day / 1.5 ATR under low      traded  57% entry  +2.6% | win  60% avg  +3.5% worst5  -17.1% stops  21% early  43% | +0.2%/y DD  6.9% ratio  0.03
+  T3 reversal day / 0.5 ATR under low      traded  61% entry  +2.4% | win  53% avg  +2.9% worst5  -15.2% stops  36% early  44% | +0.2%/y DD  7.1% ratio  0.02
+  T3 reversal day / 2% under low           traded  61% entry  +2.4% | win  54% avg  +3.1% worst5  -14.7% stops  35% early  44% | +0.1%/y DD  6.9% ratio  0.01
+  T7 above 5d avg / 2% under low           traded  57% entry  +0.5% | win  58% avg  +4.7% worst5  -14.8% stops  31% early  36% | +0.0%/y DD  5.8% ratio  0.01
+  T7 above 5d avg / 0.5 ATR under low      traded  57% entry  +0.5% | win  59% avg  +4.9% worst5  -15.0% stops  30% early  36% | +0.0%/y DD  5.8% ratio  0.01
+  T4 Z turn 0.5 / 1.5 ATR under low        traded  57% entry  +1.5% | win  59% avg  +4.1% worst5  -16.4% stops  22% early  45% | +0.0%/y DD  7.1% ratio  0.00
+  T0 no wait / 0.5 ATR under low           traded  68% entry  +0.0% | win  30% avg  +0.9% worst5  -10.3% stops  69% early  52% | -0.0%/y DD  7.5% ratio -0.00
+  T5 Z turn 1.0 / 6% under low             traded  53% entry  +2.2% | win  64% avg  +5.4% worst5  -16.6% stops  17% early  42% | -0.0%/y DD  5.6% ratio -0.01
+  T0 no wait / 4% under low                traded  67% entry  +0.0% | win  36% avg  +0.9% worst5  -10.8% stops  63% early  53% | -0.1%/y DD  7.7% ratio -0.02
+  T5 Z turn 1.0 / 1.0 ATR under low        traded  53% entry  +2.2% | win  63% avg  +5.3% worst5  -16.5% stops  20% early  43% | -0.1%/y DD  5.5% ratio -0.03
+  T5 Z turn 1.0 / 2% under low             traded  56% entry  +2.3% | win  59% avg  +4.4% worst5  -14.4% stops  28% early  42% | -0.2%/y DD  7.0% ratio -0.03
+  T5 Z turn 1.0 / 0.5 ATR under low        traded  55% entry  +2.1% | win  58% avg  +4.4% worst5  -14.7% stops  28% early  43% | -0.3%/y DD  6.9% ratio -0.05
+  T0 no wait / 2% under low                traded  67% entry  +0.0% | win  28% avg  +0.4% worst5  -10.4% stops  71% early  53% | -0.4%/y DD  7.4% ratio -0.05
+  T5 Z turn 1.0 / none                     traded  52% entry  +2.2% | win  66% avg  +6.3% worst5  -16.5% stops   0% early  42% | -0.4%/y DD  6.8% ratio -0.06
+  T5 Z turn 1.0 / 1.5 ATR under low        traded  53% entry  +2.2% | win  64% avg  +5.5% worst5  -16.6% stops  15% early  42% | -0.4%/y DD  5.6% ratio -0.07
+  T0 no wait / 1.5 ATR under low           traded  64% entry  +0.0% | win  47% avg  +2.5% worst5  -13.3% stops  50% early  52% | -0.5%/y DD  6.7% ratio -0.07
+  T0 no wait / 6% under low                traded  65% entry  +0.0% | win  45% avg  +2.2% worst5  -11.4% stops  54% early  52% | -0.6%/y DD  6.9% ratio -0.08
+  T0 no wait / 1.0 ATR under low           traded  67% entry  +0.0% | win  37% avg  +1.2% worst5  -11.8% stops  61% early  54% | -0.8%/y DD  8.6% ratio -0.09
+
+==== 2023-26 (live: traded  42% entry  +0.0% | win  67% avg  +4.5% worst5  -10.7% stops   0% early  19% | +1.2%/y DD  5.3% ratio  0.22)
+  T1 bounce 3% / 6% under low              traded  42% entry  +3.0% | win  50% avg  +0.8% worst5  -13.6% stops  17% early  15% | +1.3%/y DD  3.8% ratio  0.36
+  T1 bounce 3% / none                      traded  41% entry  +3.1% | win  53% avg  +1.5% worst5  -13.9% stops   0% early  14% | +1.2%/y DD  4.3% ratio  0.29
+  T2 bounce 5% / none                      traded  39% entry  +4.1% | win  48% avg  +0.6% worst5  -13.2% stops   0% early  19% | +1.1%/y DD  4.1% ratio  0.26
+  T1 bounce 3% / 1.5 ATR under low         traded  42% entry  +3.0% | win  48% avg  +0.3% worst5  -13.7% stops  17% early  15% | +1.0%/y DD  3.8% ratio  0.26
+  T1 bounce 3% / 1.0 ATR under low         traded  43% entry  +2.9% | win  47% avg  +0.1% worst5  -13.3% stops  26% early  17% | +0.9%/y DD  3.7% ratio  0.25
+  T1 bounce 3% / 4% under low              traded  43% entry  +2.9% | win  47% avg  +0.1% worst5  -13.4% stops  25% early  17% | +0.9%/y DD  3.7% ratio  0.25
+  T2 bounce 5% / 6% under low              traded  40% entry  +4.0% | win  47% avg  -0.2% worst5  -13.6% stops  16% early  20% | +1.0%/y DD  3.9% ratio  0.25
+  T0 no wait / none                        traded  42% entry  +0.0% | win  67% avg  +4.5% worst5  -10.7% stops   0% early  19% | +1.2%/y DD  5.3% ratio  0.22
+  T2 bounce 5% / 1.5 ATR under low         traded  40% entry  +4.0% | win  45% avg  -0.5% worst5  -13.6% stops  14% early  20% | +0.6%/y DD  4.0% ratio  0.16
+  T1 bounce 3% / 0.5 ATR under low         traded  46% entry  +2.4% | win  44% avg  -0.2% worst5  -11.4% stops  35% early  23% | +0.6%/y DD  4.0% ratio  0.16
+  T1 bounce 3% / 2% under low              traded  47% entry  +2.4% | win  43% avg  -0.3% worst5  -11.4% stops  38% early  22% | +0.6%/y DD  4.0% ratio  0.16
+  T2 bounce 5% / 4% under low              traded  40% entry  +3.8% | win  44% avg  -0.8% worst5  -13.5% stops  24% early  22% | +0.6%/y DD  3.8% ratio  0.15
+  T2 bounce 5% / 1.0 ATR under low         traded  40% entry  +3.8% | win  44% avg  -0.9% worst5  -13.3% stops  26% early  22% | +0.6%/y DD  3.9% ratio  0.15
+  T7 above 5d avg / 6% under low           traded  43% entry  +6.3% | win  34% avg  -4.3% worst5  -20.7% stops  28% early  17% | +0.2%/y DD  4.9% ratio  0.04
+  T2 bounce 5% / 2% under low              traded  44% entry  +3.3% | win  41% avg  -1.1% worst5  -11.8% stops  33% early  26% | +0.2%/y DD  4.2% ratio  0.04
+  T2 bounce 5% / 0.5 ATR under low         traded  44% entry  +3.3% | win  41% avg  -1.2% worst5  -11.8% stops  33% early  26% | +0.1%/y DD  4.3% ratio  0.03
+  T7 above 5d avg / none                   traded  42% entry  +6.4% | win  35% avg  -3.4% worst5  -17.0% stops   0% early  17% | +0.0%/y DD  5.7% ratio  0.00
+  T6 swing low / 6% under low              traded  43% entry  +6.7% | win  28% avg  -4.2% worst5  -20.7% stops  28% early  21% | -0.1%/y DD  4.6% ratio -0.01
+  T6 swing low / none                      traded  42% entry  +6.8% | win  29% avg  -3.5% worst5  -17.5% stops   0% early  21% | -0.1%/y DD  5.2% ratio -0.01
+  T3 reversal day / 6% under low           traded  43% entry  +4.2% | win  36% avg  -3.9% worst5  -17.5% stops  21% early  15% | -0.2%/y DD  7.1% ratio -0.03
+  T4 Z turn 0.5 / 6% under low             traded  44% entry  +4.1% | win  33% avg  -4.1% worst5  -18.2% stops  24% early  15% | -0.3%/y DD  7.5% ratio -0.03
+  T7 above 5d avg / 1.5 ATR under low      traded  43% entry  +6.4% | win  32% avg  -4.5% worst5  -20.1% stops  26% early  17% | -0.2%/y DD  4.8% ratio -0.04
+  T5 Z turn 1.0 / none                     traded  42% entry  +6.9% | win  29% avg  -4.0% worst5  -17.0% stops   0% early  31% | -0.3%/y DD  6.6% ratio -0.05
+  T3 reversal day / none                   traded  42% entry  +4.2% | win  37% avg  -3.7% worst5  -17.0% stops   0% early  13% | -0.4%/y DD  7.8% ratio -0.05
+  T4 Z turn 0.5 / none                     traded  42% entry  +4.2% | win  33% avg  -4.0% worst5  -17.6% stops   0% early  15% | -0.5%/y DD  8.4% ratio -0.06
+  T5 Z turn 1.0 / 6% under low             traded  43% entry  +7.0% | win  26% avg  -5.1% worst5  -20.7% stops  30% early  30% | -0.3%/y DD  5.6% ratio -0.06
+  T7 above 5d avg / 1.0 ATR under low      traded  44% entry  +6.2% | win  31% avg  -4.7% worst5  -19.8% stops  37% early  19% | -0.3%/y DD  5.0% ratio -0.07
+  T3 reversal day / 1.0 ATR under low      traded  43% entry  +4.2% | win  34% avg  -4.0% worst5  -17.3% stops  28% early  15% | -0.5%/y DD  6.7% ratio -0.07
+  T4 Z turn 0.5 / 1.0 ATR under low        traded  44% entry  +4.0% | win  31% avg  -4.2% worst5  -18.1% stops  31% early  16% | -0.5%/y DD  6.7% ratio -0.07
+  T0 no wait / 0.5 ATR under low           traded  60% entry  +0.0% | win  28% avg  -0.8% worst5  -12.2% stops  71% early  41% | -0.6%/y DD  7.3% ratio -0.08
+  T4 Z turn 0.5 / 1.5 ATR under low        traded  44% entry  +4.2% | win  31% avg  -4.4% worst5  -17.4% stops  24% early  15% | -0.5%/y DD  7.1% ratio -0.08
+  T7 above 5d avg / 4% under low           traded  44% entry  +6.2% | win  31% avg  -4.9% worst5  -19.1% stops  35% early  19% | -0.4%/y DD  4.8% ratio -0.08
+  T3 reversal day / 1.5 ATR under low      traded  43% entry  +4.2% | win  34% avg  -4.3% worst5  -17.0% stops  21% early  15% | -0.6%/y DD  6.9% ratio -0.08
+  T6 swing low / 1.5 ATR under low         traded  43% entry  +6.7% | win  26% avg  -4.4% worst5  -20.2% stops  26% early  21% | -0.4%/y DD  4.5% ratio -0.08
+  T0 no wait / 4% under low                traded  57% entry  +0.0% | win  35% avg  -1.0% worst5  -13.7% stops  63% early  42% | -0.7%/y DD  7.7% ratio -0.09
+  T0 no wait / 1.5 ATR under low           traded  55% entry  +0.0% | win  40% avg  -0.7% worst5  -10.6% stops  59% early  38% | -0.6%/y DD  6.7% ratio -0.09
+  T0 no wait / 2% under low                traded  59% entry  +0.0% | win  29% avg  -1.1% worst5  -14.8% stops  71% early  42% | -0.7%/y DD  7.3% ratio -0.09
+  T4 Z turn 0.5 / 4% under low             traded  44% entry  +4.1% | win  31% avg  -4.6% worst5  -17.6% stops  33% early  16% | -0.7%/y DD  7.1% ratio -0.11
+  T6 swing low / 1.0 ATR under low         traded  44% entry  +6.5% | win  26% avg  -4.6% worst5  -20.4% stops  37% early  22% | -0.5%/y DD  4.7% ratio -0.11
+  T3 reversal day / 4% under low           traded  44% entry  +4.1% | win  33% avg  -4.5% worst5  -17.5% stops  31% early  17% | -0.7%/y DD  6.7% ratio -0.11
+  T5 Z turn 1.0 / 1.5 ATR under low        traded  43% entry  +7.0% | win  25% avg  -5.3% worst5  -20.1% stops  28% early  30% | -0.6%/y DD  5.6% ratio -0.11
+  T0 no wait / 6% under low                traded  56% entry  +0.0% | win  39% avg  -0.7% worst5  -11.3% stops  59% early  38% | -0.8%/y DD  6.9% ratio -0.12
+  T0 no wait / 1.0 ATR under low           traded  59% entry  +0.0% | win  32% avg  -1.3% worst5  -13.5% stops  67% early  44% | -1.0%/y DD  8.6% ratio -0.12
+  T4 Z turn 0.5 / 0.5 ATR under low        traded  48% entry  +3.6% | win  29% avg  -4.1% worst5  -16.9% stops  39% early  22% | -0.8%/y DD  6.8% ratio -0.12
+  T4 Z turn 0.5 / 2% under low             traded  48% entry  +3.6% | win  29% avg  -4.2% worst5  -16.9% stops  39% early  22% | -0.9%/y DD  6.9% ratio -0.13
+  T6 swing low / 4% under low              traded  44% entry  +6.6% | win  26% avg  -4.8% worst5  -20.4% stops  35% early  22% | -0.6%/y DD  4.5% ratio -0.13
+  T5 Z turn 1.0 / 1.0 ATR under low        traded  44% entry  +6.7% | win  24% avg  -5.4% worst5  -20.4% stops  39% early  31% | -0.7%/y DD  5.5% ratio -0.13
+  T3 reversal day / 0.5 ATR under low      traded  46% entry  +3.9% | win  32% avg  -4.1% worst5  -17.0% stops  37% early  21% | -0.9%/y DD  7.0% ratio -0.13
+  T3 reversal day / 2% under low           traded  46% entry  +3.9% | win  32% avg  -4.1% worst5  -17.0% stops  37% early  21% | -1.0%/y DD  6.9% ratio -0.14
+  T7 above 5d avg / 0.5 ATR under low      traded  47% entry  +5.6% | win  29% avg  -5.1% worst5  -18.3% stops  48% early  24% | -0.8%/y DD  5.8% ratio -0.14
+  T7 above 5d avg / 2% under low           traded  47% entry  +5.6% | win  29% avg  -5.1% worst5  -18.3% stops  48% early  24% | -0.8%/y DD  5.8% ratio -0.14
+  T5 Z turn 1.0 / 4% under low             traded  44% entry  +6.8% | win  24% avg  -5.6% worst5  -20.4% stops  35% early  31% | -0.9%/y DD  5.7% ratio -0.15
+  T6 swing low / 0.5 ATR under low         traded  46% entry  +6.2% | win  25% avg  -5.0% worst5  -19.8% stops  47% early  26% | -0.8%/y DD  4.8% ratio -0.16
+  T6 swing low / 2% under low              traded  46% entry  +6.2% | win  25% avg  -5.0% worst5  -19.8% stops  47% early  26% | -0.8%/y DD  4.9% ratio -0.16
+  T5 Z turn 1.0 / 0.5 ATR under low        traded  47% entry  +6.2% | win  22% avg  -5.4% worst5  -18.7% stops  45% early  34% | -1.2%/y DD  6.9% ratio -0.17
+  T5 Z turn 1.0 / 2% under low             traded  47% entry  +6.2% | win  22% avg  -5.4% worst5  -18.7% stops  45% early  34% | -1.2%/y DD  7.0% ratio -0.17
+
+DESIGN pick: T3 reversal day / 1.5 ATR under low -> FAILS the CONFIRM rule
+  live                                     traded  64% entry  +0.0% | win  82% avg +19.1% worst5  -11.5% stops   0% early  70% | +1.6%/y DD  6.5% ratio  0.24
+  pick                                     traded  64% entry  +3.0% | win  75% avg +16.2% worst5  -12.7% stops  11% early  58% | +3.0%/y DD  4.8% ratio  0.63
+  live                                     traded  55% entry  +0.0% | win  71% avg  +7.4% worst5  -11.7% stops   0% early  51% | +1.2%/y DD  5.3% ratio  0.23
+  pick                                     traded  57% entry  +2.6% | win  60% avg  +3.5% worst5  -17.1% stops  21% early  43% | +0.2%/y DD  6.9% ratio  0.03
+  live                                     traded  42% entry  +0.0% | win  67% avg  +4.5% worst5  -10.7% stops   0% early  19% | +1.2%/y DD  5.3% ratio  0.22
+  pick                                     traded  43% entry  +4.2% | win  34% avg  -4.3% worst5  -17.0% stops  21% early  15% | -0.6%/y DD  6.9% ratio -0.08

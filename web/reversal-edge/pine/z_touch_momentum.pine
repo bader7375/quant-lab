@@ -1,0 +1,101 @@
+//@version=6
+// Z touch momentum (reversal edge research, round 60).
+// Counts how often the daily stretch Z (the scanner's formula) touches the levels +1 / +2 / +3 and -1 / -2 / -3.
+//   stretch Z = average of z10, z20, z60; z_k = sum of the last k log returns (clipped at +/-25%) / (60-bar standard deviation
+//   measured k bars earlier x sqrt(k)).
+//   Up-touch at level k: the bar where Z first reaches +k (Z >= k and the bar before < k). Down-touch: Z <= -k and the bar before > -k.
+//   Deeper levels weigh more (weight = the level: 1, 2, 3).
+// Three ways to turn the touches into one line (pick in the settings):
+//   Net touches      = sum of weight x (up-touches - down-touches) in the last N bars
+//   Touch balance    = net touches / all weighted touches  (-1 .. +1; 0 when there was no touch)
+//   Time beyond      = sum of weight x (bars with Z >= level - bars with Z <= -level) / N
+// Use on a daily chart (the stretch Z of the scanner is daily).
+indicator("Z touch momentum", shorttitle = "Z touch mom", overlay = false, precision = 2)
+
+// ---------------------------------------------------------------- inputs
+mode   = input.string("Net touches", "Line", options = ["Net touches", "Touch balance", "Time beyond levels"])
+lookback = input.int(250, "Look-back (bars)", minval = 10, maxval = 1000, tooltip = "Round 60: 250 bars was the best stand-alone momentum version; 120 bars is the one tested as a Z-swing filter (net touches <= -9).")
+clipD  = input.float(0.25, "Clip daily returns at +/-", step = 0.05)
+showT  = input.bool(true, "Mark the touches (top: up, bottom: down)")
+showZ  = input.bool(false, "Also plot the stretch Z itself")
+
+// ---------------------------------------------------------------- stretch Z (same formula as the scanner and stretch_z.pine)
+clip(float x, float c) => math.max(math.min(x, c), -c)
+float r   = clip(math.log(close / close[1]), clipD)
+float sd  = ta.stdev(r, 60, false)
+float z10 = math.sum(r, 10) / (sd[10] * math.sqrt(10))
+float z20 = math.sum(r, 20) / (sd[20] * math.sqrt(20))
+float z60 = math.sum(r, 60) / (sd[60] * math.sqrt(60))
+float z   = (z10 + z20 + z60) / 3
+
+// ---------------------------------------------------------------- touches (bool -> 0/1 numbers; na Z counts as no touch)
+upT(float lvl) => not na(z) and not na(z[1]) and z >= lvl and z[1] < lvl ? 1.0 : 0.0
+dnT(float lvl) => not na(z) and not na(z[1]) and z <= -lvl and z[1] > -lvl ? 1.0 : 0.0
+abv(float lvl) => not na(z) and z >= lvl ? 1.0 : 0.0
+blw(float lvl) => not na(z) and z <= -lvl ? 1.0 : 0.0
+
+float u1 = upT(1.0)
+float u2 = upT(2.0)
+float u3 = upT(3.0)
+float d1 = dnT(1.0)
+float d2 = dnT(2.0)
+float d3 = dnT(3.0)
+float a1 = abv(1.0)
+float a2 = abv(2.0)
+float a3 = abv(3.0)
+float b1 = blw(1.0)
+float b2 = blw(2.0)
+float b3 = blw(3.0)
+
+float U1 = math.sum(u1, lookback)
+float U2 = math.sum(u2, lookback)
+float U3 = math.sum(u3, lookback)
+float D1 = math.sum(d1, lookback)
+float D2 = math.sum(d2, lookback)
+float D3 = math.sum(d3, lookback)
+float upW = U1 + 2 * U2 + 3 * U3
+float dnW = D1 + 2 * D2 + 3 * D3
+float net = upW - dnW
+float bal = upW + dnW > 0 ? net / (upW + dnW) : 0.0
+float occ = (math.sum(a1, lookback) - math.sum(b1, lookback) + 2 * (math.sum(a2, lookback) - math.sum(b2, lookback)) + 3 * (math.sum(a3, lookback) - math.sum(b3, lookback))) / lookback
+bool  ready = bar_index >= lookback + 120          // Z needs about 120 bars before it exists, then the look-back must fill
+float val = not ready ? na : mode == "Net touches" ? net : mode == "Touch balance" ? bal : occ
+
+// ---------------------------------------------------------------- plots
+hline(0, "Zero", color = color.new(color.gray, 50), linestyle = hline.style_dotted)
+plot(val, "Z touch momentum", style = plot.style_columns, color = val >= 0 ? color.new(color.teal, 30) : color.new(color.red, 30))
+plot(showZ ? z : na, "Stretch Z", color = color.new(color.blue, 0), linewidth = 1)
+bool up3 = showT and u3 > 0
+bool up2 = showT and u2 > 0 and u3 == 0
+bool up1 = showT and u1 > 0 and u2 == 0 and u3 == 0
+bool dn3 = showT and d3 > 0
+bool dn2 = showT and d2 > 0 and d3 == 0
+bool dn1 = showT and d1 > 0 and d2 == 0 and d3 == 0
+plotshape(up1, "Up-touch +1", shape.circle, location.top, color.new(color.teal, 60), size = size.tiny)
+plotshape(up2, "Up-touch +2", shape.circle, location.top, color.new(color.teal, 30), size = size.small)
+plotshape(up3, "Up-touch +3", shape.circle, location.top, color.new(color.teal, 0), size = size.normal)
+plotshape(dn1, "Down-touch -1", shape.circle, location.bottom, color.new(color.red, 60), size = size.tiny)
+plotshape(dn2, "Down-touch -2", shape.circle, location.bottom, color.new(color.red, 30), size = size.small)
+plotshape(dn3, "Down-touch -3", shape.circle, location.bottom, color.new(color.red, 0), size = size.normal)
+
+// ---------------------------------------------------------------- status table
+var table t = table.new(position.top_right, 4, 5, bgcolor = color.new(color.black, 85), border_width = 1)
+if barstate.islast
+    table.cell(t, 0, 0, "Last " + str.tostring(lookback) + " bars")
+    table.cell(t, 1, 0, "level 1")
+    table.cell(t, 2, 0, "level 2")
+    table.cell(t, 3, 0, "level 3")
+    table.cell(t, 0, 1, "Up-touches", text_color = color.teal)
+    table.cell(t, 1, 1, str.tostring(U1, "#"), text_color = color.teal)
+    table.cell(t, 2, 1, str.tostring(U2, "#"), text_color = color.teal)
+    table.cell(t, 3, 1, str.tostring(U3, "#"), text_color = color.teal)
+    table.cell(t, 0, 2, "Down-touches", text_color = color.red)
+    table.cell(t, 1, 2, str.tostring(D1, "#"), text_color = color.red)
+    table.cell(t, 2, 2, str.tostring(D2, "#"), text_color = color.red)
+    table.cell(t, 3, 2, str.tostring(D3, "#"), text_color = color.red)
+    table.cell(t, 0, 3, mode)
+    table.cell(t, 1, 3, na(val) ? "-" : str.tostring(val, "#.##"))
+    table.cell(t, 2, 3, "Z now")
+    table.cell(t, 3, 3, na(z) ? "-" : str.tostring(z, "#.##"))
+    table.cell(t, 0, 4, "Chart")
+    table.cell(t, 1, 4, timeframe.isdaily ? "daily" : "use a daily chart", text_color = timeframe.isdaily ? color.white : color.red)

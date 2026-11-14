@@ -1,0 +1,57 @@
+
+== DESIGN
+baseline (next open, hold 40)                             n 267 win 84% avg +19.5% w5 -11.1% | sleeve  34 tr +2.8%/y DD  5.1% ratio 0.55 Sharpe 0.78
+any green | no stop                                       n 267 win 83% avg +17.7% w5 -10.1% | sleeve  34 tr +2.4%/y DD  5.1% ratio 0.47 Sharpe 0.74 | stopped 0% risk 6.1% wait 1d avg loss -7.6%
+any green | stop order under low                          n 311 win 43% avg  +8.0% w5 -11.1% | sleeve  77 tr +3.4%/y DD  5.9% ratio 0.57 Sharpe 0.95 | stopped 55% risk 6.4% wait 1d avg loss -5.4%
+any green | close below low                               n 308 win 53% avg  +9.6% w5 -12.2% | sleeve  70 tr +2.5%/y DD  7.1% ratio 0.35 Sharpe 0.75 | stopped 46% risk 5.9% wait 1d avg loss -7.0%
+green + big volume | no stop                              n 230 win 83% avg +16.4% w5 -10.3% | sleeve  30 tr +1.8%/y DD  4.4% ratio 0.41 Sharpe 0.61 | stopped 0% risk 5.8% wait 3d avg loss -7.7%
+green + big volume | stop order under low                 n 260 win 37% avg  +5.8% w5 -10.2% | sleeve  66 tr +2.9%/y DD  7.3% ratio 0.40 Sharpe 0.86 | stopped 61% risk 6.0% wait 3d avg loss -5.6%
+green + big volume | close below low                      n 255 win 46% avg  +7.6% w5 -12.2% | sleeve  61 tr +2.5%/y DD  7.8% ratio 0.32 Sharpe 0.75 | stopped 52% risk 5.6% wait 3d avg loss -6.8%
+green + strong close | no stop                            n 262 win 84% avg +18.3% w5  -9.3% | sleeve  32 tr +2.5%/y DD  4.9% ratio 0.52 Sharpe 0.74 | stopped 0% risk 6.2% wait 2d avg loss -7.9%
+green + strong close | stop order under low               n 291 win 48% avg  +9.5% w5 -11.3% | sleeve  70 tr +3.0%/y DD  5.8% ratio 0.52 Sharpe 0.92 | stopped 50% risk 6.5% wait 2d avg loss -6.0%
+green + strong close | close below low                    n 290 win 56% avg +10.6% w5 -12.0% | sleeve  64 tr +1.7%/y DD  7.7% ratio 0.22 Sharpe 0.56 | stopped 42% risk 6.1% wait 2d avg loss -7.2%
+green + (big vol OR strong close) | no stop               n 265 win 84% avg +18.0% w5  -9.8% | sleeve  32 tr +1.8%/y DD  5.0% ratio 0.36 Sharpe 0.60 | stopped 0% risk 6.1% wait 2d avg loss -8.0%
+green + (big vol OR strong close) | stop order under low  n 302 win 45% avg  +8.6% w5 -10.7% | sleeve  75 tr +3.1%/y DD  6.1% ratio 0.51 Sharpe 0.92 | stopped 53% risk 6.5% wait 2d avg loss -5.7%
+green + (big vol OR strong close) | close below low       n 300 win 54% avg +10.3% w5 -11.9% | sleeve  67 tr +2.2%/y DD  7.9% ratio 0.27 Sharpe 0.65 | stopped 44% risk 6.1% wait 2d avg loss -7.1%
+green + big vol AND strong close | no stop                n 175 win 82% avg +16.6% w5  -8.9% | sleeve  30 tr +2.4%/y DD  3.6% ratio 0.67 Sharpe 0.81 | stopped 0% risk 6.8% wait 3d avg loss -7.0%
+green + big vol AND strong close | stop order under low   n 186 win 42% avg  +5.9% w5 -11.2% | sleeve  56 tr +2.3%/y DD  7.2% ratio 0.32 Sharpe 0.73 | stopped 56% risk 7.1% wait 3d avg loss -6.8%
+green + big vol AND strong close | close below low        n 185 win 54% avg  +8.5% w5 -12.2% | sleeve  51 tr +2.0%/y DD  7.6% ratio 0.27 Sharpe 0.67 | stopped 44% risk 6.7% wait 3d avg loss -7.7%
+
+== CONFIRM
+baseline (next open, hold 40)                             n 200 win 72% avg  +7.6% w5 -12.3% | sleeve  43 tr +1.7%/y DD  5.6% ratio 0.31 Sharpe 0.54
+any green | no stop                                       n 197 win 70% avg  +7.4% w5 -10.7% | sleeve  42 tr +0.5%/y DD  7.1% ratio 0.07 Sharpe 0.18 | stopped 0% risk 3.6% wait 1d avg loss -7.1%
+any green | stop order under low                          n 236 win 36% avg  +2.7% w5  -8.8% | sleeve  73 tr +1.2%/y DD  4.5% ratio 0.26 Sharpe 0.39 | stopped 59% risk 3.9% wait 1d avg loss -4.4%
+any green | close below low                               n 231 win 46% avg  +4.2% w5 -10.6% | sleeve  63 tr +2.3%/y DD  4.4% ratio 0.52 Sharpe 0.77 | stopped 50% risk 3.4% wait 1d avg loss -5.2%
+green + big volume | no stop                              n 156 win 69% avg  +6.5% w5 -11.7% | sleeve  35 tr +0.6%/y DD  8.1% ratio 0.08 Sharpe 0.23 | stopped 0% risk 4.0% wait 2d avg loss -6.6%
+green + big volume | stop order under low                 n 173 win 34% avg  +1.6% w5  -9.0% | sleeve  62 tr +0.7%/y DD  5.1% ratio 0.14 Sharpe 0.25 | stopped 60% risk 4.6% wait 2d avg loss -4.5%
+green + big volume | close below low                      n 171 win 42% avg  +2.4% w5 -12.4% | sleeve  53 tr +1.2%/y DD  6.3% ratio 0.19 Sharpe 0.41 | stopped 52% risk 4.2% wait 2d avg loss -5.7%
+green + strong close | no stop                            n 190 win 67% avg  +6.0% w5 -14.3% | sleeve  44 tr +1.1%/y DD  5.3% ratio 0.21 Sharpe 0.41 | stopped 0% risk 4.5% wait 3d avg loss -7.9%
+green + strong close | stop order under low               n 215 win 35% avg  +1.5% w5  -9.6% | sleeve  70 tr +0.6%/y DD  4.8% ratio 0.13 Sharpe 0.23 | stopped 60% risk 4.7% wait 3d avg loss -5.3%
+green + strong close | close below low                    n 212 win 42% avg  +2.7% w5 -10.1% | sleeve  64 tr +0.7%/y DD  4.8% ratio 0.15 Sharpe 0.26 | stopped 53% risk 4.3% wait 3d avg loss -5.4%
+green + (big vol OR strong close) | no stop               n 196 win 70% avg  +6.9% w5 -11.7% | sleeve  45 tr +0.7%/y DD  7.4% ratio 0.10 Sharpe 0.25 | stopped 0% risk 4.2% wait 2d avg loss -6.8%
+green + (big vol OR strong close) | stop order under low  n 228 win 37% avg  +2.1% w5  -8.9% | sleeve  71 tr +0.9%/y DD  4.5% ratio 0.20 Sharpe 0.30 | stopped 58% risk 4.3% wait 2d avg loss -4.6%
+green + (big vol OR strong close) | close below low       n 224 win 45% avg  +3.3% w5 -10.2% | sleeve  62 tr +1.7%/y DD  5.9% ratio 0.29 Sharpe 0.59 | stopped 50% risk 3.9% wait 2d avg loss -5.5%
+green + big vol AND strong close | no stop                n 100 win 62% avg  +3.9% w5 -14.9% | sleeve  33 tr +1.2%/y DD  5.3% ratio 0.22 Sharpe 0.45 | stopped 0% risk 5.9% wait 4d avg loss -7.4%
+green + big vol AND strong close | stop order under low   n 106 win 30% avg  -0.5% w5 -10.4% | sleeve  47 tr -0.4%/y DD  5.1% ratio -0.09 Sharpe -0.19 | stopped 59% risk 6.3% wait 4d avg loss -5.8%
+green + big vol AND strong close | close below low        n 105 win 34% avg  -0.0% w5 -11.9% | sleeve  46 tr -0.3%/y DD  5.6% ratio -0.06 Sharpe -0.13 | stopped 54% risk 5.8% wait 4d avg loss -6.0%
+
+== 2023-26
+baseline (next open, hold 40)                             n  60 win 68% avg  +4.6% w5 -12.6% | sleeve  23 tr +1.5%/y DD  5.6% ratio 0.26 Sharpe 0.67
+any green | no stop                                       n  60 win 52% avg  +1.9% w5 -14.1% | sleeve  23 tr +0.6%/y DD  7.1% ratio 0.08 Sharpe 0.34 | stopped 0% risk 5.5% wait 1d avg loss -6.6%
+any green | stop order under low                          n  64 win 41% avg  +1.8% w5  -8.3% | sleeve  29 tr +1.4%/y DD  3.4% ratio 0.41 Sharpe 0.61 | stopped 45% risk 5.3% wait 1d avg loss -3.7%
+any green | close below low                               n  63 win 46% avg  +2.5% w5  -8.4% | sleeve  29 tr +1.5%/y DD  4.4% ratio 0.35 Sharpe 0.69 | stopped 40% risk 4.9% wait 1d avg loss -3.7%
+green + big volume | no stop                              n  50 win 50% avg  +1.4% w5 -14.5% | sleeve  21 tr +0.3%/y DD  8.1% ratio 0.03 Sharpe 0.29 | stopped 0% risk 5.8% wait 1d avg loss -6.9%
+green + big volume | stop order under low                 n  51 win 33% avg  +0.6% w5  -8.7% | sleeve  29 tr +0.3%/y DD  5.1% ratio 0.07 Sharpe 0.32 | stopped 49% risk 6.5% wait 1d avg loss -4.0%
+green + big volume | close below low                      n  51 win 41% avg  +1.1% w5  -9.4% | sleeve  26 tr +0.2%/y DD  6.3% ratio 0.04 Sharpe 0.29 | stopped 41% risk 6.0% wait 1d avg loss -4.6%
+green + strong close | no stop                            n  59 win 44% avg  -0.2% w5 -15.2% | sleeve  25 tr +0.9%/y DD  5.3% ratio 0.16 Sharpe 0.47 | stopped 0% risk 5.8% wait 2d avg loss -8.2%
+green + strong close | stop order under low               n  60 win 32% avg  -0.6% w5  -9.7% | sleeve  27 tr +0.8%/y DD  4.5% ratio 0.17 Sharpe 0.47 | stopped 57% risk 6.2% wait 2d avg loss -5.3%
+green + strong close | close below low                    n  60 win 35% avg  -0.4% w5 -10.5% | sleeve  27 tr +0.7%/y DD  4.8% ratio 0.14 Sharpe 0.41 | stopped 52% risk 5.8% wait 2d avg loss -5.3%
+green + (big vol OR strong close) | no stop               n  59 win 53% avg  +1.7% w5 -14.1% | sleeve  26 tr +0.9%/y DD  7.4% ratio 0.12 Sharpe 0.44 | stopped 0% risk 5.6% wait 1d avg loss -6.7%
+green + (big vol OR strong close) | stop order under low  n  62 win 39% avg  +1.1% w5  -8.0% | sleeve  31 tr +0.8%/y DD  4.3% ratio 0.19 Sharpe 0.45 | stopped 48% risk 6.0% wait 1d avg loss -3.9%
+green + (big vol OR strong close) | close below low       n  61 win 44% avg  +1.4% w5  -8.6% | sleeve  29 tr +0.7%/y DD  5.9% ratio 0.13 Sharpe 0.44 | stopped 43% risk 5.6% wait 1d avg loss -4.5%
+green + big vol AND strong close | no stop                n  37 win 41% avg  -0.2% w5 -16.6% | sleeve  20 tr +0.9%/y DD  5.3% ratio 0.16 Sharpe 0.52 | stopped 0% risk 7.2% wait 2d avg loss -8.1%
+green + big vol AND strong close | stop order under low   n  37 win 24% avg  -1.9% w5 -11.0% | sleeve  20 tr -0.3%/y DD  5.0% ratio -0.07 Sharpe -0.12 | stopped 54% risk 7.7% wait 2d avg loss -5.6%
+green + big vol AND strong close | close below low        n  37 win 30% avg  -1.6% w5 -12.0% | sleeve  20 tr -0.3%/y DD  5.0% ratio -0.06 Sharpe -0.11 | stopped 49% risk 7.2% wait 2d avg loss -6.0%
+
+DESIGN pick: 'any green | stop order under low' ratio 0.57 vs baseline 0.55 | CONFIRM ratio 0.26 vs 0.31, return +1.2% vs +1.7%, worst5 -8.8% vs -12.3% -> ADOPTED: False
+  risk-based sizing (0.5% of the account at risk, at most 10%): DESIGN n 311 win 43% avg  +8.0% w5 -11.1% | sleeve  77 tr +3.9%/y DD  9.8% ratio 0.40 Sharpe 0.75 || CONFIRM n 236 win 36% avg  +2.7% w5  -8.8% | sleeve  73 tr +2.2%/y DD  6.6% ratio 0.33 Sharpe 0.43 || 2023-26 n  64 win 41% avg  +1.8% w5  -8.3% | sleeve  29 tr +2.4%/y DD  5.2% ratio 0.47 Sharpe 0.65

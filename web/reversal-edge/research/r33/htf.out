@@ -1,0 +1,20 @@
+daily Z swing (reference, hold 40): DESIGN n 247 (39/y) win 86% +24.4/-7.0 exp +19.9% | CONFIRM n 174 (28/y) win 70% +13.0/-7.2 exp +6.9% | C1 n 122 (43/y) win 71% +14.7/-7.7 exp +8.2% | C2 n  52 (16/y) win 65% +8.8/-6.1 exp +3.6%
+
+WEEKLY: bars 851 from 2010-02-24 | DESIGN 2% line -2.08 | quantiles {0.01: -2.42, 0.05: -1.61, 0.1: -1.18, 0.5: 0.05, 0.9: 1.26, 0.95: 1.68, 0.99: 2.53}
+  live filters, hold 40: DESIGN n  95 (25/y) win 85% +24.3/-10.8 exp +19.1% | CONFIRM n  63 (10/y) win 86% +14.4/-7.6 exp +11.2% | C1 n  56 (19/y) win 91% +14.0/-3.7 exp +12.4% | C2 n<10
+    overlap with daily Z swing (same stock within 10 sessions): 61% | non-overlapping: DESIGN n  39 (10/y) win 72% +18.7/-9.8 exp +10.7% | CONFIRM n  23 (4/y) win 87% +13.7/-5.6 exp +11.2%
+  price only, hold 40:   DESIGN n 180 (26/y) win 73% +21.0/-13.1 exp +11.7% | CONFIRM n 150 (23/y) win 70% +13.7/-12.1 exp +5.9%
+  live filters, hold 65: DESIGN n  95 (25/y) win 83% +26.7/-12.2 exp +20.2% | CONFIRM n  63 (10/y) win 78% +20.4/-6.6 exp +14.4% | C1 n  56 (19/y) win 82% +19.9/-6.3 exp +15.2% | C2 n<10
+    overlap with daily Z swing (same stock within 10 sessions): 61% | non-overlapping: DESIGN n  39 (10/y) win 67% +19.9/-10.3 exp +9.8% | CONFIRM n  23 (4/y) win 65% +22.5/-5.8 exp +12.7%
+  price only, hold 65:   DESIGN n 173 (25/y) win 72% +24.8/-13.9 exp +13.8% | CONFIRM n 142 (22/y) win 66% +18.7/-13.1 exp +8.0%
+  DEEP price only, hold 40: DEEP n 144 (16/y) win 62% +38.3/-13.9 exp +18.4%
+  DEEP price only, hold 65: DEEP n 135 (18/y) win 76% +46.2/-15.5 exp +31.1%
+  daily stretch Z price-only DEEP hold 40 for comparison: +3.7% (round 31)
+
+MONTHLY: bars 299 from 2001-12-31 | DESIGN 2% line -1.62 | quantiles {0.01: -1.87, 0.05: -1.26, 0.1: -0.93, 0.5: 0.08, 0.9: 1.02, 0.95: 1.28, 0.99: 1.73}
+  live filters, hold 63: DESIGN n  12 (3/y) win 100% +37.4/0.0 exp +37.4% | CONFIRM n<10 | C1 n<10 | C2 n<10
+    overlap with daily Z swing (same stock within 10 sessions): 47% | non-overlapping: DESIGN n<10 | CONFIRM n<10
+  price only, hold 63:   DESIGN n  46 (7/y) win 63% +27.7/-11.6 exp +13.2% | CONFIRM n  18 (3/y) win 44% +26.5/-11.4 exp +5.4%
+  live filters, hold 126: DESIGN n  12 (3/y) win 100% +34.4/0.0 exp +34.4% | CONFIRM n<10 | C1 n<10 | C2 n<10
+    overlap with daily Z swing (same stock within 10 sessions): 47% | non-overlapping: DESIGN n<10 | CONFIRM n<10
+  price only, hold 126:   DESIGN n  39 (6/y) win 67% +25.3/-15.3 exp +11.8% | CONFIRM n  15 (2/y) win 73% +41.6/-11.5 exp +27.4%

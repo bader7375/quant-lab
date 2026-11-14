@@ -1,0 +1,8 @@
+round 67 (constant weights, open to open):  2013-19  +6.8%/y DD  9.7% Sh 0.89 | 2020-26  +6.5%/y DD  6.3% Sh 1.14 | 2023-26  +6.4%/y DD  3.4% Sh 1.65 | 2016-26  +8.7%/y DD  6.3% Sh 1.31
+independent, as tested (no loss filter)     2013-19  +6.8%/y DD  9.8% Sh 1.06 worst yr -1.5% | 2020-26  +6.3%/y DD  6.3% Sh 1.14 worst yr +0.0% | 2023-26  +6.2%/y DD  3.7% Sh 1.57 worst yr +2.3% | 2016-26  +8.6%/y DD  6.3% Sh 1.44 worst yr +0.0%
+    trades taken 53 of 304 signals in the window; winners 75%, average +12.7%, worst -12.6%, worst 5% -10.5%
+    taken per year: 2014: 5, 2015: 6, 2016: 10, 2018: 5, 2020: 10, 2022: 8, 2024: 2, 2025: 2, 2026: 5
+independent, with the live loss filter      2013-19  +6.8%/y DD  9.8% Sh 1.06 worst yr -1.5% | 2020-26  +6.3%/y DD  6.3% Sh 1.21 worst yr +0.0% | 2023-26  +6.2%/y DD  3.1% Sh 2.06 worst yr +4.0% | 2016-26  +8.6%/y DD  6.3% Sh 1.49 worst yr +0.0%
+    trades taken 51 of 298 signals in the window; winners 78%, average +13.2%, worst -12.6%, worst 5% -9.4%
+    taken per year: 2014: 5, 2015: 6, 2016: 10, 2018: 5, 2020: 10, 2022: 8, 2024: 2, 2026: 5
+  same, idle money earning nothing          2013-19  +6.0%/y DD  9.8% Sh 0.94 worst yr -1.6% | 2020-26  +3.5%/y DD  6.3% Sh 0.68 worst yr +0.0% | 2023-26  +1.7%/y DD  3.2% Sh 0.60 worst yr +0.0% | 2016-26  +6.3%/y DD  6.3% Sh 1.10 worst yr +0.0%

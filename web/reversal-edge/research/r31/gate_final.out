@@ -1,0 +1,9 @@
+Z swing (round 28)                             | DESIGN n 286 (45/y) win 78% +23.6/-10.6 pay 2.23 exp +15.92% hold 40 | CONFIRM n 189 (29/y) win 67% +13.4/-8.6 pay 1.56 exp +6.08% hold 40 | C1 w68% +7.7% | C2 w63% +2.6%
+Z swing + market momentum <= -1.18             | DESIGN n 247 (39/y) win 86% +24.4/-7.0 pay 3.48 exp +19.93% hold 40 | CONFIRM n 174 (28/y) win 70% +13.0/-7.2 pay 1.81 exp +6.87% hold 40 | C1 w71% +8.2% | C2 w65% +3.6%
+  only deep zone (MS <= -2.53)                 | DESIGN n 157 (27/y) win 83% +27.6/-5.9 pay 4.66 exp +21.86% hold 40 | CONFIRM n 121 (20/y) win 67% +13.5/-6.8 pay 1.99 exp +6.77% hold 40 | C1 w72% +8.7% | C2 w54% +2.0%
+  skipped (MS > -1.18)                         | DESIGN n  40 (7/y) win 28% +5.5/-14.9 pay 0.37 exp -9.30% hold 40 | CONFIRM n  18 (3/y) win 39% +20.9/-14.8 pay 1.42 exp -0.89% hold 40 | C1 w36% +1.9% | C2 n<10
+  robustness: gate at -1.0                     | DESIGN n 247 (39/y) win 86% +24.4/-7.0 pay 3.48 exp +19.93% hold 40 | CONFIRM n 177 (29/y) win 69% +12.9/-7.6 pay 1.71 exp +6.57% hold 40 | C1 w70% +7.8% | C2 w65% +3.6%
+  robustness: gate at -1.4                     | DESIGN n 244 (38/y) win 86% +24.6/-7.0 pay 3.51 exp +20.05% hold 40 | CONFIRM n 160 (26/y) win 73% +13.1/-6.8 pay 1.93 exp +7.75% hold 40 | C1 w77% +9.7% | C2 w65% +3.6%
+worst trade gated: -0.231 | worst 5%: -0.11
+MS days: 5999 last 2026-10-22 -3.66 | share of days MS <= -1.18 (2013-26): 0.201
+VZ_Q [[-4.24, 0.005], [-3.46, 0.01], [-2.711, 0.02], [-1.865, 0.05], [-1.323, 0.1], [-0.821, 0.2], [-0.521, 0.3], [-0.292, 0.4], [-0.091, 0.5], [0.109, 0.6], [0.331, 0.7], [0.614, 0.8], [1.068, 0.9], [1.514, 0.95], [2.135, 0.98], [2.657, 0.99], [3.216, 0.995]]

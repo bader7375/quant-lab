@@ -1,0 +1,10 @@
+loss filter off: list buys 57 | tested plan trades 57 | same 57 | list only 0 | tested only 0 | every sell on the tested day: True | most positions at once 5
+    what the list said about each signal: {'buy': 57, 'noslot': 251, 'again:held': 19, 'again:repeat': 94, 'wait': 187, 'again:blocked': 86}
+loss filter on : list buys 54 | tested plan trades 54 | same 54 | list only 0 | tested only 0 | every sell on the tested day: True | most positions at once 5
+    what the list said about each signal: {'buy': 54, 'noslot': 247, 'again:held': 15, 'again:repeat': 94, 'wait': 171, 'again:blocked': 84}
+
+2022-06-16 close (window open): held ['4031', '1214', '4008', '2030', '2360'] free 0 | sell at the next open []
+   signals: [('8311', 'noslot'), ('8020', 'noslot'), ('6060', 'noslot'), ('3007', 'noslot'), ('2150', 'noslot'), ('6050', 'noslot'), ('8040', 'noslot'), ('6040', 'noslot'), ('4070', 'noslot'), ('1820', 'noslot'), ('3008', 'noslot'), ('2140', 'noslot'), ('2200', 'noslot'), ('3050', 'noslot')] | again: [('8250', 'blocked', '2022-05-23'), ('1214', 'held', '2022-06-15'), ('4030', 'blocked', '2022-05-24')]
+
+2022-06-19 close (window open): held ['4031', '1214', '4008', '2030', '2360'] free 0 | sell at the next open []
+   signals: [('2160', 'noslot'), ('2370', 'noslot'), ('2220', 'noslot'), ('1201', 'noslot'), ('4180', 'noslot'), ('2340', 'noslot'), ('4310', 'noslot'), ('2240', 'noslot'), ('4080', 'noslot'), ('4040', 'noslot'), ('4290', 'noslot'), ('3010', 'noslot')] | again: [('3007', 'repeat', '2022-06-16'), ('2320', 'repeat', '2022-06-15'), ('4031', 'held', '2022-06-14')]

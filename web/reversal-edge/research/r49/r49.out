@@ -1,0 +1,90 @@
+
+== DESIGN
+G4 stop12                n 241 win  62% avg +12.8% w5 -14.1% | taken  40 +3.3%/y DD  5.2% ratio 0.64 Sh 0.99
+G4 ML70                  n 149 win  87% avg +23.2% w5  -9.9% | taken  25 +3.2%/y DD  5.4% ratio 0.60 Sh 1.05
+G4 ML70 stop12           n 163 win  63% avg +14.6% w5 -13.0% | taken  39 +3.5%/y DD  5.9% ratio 0.60 Sh 1.04
+G4                       n 216 win  85% avg +21.2% w5 -11.1% | taken  25 +2.8%/y DD  4.7% ratio 0.59 Sh 0.95
+G4 split stop12          n 241 win  62% avg +12.8% w5 -14.1% | taken  93 +2.6%/y DD  5.1% ratio 0.50 Sh 0.85
+G4 split                 n 216 win  85% avg +21.2% w5 -11.1% | taken  60 +2.4%/y DD  4.8% ratio 0.50 Sh 0.89
+ML70 stop12              n 198 win  59% avg +12.4% w5 -13.0% | taken  50 +3.5%/y DD  7.1% ratio 0.49 Sh 0.91
+G4 ML70 split            n 149 win  87% avg +23.2% w5  -9.9% | taken  58 +2.5%/y DD  5.1% ratio 0.49 Sh 0.92
+stop12                   n 305 win  59% avg +11.0% w5 -13.4% | taken  55 +3.3%/y DD  7.1% ratio 0.46 Sh 0.86
+G4 ML70 split stop12     n 163 win  63% avg +14.6% w5 -13.0% | taken  85 +2.5%/y DD  5.9% ratio 0.42 Sh 0.84
+ML70                     n 178 win  85% avg +20.8% w5 -11.0% | taken  29 +2.2%/y DD  5.5% ratio 0.40 Sh 0.67
+split stop12             n 305 win  59% avg +11.0% w5 -13.4% | taken 123 +2.4%/y DD  6.0% ratio 0.39 Sh 0.67
+ML70 split stop12        n 198 win  59% avg +12.4% w5 -13.0% | taken 106 +2.3%/y DD  6.3% ratio 0.36 Sh 0.67
+ML70 split               n 178 win  85% avg +20.8% w5 -11.0% | taken  63 +1.8%/y DD  5.7% ratio 0.31 Sh 0.57
+split                    n 272 win  83% avg +18.9% w5 -11.4% | taken  73 +1.6%/y DD  6.0% ratio 0.28 Sh 0.52
+live                     n 272 win  83% avg +18.9% w5 -11.4% | taken  35 +1.8%/y DD  6.4% ratio 0.28 Sh 0.53
+
+== CONFIRM
+G4 stop12                n 149 win  70% avg  +7.5% w5 -12.4% | taken  32 +0.9%/y DD  4.2% ratio 0.21 Sh 0.36
+G4 ML70                  n  94 win  82% avg +11.5% w5  -4.7% | taken  23 +1.3%/y DD  3.2% ratio 0.39 Sh 0.48
+G4 ML70 stop12           n 101 win  73% avg  +8.5% w5 -12.4% | taken  28 +0.8%/y DD  3.8% ratio 0.21 Sh 0.34
+G4                       n 140 win  79% avg +10.2% w5  -7.0% | taken  28 +1.3%/y DD  3.5% ratio 0.37 Sh 0.49
+G4 split stop12          n 149 win  70% avg  +7.5% w5 -12.4% | taken  63 +0.8%/y DD  3.8% ratio 0.21 Sh 0.37
+G4 split                 n 140 win  79% avg +10.2% w5  -7.0% | taken  55 +1.4%/y DD  3.2% ratio 0.43 Sh 0.59
+ML70 stop12              n 144 win  65% avg  +6.0% w5 -12.4% | taken  44 +1.2%/y DD  4.9% ratio 0.25 Sh 0.40
+G4 ML70 split            n  94 win  82% avg +11.5% w5  -4.7% | taken  46 +1.3%/y DD  2.6% ratio 0.51 Sh 0.59
+stop12                   n 211 win  62% avg  +4.9% w5 -12.4% | taken  53 +1.1%/y DD  4.9% ratio 0.23 Sh 0.35
+G4 ML70 split stop12     n 101 win  73% avg  +8.5% w5 -12.4% | taken  56 +0.8%/y DD  3.8% ratio 0.20 Sh 0.39
+ML70                     n 129 win  74% avg  +8.9% w5 -11.4% | taken  32 +1.5%/y DD  4.4% ratio 0.33 Sh 0.48
+split stop12             n 211 win  62% avg  +4.9% w5 -12.4% | taken 109 +1.2%/y DD  4.9% ratio 0.24 Sh 0.42
+ML70 split stop12        n 144 win  65% avg  +6.0% w5 -12.4% | taken  91 +1.4%/y DD  4.9% ratio 0.28 Sh 0.51
+ML70 split               n 129 win  74% avg  +8.9% w5 -11.4% | taken  64 +1.9%/y DD  4.4% ratio 0.43 Sh 0.75
+split                    n 194 win  72% avg  +7.4% w5 -12.4% | taken  81 +1.7%/y DD  4.4% ratio 0.38 Sh 0.62
+live                     n 194 win  72% avg  +7.4% w5 -12.4% | taken  41 +1.5%/y DD  4.4% ratio 0.34 Sh 0.47
+
+== 2023-26
+G4 stop12                n  18 win  67% avg  +3.2% w5 -13.1% | taken  12 +0.2%/y DD  4.2% ratio 0.05 Sh 0.13
+G4 ML70                  n  12 win  75% avg  +5.4% w5  -4.5% | taken  10 +0.8%/y DD  2.7% ratio 0.30 Sh 0.43
+G4 ML70 stop12           n  12 win  67% avg  +2.3% w5 -14.4% | taken  10 +0.4%/y DD  3.3% ratio 0.13 Sh 0.25
+G4                       n  18 win  72% avg  +5.5% w5  -5.8% | taken  12 +0.6%/y DD  3.5% ratio 0.18 Sh 0.32
+G4 split stop12          n  18 win  67% avg  +3.2% w5 -13.1% | taken  24 +0.4%/y DD  3.6% ratio 0.10 Sh 0.28
+G4 split                 n  18 win  72% avg  +5.5% w5  -5.8% | taken  24 +0.9%/y DD  3.2% ratio 0.28 Sh 0.57
+ML70 stop12              n  42 win  62% avg  +3.1% w5 -12.4% | taken  21 +0.7%/y DD  4.6% ratio 0.15 Sh 0.29
+G4 ML70 split            n  12 win  75% avg  +5.4% w5  -4.5% | taken  20 +1.1%/y DD  1.9% ratio 0.54 Sh 0.71
+stop12                   n  61 win  57% avg  +2.6% w5 -12.4% | taken  26 +0.6%/y DD  4.6% ratio 0.14 Sh 0.24
+G4 ML70 split stop12     n  12 win  67% avg  +2.3% w5 -14.4% | taken  20 +0.6%/y DD  2.3% ratio 0.27 Sh 0.47
+ML70                     n  37 win  73% avg  +5.8% w5  -6.5% | taken  16 +1.6%/y DD  4.3% ratio 0.38 Sh 0.67
+split stop12             n  61 win  57% avg  +2.6% w5 -12.4% | taken  54 +0.9%/y DD  3.9% ratio 0.24 Sh 0.41
+ML70 split stop12        n  42 win  62% avg  +3.1% w5 -12.4% | taken  44 +1.3%/y DD  3.9% ratio 0.33 Sh 0.58
+ML70 split               n  37 win  73% avg  +5.8% w5  -6.5% | taken  34 +2.3%/y DD  2.6% ratio 0.87 Sh 1.07
+split                    n  56 win  66% avg  +4.2% w5 -13.1% | taken  41 +1.7%/y DD  2.9% ratio 0.58 Sh 0.73
+live                     n  56 win  66% avg  +4.2% w5 -13.1% | taken  21 +1.4%/y DD  4.4% ratio 0.33 Sh 0.53
+
+DESIGN pick: G4 stop12 (ratio 0.64 vs live 0.28) | CONFIRM ratio 0.21 vs 0.34, return +0.9% vs +1.5% -> False
+us100: 115 stocks, 2000-01-03..2026-11-02, eligible on 2026-11-02: 115
+
+US sell-off swing:
+== US 2005-09
+  live                 n 196 win  51% avg  -0.2% w5 -35.2% | taken  27 -1.0%/y DD 11.3% ratio -0.09 Sh -0.21
+  stop12               n 288 win  39% avg  -0.8% w5 -13.9% | taken  41 -0.1%/y DD  9.5% ratio -0.01 Sh -0.02
+  split                n 196 win  51% avg  -0.2% w5 -35.2% | taken  58 -0.4%/y DD 11.1% ratio -0.04 Sh -0.10
+  split stop12         n 288 win  39% avg  -0.8% w5 -13.9% | taken  95 +0.5%/y DD  8.5% ratio 0.06 Sh 0.12
+  G4                   n 121 win  40% avg  -3.9% w5 -41.3% | taken  14 -0.8%/y DD 10.8% ratio -0.08 Sh -0.23
+  G4 stop12            n 207 win  29% avg  -3.3% w5 -14.1% | taken  25 -0.1%/y DD  8.9% ratio -0.01 Sh -0.01
+  G4 split             n 121 win  40% avg  -3.9% w5 -41.3% | taken  25 -0.6%/y DD 10.6% ratio -0.06 Sh -0.18
+  G4 split stop12      n 207 win  29% avg  -3.3% w5 -14.1% | taken  57 +0.3%/y DD  8.0% ratio 0.03 Sh 0.07
+== US 2010-17
+  live                 n 220 win  65% avg  +3.0% w5 -17.3% | taken  31 +0.7%/y DD  5.7% ratio 0.12 Sh 0.26
+  stop12               n 250 win  60% avg  +1.9% w5 -12.1% | taken  36 +0.5%/y DD  6.5% ratio 0.07 Sh 0.18
+  split                n 220 win  65% avg  +3.0% w5 -17.3% | taken  60 +0.7%/y DD  4.7% ratio 0.16 Sh 0.31
+  split stop12         n 250 win  60% avg  +1.9% w5 -12.1% | taken  78 +0.6%/y DD  5.5% ratio 0.10 Sh 0.23
+  G4                   n 152 win  82% avg  +7.2% w5 -10.0% | taken  21 +0.9%/y DD  2.0% ratio 0.48 Sh 0.58
+  G4 stop12            n 167 win  74% avg  +5.5% w5 -12.3% | taken  23 +0.9%/y DD  2.9% ratio 0.29 Sh 0.48
+  G4 split             n 152 win  82% avg  +7.2% w5 -10.0% | taken  48 +1.0%/y DD  2.0% ratio 0.49 Sh 0.59
+  G4 split stop12      n 167 win  74% avg  +5.5% w5 -12.3% | taken  54 +0.9%/y DD  2.0% ratio 0.46 Sh 0.53
+== US 2018-26
+  live                 n 407 win  77% avg +12.1% w5 -12.4% | taken  50 +2.7%/y DD  5.6% ratio 0.48 Sh 0.68
+  stop12               n 467 win  64% avg  +9.2% w5 -12.1% | taken  57 +2.5%/y DD  5.3% ratio 0.48 Sh 0.69
+  split                n 407 win  77% avg +12.1% w5 -12.4% | taken 104 +2.3%/y DD  4.6% ratio 0.51 Sh 0.68
+  split stop12         n 467 win  64% avg  +9.2% w5 -12.1% | taken 130 +2.1%/y DD  5.4% ratio 0.39 Sh 0.63
+  G4                   n 266 win  83% avg +13.1% w5  -9.1% | taken  35 +1.9%/y DD  6.2% ratio 0.30 Sh 0.51
+  G4 stop12            n 318 win  63% avg  +8.5% w5 -12.1% | taken  43 +1.8%/y DD  5.3% ratio 0.34 Sh 0.56
+  G4 split             n 266 win  83% avg +13.1% w5  -9.1% | taken  75 +1.8%/y DD  4.6% ratio 0.38 Sh 0.56
+  G4 split stop12      n 318 win  63% avg  +8.5% w5 -12.1% | taken 101 +1.6%/y DD  5.4% ratio 0.30 Sh 0.55
+US check for 'G4 stop12': ratio 2010-17 0.29 vs 0.12, 2018-26 0.34 vs 0.48 -> False
+
+DECISION: nothing adopted
+Versions passing the bar in both eras (for context): split, ML70 split, G4 split

@@ -1,0 +1,138 @@
+//@version=6
+// Stretch Z + VWAP stretch (reversal edge research).
+// Daily / weekly stretch Z = the formula the daily Saudi scanner uses:
+//   r = log return, clipped at ±25% (daily) / ±60% (weekly)
+//   z_k = sum of the last k returns / (60-bar standard deviation of returns, measured k bars earlier × sqrt(k)),  k = 10, 20, 60
+//   stretch Z = average of z_10, z_20, z_60
+// Buy setup of the live Saudi rule: first close at or below -2.62 (daily) or -2.08 (weekly, at the week's close), inside the
+// market sell-off window (market momentum <= -1.18). The scanner also needs ML rank >= 50%, market model > 0, liquidity and a
+// profitable company, which TradingView cannot see.
+// VWAP stretch = (close - VWAP) / volume-weighted standard deviation of price around that VWAP (rolling N bars or anchored).
+indicator("Stretch Z + VWAP stretch", shorttitle = "Stretch Z", overlay = false, precision = 2)
+
+// ---------------------------------------------------------------- inputs
+grpZ   = "Stretch Z"
+showD  = input.bool(true, "Daily stretch Z", group = grpZ)
+showW  = input.bool(true, "Weekly stretch Z", group = grpZ)
+lineD  = input.float(-2.62, "Daily buy line", step = 0.01, group = grpZ, tooltip = "Saudi live rule -2.62 daily / -2.08 weekly. US sell-off swing -1.67 / -1.13.")
+lineW  = input.float(-2.08, "Weekly buy line", step = 0.01, group = grpZ)
+clipD  = input.float(0.25, "Clip daily returns at +/-", step = 0.05, group = grpZ)
+clipW  = input.float(0.60, "Clip weekly returns at +/-", step = 0.05, group = grpZ)
+
+grpM   = "Sell-off window"
+showM  = input.bool(true, "Shade the sell-off window", group = grpM)
+mktSym = input.symbol("TADAWUL:TASI", "Market index", group = grpM, tooltip = "Market momentum = 60-day sum of the index's daily log returns / (60-day standard deviation measured 60 days earlier x sqrt(60)). The scanner uses an equal-weight index of liquid Saudi stocks, so TASI gives a close but not identical value.")
+lineM  = input.float(-1.18, "Window opens at momentum <=", step = 0.01, group = grpM)
+
+grpV   = "VWAP stretch"
+showV  = input.bool(true, "VWAP stretch", group = grpV)
+vMode  = input.string("Rolling", "VWAP", options = ["Rolling", "Session", "Week", "Month", "Quarter", "Year"], group = grpV, tooltip = "Rolling: VWAP and its band over the last N bars (use this on daily charts). The anchored modes restart at each new session / week / month / quarter / year.")
+vLen   = input.int(20, "Rolling length (bars)", minval = 2, group = grpV)
+vSrc   = input.source(hlc3, "VWAP price", group = grpV)
+vLine  = input.float(-2.0, "VWAP stretch line", step = 0.1, group = grpV)
+
+// ---------------------------------------------------------------- functions
+clip(float x, float c) => math.max(math.min(x, c), -c)
+
+stretchZ(float src, float c) =>
+    float r  = clip(math.log(src / src[1]), c)
+    float sd = ta.stdev(r, 60, false)                          // sample standard deviation, as in the scanner
+    float z10 = math.sum(r, 10) / (sd[10] * math.sqrt(10))
+    float z20 = math.sum(r, 20) / (sd[20] * math.sqrt(20))
+    float z60 = math.sum(r, 60) / (sd[60] * math.sqrt(60))
+    (z10 + z20 + z60) / 3
+
+firstTouch(float z, float lvl) => z <= lvl and not (z[1] <= lvl)
+
+momentum(float src) =>
+    float r = clip(math.log(src / src[1]), 0.25)
+    float sd = ta.stdev(r, 60, false)
+    math.sum(r, 60) / (sd[60] * math.sqrt(60))
+
+// value and first-touch flag of the last completed bar (called inside request.security)
+zState(float c, float lvl) =>
+    float z  = stretchZ(close, c)
+    bool  tt = firstTouch(z, lvl)
+    [z[1], tt[1]]
+
+// ---------------------------------------------------------------- daily and weekly stretch Z
+bool chartDaily  = timeframe.isdaily and timeframe.multiplier == 1
+bool chartWeekly = timeframe.isweekly and timeframe.multiplier == 1
+bool chartIntra  = timeframe.isintraday
+bool newDay   = timeframe.change("D")
+bool newWeek  = timeframe.change("W")
+bool newMonth = timeframe.change("M")
+bool newQtr   = timeframe.change("3M")
+bool newYear  = timeframe.change("12M")
+
+// on the chart's own bars
+float zDc = stretchZ(close, clipD)
+bool  tDc = firstTouch(zDc, lineD)
+float zWc = stretchZ(close, clipW)
+bool  tWc = firstTouch(zWc, lineW)
+// from other timeframes: the last completed bar only (no repainting)
+[zDs, tDs] = request.security(syminfo.tickerid, "D", zState(clipD, lineD), lookahead = barmerge.lookahead_on)
+[zWs, tWs] = request.security(syminfo.tickerid, "W", zState(clipW, lineW), lookahead = barmerge.lookahead_on)
+
+float zD = chartDaily ? zDc : chartIntra ? zDs : na
+float zW = chartWeekly ? zWc : (chartDaily or chartIntra) ? zWs : na
+// entry markers: the bar whose open is the buy (daily: the bar after the first touch; weekly: the first bar after the week closed)
+bool tDc1 = tDc[1]
+bool tWc1 = tWc[1]
+bool buyD = chartDaily ? tDc1 : chartIntra ? (tDs and newDay) : false
+bool buyW = chartWeekly ? tWc1 : (chartDaily or chartIntra) ? (tWs and newWeek) : false
+
+// ---------------------------------------------------------------- market sell-off window
+float mm  = request.security(mktSym, "D", momentum(close), ignore_invalid_symbol = true)
+bool  win = not na(mm) and mm <= lineM
+
+// ---------------------------------------------------------------- VWAP stretch
+float w   = nz(volume) > 0 ? volume : 1.0                     // symbols without volume: equal weights
+float sw  = math.sum(w, vLen)
+float vwR = math.sum(vSrc * w, vLen) / sw
+float sdR = math.sqrt(math.max(math.sum(vSrc * vSrc * w, vLen) / sw - vwR * vwR, 0.0))
+bool anchor = switch vMode
+    "Session" => newDay
+    "Week"    => newWeek
+    "Month"   => newMonth
+    "Quarter" => newQtr
+    "Year"    => newYear
+    => false
+[vwA, upA, loA] = ta.vwap(vSrc, anchor, 1.0)
+float vw  = vMode == "Rolling" ? vwR : vwA
+float vsd = vMode == "Rolling" ? sdR : upA - vwA
+float zV  = vsd > 0 ? (close - vw) / vsd : na
+bool  vCross = ta.crossunder(zV, vLine)
+
+// ---------------------------------------------------------------- plots
+hline(0, "Zero", color = color.new(color.gray, 60), linestyle = hline.style_dotted)
+hline(lineD, "Daily buy line", color = color.new(color.blue, 40), linestyle = hline.style_dashed)
+hline(lineW, "Weekly buy line", color = color.new(color.orange, 40), linestyle = hline.style_dashed)
+hline(vLine, "VWAP stretch line", color = color.new(color.purple, 60), linestyle = hline.style_dotted)
+bgcolor(showM and win ? color.new(color.red, 88) : na, title = "Sell-off window")
+plot(showD ? zD : na, "Daily stretch Z", color = color.blue, linewidth = 2)
+plot(showW ? zW : na, "Weekly stretch Z", color = color.orange, linewidth = 2, style = plot.style_stepline)
+plot(showV ? zV : na, "VWAP stretch", color = color.new(color.purple, 20), linewidth = 1)
+bool markD = showD and buyD
+bool markW = showW and buyW
+plotshape(markD, "Daily first touch (buy at this open)", shape.triangleup, location.bottom, win ? color.green : color.gray, size = size.small, text = "D")
+plotshape(markW, "Weekly first touch (buy at this open)", shape.triangleup, location.bottom, win ? color.green : color.gray, size = size.small, text = "W")
+
+// ---------------------------------------------------------------- status table
+var table t = table.new(position.top_right, 2, 5, bgcolor = color.new(color.black, 85), border_width = 1)
+if barstate.islast
+    table.cell(t, 0, 0, "Daily Z",  text_color = color.blue)
+    table.cell(t, 1, 0, na(zD) ? "-" : str.tostring(zD, "#.##"), text_color = color.blue)
+    table.cell(t, 0, 1, "Weekly Z", text_color = color.orange)
+    table.cell(t, 1, 1, na(zW) ? "-" : str.tostring(zW, "#.##"), text_color = color.orange)
+    table.cell(t, 0, 2, "VWAP stretch", text_color = color.purple)
+    table.cell(t, 1, 2, na(zV) ? "-" : str.tostring(zV, "#.##"), text_color = color.purple)
+    table.cell(t, 0, 3, "Market momentum")
+    table.cell(t, 1, 3, na(mm) ? "-" : str.tostring(mm, "#.##"))
+    table.cell(t, 0, 4, "Sell-off window")
+    table.cell(t, 1, 4, na(mm) ? "-" : win ? "OPEN" : "closed", text_color = win ? color.green : color.gray)
+
+// ---------------------------------------------------------------- alerts
+alertcondition(chartDaily and tDc and win, "Daily stretch-Z setup", "Daily stretch Z first touch inside the sell-off window: buy at the next open (check ML rank and the scanner).")
+alertcondition(buyW and win, "Weekly stretch-Z setup", "Weekly stretch Z first touch at last week's close inside the sell-off window: buy at this open (check the scanner).")
+alertcondition(vCross, "VWAP stretch below line", "VWAP stretch crossed below the line.")

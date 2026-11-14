@@ -1,0 +1,10 @@
+{
+ "pick": "C",
+ "tests": {
+  "IC higher": true,
+  "Core ML Sharpe higher": true,
+  "top-decile excess higher": true,
+  "Z-swing average not lower by > 0.5 pt": true
+ },
+ "adopt": true
+}

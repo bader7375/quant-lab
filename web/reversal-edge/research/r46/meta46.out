@@ -1,0 +1,32 @@
+[library] Core ML sleeve                   DESIGN  CAGR  +7.5% Sh 0.57 DD  -25% | CONFIRM CAGR +16.3% Sh 1.40 DD  -13% | 2023-26 CAGR  +7.0% Sh 0.89 DD  -13%
+[library] trend breakouts                  DESIGN  CAGR  +7.2% Sh 0.81 DD  -12% | CONFIRM CAGR +19.0% Sh 1.38 DD  -25% | 2023-26 CAGR  +7.7% Sh 0.70 DD  -25%
+[library] Z swing hold 40 (5 x 20%)        DESIGN  CAGR  +7.9% Sh 0.54 DD  -28% | CONFIRM CAGR  +4.9% Sh 0.43 DD  -19% | 2023-26 CAGR  +2.8% Sh 0.31 DD  -19%
+[library] Z swing sell at Z=0 (5 x 20%)    DESIGN  CAGR  +6.0% Sh 0.45 DD  -21% | CONFIRM CAGR +10.4% Sh 0.82 DD  -17% | 2023-26 CAGR +10.3% Sh 0.97 DD  -12%
+[library] market timing (Faber)            DESIGN  CAGR  -0.4% Sh 0.02 DD  -41% | CONFIRM CAGR  +5.7% Sh 0.53 DD  -24% | 2023-26 CAGR  -2.3% Sh -0.19 DD  -17%
+[library] CNN top-10 sleeve                DESIGN  CAGR  +3.5% Sh 0.30 DD  -33% | CONFIRM CAGR  +7.9% Sh 0.79 DD  -16% | 2023-26 CAGR  +0.2% Sh 0.07 DD  -16%
+static Core v2 + Z swing (5 x 5%)          DESIGN  CAGR +12.2% Sh 0.93 DD  -23% | CONFIRM CAGR +23.4% Sh 1.52 DD  -21% | 2023-26 CAGR +10.5% Sh 0.87 DD  -21%
+Core v2 alone                              DESIGN  CAGR +11.4% Sh 0.94 DD  -20% | CONFIRM CAGR +22.9% Sh 1.54 DD  -23% | 2023-26 CAGR +10.2% Sh 0.87 DD  -23%
+equal-weight library (vol-scaled)          DESIGN  CAGR  -0.4% Sh 0.02 DD  -53% | CONFIRM CAGR +10.5% Sh 1.05 DD  -16% | 2023-26 CAGR  +7.4% Sh 0.80 DD  -12%
+AI manager (Hedge, eta 2)                  DESIGN  CAGR  -0.5% Sh 0.02 DD  -53% | CONFIRM CAGR +10.7% Sh 1.07 DD  -16% | 2023-26 CAGR  +7.5% Sh 0.81 DD  -12%
+AI manager (Hedge, eta 5)                  DESIGN  CAGR  -0.5% Sh 0.01 DD  -53% | CONFIRM CAGR +11.0% Sh 1.08 DD  -15% | 2023-26 CAGR  +7.5% Sh 0.81 DD  -12%
+AI manager (Hedge, eta 10)                 DESIGN  CAGR  -0.8% Sh -0.01 DD  -53% | CONFIRM CAGR +11.2% Sh 1.10 DD  -15% | 2023-26 CAGR  +7.5% Sh 0.82 DD  -12%
+AI manager (Hedge, eta 20)                 DESIGN  CAGR  -1.3% Sh -0.07 DD  -53% | CONFIRM CAGR +11.2% Sh 1.11 DD  -14% | 2023-26 CAGR  +7.2% Sh 0.79 DD  -12%
+
+DESIGN pick eta = 2; DECISION AI manager adopted: False
+Average weight by year (eta pick):
+      Core ML sleeve  trend breakouts  Z swing hold 40 (5 x 20%)  Z swing sell at Z=0 (5 x 20%)  market timing (Faber)  CNN top-10 sleeve  cash
+date                                                                                                                                           
+2013            0.14             0.15                       0.14                           0.14                   0.14               0.14  0.14
+2014            0.14             0.15                       0.14                           0.14                   0.15               0.14  0.14
+2015            0.14             0.15                       0.14                           0.14                   0.14               0.14  0.15
+2016            0.14             0.15                       0.14                           0.14                   0.14               0.14  0.14
+2017            0.14             0.14                       0.14                           0.14                   0.14               0.14  0.14
+2018            0.14             0.14                       0.14                           0.14                   0.14               0.15  0.14
+2019            0.14             0.14                       0.15                           0.14                   0.14               0.14  0.14
+2020            0.14             0.15                       0.14                           0.14                   0.15               0.14  0.14
+2021            0.15             0.15                       0.14                           0.14                   0.14               0.15  0.14
+2022            0.14             0.14                       0.14                           0.14                   0.14               0.14  0.14
+2023            0.15             0.15                       0.14                           0.14                   0.14               0.14  0.14
+2024            0.15             0.14                       0.14                           0.14                   0.14               0.14  0.14
+2025            0.14             0.14                       0.15                           0.15                   0.14               0.14  0.14
+2026            0.14             0.14                       0.14                           0.14                   0.14               0.14  0.14

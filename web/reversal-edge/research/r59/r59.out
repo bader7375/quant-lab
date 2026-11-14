@@ -1,0 +1,138 @@
+accounts: 1029 stock-years, 270 stocks; F-score available for 756 stock-years (items used: median 9); split events used: 274
+
+=================== LAST TWO YEARS (entries 2024-11-06 .. 2026-11-05, finished trades)
+
+A Z swing (live filters, no profit filter), hold 40: 49 signals, 47 with an F-score, 9 entry weeks
+    all                            n    49  win  65%  avg  +4.42%
+    F-score strong (>= 6)          n    22  win  59%  avg  +3.45%
+    F-score middle (5)             n    14  win  86%  avg  +6.78%
+    F-score weak (<= 4)            n    11  win  45%  avg  +2.54%
+    -> PRIMARY strong - weak: +0.91 pts (95% -16.75 .. +7.66)
+    profitable                     n    34  win  74%  avg  +5.80%
+    loss-making                    n    15  win  47%  avg  +1.29%
+    -> profit - loss: +4.52 pts (95% +1.62 .. +9.81)  *
+    ROE high third                 n    15  win  67%  avg  +5.11%
+    ROE mid third                  n    13  win  85%  avg  +6.40%
+    ROE low third                  n    21  win  52%  avg  +2.71%
+    -> ROE high - low: +2.40 pts (95% -5.09 .. +12.40)
+    debt/equity (non-fin) high third n    13  win  77%  avg  +7.03%
+    debt/equity (non-fin) mid third n    15  win  47%  avg  -0.02%
+    debt/equity (non-fin) low third n    16  win  81%  avg  +7.54%
+    -> debt/equity (non-fin) high - low: -0.51 pts (95% -8.63 .. +3.48)
+    earnings yield high third      n    19  win  79%  avg  +4.50%
+    earnings yield mid third       n     9  win  67%  avg  +2.82%
+    earnings yield low third       n    21  win  52%  avg  +5.04%
+    -> earnings yield high - low: -0.55 pts (95% -5.67 .. +7.15)
+    earnings up                    n    33  win  70%  avg  +4.23%
+    earnings down                  n    14  win  50%  avg  +4.24%
+    -> earnings up - down: -0.01 pts (95% -6.30 .. +5.26)
+    cash flow > net income         n    28  win  57%  avg  +3.64%
+    cash flow <= net income        n    21  win  76%  avg  +5.47%
+    -> cash > income - not: -1.84 pts (95% -7.07 .. +3.68)
+
+B price-only dips (first close <= -2.0), hold 40: 270 signals, 255 with an F-score, 51 entry weeks
+    all                            n   270  win  44%  avg  -1.00%
+    F-score strong (>= 6)          n   160  win  45%  avg  -0.57%
+    F-score middle (5)             n    52  win  52%  avg  +2.29%
+    F-score weak (<= 4)            n    43  win  35%  avg  -5.55%
+    -> PRIMARY strong - weak: +4.98 pts (95% +0.83 .. +9.97)  *
+    profitable                     n   225  win  48%  avg  +0.14%
+    loss-making                    n    45  win  22%  avg  -6.69%
+    -> profit - loss: +6.82 pts (95% +3.46 .. +11.00)  *
+    ROE high third                 n    87  win  48%  avg  -0.77%
+    ROE mid third                  n    90  win  48%  avg  +0.52%
+    ROE low third                  n    92  win  36%  avg  -2.64%
+    -> ROE high - low: +1.86 pts (95% -1.57 .. +5.41)
+    debt/equity (non-fin) high third n    78  win  41%  avg  -3.31%
+    debt/equity (non-fin) mid third n    82  win  40%  avg  -1.09%
+    debt/equity (non-fin) low third n    64  win  56%  avg  +1.92%
+    -> debt/equity (non-fin) high - low: -5.23 pts (95% -8.76 .. -1.66)  *
+    earnings yield high third      n   106  win  51%  avg  -0.05%
+    earnings yield mid third       n    77  win  45%  avg  -0.45%
+    earnings yield low third       n    87  win  33%  avg  -2.64%
+    -> earnings yield high - low: +2.59 pts (95% -0.59 .. +5.99)
+    earnings up                    n   180  win  43%  avg  -0.69%
+    earnings down                  n    75  win  49%  avg  -1.15%
+    -> earnings up - down: +0.46 pts (95% -3.06 .. +4.33)
+    cash flow > net income         n   167  win  44%  avg  -1.46%
+    cash flow <= net income        n   103  win  44%  avg  -0.24%
+    -> cash > income - not: -1.22 pts (95% -5.52 .. +2.18)
+
+C ML ranker C top 10%, 20-session excess: 1698 signals, 1685 with an F-score, 94 entry weeks
+    all                            n  1698  win  57%  avg  +1.33%
+    F-score strong (>= 6)          n  1090  win  59%  avg  +1.43%
+    F-score middle (5)             n   341  win  58%  avg  +1.76%
+    F-score weak (<= 4)            n   254  win  51%  avg  +0.33%
+    -> PRIMARY strong - weak: +1.11 pts (95% +0.38 .. +1.86)  *
+    profitable                     n  1613  win  58%  avg  +1.42%
+    loss-making                    n    85  win  40%  avg  -0.45%
+    -> profit - loss: +1.87 pts (95% -0.03 .. +3.87)
+    ROE high third                 n   555  win  57%  avg  +1.32%
+    ROE mid third                  n   817  win  61%  avg  +1.70%
+    ROE low third                  n   307  win  50%  avg  +0.42%
+    -> ROE high - low: +0.90 pts (95% -0.00 .. +1.76)
+    debt/equity (non-fin) high third n   227  win  52%  avg  +0.99%
+    debt/equity (non-fin) mid third n   379  win  53%  avg  +1.18%
+    debt/equity (non-fin) low third n   437  win  57%  avg  +1.06%
+    -> debt/equity (non-fin) high - low: -0.07 pts (95% -1.16 .. +1.03)
+    earnings yield high third      n  1010  win  62%  avg  +1.76%
+    earnings yield mid third       n   469  win  52%  avg  +0.53%
+    earnings yield low third       n   219  win  50%  avg  +1.05%
+    -> earnings yield high - low: +0.71 pts (95% -0.63 .. +2.03)
+    earnings up                    n  1180  win  59%  avg  +1.43%
+    earnings down                  n   505  win  54%  avg  +1.10%
+    -> earnings up - down: +0.33 pts (95% -0.40 .. +1.04)
+    cash flow > net income         n  1034  win  58%  avg  +1.37%
+    cash flow <= net income        n   664  win  57%  avg  +1.26%
+    -> cash > income - not: +0.12 pts (95% -0.41 .. +0.66)
+
+D all liquid stocks, 20-session excess: 15978 signals, 15555 with an F-score, 94 entry weeks
+    all                            n 15978  win  46%  avg  -0.00%
+    F-score strong (>= 6)          n  9118  win  47%  avg  +0.27%
+    F-score middle (5)             n  3564  win  47%  avg  +0.14%
+    F-score weak (<= 4)            n  2873  win  41%  avg  -0.72%
+    -> PRIMARY strong - weak: +0.99 pts (95% +0.58 .. +1.41)  *
+    profitable                     n 13249  win  47%  avg  +0.15%
+    loss-making                    n  2724  win  40%  avg  -0.73%
+    -> profit - loss: +0.88 pts (95% +0.26 .. +1.48)  *
+    ROE high third                 n  5296  win  47%  avg  +0.13%
+    ROE mid third                  n  5259  win  48%  avg  +0.13%
+    ROE low third                  n  5231  win  43%  avg  -0.39%
+    -> ROE high - low: +0.52 pts (95% +0.10 .. +0.95)  *
+    debt/equity (non-fin) high third n  4361  win  42%  avg  -0.61%
+    debt/equity (non-fin) mid third n  4332  win  44%  avg  -0.08%
+    debt/equity (non-fin) low third n  4300  win  48%  avg  +0.21%
+    -> debt/equity (non-fin) high - low: -0.82 pts (95% -1.12 .. -0.51)  *
+    earnings yield high third      n  5353  win  50%  avg  +0.47%
+    earnings yield mid third       n  5325  win  46%  avg  +0.01%
+    earnings yield low third       n  5295  win  41%  avg  -0.48%
+    -> earnings yield high - low: +0.95 pts (95% +0.54 .. +1.34)  *
+    earnings up                    n 10374  win  47%  avg  +0.25%
+    earnings down                  n  5181  win  44%  avg  -0.33%
+    -> earnings up - down: +0.58 pts (95% +0.30 .. +0.84)  *
+    cash flow > net income         n 10388  win  46%  avg  +0.10%
+    cash flow <= net income        n  5585  win  45%  avg  -0.18%
+    -> cash > income - not: +0.29 pts (95% -0.04 .. +0.63)
+
+=================== EARLIER PIECE (entries 2024-04-01 .. 2024-11-05)
+
+B price-only dips (first close <= -2.0), hold 40: 46 signals, 43 with an F-score, 12 entry weeks
+    all                            n    46  win  54%  avg  +0.90%
+    F-score strong (>= 6)          n    26  win  50%  avg  +0.08%
+    F-score middle (5)             n     9  win  78%  avg  +1.23%
+    F-score weak (<= 4)            n     8  win  38%  avg  +4.07%
+    -> PRIMARY strong - weak: -3.99 pts (95% -16.41 .. +7.74)
+
+C ML ranker C top 10%, 20-session excess: 551 signals, 545 with an F-score, 28 entry weeks
+    all                            n   551  win  53%  avg  +0.88%
+    F-score strong (>= 6)          n   343  win  55%  avg  +1.00%
+    F-score middle (5)             n    91  win  47%  avg  +0.77%
+    F-score weak (<= 4)            n   111  win  51%  avg  +0.81%
+    -> PRIMARY strong - weak: +0.19 pts (95% -1.24 .. +1.75)
+
+D all liquid stocks, 20-session excess: 5242 signals, 5082 with an F-score, 28 entry weeks
+    all                            n  5242  win  43%  avg  -0.00%
+    F-score strong (>= 6)          n  2890  win  42%  avg  -0.36%
+    F-score middle (5)             n  1039  win  45%  avg  +0.01%
+    F-score weak (<= 4)            n  1153  win  43%  avg  +0.72%
+    -> PRIMARY strong - weak: -1.07 pts (95% -2.05 .. -0.15)  *
