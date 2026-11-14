@@ -33,4 +33,5 @@ def cell(z, ms, vol=None, gated=True):
 
 NOTE = ("Rebound Edge: the average result of a buy at the next open in past cases with the same market momentum and stretch (sold when the "
         "stretch Z is back at 0, or after 40 sessions), how many in 100 ended in profit, and the typical dip on the way. \"n/a\": the daily "
-        "stretch Z is above -1.5. It describes the setup; it is not part of your rule.")
+        "stretch Z is above -1.5. It describes the setup; it is not part of your rule. Its typical dip is not a stop level: your plan's own "
+        "trades (40-session hold, 2013-26) fell about 11% below the entry at the median before the exit.")
