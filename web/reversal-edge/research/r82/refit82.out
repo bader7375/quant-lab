@@ -1,0 +1,16 @@
+Saudi hold cases to date: 224333 from 27953 trades
+tested (2013-19, on M19):  saudi hold edge = -2.34% + 1.03 x hold edge +3.48% with the gates
+product (all, live copy):  saudi hold edge = -2.83% + 1.26 x hold edge +2.58% with the gates | gate term tried +2.58% (range +0.89 to +4.04) -> kept; slope range 0.92 to 1.65
+for Saudi, on the raw readings (Z = stretch Z now, M = market momentum now, L = sessions left / 40): hold edge % = -4.23 -0.59 x Z -1.22 x M +0.109 x Z x M +1.67 x L -0.55 x Z x L +2.58 when the stock passes the gates
+zones (thirds of the Saudi cases): weak below +0.6%, strong from +3.7%
+product Saudi table by band: reading -> rest of the trade | sold above the close | sessions to the sale | further dip typical / 1-in-10 (in 20-session swings)
+  0:  22434 |  -2.8% ->  -1.1% | 54 in 100 | 11 | -0.30 / -1.91
+  1:  22433 |  -1.1% ->  -1.3% | 56 in 100 | 16 | -0.44 / -2.54
+  2:  22433 |  -0.1% ->  -1.2% | 57 in 100 | 18 | -0.57 / -2.78
+  3:  22433 |  +0.7% ->  -0.5% | 58 in 100 | 18 | -0.55 / -2.76
+  4:  22433 |  +1.5% ->  +0.7% | 65 in 100 | 16 | -0.46 / -2.55
+  5:  22434 |  +2.5% ->  +2.8% | 71 in 100 | 16 | -0.36 / -1.90
+  6:  22433 |  +3.5% ->  +3.4% | 70 in 100 | 16 | -0.37 / -1.73
+  7:  22433 |  +4.7% ->  +4.9% | 73 in 100 | 17 | -0.34 / -1.49
+  8:  22433 |  +6.2% ->  +6.9% | 78 in 100 | 19 | -0.33 / -1.42
+  9:  22434 |  +9.8% -> +10.7% | 83 in 100 | 23 | -0.27 / -1.16

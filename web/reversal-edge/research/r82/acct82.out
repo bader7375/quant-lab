@@ -1,0 +1,14 @@
+Saudi, tested copy of Hold Edge (formula from other markets to 2019; Saudi adjustment from 2013-19). growth a year / worst drawdown (return per drawdown), trades
+A. the swing as it is                        2013-19 +3.9% / 5.4% (0.72), 54 | 2020-26 +4.8% / 2.6% (1.86), 41 | 2023-26 +6.0% / 1.7% (3.49), 16 | 2013-26 +4.4% / 5.4% (0.81), 95 | winners 82%, average +9.9%, held 24, worst -19.7%
+H1. plus: sell when Hold Edge is below 0     2013-19 +3.0% / 5.4% (0.55), 54 | 2020-26 +4.5% / 1.7% (2.61), 43 | 2023-26 +5.7% / 1.7% (3.29), 18 | 2013-26 +3.7% / 5.4% (0.69), 97 | winners 79%, average +7.5%, held 16, worst -13.0%
+H2. plus: sell when Hold Edge is below -1%   2013-19 +3.1% / 5.4% (0.58), 54 | 2020-26 +4.7% / 1.7% (2.75), 42 | 2023-26 +6.0% / 1.7% (3.47), 17 | 2013-26 +3.9% / 5.4% (0.73), 96 | winners 79%, average +8.4%, held 20, worst -17.0%
+market-eras counted: 64 | reference L12D: median ratio 0.149, growth +0.73% dd 5.4%, trades 1884 | live shape A0: median ratio 0.082, trades 1767
+
+24 other markets, 64 market-eras, price-only; each market traded with a Hold Edge formula fitted on the other markets
+A. the swing as it is                        median return per drawdown 0.203 | growth +0.81% drawdown 5.4% | trades 2213, winners 73%, average +6.0%
+H1. plus: sell when Hold Edge is below 0     median return per drawdown 0.198 | growth +0.77% drawdown 5.4% | trades 2214, winners 72%, average +5.7% | against the swing: won 15, lost 48, same 1, p=1.000
+H2. plus: sell when Hold Edge is below -1%   median return per drawdown 0.204 | growth +0.81% drawdown 5.4% | trades 2213, winners 73%, average +5.9% | against the swing: won 17, lost 21, same 26, p=0.791
+
+verdict:
+  H1. plus: sell when Hold Edge is below 0: Saudi both periods no, other markets no -> not better than the swing
+  H2. plus: sell when Hold Edge is below -1%: Saudi both periods no, other markets no -> not better than the swing

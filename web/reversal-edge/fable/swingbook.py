@@ -70,7 +70,8 @@ def simulate(B, line=-2.5, target=-1.0, cap=40, slots=12, per_day=1, queue=0, ra
       xrule   another sale rule: dict(kind="decay", t0, t1) target falling linearly from t0 on the first held session to t1 on the
               last; dict(kind="fade", arm, drop, top) once the stretch has closed at `arm` or higher, sell after the first close `drop`
               below its highest stretch since, or at `top`; dict(kind="mkt") sell at the target only when the weather is not deep;
-              dict(kind="fast", ZF, a) also sell at the first close with ZF at `a` or higher
+              dict(kind="fast", ZF, a) also sell at the first close with ZF at `a` or higher;
+              dict(kind="hold", fn, thr) also sell when fn(t, stock, sessions held) (the Hold Edge) closes below thr
       cooldown sessions after a sale in which the stock cannot be bought again
       groups, gcap   a group number per stock and the most open positions in one group
       rotate  when the book is full and a candidate appears, sell the held stock with the highest stretch if it is at `rotate` or higher
@@ -139,6 +140,7 @@ def simulate(B, line=-2.5, target=-1.0, cap=40, slots=12, per_day=1, queue=0, ra
                         if z >= xrule["top"]: hit = True
                 elif k == "mkt": hit = p[5] is not None and fin(z) and z >= p[5] and wx[t] != 3
                 elif k == "fast": hit = (p[5] is not None and fin(z) and z >= p[5]) or (fin(xrule["ZF"][t, j]) and xrule["ZF"][t, j] >= xrule["a"])
+                elif k == "hold": hit = (p[5] is not None and fin(z) and z >= p[5]) or (n < p[6] and xrule["fn"](t, j, n) < xrule["thr"])   # also sell when the rest of the trade reads below thr
             if hit: flag[j] = 0
             elif n >= p[6]: flag[j] = 1
         sells, buys = decide(t); last = (sells, buys, t)
