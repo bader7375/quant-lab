@@ -1,0 +1,26 @@
+hold cases: 1652174 in 24 markets; trades ended by 2019-12-31: 1077610 in 23 markets (sold above the close 69.3%, average rest +2.42%)
+
+base inputs (stretch Z now, market momentum now, stretch Z x market momentum, sessions left (share of 40), stretch Z x sessions left): out-of-market squared error 2.99% below no-skill (better in 20 of 23); rank correlation 0.238
+step 1: market momentum x sessions left: error +0.012%, 16 markets, rank corr 0.239 | worst close so far (in 20-session swings): error +0.000%, 14 markets, rank corr 0.238 | result so far (in 20-session swings): error -0.001%, 13 markets, rank corr 0.238 | stretch Z at the buy: error -0.015%, 13 markets, rank corr 0.236 | stretch Z squared: error -0.020%, 13 markets, rank corr 0.238
+  -> no extra meets the mark (17 markets and a higher rank correlation).
+
+inputs of the formula: ['stretch Z now', 'market momentum now', 'stretch Z x market momentum', 'sessions left (share of 40)', 'stretch Z x sessions left']
+
+step 1, other markets, out-of-market: top third of readings +4.87% vs bottom third +0.65% = +4.21 points (5th pct +3.50); positive in 22 of 23 markets
+rank correlation with the rest of the trade, average over markets: Hold Edge 0.238 | stretch Z now alone 0.203 | market momentum alone 0.180 | Rebound Edge with no clock 0.211
+by tenth: stated -> realized (sold above the close): -0.2->+0.4 (65%)  +0.5->+0.5 (66%)  +0.9->+0.8 (67%)  +1.3->+1.2 (69%)  +1.7->+1.6 (70%)  +2.1->+2.0 (70%)  +2.6->+2.3 (70%)  +3.2->+3.2 (71%)  +4.2->+4.5 (72%)  +6.9->+7.7 (73%)
+by sessions held (stated -> realized): n=1: +3.1->+3.1  n=2: +2.9->+2.9  n=3: +2.8->+2.7  n=5: +2.4->+2.4  n=8: +2.1->+2.3  n=10: +2.0->+2.3  n=15: +1.8->+2.1  n=20: +1.6->+2.1  n=25: +1.6->+2.1  n=30: +1.5->+1.6  n=35: +1.3->+0.7
+
+M19: 1077610 hold cases | live copy: 1652174 | the two copies on all cases: correlation 0.9803, average gap 0.40 points
+weights per one standard deviation of each input, in % (M19 | live): stretch Z now -0.10 | -0.51; market momentum now -0.69 | -1.89; stretch Z x market momentum +0.97 | +0.56; sessions left (share of 40) +0.07 | +0.31; stretch Z x sessions left -0.69 | -0.44
+live companion table by band: reading -> rest of the trade, sold above the close, sessions to the sale, further dip typical / 1-in-10 (in 20-session swings)
+  0:  -0.6% ->  +0.4%, 64 in 100, 10 sessions, -0.21 / -1.31
+  1:  +0.4% ->  +0.6%, 66 in 100, 11 sessions, -0.28 / -1.54
+  2:  +1.0% ->  +0.9%, 67 in 100, 13 sessions, -0.32 / -1.65
+  3:  +1.5% ->  +1.3%, 69 in 100, 15 sessions, -0.35 / -1.75
+  4:  +2.0% ->  +1.7%, 70 in 100, 16 sessions, -0.37 / -1.81
+  5:  +2.5% ->  +2.1%, 71 in 100, 16 sessions, -0.40 / -1.88
+  6:  +3.1% ->  +2.6%, 71 in 100, 17 sessions, -0.41 / -1.91
+  7:  +4.0% ->  +3.5%, 71 in 100, 18 sessions, -0.41 / -1.94
+  8:  +5.3% ->  +5.8%, 74 in 100, 19 sessions, -0.35 / -1.75
+  9:  +9.6% -> +11.7%, 81 in 100, 23 sessions, -0.27 / -1.43
