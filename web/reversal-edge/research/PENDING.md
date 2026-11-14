@@ -16,7 +16,8 @@ TERMINAL v33 (2026-11-13, the user: "Keep the original strategy just add the new
    H3: the average stretch Z of the other liquid stocks of the same industry, at least 3), legend reading and a sentence in the Z-touch
    plan text. Context only; the live rule is unchanged. Computed in the browser from the stored daily bars (from 2019). Data finding:
    91 stored Saudi stocks (Aramco 2222 and the newer listings added 2026-10-24) are not in the 15:48 data task's list, so their stored
-   prices stopped on 2026-10-22; their charts are stale and Industry Z for their industries uses fewer stocks. OFFERED: add them to the task.
+   prices stopped on 2026-10-22; their charts are stale and Industry Z for their industries uses fewer stocks. DONE 2026-11-14 (the user: "Add the 91 stocks
+   (including Aramco) to the 15:48 data-update task"): the task now lists TASI + 284 codes (prompt copy: tadawul/routine_prompt.txt).
 Round 72 (r72/RESULTS.md, the user's four momentum helpers, pre-registered): pulse acceleration (H1), prior momentum (H2), industry-wide
    stretch (H3) and RSI with heavy volume (H4), alone, combined, as a slot order (Capitulation Score) and with 6-ATR / -25% stops.
    None passes; every filter lowers the sleeve's Sharpe and Calmar in 2013-19. H3 has a real event-level edge in Saudi but the live rule
