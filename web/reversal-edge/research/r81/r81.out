@@ -1,0 +1,20 @@
+Saudi, tested copy of Rebound Edge (formula from other markets to 2019; Saudi adjustment from 2013-19). Lines: terminal weak +0.0% / strong +5.3%; chart weak +1.9% / strong +3.5%
+growth a year / worst drawdown (return per drawdown); idle money at interest
+A. the swing as it is                      2013-19 +3.9% / 5.4% (0.72), 54 trades | 2020-26 +4.8% / 2.6% (1.86), 41 trades | 2023-26 +6.0% / 1.7% (3.49), 16 trades | 2013-26 +4.4% / 5.4% (0.81), 95 trades | winners 82%, average +9.9%, held 24, worst -19.7%
+B. the swing, strong edge only             2013-19 +3.8% / 5.7% (0.66), 48 trades | 2020-26 +4.7% / 1.7% (2.75), 29 trades | 2023-26 +5.8% / 1.7% (3.39), 12 trades | 2013-26 +4.2% / 5.7% (0.74), 77 trades | winners 84%, average +11.2%, held 23, worst -19.7%
+C. the swing, weak edge skipped            2013-19 +3.9% / 5.4% (0.72), 54 trades | 2020-26 +4.8% / 2.6% (1.86), 41 trades | 2023-26 +6.0% / 1.7% (3.49), 16 trades | 2013-26 +4.4% / 5.4% (0.81), 95 trades | winners 82%, average +9.9%, held 24, worst -19.7%
+D. Rebound Edge alone, terminal version    2013-19 +3.2% / 8.5% (0.38), 80 trades | 2020-26 +7.1% / 4.0% (1.78), 86 trades | 2023-26 +6.5% / 4.0% (1.63), 32 trades | 2013-26 +5.1% / 8.5% (0.60), 166 trades | winners 78%, average +7.1%, held 25, worst -23.5%
+E. Rebound Edge alone, chart version       2013-19 +2.0% / 8.4% (0.24), 128 trades | 2020-26 +4.6% / 5.7% (0.81), 162 trades | 2023-26 +5.1% / 5.7% (0.89), 81 trades | 2013-26 +3.3% / 8.4% (0.39), 290 trades | winners 63%, average +2.0%, held 26, worst -59.0%
+market-eras counted: 64 | reference L12D: median ratio 0.149, growth +0.73% dd 5.4%, trades 1884 | live shape A0: median ratio 0.082, trades 1767
+
+24 other markets, 64 market-eras, price-only; each market traded with a formula fitted on the other markets
+A. the swing as it is                      median return per drawdown 0.203 | growth +0.81% drawdown 5.4% | trades 2213, winners 73%, average +6.0%
+B. the swing, strong edge only             median return per drawdown 0.188 | growth +0.79% drawdown 5.4% | trades 1994, winners 73%, average +6.4% | against the swing: won 28, lost 34, same 2, p=0.813
+C. the swing, weak edge skipped            median return per drawdown 0.203 | growth +0.81% drawdown 5.4% | trades 2213, winners 73%, average +6.0% | against the swing: won 0, lost 0, same 64, p=nan
+D. Rebound Edge alone                      median return per drawdown 0.212 | growth +0.97% drawdown 5.7% | trades 3530, winners 73%, average +4.6% | against the swing: won 34, lost 30, same 0, p=0.354
+
+verdict:
+  B. the swing, strong edge only: Saudi both periods no, other markets no -> not better than the swing
+  C. the swing, weak edge skipped: Saudi both periods no, other markets no -> not better than the swing
+  D. Rebound Edge alone, terminal version: Saudi both periods no, other markets no -> not better than the swing
+  E. Rebound Edge alone, chart version: Saudi both periods no, other markets no -> not better than the swing
