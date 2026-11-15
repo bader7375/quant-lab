@@ -12,6 +12,9 @@ Round 71 (r71/RESULTS.md, the user asked for another indicator like stretch Z): 
 12. OFFERED 2026-11-13 (round 71): compute traded value from the raw close instead of the dividend-adjusted close (removes a mild
    look-ahead in the liquidity filter and stops old signals changing after dividends); needs the ranker and the market model refit;
    first estimate: 2013-19 drawdown 7.6% instead of 6.1%, 2020-26 unchanged. Waiting for the user.
+Round 75 (r75/RESULTS.md, the user declined pacing on 2026-11-15 and asked for "a model that help with taking the trade and positions"):
+   walk-forward RISK (how far a trade falls) and EDGE models, 2004-26, used to size, skip and choose. Nothing passes; each use helped
+   one period and hurt the other. Trade results here are decided by the market, which the gates already use (as round 62 found).
 Round 74 (r74/RESULTS.md, the user: a near stop, one win paying for about 4 losses; "find an edge"): no new entry passes the frozen
    test. A -3% stop order on the live plan is affordable (22% winners, payoff 5.8, worst trade halved, growth 2013-19 +2.8% vs +3.2% and
    2020-26 +3.4% vs +4.5%) but the worst drawdown stays about the same, because losses cluster in sell-offs. B3 (market turn + break of

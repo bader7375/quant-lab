@@ -1,0 +1,5 @@
+  live plan                                    2013-19 +3.2% · DD 6.1% · Calmar 0.53 | 2020-26 +5.1% · DD 4.9% · Calmar 1.04 | 2023-26 +7.1% · DD 2.7% · Calmar 2.66
+  U1y size by RISK (Yahoo-only model)          2013-19 +2.3% · DD 6.9% · Calmar 0.34 | 2020-26 +5.2% · DD 3.7% · Calmar 1.40 | 2023-26 +6.8% · DD 1.9% · Calmar 3.57
+  C1 size by volatility                        2013-19 +3.2% · DD 5.8% · Calmar 0.56 | 2020-26 +5.1% · DD 5.1% · Calmar 1.00 | 2023-26 +7.7% · DD 2.5% · Calmar 3.01
+  U2y skip riskiest fifth (Yahoo-only model)   2013-19 +3.2% · DD 6.1% · Calmar 0.52 | 2020-26 +4.9% · DD 4.9% · Calmar 1.00 | 2023-26 +6.6% · DD 3.0% · Calmar 2.22
+  C2 skip most volatile fifth                  2013-19 +3.3% · DD 5.6% · Calmar 0.59 | 2020-26 +4.4% · DD 5.5% · Calmar 0.79 | 2023-26 +7.1% · DD 2.7% · Calmar 2.66
