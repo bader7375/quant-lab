@@ -1,0 +1,32 @@
+[     7s] yahoo features ready
+[     8s] design rows 197902 (liquid stock-days 2013-19), sell-off share 0.18; rules per search ~2,889,432
+[    17s] placebo  1 (shift 923): best t raw10 31.02 exc10 9.49 raw40 60.42 exc40 24.10
+[    27s] placebo  2 (shift 1210): best t raw10 35.77 exc10 11.21 raw40 80.68 exc40 22.11
+[    37s] placebo  3 (shift 811): best t raw10 34.50 exc10 7.57 raw40 55.98 exc40 16.37
+[    47s] placebo  4 (shift 1423): best t raw10 47.40 exc10 9.11 raw40 82.57 exc40 48.62
+[    57s] placebo  5 (shift 732): best t raw10 44.13 exc10 8.28 raw40 63.52 exc40 19.67
+[    67s] placebo  6 (shift 1062): best t raw10 60.50 exc10 7.45 raw40 81.98 exc40 20.04
+[    76s] placebo  7 (shift 1414): best t raw10 38.19 exc10 9.05 raw40 66.88 exc40 38.03
+[    86s] placebo  8 (shift 1108): best t raw10 39.27 exc10 10.43 raw40 77.32 exc40 23.99
+[    96s] placebo  9 (shift 1379): best t raw10 37.66 exc10 9.58 raw40 67.55 exc40 22.24
+[   106s] placebo 10 (shift 343): best t raw10 41.36 exc10 7.00 raw40 70.65 exc40 19.78
+[   116s] placebo 11 (shift 256): best t raw10 37.83 exc10 8.29 raw40 60.18 exc40 26.76
+[   127s] placebo 12 (shift 617): best t raw10 45.42 exc10 6.38 raw40 64.81 exc40 18.73
+[   137s] placebo 13 (shift 583): best t raw10 54.90 exc10 7.14 raw40 64.39 exc40 17.37
+[   147s] placebo 14 (shift 919): best t raw10 33.49 exc10 8.79 raw40 69.07 exc40 24.79
+[   157s] placebo 15 (shift 564): best t raw10 38.50 exc10 9.14 raw40 78.77 exc40 17.94
+[   166s] placebo 16 (shift 1401): best t raw10 42.13 exc10 7.33 raw40 56.90 exc40 23.49
+[   175s] placebo 17 (shift 1306): best t raw10 39.68 exc10 11.47 raw40 76.32 exc40 22.15
+[   185s] placebo 18 (shift 515): best t raw10 43.81 exc10 7.67 raw40 57.93 exc40 16.91
+[   194s] placebo 19 (shift 1249): best t raw10 43.65 exc10 7.56 raw40 82.12 exc40 23.17
+[   204s] placebo 20 (shift 666): best t raw10 29.62 exc10 10.14 raw40 56.00 exc40 23.47
+[   204s] luck threshold (max of 20 placebo bests): raw10 60.50 exc10 11.47 raw40 82.57 exc40 48.62
+[   214s] real search best t: raw10 46.67 exc10 11.52 raw40 79.03 exc40 26.91; rules above the luck threshold: 1
+[   214s] families (best rule per feature set x market state x horizon x target): 1
+[   214s] families passing the honest design check (clustered t >= 3, both halves positive): 0
+[   228s] library ready
+us100: 115 stocks, 2000-01-03..2026-11-13, eligible on 2026-11-13: 115
+us100: 115 stocks, 2000-01-03..2026-11-13, eligible on 2026-11-13: 115
+[   244s] US ready
+[   244s] confirmed: 0 of 0 families that passed the design check
+[   244s] done

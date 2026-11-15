@@ -12,6 +12,12 @@ Round 71 (r71/RESULTS.md, the user asked for another indicator like stretch Z): 
 12. OFFERED 2026-11-13 (round 71): compute traded value from the raw close instead of the dividend-adjusted close (removes a mild
    look-ahead in the liquidity filter and stops old signals changing after dividends); needs the ranker and the market model refit;
    first estimate: 2013-19 drawdown 7.6% instead of 6.1%, 2020-26 unchanged. Waiting for the user.
+Round 76 (r76/RESULTS.md, the user: "a model that do a million rounds to understand the market and features ... with out overfitting"):
+   2.9 million price-and-volume rules per search on Saudi 2013-19, judged against 20 searches on time-scrambled data (60.7 million rule
+   tests). No rule beats luck (one by a hair, then it failed the honest check); nothing reached confirmation. Description only: the best
+   40-session rules are the plan's own territory (sell-off + volatile stocks; the top one holds 80% of the plan's signals) and held on all
+   three unseen sets; "oversold" alone carries no information outside sell-offs. 13. OFFERED 2026-11-15: an account test of a weak,
+   Saudi-only pattern (calm stocks near their 1-year high beat the market in normal markets, when the plan is in cash). Waiting for the user.
 Round 75 (r75/RESULTS.md, the user declined pacing on 2026-11-15 and asked for "a model that help with taking the trade and positions"):
    walk-forward RISK (how far a trade falls) and EDGE models, 2004-26, used to size, skip and choose. Nothing passes; each use helped
    one period and hurt the other. Trade results here are decided by the market, which the gates already use (as round 62 found).

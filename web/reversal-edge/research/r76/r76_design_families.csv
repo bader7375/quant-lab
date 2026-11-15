@@ -1,0 +1,2 @@
+key,cond,dirs,feats,ix,t_plain,design_mean,design_t_cl,design_n,h1,h2,design_ok
+exc10,normal,LL,"['vol60', 'ms']","[0, 2]",11.524657128261977,0.011963544142229532,2.462134659823031,1700,0.025189189581620513,0.004951928333227474,False
