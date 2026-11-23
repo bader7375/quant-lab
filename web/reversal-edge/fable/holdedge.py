@@ -17,6 +17,7 @@ EXTRA = ["MSLEFT", "SF", "DIPSF", "ZE", "Z2"]
 WORDS = dict(Z="stretch Z now", MS="market momentum now", ZMS="stretch Z x market momentum", LEFT="sessions left (share of 40)", ZLEFT="stretch Z x sessions left", MSLEFT="market momentum x sessions left",
              SF="result so far (in 20-session swings)", DIPSF="worst close so far (in 20-session swings)", ZE="stretch Z at the buy", Z2="stretch Z squared")
 HERE = os.path.dirname(os.path.abspath(__file__)); MODEL_FILE = os.path.join(HERE, "holdedge_model.json")
+MODEL_FILE_40 = os.path.join(HERE, "holdedge40_model.json")                    # round 83: the live plan's sale (a fixed 40-session hold)
 
 
 def readings(z, ms, n, sofar=None, worst=None, ze=None, unit_entry=None):
@@ -70,5 +71,5 @@ def read(M, S, z, ms, n, gated=None, unit=None, **more):
     return dict(edge=e, band=k, up=b["up"], togo=b["togo"], fur=(b["furz_med"] * u if u else None), fur_bad=(b["furz_bad"] * u if u else None))
 
 
-def load(which="live"):
-    X = json.load(open(MODEL_FILE)); return X[which], X
+def load(which="live", file=None):
+    X = json.load(open(file or MODEL_FILE)); return X[which], X

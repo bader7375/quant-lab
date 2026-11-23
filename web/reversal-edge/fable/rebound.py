@@ -16,6 +16,7 @@ LINE, TARGET, CAP, COST = -1.5, 0.0, 40, .004
 HORIZONS = (1, 2, 3, 5, 8, 10, 15, 20, 30, 40)             # sessions after the buy at which the cone is read
 NAMES = ["Z", "MS", "ZMS"]
 HERE = os.path.dirname(os.path.abspath(__file__)); MODEL_FILE = os.path.join(HERE, "rebound_model.json")
+HOLD40 = 99.0; MODEL_FILE_40 = os.path.join(HERE, "rebound40_model.json")      # round 83: the live plan's sale (a fixed 40-session hold)
 
 
 def inputs(B):
@@ -23,12 +24,13 @@ def inputs(B):
     Z = B.ZC.values; MS = np.asarray(B.MS, float)[:, None] * np.ones((B.T, B.N)); return dict(Z=Z, MS=MS, ZMS=Z * MS, unit=B.VOL * np.sqrt(20))
 
 
-def cases(B, start=None, end=None, extra=None):
-    """every case as a row: i (signal close), j (stock), the inputs, and what the trade did. Trades not finished in the data are left out."""
+def cases(B, start=None, end=None, extra=None, target=TARGET):
+    """every case as a row: i (signal close), j (stock), the inputs, and what the trade did. Trades not finished in the data are left out.
+    target: the stretch Z of the sale (the swing's 0); HOLD40 (never reached) gives the live plan's sale, the open 40 sessions after the buy."""
     F = inputs(B); d = B.dates; ok = (np.nan_to_num(F["Z"], nan=9.) <= LINE) & B.EL & np.isfinite(F["MS"])
     if start is not None: ok[:int(np.searchsorted(d.values, np.datetime64(start)))] = False
     if end is not None: ok[int(np.searchsorted(d.values, np.datetime64(end), side="right")):] = False
-    I, J = np.where(ok); X = SW.run_exits(B, I, J, target=TARGET, cap=CAP); done = X["ex"] >= 0; I, J = I[done], J[done]; d1 = X["d1"][done]
+    I, J = np.where(ok); X = SW.run_exits(B, I, J, target=target, cap=CAP); done = X["ex"] >= 0; I, J = I[done], J[done]; d1 = X["d1"][done]
     out = dict(i=I, j=J, date=d[I].values, month=(d[I].year * 12 + d[I].month).values, d1=d1, ex=X["ex"][done], held=X["held"][done], net=X["ret"][done] - COST, dip=X["mae"][done], why=X["why"][done])
     for k in NAMES + ["unit"]: out[k] = F[k][I, J]
     e = B.Of[d1, J]; T = B.T
@@ -106,5 +108,5 @@ def saudi_tables(D, ea, M, K=300.0):
     return edges, out
 
 
-def load(which="live"):
-    X = json.load(open(MODEL_FILE)); return X[which], X
+def load(which="live", file=None):
+    X = json.load(open(file or MODEL_FILE)); return X[which], X
