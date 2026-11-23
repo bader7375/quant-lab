@@ -13,6 +13,7 @@ scheduled tasks are untouched.
 | `swing.py`, `swingbook.py` | the swing account, day by day, for any market: crosses into the buy zone, one buy a day, sale when the stretch is gone. Optional switches (round 79) are off by default |
 | `swingrule.py` | **the Fable swing rule** with its tested values, in one place for the export, the brief, the terminal and the tests |
 | `rebound.py`, `rebound_model.json` | **Rebound Edge**, the indicator (round 80): for a stretched stock, the expected result of a buy at the next open, with the share of wins, the dip, the sessions and a cone. The formula was fitted on other markets only |
+| `rebound40_model.json`, `holdedge40_model.json` | both indicators rebuilt for the live plan's own sale, a fixed 40-session hold (round 83): the live daily list's Rebound Edge and Hold Edge columns, and the Hold Edge on the Live and Ladder positions |
 | `holdedge.py`, `holdedge_model.json` | **Hold Edge**, the second indicator (round 82): for an open trade, what the rest of the trade is worth from today's close, with how many in 100 were sold higher, the further dip and the sessions to the sale |
 | `make_daily_model.py` | writes the small table the live daily list uses for its Rebound Edge column |
 | `book.py` | the ladder rule (and the live rule) replayed to any close |
@@ -26,7 +27,7 @@ scheduled tasks are untouched.
 
 Research: `research/r71` (reproduce, no look-ahead, ranges, gate test), `r72` (24 other markets), `r73` (the ladder on Saudi), `r74`
 (entry timing), `r75` (the idle-money assumption), `r76` (anatomy of a buy-zone cross), `r77` (the swing chosen abroad: stopped at
-the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule), `r79` (36 changes to the swing: none adopted), `r80` (Rebound Edge: tested, verdict descriptive), `r81` (the swing with and without Rebound Edge: no rule that uses it is better), `r82` (Hold Edge: descriptive, not an exit rule; the stop question). Each has PREREG.md written before its run and RESULTS.md.
+the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule), `r79` (36 changes to the swing: none adopted), `r80` (Rebound Edge: tested, verdict descriptive), `r81` (the swing with and without Rebound Edge: no rule that uses it is better), `r82` (Hold Edge: descriptive, not an exit rule; the stop question), `r83` (both indicators for the live plan's 40-session hold: descriptive; in the live list). Each has PREREG.md written before its run and RESULTS.md.
 
 ## The three rules side by side
 | | live (plan Z, what you trade) | **the Fable swing (on paper)** | the ladder (on paper) |
@@ -95,6 +96,7 @@ RE_WORK=<work folder> python3 pine/check_fable_swing.py          # the TradingVi
 RE_WORK=<work folder> python3 research/r80/trunc80.py            # Rebound Edge uses no future data (30 past closes)
 RE_WORK=<work folder> python3 pine/check_rebound_edge.py         # the TradingView script's arithmetic against the product
 RE_WORK=<work folder> python3 research/r82/trunc82.py            # Hold Edge uses no future data (30 past closes)
+RE_WORK=<work folder> python3 research/r83/trunc83.py            # the 40-session versions use no future data
 RE_WORK=<work folder> python3 pine/check_hold_edge.py            # the Hold Edge script's arithmetic against the product
 ```
 

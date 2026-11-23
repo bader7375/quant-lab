@@ -2,6 +2,13 @@
 LIVE SINCE 2026-11-10 (the user: "Let's go back to previous strategy stretch with ML"): plan Z = the Z score rule (stretch Z touch, ML rank 50%+,
 market model positive, market momentum -1.18 or lower, profitable), 5 positions of 5%, most volatile first, hold 40 sessions, no stop; reported
 through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2026-11-09 only and made no trade.
+16. BUILT 2026-11-23 at the user's request ("Yes add it" to Hold Edge in the live list; "refresh it and update it"): round 83 rebuilt Rebound
+   Edge and Hold Edge for the live plan's own sale (a fixed 40-session hold; r83/RESULTS.md). Both DESCRIPTIVE; weaker than the swing
+   versions (abroad rank link 0.13 vs 0.22); in Saudi 2023-26 alone neither separates. Selling early on Hold Edge 40: 2013-19 +2.6% vs +3.1%
+   a year; not adopted. LIVE LIST: commit 0ecef1b on claude/nice-gates-8aa4yb: a Hold Edge column in the Held table; both columns show the
+   40-session group averages. The live session was asked to copy the three files and to confirm with the user first (as on 2026-11-14,
+   when the user told it "Add it as indicator only"). The Fable terminal (data to the 2026-11-23 close) shows Hold Edge 40 on Live and
+   Ladder positions and the round 83 tables under Research -> Hold Edge.
 15. BUILT 2026-11-14 at the user's request ("Let's create another indicator"): Hold Edge (round 82, r82/RESULTS.md; fable/holdedge.py;
    pine/hold_edge.pine; the Fable terminal's Books, chart card and Research tab). For an open trade: the average result of the rest of
    the trade from today's close to the sale, from the stretch Z now, market momentum now and the sessions left. Verdict: DESCRIPTIVE,

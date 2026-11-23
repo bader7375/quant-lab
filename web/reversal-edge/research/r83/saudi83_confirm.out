@@ -1,0 +1,31 @@
+Saudi confirm, Rebound Edge 40: 14407 trades held 40 sessions, 2020-01-06 to 2026-09-24; wins 55.4%, average net +2.34%; live-plan signals among them 250
+[Rebound Edge 40, M19, no Saudi data] mark 1: top third +7.79% vs bottom third -2.76% = +10.54 points, range +6.18 to +13.52 -> PASS
+[Rebound Edge 40, M19, no Saudi data] mark 2: rank correlation: reading 0.353 | stretch alone 0.156, lead +0.197 (5th pct +0.103) | momentum alone 0.366, lead -0.013 (5th pct -0.047) -> FAIL
+[Rebound Edge 40, Saudi-adjusted (frozen: a test)] mark 1: top third +7.02% vs bottom third -2.93% = +9.95 points, range +4.81 to +12.87 -> PASS
+[Rebound Edge 40, Saudi-adjusted (frozen: a test)] mark 2: rank correlation: reading 0.347 | stretch alone 0.156, lead +0.191 (5th pct +0.113) | momentum alone 0.366, lead -0.020 (5th pct -0.089) -> FAIL
+[Rebound Edge 40] thirds: stated -2.5% -> -2.9% (37 in 100) | stated +1.9% -> +2.9% (58 in 100) | stated +10.5% -> +7.0% (71 in 100)
+[Rebound Edge 40] by band: 0: -4.7->-3.5, 35 (stated 45), 1255 | 1: -2.0->-3.7, 35 (stated 38), 2541 | 2: -0.4->+0.8, 49 (stated 51), 2322 | 3: +1.6->+3.4, 58 (stated 57), 1891 | 4: +3.7->+3.6, 64 (stated 50), 1393 | 5: +6.0->+2.7, 58 (stated 54), 1594 | 6: +8.5->+5.4, 69 (stated 68), 1162 | 7: +10.7->+8.1, 78 (stated 70), 886 | 8: +13.5->+10.9, 80 (stated 75), 654 | 9: +19.3->+13.0, 87 (stated 78), 709
+[Rebound Edge 40] by weather: calm 2779: stated -2.7% -> -3.6% (35 in 100) | clouds 2549: stated -0.4% -> -3.7% (33 in 100) | storm 3717: stated +2.6% -> +3.8% (60 in 100) | deep 5362: stated +8.7% -> +7.3% (74 in 100)
+[Rebound Edge 40] inside the live plan's own signals (250): stated +13.6% -> realized +8.3%, wins 74%, rank correlation 0.11834186146978351
+[Rebound Edge 40] mark 3: thirds rise: yes; shares within 10 points in every band with 100+ cases: NO (largest gap 13) -> FAIL
+[Rebound Edge 40, 2023-26, M19] mark 1: top third -0.81% vs bottom third -2.85% = +2.04 points, range -0.96 to +5.51 -> FAIL
+[Rebound Edge 40, 2023-26, M19] mark 2: rank correlation: reading 0.079 | stretch alone -0.050, lead +0.129 (5th pct +0.020) | momentum alone 0.148, lead -0.070 (5th pct -0.108) -> FAIL
+
+VERDICT Rebound Edge 40: DESCRIPTIVE
+
+
+Saudi confirm, Hold Edge 40: 157722 hold cases from 14407 trades; sold above the close 51.7%, average rest +1.23%
+[Hold Edge 40, M19, no Saudi data] mark 1: top third +4.91% vs bottom third -0.78% = +5.69 points, range +2.68 to +7.88 -> PASS
+[Hold Edge 40, M19, no Saudi data] mark 2: rank correlation: reading 0.240 | stretch alone 0.162, lead +0.078 (5th pct +0.030) | momentum alone 0.281, lead -0.041 (5th pct -0.134) | noclock alone 0.288, lead -0.048 (5th pct -0.106) -> FAIL
+[Hold Edge 40, Saudi-adjusted (frozen: a test)] mark 1: top third +4.69% vs bottom third -0.99% = +5.67 points, range +3.00 to +8.13 -> PASS
+[Hold Edge 40, Saudi-adjusted (frozen: a test)] mark 2: rank correlation: reading 0.236 | stretch alone 0.162, lead +0.074 (5th pct +0.015) | momentum alone 0.281, lead -0.045 (5th pct -0.132) | noclock alone 0.288, lead -0.052 (5th pct -0.110) -> FAIL
+[Hold Edge 40] thirds: stated -0.1% -> -1.0% (43 in 100) | stated +2.5% -> +0.0% (48 in 100) | stated +7.3% -> +4.7% (64 in 100)
+[Hold Edge 40] by band: 0: -1.0->-1.0, 40 (stated 57), 15571 | 1: -0.3->-1.1, 42 (stated 56), 16246 | 2: +0.5->-0.9, 45 (stated 52), 16390 | 3: +1.5->-0.9, 46 (stated 49), 19914 | 4: +2.6->-0.2, 48 (stated 49), 24842 | 5: +3.9->+1.9, 53 (stated 54), 18989 | 6: +5.2->+2.9, 58 (stated 56), 16488 | 7: +6.8->+2.9, 60 (stated 61), 12203 | 8: +9.0->+6.1, 72 (stated 69), 10035 | 9: +13.4->+12.3, 87 (stated 80), 7044
+[Hold Edge 40] by weather: calm 36562: stated +1.1% -> -2.2% (37 in 100) | clouds 27626: stated +1.7% -> -1.8% (38 in 100) | storm 33790: stated +3.0% -> +1.1% (52 in 100) | deep 59744: stated +5.3% -> +4.8% (67 in 100)
+[Hold Edge 40] the stop question (rest of a 40-session hold from that close): all n=5 down 15% or more: +12.8% (81 in 100, 160) | all n=5 down 10 to 15%: +8.5% (74 in 100, 388) | all n=5 down 5 to 10%: +4.6% (64 in 100, 1512) | all n=5 down 0 to 5%: +1.5% (53 in 100, 4735) | all n=5 up: +1.4% (53 in 100, 7562) | all n=10 down 15% or more: +10.0% (74 in 100, 373) | all n=10 down 10 to 15%: +5.5% (69 in 100, 615) | all n=10 down 5 to 10%: +2.9% (60 in 100, 1788) | all n=10 down 0 to 5%: +1.5% (54 in 100, 3741) | all n=10 up: +0.2% (49 in 100, 7769) | all n=20 down 15% or more: +4.3% (62 in 100, 735) | all n=20 down 10 to 15%: +2.7% (57 in 100, 949) | all n=20 down 5 to 10%: +1.8% (56 in 100, 1708) | all n=20 down 0 to 5%: +0.2% (49 in 100, 2719) | all n=20 up: -0.3% (46 in 100, 8184) | the n=5 down 5 to 10%: +12.2% (94 in 100, 33) | the n=5 down 0 to 5%: +10.3% (84 in 100, 63) | the n=5 up: +6.2% (70 in 100, 131) | the n=10 down 5 to 10%: +9.3% (92 in 100, 24) | the n=10 down 0 to 5%: +10.7% (80 in 100, 46) | the n=10 up: +4.4% (65 in 100, 155) | the n=20 down 0 to 5%: +2.4% (42 in 100, 26) | the n=20 up: +0.9% (45 in 100, 196)
+[Hold Edge 40] by sessions held: n=1: +5.6->+2.6  n=2: +5.3->+2.4  n=3: +5.0->+2.3  n=5: +4.5->+2.1  n=8: +3.7->+1.6  n=10: +3.2->+1.4  n=15: +2.6->+0.9  n=20: +2.0->+0.5  n=25: +1.5->+0.1  n=30: +1.1->-0.1  n=35: +0.8->-0.1
+[Hold Edge 40] mark 3: thirds rise: yes; shares within 10 points in every band with 100+ cases: NO (largest gap 17) -> FAIL
+[Hold Edge 40, 2023-26, M19] mark 1: top third -0.40% vs bottom third -1.30% = +0.90 points, range -1.67 to +3.62 -> FAIL
+[Hold Edge 40, 2023-26, M19] mark 2: rank correlation: reading 0.028 | stretch alone 0.021, lead +0.006 (5th pct -0.042) | momentum alone 0.049, lead -0.021 (5th pct -0.126) | noclock alone 0.024, lead +0.004 (5th pct -0.060) -> FAIL
+
+VERDICT Hold Edge 40: DESCRIPTIVE

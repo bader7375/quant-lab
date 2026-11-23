@@ -245,6 +245,19 @@ def he_of(p):
     return out
 for bk_ in (SWB, SWR):
     for p_ in bk_["held"]: p_["he"] = he_of(p_)
+# ---- Hold Edge 40 (round 83): the same reading for the 40-session books (your live rule, the ladder), built for their own sale.
+# It shows its group's past average (what Saudi trades with a like reading did from that close to the sale), as the live list does.
+H4M, H4A = HED.load("live", HED.MODEL_FILE_40); H4S = H4A.get("saudi")
+def he40_of(p):
+    try:
+        j = cols.index(p["sym"]); n = int(p.get("held") or 0)
+        if H4S is None or not 1 <= n < 40 or not (np.isfinite(Zs[i, j]) and np.isfinite(MS[i])): return None
+        e = float(RBD.edge(H4M, HED.readings(float(Zs[i, j]), float(MS[i]), n), saudi=H4S, gated=bool(G_[i, j]))); k = int(RBD.band_of(H4S, e)); b = H4S["bands"][k]; u = RUNIT[i, j]
+        return dict(edge=R(e, 4), rest=R(b["rest"], 4), up=R(b["up"], 3), togo=R(b["togo"], 0), fur=R(b["furz_med"] * u, 4) if np.isfinite(u) else None, fur_bad=R(b["furz_bad"] * u, 4) if np.isfinite(u) else None,
+                    word=("weak" if k <= 2 else "strong" if k >= 7 else "fair"))                        # by its group, so the word matches the group average shown
+    except Exception: return None
+for bk_ in (BOOKS["live"], BOOKS["fable"], REPLAY["live"], REPLAY["fable"]):
+    for p_ in bk_.get("held", []): p_["he40"] = he40_of(p_)
 # ---- the scanner: every liquid stock at this close
 inzL, ageL = SBk.zone_age(B, SR.LINE); fw_h = {p["sym"] for p in SWB["held"]}; fw_s = {p["sym"] for p in SWB["due"]}; fw_b = {b["sym"] for b in SWB["buys"]}; rp_h = {p["sym"] for p in SWR["held"] + SWR["due"]}; cand_now = set(cols[j] for j in ORF["cands"])
 scan = []; liqj = [j for j in range(len(cols)) if PB.EL[i, j] and np.isfinite(Zs[i, j])]
@@ -325,6 +338,18 @@ if r82d and r82c and r82f and r82a:
                             water=[dict(n=int(x["n"]), state=x["state"], d=R(x["rest"], 5), du=R(x["up"], 3), c=R(wd[(x["n"], x["state"])]["rest"], 5) if (x["n"], x["state"]) in wd else None, cu=R(wd[(x["n"], x["state"])]["up"], 3) if (x["n"], x["state"]) in wd else None) for x in r82d["water"]],
                             weather=[dict(w=x["weather"], d=R(x["realized"], 5), c=R(y["realized"], 5), cu=R(y["up"], 3)) for x, y in zip(r82d["weather"], r82c["weather"])],
                             acct=[dict(rule=k, a=[R(v["perf"]["2013-19"]["cagr"], 5), R(v["perf"]["2013-19"]["dd"], 5)], b=[R(v["perf"]["2020-26"]["cagr"], 5), R(v["perf"]["2020-26"]["dd"], 5)], won=(r82a["world"].get(k) or {}).get("won"), lost=(r82a["world"].get(k) or {}).get("lost")) for k, v in r82a["saudi"].items()])
+r83d = rj("r83", "saudi83_design.json"); r83c = rj("r83", "saudi83_confirm.json"); r83f = rj("r83", "fit83.json"); r83a = rj("r83", "acct83.json")
+if r83d and r83c and r83f and r83a and not r83c.get("hold40", {}).get("skipped"):
+    def mk3(x): sp = x["separation"]; bt = x["beats"]; return dict(top=R(sp[3], 5), bottom=R(sp[4], 5), lo=R(sp[1], 5), corr=R(bt["odds"], 3), corr_ms=R(bt["momentum"]["corr"], 3), corr_z=R(bt["stretch"]["corr"], 3))
+    h1 = r83f["hold40"]; r1 = r83f["rebound40"]; wd = {(x["who"], x["n"], x["state"]): x for x in r83c["hold40"]["water"]}
+    evidence["live40"] = dict(verdict_rebound=r83c["rebound40"].get("verdict"), verdict_hold=r83c["hold40"].get("verdict"),
+                              hold=dict(abroad=dict(top=R(h1["separation"][3], 5), bottom=R(h1["separation"][4], 5), corr=R(h1["corr"], 3), corr_ms=R(h1["comps"]["momentum"], 3), corr_z=R(h1["comps"]["stretch"], 3), pos=int(sum(v["spread"] > 0 for v in h1["by_market"].values())), markets=int(h1["markets"])),
+                                        design=mk3(r83d["hold40"]["m19"]), confirm=mk3(r83c["hold40"]["m19"]), late=mk3(r83c["hold40"]["m19_2023_26"])),
+                              rebound=dict(abroad=dict(top=R(r1["separation"][3], 5), bottom=R(r1["separation"][4], 5), corr=R(r1["corr"], 3), corr_ms=R(r1["comps"]["momentum"], 3), corr_z=R(r1["comps"]["stretch"], 3), pos=int(sum(v["spread"] > 0 for v in r1["by_market"].values())), markets=int(r1["markets"])),
+                                           design=mk3(r83d["rebound40"]["m19"]), confirm=mk3(r83c["rebound40"]["m19"]), late=mk3(r83c["rebound40"]["m19_2023_26"])),
+                              water=[dict(n=int(x["n"]), state=x["state"], d=R(x["rest"], 5), du=R(x["up"], 3), c=R(wd[(x["who"], x["n"], x["state"])]["rest"], 5) if (x["who"], x["n"], x["state"]) in wd else None, cu=R(wd[(x["who"], x["n"], x["state"])]["up"], 3) if (x["who"], x["n"], x["state"]) in wd else None)
+                                     for x in r83d["hold40"]["water"] if x["who"].startswith("all")],
+                              acct=[dict(rule=k, a=[R(v["perf"]["2013-19"]["cagr"], 5), R(v["perf"]["2013-19"]["dd"], 5)], b=[R(v["perf"]["2020-26"]["cagr"], 5), R(v["perf"]["2020-26"]["dd"], 5)], won=(r83a["world"].get(k) or {}).get("won"), lost=(r83a["world"].get(k) or {}).get("lost")) for k, v in r83a["saudi"].items()])
 us = None
 try:
     t27 = json.load(open(os.path.join(WORK, "r27/today27.json"))); u = t27.get("us_scan") or {}; u30 = t27.get("us30") or {}

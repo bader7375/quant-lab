@@ -1,0 +1,25 @@
+Rebound Edge 40: 27535 Saudi trades | tested: -7.24% + 2.02 x edge, +6.91% with the gates | product: -4.79% + 1.33 x edge, +5.51% with the gates (range +1.44 to +8.81)
+  for Saudi: edge % = -5.70 -1.23 x Z -2.64 x M -0.089 x Z x M, +5.51 with the gates; weak below +0.2%, strong from +6.3%
+  0:  2754 |  -4.8% ->  -2.4% | wins 40% | dip -1.13 / -3.10 | Saudi alone  -2.8%, 38%
+  1:  2753 |  -2.1% ->  -3.9% | wins 37% | dip -1.31 / -3.25 | Saudi alone  -4.4%, 36%
+  2:  2754 |  -0.8% ->  -2.9% | wins 39% | dip -1.41 / -3.63 | Saudi alone  -3.3%, 38%
+  3:  2753 |  +0.4% ->  +1.9% | wins 55% | dip -0.98 / -3.04 | Saudi alone  +2.0%, 55%
+  4:  2753 |  +2.1% ->  +2.7% | wins 57% | dip -0.88 / -2.85 | Saudi alone  +2.7%, 57%
+  5:  2754 |  +4.1% ->  +3.4% | wins 57% | dip -0.74 / -2.49 | Saudi alone  +3.4%, 56%
+  6:  2753 |  +6.0% ->  +4.6% | wins 61% | dip -0.69 / -2.10 | Saudi alone  +4.6%, 61%
+  7:  2754 |  +8.2% -> +10.4% | wins 74% | dip -0.48 / -1.64 | Saudi alone +10.8%, 74%
+  8:  2753 | +10.2% -> +12.7% | wins 72% | dip -0.44 / -1.50 | Saudi alone +12.4%, 72%
+  9:  2754 | +15.2% -> +14.4% | wins 81% | dip -0.30 / -1.26 | Saudi alone +14.4%, 81%
+
+Hold Edge 40: 301642 Saudi readings from 27535 trades | tested: -1.01% + 1.23 x reading, +4.78% with the gates | product: -2.37% + 1.29 x reading, +3.33% with the gates (range +0.76 to +5.90)
+  for Saudi (L = sessions left / 40): hold edge % = -3.30 +0.25 x Z -1.05 x M +0.250 x Z x M +2.66 x L -0.84 x Z x L, +3.33 with the gates; weak below +0.5%, strong from +3.7%
+  0:  30165 |  -2.8% ->  -0.2% | sold above the close 45 in 100 | 11 sessions | further dip -0.27 / -1.20
+  1:  30164 |  -1.4% ->  -0.3% | sold above the close 48 in 100 | 16 sessions | further dip -0.33 / -1.65
+  2:  30164 |  -0.3% ->  -0.2% | sold above the close 49 in 100 | 26 sessions | further dip -0.53 / -2.38
+  3:  30164 |  +0.7% ->  -0.7% | sold above the close 45 in 100 | 31 sessions | further dip -0.63 / -2.62
+  4:  30164 |  +1.5% ->  -0.3% | sold above the close 47 in 100 | 31 sessions | further dip -0.62 / -2.62
+  5:  30164 |  +2.4% ->  +1.0% | sold above the close 53 in 100 | 33 sessions | further dip -0.53 / -2.45
+  6:  30164 |  +3.5% ->  +2.7% | sold above the close 57 in 100 | 31 sessions | further dip -0.49 / -1.95
+  7:  30164 |  +4.8% ->  +4.7% | sold above the close 61 in 100 | 33 sessions | further dip -0.47 / -1.66
+  8:  30164 |  +6.7% ->  +7.3% | sold above the close 67 in 100 | 36 sessions | further dip -0.40 / -1.47
+  9:  30165 | +10.7% -> +12.9% | sold above the close 79 in 100 | 38 sessions | further dip -0.32 / -1.25

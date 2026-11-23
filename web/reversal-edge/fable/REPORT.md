@@ -67,6 +67,7 @@ Trades by year: 2014: 10, 2015: 15, 2016: 22, 2017: 1, 2018: 5, 2019: 1, 2020: 9
 | 80 | Can an indicator say what a stretched stock is worth buying for? | **Yes as a description, no as a new edge.** Rebound Edge separates in every test; it does not beat market momentum alone |
 | 81 | Does the swing do better with Rebound Edge, or can it replace the swing? | **No and no** |
 | 82 | Can an indicator say what an open trade is still worth? Should a negative reading sell it? | **Yes as a description; no as an exit.** And a stop would sell the trades with the most left to gain |
+| 83 | The same two indicators for the live plan's 40-session hold? | **Descriptive, weaker; no separation in 2023-26 alone.** In the live list as information only |
 
 ## Round 79: can the swing be improved? 36 changes tested, none adopted
 Each change altered one thing. To go forward it had to win on 24 other markets AND on Saudi 2013-19. Saudi 2020-26 stayed closed.
@@ -131,6 +132,25 @@ sessions left. Verdict: **descriptive, and not an exit rule.**
 **The stop question, settled:** a trade that was down 10% or more after 5 or 10 sessions went on to make +6% to +16% from there, and
 was sold above that close 74 to 90 times in 100, in both periods. A stop sells exactly these. Details: `research/r82/RESULTS.md`.
 
+## Round 83: both indicators for your live plan's own sale (2026-11-23)
+Your live plan sells 40 sessions after the buy; rounds 80 and 82 used the swing's earlier sale. Both were rebuilt for the 40-session
+hold, with the same tests, and went into your live daily list (your yes, 2026-11-23), as information only.
+
+| Hold Edge 40 | top third | bottom third |
+|---|---|---|
+| 23 other markets | +4.2% | +0.5% |
+| Saudi 2013-19 | +9.5% | +1.8% |
+| Saudi 2020-26 | +4.9% | -0.8% |
+| Saudi 2023-26 | -0.4% | -1.3% (does not separate) |
+
+| your live plan (growth / worst drawdown) | 2013-19 | 2020-26 | other markets, won / lost |
+|---|---|---|---|
+| as it is | +3.1% / 6.1% | +4.6% / 4.9% | |
+| plus: sell when Hold Edge 40 is below 0 | +2.6% / 5.0% | +4.7% / 4.9% | 31 / 33 |
+| plus: sell when it is below -1% | +2.6% / 5.3% | +4.9% / 4.9% | 34 / 19 |
+
+Verdict: descriptive for both, weaker than the swing versions, and no early sale improves the plan. Details: `research/r83/RESULTS.md`.
+
 ## Honesty checks on the swing
 | check | result |
 |---|---|
@@ -151,7 +171,8 @@ was sold above that close 74 to 90 times in 100, in both periods. A stop sells e
 | Daily export and brief (`fable/run.sh`) | working, about 10 seconds after the live run | |
 | Daily feed: one new scheduled task at 16:55 Riyadh (`fable/SCHEDULE.md`) | written, **not created**: you said no on 2026-11-13 | nothing; the terminal is filled by hand |
 | Rebound Edge: terminal (chart pane, cone, card, scanner), brief, `pine/rebound_edge.pine` | built and tested; verdict descriptive | paste the Pine script into TradingView and send me any error |
-| Rebound Edge column in the LIVE daily list | commit 51e79e0 on the live branch; your live session is asking you to confirm before it copies the files | your yes in the live session |
+| Rebound Edge column in the LIVE daily list | installed by your live session on 2026-11-14 ("indicator only") | |
+| Hold Edge column in the LIVE daily list, and both columns rebuilt for the 40-session hold | commit 0ecef1b on the live branch; your live session asks you to confirm before it copies the files | your yes in the live session |
 | Hold Edge: terminal (Books, chart card, Research), brief, `pine/hold_edge.pine` | built and tested; verdict descriptive, not an exit | paste the Pine script into TradingView and send me any error |
 | The swing as your live rule | confirmed against live; on paper since the 2026-11-11 close | your yes, later. I suggest watching it on paper through one sell-off first |
 | The ladder | on paper | nothing now |
