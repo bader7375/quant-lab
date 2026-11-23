@@ -234,9 +234,18 @@ def live():
         keep, due_p = ST["keep"], ST["due"]; tierk = 1 if KIND == "Z" else 4
         L += ["", f"Plan book: **{len(keep)} of {PB.SLOTS} slots in use**, {ST['free']} free" + (f" (your plan started on {fdt(SET['plan_start'])})" if SET["plan_start"] else "") + "."]
         if len(keep):
-            L += ["", "| Held | Bought at the open of | Entry | Last close | So far | Sell at the open of |", "|---|---|---|---|---|---|"]
+            try: import rebound_edge as _HE                                         # round 83, the user's yes on 2026-11-23: a Hold Edge column; it changes no signal or exit
+            except Exception: _HE = None
+            def _hc(r):
+                try:
+                    if _HE is None: return "n/a"
+                    j_ = int(r.j); g_ = bool(np.nan_to_num(PB.PCTv[i, j_], nan=-1) >= .5 and PB.PMv[i] > 0 and not PB.LOSS[i, j_])
+                    return _HE.hold_cell(float(ZC.iloc[i, j_]), float(PB.MS[i]), int(i - r.d1 + 1), float(PB.VOL[i, j_]), g_)
+                except Exception: return "n/a"
+            L += ["", "| Held | Bought at the open of | Entry | Last close | So far | Hold Edge | Sell at the open of |", "|---|---|---|---|---|---|---|"]
             for r in keep.sort_values("d1").itertuples():
-                e = Of[r.d1, r.j]; L.append(f"| **{cols[r.j]}** {nm.get(cols[r.j], '')[:24]} | {fmt_d(dates[r.d1])} | {e:.2f} | {Cl[i, r.j]:.2f} | {pc(Cl[i, r.j] / e - 1)} | {fmt_d(day + (r.xo - T_) * BD)} |")
+                e = Of[r.d1, r.j]; L.append(f"| **{cols[r.j]}** {nm.get(cols[r.j], '')[:24]} | {fmt_d(dates[r.d1])} | {e:.2f} | {Cl[i, r.j]:.2f} | {pc(Cl[i, r.j] / e - 1)} | {_hc(r)} | {fmt_d(day + (r.xo - T_) * BD)} |")
+            if _HE is not None: L += ["", _HE.HOLD_NOTE]
         if len(due_p): L += ["", "**SELL at today's open** (40 sessions done): " + "; ".join(f"**{cols[r.j]}** {nm.get(cols[r.j], '')[:18]} ({pc(Cl[i, r.j] / Of[r.d1, r.j] - 1)} so far)" for r in due_p.itertuples()) + "."]
         buys = [j for j, a in ST["new"] if a == "buy"]; nos = [j for j, a in ST["new"] if a == "noslot"]; wait = [j for j, a in ST["new"] if a == "wait"]; held_back = [j for j, a in ST["new"] if a == "rule"]
         if buys:

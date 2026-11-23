@@ -84,3 +84,10 @@ Change 2026-11-14 (round 80; the user's yes to "one extra column to your live da
 **Rebound Edge** column (`rebound_edge.py`, numbers in `rebound_edge.json`): the average result of a buy at the next open in past
 cases with the same market momentum and stretch, how many in 100 ended in profit, the typical dip. It changes no signal, no size,
 no export; if anything in it fails the cell reads "n/a" and the list is written as before. Tested as descriptive only (r80, r81).
+Change 2026-11-23 (round 83; the user's yes to Hold Edge in the live list, "Yes add it"): the plan book's **Held** table has a **Hold
+Edge** column: in past trades that stood where the position stands (stretch Z now, market momentum now, sessions left, gates), the
+average result from today's close to the sale and how many in 100 were sold above today's close. Both columns now describe the plan's
+own sale (a fixed 40-session hold; rounds 80 and 82 had used the swing's earlier sale), and both show their group's past average, not
+the formula's value. Tested (r83 on the research branch): both separate in 2013-19 and 2020-26, neither ranks better than market
+momentum alone, neither separated reliably in 2023-26 alone; selling early on Hold Edge did not improve the plan. No signal, size,
+exit, setting or export changes; a failure reads "n/a" and the list is written as before.
