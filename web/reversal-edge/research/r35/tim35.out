@@ -1,0 +1,91 @@
+
+######## T1 turn of the month
+  DESIGN days -1..+3                              in 19% of days, daily in +0.140% vs out +0.016% (t +6.5) | Sharpe 1.70 vs B&H 0.73 | CAGR +10.3% vs +9.4% | DD -14% vs -48%
+  DESIGN days -1..+4                              in 24% of days, daily in +0.117% vs out +0.015% (t +5.8) | Sharpe 1.55 vs B&H 0.73 | CAGR +10.3% vs +9.4% | DD -15% vs -48%
+  DESIGN days -1..+5                              in 29% of days, daily in +0.099% vs out +0.016% (t +5.0) | Sharpe 1.40 vs B&H 0.73 | CAGR +10.2% vs +9.4% | DD -12% vs -48%
+  DESIGN days -2..+3                              in 24% of days, daily in +0.124% vs out +0.013% (t +6.3) | Sharpe 1.59 vs B&H 0.73 | CAGR +10.8% vs +9.4% | DD -20% vs -48%
+  DESIGN days -2..+4                              in 29% of days, daily in +0.107% vs out +0.012% (t +5.7) | Sharpe 1.48 vs B&H 0.73 | CAGR +10.8% vs +9.4% | DD -18% vs -48%
+  DESIGN days -2..+5                              in 33% of days, daily in +0.093% vs out +0.012% (t +5.1) | Sharpe 1.35 vs B&H 0.73 | CAGR +10.6% vs +9.4% | DD -17% vs -48%
+  >> chosen on DESIGN: days -1..+3
+  CONFIRM GSPC 2000-2026: in 19% of days, daily in +0.058% vs out +0.026% (t +0.9) | Sharpe 0.46 vs B&H 0.42 | CAGR +3.5% vs +6.3% | DD -19% vs -57%
+  check SPY    1994-2026: in 19% of days, daily in +0.082% vs out +0.040% (t +1.3) | Sharpe 0.67 vs B&H 0.64 | CAGR +5.1% vs +10.8% | DD -18% vs -55%
+  check IXIC   1972-2026: in 19% of days, daily in +0.121% vs out +0.030% (t +3.2) | Sharpe 0.97 vs B&H 0.59 | CAGR +8.7% vs +10.4% | DD -29% vs -78%
+  check N225   1966-2026: in 20% of days, daily in +0.064% vs out +0.026% (t +1.4) | Sharpe 0.65 vs B&H 0.41 | CAGR +5.9% vs +6.6% | DD -37% vs -82%
+  check GDAXI  1988-2026: in 19% of days, daily in +0.120% vs out +0.024% (t +2.7) | Sharpe 0.78 vs B&H 0.49 | CAGR +7.3% vs +8.6% | DD -33% vs -73%
+  check FTSE   1985-2026: in 19% of days, daily in +0.091% vs out +0.011% (t +3.0) | Sharpe 0.87 vs B&H 0.39 | CAGR +6.3% vs +5.3% | DD -21% vs -53%
+  check HSI    1987-2026: in 19% of days, daily in +0.150% vs out +0.008% (t +3.5) | Sharpe 0.82 vs B&H 0.35 | CAGR +8.9% vs +5.8% | DD -25% vs -65%
+  check QQQ    2000-2026: in 19% of days, daily in +0.093% vs out +0.036% (t +1.1) | Sharpe 0.45 vs B&H 0.44 | CAGR +4.8% vs +8.6% | DD -33% vs -83%
+  ACCEPT T1 turn of the month: False (confirm edge +0.032 vs design +0.124, t +0.9; positive on 6 of 6 checks)
+
+GSPC stretch Z DESIGN quantiles: 5% -1.64 10% -1.11
+
+######## T2 index dip + guard
+  DESIGN stretch Z<=q5% guard none hold 20        n   70 mean +0.72% vs all-days +0.79% edge -0.07 (t -0.1) win 63%
+  DESIGN stretch Z<=q5% guard none hold 40        n   65 mean +1.92% vs all-days +1.57% edge +0.35 (t +0.4) win 62%
+  DESIGN stretch Z<=q5% guard above200 hold 20    n   19 mean +0.43% vs all-days +0.79% edge -0.36 (t -0.4) win 63%
+  DESIGN stretch Z<=q5% guard above200 hold 40    n   19 mean +0.95% vs all-days +1.57% edge -0.62 (t -0.6) win 63%
+  DESIGN stretch Z<=q5% guard rising200 hold 20   n   42 mean -0.14% vs all-days +0.79% edge -0.92 (t -1.2) win 60%
+  DESIGN stretch Z<=q5% guard rising200 hold 40   n   42 mean +1.07% vs all-days +1.57% edge -0.50 (t -0.5) win 57%
+  DESIGN stretch Z<=q5% guard above10m hold 20    n   21 mean -0.11% vs all-days +0.79% edge -0.90 (t -0.9) win 62%
+  DESIGN stretch Z<=q5% guard above10m hold 40    n   21 mean +0.49% vs all-days +1.57% edge -1.09 (t -0.9) win 62%
+  DESIGN stretch Z<=q10% guard none hold 20       n  120 mean +0.25% vs all-days +0.79% edge -0.54 (t -1.3) win 57%
+  DESIGN stretch Z<=q10% guard none hold 40       n   96 mean +0.97% vs all-days +1.57% edge -0.60 (t -0.9) win 59%
+  DESIGN stretch Z<=q10% guard above200 hold 20   n   49 mean +0.94% vs all-days +0.79% edge +0.15 (t +0.3) win 63%
+  DESIGN stretch Z<=q10% guard above200 hold 40   n   42 mean +0.87% vs all-days +1.57% edge -0.70 (t -0.8) win 67%
+  DESIGN stretch Z<=q10% guard rising200 hold 20  n   78 mean +0.57% vs all-days +0.79% edge -0.22 (t -0.4) win 58%
+  DESIGN stretch Z<=q10% guard rising200 hold 40  n   65 mean +1.01% vs all-days +1.57% edge -0.57 (t -0.7) win 62%
+  DESIGN stretch Z<=q10% guard above10m hold 20   n   52 mean +0.64% vs all-days +0.79% edge -0.15 (t -0.3) win 62%
+  DESIGN stretch Z<=q10% guard above10m hold 40   n   43 mean +1.00% vs all-days +1.57% edge -0.57 (t -0.7) win 67%
+  >> chosen on DESIGN: stretch Z<=q5% guard none hold 40
+  CONFIRM GSPC 2000-2026: n   29 mean +1.73% vs all-days +1.22% edge +0.51 (t +0.3) win 62%
+  check SPY    1994-2026: n   32 mean +2.41% vs all-days +1.84% edge +0.57 (t +0.4) win 62%
+  check IXIC   1972-2026: n   68 mean +0.66% vs all-days +1.97% edge -1.30 (t -1.0) win 53%
+  check N225   1966-2026: n   70 mean +0.34% vs all-days +1.33% edge -1.00 (t -1.0) win 51%
+  check GDAXI  1988-2026: n   43 mean +0.26% vs all-days +1.67% edge -1.41 (t -0.8) win 56%
+  check FTSE   1985-2026: n   45 mean +1.96% vs all-days +1.00% edge +0.96 (t +0.9) win 69%
+  check HSI    1987-2026: n   42 mean +1.05% vs all-days +1.44% edge -0.39 (t -0.2) win 55%
+  check QQQ    2000-2026: n   28 mean +2.91% vs all-days +1.77% edge +1.15 (t +0.5) win 61%
+  ACCEPT T2 index dip + guard: False (confirm edge +0.505 vs design +0.349, t +0.3; positive on 2 of 6 checks)
+
+######## T3 RSI(2) in uptrend
+  DESIGN RSI2<10 & above 200d, exit >SMA5 / 10d   n  428 mean +0.18% vs all-days +0.12% edge +0.06 (t +0.8) win 73%
+  DESIGN RSI2<5 & above 200d, exit >SMA5 / 10d    n  248 mean +0.16% vs all-days +0.13% edge +0.03 (t +0.4) win 69%
+  >> chosen on DESIGN: RSI2<10 & above 200d, exit >SMA5 / 10d
+  CONFIRM GSPC 2000-2026: n  198 mean +0.29% vs all-days +0.09% edge +0.21 (t +2.2) win 70%
+  check SPY    1994-2026: n  263 mean +0.44% vs all-days +0.12% edge +0.32 (t +3.7) win 72%
+  check IXIC   1972-2026: n  418 mean +0.12% vs all-days +0.15% edge -0.03 (t -0.3) win 65%
+  check N225   1966-2026: n  414 mean +0.12% vs all-days +0.10% edge +0.02 (t +0.2) win 68%
+  check GDAXI  1988-2026: n  271 mean +0.22% vs all-days +0.13% edge +0.10 (t +0.7) win 69%
+  check FTSE   1985-2026: n  308 mean +0.18% vs all-days +0.08% edge +0.10 (t +1.0) win 70%
+  check HSI    1987-2026: n  280 mean -0.05% vs all-days +0.12% edge -0.17 (t -0.7) win 62%
+  check QQQ    2000-2026: n  212 mean +0.48% vs all-days +0.14% edge +0.35 (t +3.1) win 72%
+  ACCEPT T3 RSI(2) in uptrend: True (confirm edge +0.208 vs design +0.056, t +2.2; positive on 4 of 6 checks)
+
+######## T4 VIX spike
+  DESIGN VIX >= 1.25 x its 20d avg, hold 20       n   26 mean +1.50% vs all-days +0.74% edge +0.75 (t +0.9) win 62%
+  DESIGN VIX >= 1.25 x its 20d avg, hold 40       n   21 mean +2.24% vs all-days +1.49% edge +0.75 (t +0.5) win 76%
+  DESIGN VIX >= 1.4 x its 20d avg, hold 20        n<8
+  DESIGN VIX >= 1.4 x its 20d avg, hold 40        n<8
+  >> chosen on DESIGN: VIX >= 1.25 x its 20d avg, hold 20
+  CONFIRM GSPC 2006-2026: n   71 mean +0.90% vs all-days +0.80% edge +0.10 (t +0.2) win 63%
+  check SPY    1990-2026: n   90 mean +1.19% vs all-days +0.92% edge +0.27 (t +0.6) win 63%
+  check IXIC   1990-2026: n   97 mean +1.12% vs all-days +1.08% edge +0.03 (t +0.1) win 63%
+  check N225   1990-2026: n   99 mean +0.23% vs all-days +0.32% edge -0.09 (t -0.1) win 53%
+  check GDAXI  1990-2026: n  100 mean +1.14% vs all-days +0.74% edge +0.40 (t +0.7) win 66%
+  check FTSE   1990-2026: n   98 mean +1.59% vs all-days +0.42% edge +1.17 (t +2.5) win 69%
+  check HSI    1990-2026: n   97 mean +0.90% vs all-days +0.71% edge +0.19 (t +0.3) win 58%
+  check QQQ    1990-2026: n   78 mean +0.80% vs all-days +1.04% edge -0.24 (t -0.4) win 60%
+  ACCEPT T4 VIX spike: False (confirm edge +0.104 vs design +0.751, t +0.2; positive on 5 of 6 checks)
+
+######## T5 trend filter (reference)
+  DESIGN above 200-day average                    in 70% of days, daily in +0.049% vs out +0.016% (t +1.7) | Sharpe 1.03 vs B&H 0.73 | CAGR +10.2% vs +9.4% | DD -17% vs -48%
+  >> chosen on DESIGN: above 200-day average
+  CONFIRM GSPC 2000-2026: in 72% of days, daily in +0.034% vs out +0.027% (t +0.1) | Sharpe 0.58 vs B&H 0.42 | CAGR +6.0% vs +6.3% | DD -22% vs -57%
+  check SPY    1994-2026: in 77% of days, daily in +0.048% vs out +0.049% (t -0.0) | Sharpe 0.79 vs B&H 0.64 | CAGR +9.2% vs +10.8% | DD -22% vs -55%
+  check IXIC   1972-2026: in 71% of days, daily in +0.058% vs out +0.021% (t +1.2) | Sharpe 0.87 vs B&H 0.59 | CAGR +11.4% vs +10.4% | DD -54% vs -78%
+  check N225   1966-2026: in 64% of days, daily in +0.043% vs out +0.017% (t +1.0) | Sharpe 0.61 vs B&H 0.41 | CAGR +7.5% vs +6.6% | DD -38% vs -82%
+  check GDAXI  1988-2026: in 69% of days, daily in +0.045% vs out +0.036% (t +0.2) | Sharpe 0.60 vs B&H 0.49 | CAGR +7.8% vs +8.6% | DD -44% vs -73%
+  check FTSE   1985-2026: in 69% of days, daily in +0.013% vs out +0.054% (t -1.5) | Sharpe 0.27 vs B&H 0.39 | CAGR +2.4% vs +5.3% | DD -47% vs -53%
+  check HSI    1987-2026: in 60% of days, daily in +0.039% vs out +0.029% (t +0.3) | Sharpe 0.41 vs B&H 0.35 | CAGR +5.6% vs +5.8% | DD -45% vs -65%
+  check QQQ    2000-2026: in 74% of days, daily in +0.055% vs out +0.025% (t +0.5) | Sharpe 0.62 vs B&H 0.44 | CAGR +9.5% vs +8.6% | DD -41% vs -83%
+  ACCEPT T5 trend filter (reference): False (confirm edge +0.006 vs design +0.033, t +0.1; positive on 4 of 6 checks)

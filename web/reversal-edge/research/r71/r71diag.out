@@ -1,0 +1,12 @@
+rank correlation of S5 with: zc -0.24, vol +0.22, volp +0.19, ml +0.02, S4 +0.04, S1 +0.35, S3 -0.03, S6 -0.17, age +0.22
+  S5 slope on the result with controls none: +18.8 pts (t +5.16, n 435)
+  S5 slope on the result with controls ['zc']: +18.5 pts (t +5.41, n 431)
+  S5 slope on the result with controls ['vol']: +15.6 pts (t +5.43, n 435)
+  S5 slope on the result with controls ['zc', 'vol', 'ml']: +15.5 pts (t +5.84, n 431)
+  S5 slope on the result with controls ['zc', 'vol', 'ml', 'S4', 'age']: +11.5 pts (t +3.04, n 431)
+by year (rank correlation, trades): 2014: +0.41 (67), 2015: +0.11 (60), 2016: +0.07 (121), 2018: +0.28 (16), 2020: -0.08 (82), 2022: +0.50 (52), 2025: +0.16 (22), 2026: -0.02 (12)
+years with a positive correlation: 6 of 8
+episodes with at least 2 trades on each side: 7; favourable half better in 6 of them; median gap +7.6 pts
+  taken by the account   n  67 | S5 median +1.20 | rank correlation with the result +0.093 | favourable half +7.9% (11) vs +8.6% (56)
+  not taken              n 368 | S5 median +1.73 | rank correlation with the result +0.332 | favourable half +21.9% (168) vs +11.0% (200)
+signal days with 2+ signals: 57; average same-day rank correlation +0.056; positive on 60% of days

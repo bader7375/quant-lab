@@ -6,3 +6,5 @@ __pycache__/
 data/cache/
 artifacts/
 .DS_Store
+web/reversal-edge/data_update/yahoo/
+web/reversal-edge/data_update/fetch_log.json

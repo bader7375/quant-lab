@@ -1,0 +1,6 @@
+Written before any evaluation table was produced (2026-10-12).
+Model selection uses DESIGN (2013-2019) walk-forward numbers only:
+1. Candidate must have DESIGN mean daily rank IC >= M0's DESIGN IC.
+2. Among candidates, pick the highest DESIGN Core Sharpe (ML sleeve + trend sleeve driven by that model). Tie (within 0.03): higher DESIGN top-decile 20d excess.
+3. The chosen model replaces M0 only if, in CONFIRM (2020-2026), its Core Sharpe >= M0's Core Sharpe and its monthly IC exceeds M0's with paired t >= 2.
+(The training log prints yearly ICs for all years; those lines are not used for the choice.)

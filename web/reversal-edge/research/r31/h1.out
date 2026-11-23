@@ -1,0 +1,27 @@
+vz DESIGN quantiles: {0.005: -4.29, 0.01: -3.48, 0.02: -2.67, 0.05: -1.81, 0.1: -1.26, 0.5: -0.06, 0.9: 1.08, 0.95: 1.5, 0.98: 2.06, 0.99: 2.52}
+zc DESIGN 2%: -2.62 | vz line (2%): -2.67
+  z10 sd 1.16
+  z20 sd 1.20
+  z60 sd 1.27
+corr vz~zc 0.886 | spearman 0.877
+vz extremes also zc extremes: 66% | zc extremes also vz extremes: 66%
+
+H1b swing comparison (hold 40, ML >= .5, market model > 0):
+Z swing (stretch Z)                            | DESIGN n 286 (45/y) win 78% +23.6/-10.6 pay 2.23 exp +15.92% hold 40 | CONFIRM n 189 (29/y) win 67% +13.4/-8.6 pay 1.56 exp +6.08% hold 40 | C1 w68% +7.7% | C2 w63% +2.6%
+VZ swing (VWAP stretch Z)                      | DESIGN n 344 (54/y) win 69% +19.4/-10.9 pay 1.78 exp +9.98% hold 40 | CONFIRM n 333 (50/y) win 63% +13.7/-9.3 pay 1.47 exp +5.14% hold 40 | C1 w65% +6.5% | C2 w58% +2.3%
+
+H1c Z swing split by vz at the signal:
+Z swing AND vz at/below its line               | DESIGN n 260 (41/y) win 77% +23.5/-10.6 pay 2.22 exp +15.78% hold 40 | CONFIRM n 178 (27/y) win 66% +13.6/-8.2 pay 1.66 exp +6.14% hold 40 | C1 w67% +7.4% | C2 w62% +3.1%
+Z swing, vz above its line                     | DESIGN n  55 (9/y) win 75% +30.4/-10.4 pay 2.94 exp +20.04% hold 40 | CONFIRM n  24 (4/y) win 62% +10.9/-11.1 pay 0.98 exp +2.65% hold 40 | C1 w82% +11.0% | C2 w46% -4.4%
+VZ swing where zc is NOT extreme               | DESIGN n 237 (37/y) win 67% +19.6/-12.0 pay 1.64 exp +9.23% hold 40 | CONFIRM n 266 (43/y) win 64% +14.4/-9.8 pay 1.46 exp +5.55% hold 40 | C1 w65% +6.7% | C2 w58% +2.1%
+share of Z-swing trades kept by the filter: DESIGN 91%, CONFIRM 94%
+
+DEEP 2004-12, price only, hold 40:
+zc first <= -2.62                              | DEEP n 511 (58/y) win 50% +29.6/-22.4 pay 1.32 exp +3.65% hold 40
+vz first <= -2.67                              | DEEP n 831 (94/y) win 47% +23.7/-21.5 pay 1.10 exp -0.37% hold 40
+zc first & vz at/below line                    | DEEP n 479 (54/y) win 49% +26.3/-22.7 pay 1.16 exp +1.15% hold 40
+zc first & vz above line                       | DEEP n 114 (13/y) win 39% +49.5/-21.2 pay 2.34 exp +6.72% hold 40
+
+DESIGN/CONFIRM, price only, hold 40 (same rules as DEEP):
+zc first <= -2.62                              | DESIGN n 568 (82/y) win 67% +20.6/-10.9 pay 1.88 exp +10.05% hold 40 | CONFIRM n 426 (64/y) win 63% +12.5/-9.0 pay 1.39 exp +4.64% hold 40 | C1 w69% +7.1% | C2 w52% -0.3%
+vz first <= -2.67                              | DESIGN n 798 (115/y) win 58% +16.4/-11.1 pay 1.48 exp +4.88% hold 40 | CONFIRM n 778 (118/y) win 54% +13.0/-10.1 pay 1.29 exp +2.50% hold 40 | C1 w58% +3.1% | C2 w49% +1.4%

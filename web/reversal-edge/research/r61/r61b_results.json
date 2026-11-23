@@ -1,0 +1,16 @@
+{
+ "H1r grind beats shock (keep slope > median)": {
+  "thr": -0.7440367595001911,
+  "gap": 0.003619756494119844,
+  "eras_ahead": 2,
+  "sleeve_better": 2,
+  "confirmed": false
+ },
+ "H3r quiet dip (keep value ratio < median)": {
+  "thr": 1.5301042362933353,
+  "gap": -0.020894972335984384,
+  "eras_ahead": 2,
+  "sleeve_better": 2,
+  "confirmed": false
+ }
+}

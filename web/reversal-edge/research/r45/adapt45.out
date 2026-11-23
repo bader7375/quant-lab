@@ -1,0 +1,25 @@
+bandit, last 20 outcomes: chose 'sell at Z = 0' for 7% of trades (2013-19 2%, 2020-26 14%)
+bandit, last 40 outcomes: chose 'sell at Z = 0' for 7% of trades (2013-19 2%, 2020-26 13%)
+
+== DESIGN
+hold 40 (live)               n 267 win 84% avg +19.5% w5 -11.1% | sleeve  34 tr +2.8%/y DD  5.1% ratio 0.55 Sharpe 0.78
+sell at Z = 0                n 270 win 88% avg +12.1% w5 -11.2% | sleeve  38 tr +1.7%/y DD  5.5% ratio 0.32 Sharpe 0.52
+bandit, last 20 outcomes     n 267 win 84% avg +19.5% w5 -11.1% | sleeve  34 tr +2.8%/y DD  5.1% ratio 0.55 Sharpe 0.78
+bandit, last 40 outcomes     n 267 win 84% avg +19.5% w5 -11.1% | sleeve  34 tr +2.8%/y DD  5.1% ratio 0.55 Sharpe 0.78
+split 50/50                  sleeve return +2.3%/y DD  5.1% ratio 0.45 Sharpe 0.67
+
+== CONFIRM
+hold 40 (live)               n 200 win 72% avg  +7.6% w5 -12.3% | sleeve  43 tr +1.7%/y DD  5.6% ratio 0.31 Sharpe 0.54
+sell at Z = 0                n 198 win 86% avg  +9.1% w5  -6.0% | sleeve  45 tr +2.8%/y DD  4.4% ratio 0.64 Sharpe 1.11
+bandit, last 20 outcomes     n 200 win 74% avg  +7.7% w5 -11.8% | sleeve  44 tr +1.9%/y DD  5.4% ratio 0.35 Sharpe 0.62
+bandit, last 40 outcomes     n 200 win 74% avg  +7.6% w5 -11.8% | sleeve  44 tr +1.9%/y DD  5.4% ratio 0.35 Sharpe 0.62
+split 50/50                  sleeve return +2.3%/y DD  4.4% ratio 0.51 Sharpe 0.84
+
+== 2023-26
+hold 40 (live)               n  60 win 68% avg  +4.6% w5 -12.6% | sleeve  23 tr +1.5%/y DD  5.6% ratio 0.26 Sharpe 0.67
+sell at Z = 0                n  59 win 90% avg  +9.9% w5  -8.3% | sleeve  24 tr +3.2%/y DD  2.0% ratio 1.60 Sharpe 1.57
+bandit, last 20 outcomes     n  60 win 75% avg  +5.8% w5  -8.4% | sleeve  24 tr +2.5%/y DD  4.3% ratio 0.57 Sharpe 1.12
+bandit, last 40 outcomes     n  60 win 73% avg  +5.6% w5 -10.0% | sleeve  24 tr +2.5%/y DD  4.3% ratio 0.57 Sharpe 1.12
+split 50/50                  sleeve return +2.3%/y DD  2.7% ratio 0.85 Sharpe 1.13
+DECISION bandit, last 20 outcomes adopted (beats the split's ratio in both eras, return >= 90% of it): False
+DECISION bandit, last 40 outcomes adopted (beats the split's ratio in both eras, return >= 90% of it): False

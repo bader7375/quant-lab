@@ -1,0 +1,51 @@
+Saudi live Z swing, gated by market state at the signal close:
+
+== DESIGN
+live Z swing                                   n 268 win 82% avg +18.8% w5 -11.6% | sleeve  34 tr +1.9%/y DD  8.3% ratio 0.23 Sharpe 0.57
+G1 deep window (MS <= -2.53)                   n 152 win 77% avg +17.4% w5 -12.5% | sleeve  23 tr +1.7%/y DD  5.4% ratio 0.32 Sharpe 0.58
+  not G1                                       n 116 win 89% avg +20.6% w5 -11.0% | sleeve  20 tr +1.6%/y DD  3.4% ratio 0.47 Sharpe 0.69
+G2 momentum turning (MS >= 10-day low + 0.5)   n  25 win 72% avg  +8.1% w5 -14.3% | sleeve  13 tr +0.4%/y DD  4.6% ratio 0.09 Sharpe 0.19
+  not G2                                       n 243 win 83% avg +19.8% w5 -11.2% | sleeve  34 tr +1.9%/y DD  8.3% ratio 0.23 Sharpe 0.57
+G3 breadth turning (EMA10 adv ratio >= 0.5)    n<10
+  not G3                                       n 260 win 82% avg +18.4% w5 -11.7% | sleeve  34 tr +1.9%/y DD  8.3% ratio 0.23 Sharpe 0.57
+G4 turn confirmed (T2 or T3 in last 20)        n 188 win 86% avg +20.6% w5 -11.6% | sleeve  25 tr +2.7%/y DD  6.8% ratio 0.39 Sharpe 0.84
+  not G4                                       n  80 win 74% avg +14.5% w5 -11.8% | sleeve  16 tr +1.1%/y DD  4.6% ratio 0.23 Sharpe 0.48
+
+== CONFIRM
+live Z swing                                   n 196 win 72% avg  +7.7% w5 -11.9% | sleeve  39 tr +1.3%/y DD  5.3% ratio 0.25 Sharpe 0.43
+G1 deep window (MS <= -2.53)                   n 133 win 72% avg  +7.6% w5 -12.4% | sleeve  28 tr +1.9%/y DD  5.3% ratio 0.37 Sharpe 0.72
+  not G1                                       n  63 win 73% avg  +7.8% w5 -11.4% | sleeve  25 tr +0.5%/y DD  7.1% ratio 0.07 Sharpe 0.18
+G2 momentum turning (MS >= 10-day low + 0.5)   n<10
+  not G2                                       n 188 win 71% avg  +7.4% w5 -12.2% | sleeve  32 tr +0.6%/y DD  5.8% ratio 0.11 Sharpe 0.21
+G3 breadth turning (EMA10 adv ratio >= 0.5)    n<10
+  not G3                                       n 189 win 71% avg  +7.3% w5 -12.1% | sleeve  34 tr +0.6%/y DD  5.5% ratio 0.12 Sharpe 0.22
+G4 turn confirmed (T2 or T3 in last 20)        n 118 win 86% avg +11.8% w5  -5.6% | sleeve  28 tr +1.7%/y DD  3.2% ratio 0.55 Sharpe 0.64
+  not G4                                       n  78 win 51% avg  +1.5% w5 -15.5% | sleeve  26 tr +0.4%/y DD  5.5% ratio 0.08 Sharpe 0.15
+
+== 2023-26
+live Z swing                                   n  55 win 69% avg  +4.4% w5 -11.4% | sleeve  18 tr +0.7%/y DD  5.3% ratio 0.14 Sharpe 0.32
+G1 deep window (MS <= -2.53)                   n  38 win 61% avg  +3.2% w5 -15.0% | sleeve  12 tr +0.6%/y DD  5.3% ratio 0.11 Sharpe 0.25
+  not G1                                       n  17 win 88% avg  +7.0% w5  -4.2% | sleeve  10 tr +0.9%/y DD  2.5% ratio 0.35 Sharpe 0.47
+G2 momentum turning (MS >= 10-day low + 0.5)   n<10
+  not G2                                       n  52 win 67% avg  +4.4% w5 -12.1% | sleeve  15 tr +0.6%/y DD  5.8% ratio 0.11 Sharpe 0.28
+G3 breadth turning (EMA10 adv ratio >= 0.5)    n<10
+  not G3                                       n  55 win 69% avg  +4.4% w5 -11.4% | sleeve  18 tr +0.7%/y DD  5.3% ratio 0.14 Sharpe 0.32
+G4 turn confirmed (T2 or T3 in last 20)        n  17 win 82% avg  +6.3% w5  -5.9% | sleeve  10 tr +0.7%/y DD  3.0% ratio 0.24 Sharpe 0.38
+  not G4                                       n  38 win 63% avg  +3.5% w5 -15.0% | sleeve  13 tr +0.6%/y DD  5.3% ratio 0.11 Sharpe 0.27
+us100: 115 stocks, 2000-01-03..2026-11-02, eligible on 2026-11-02: 115
+
+US sell-off swing, per-trade average (all trades vs gated):
+  G1 deep window (MS <= -2.53)                   2005-09 all n196 -0.2% gated n60 +2.2% | 2010-17 all n220 +3.0% gated n36 +6.2% | 2018-26 all n407 +12.1% gated n130 +18.7%
+  G2 momentum turning (MS >= 10-day low + 0.5)   2005-09 all n196 -0.2% gated n30 -4.5% | 2010-17 all n220 +3.0% gated n12 +7.3% | 2018-26 all n407 +12.1% gated n39 +16.1%
+  G3 breadth turning (EMA10 adv ratio >= 0.5)    2005-09 all n196 -0.2% gated n11 -4.7% | 2010-17 all n220 +3.0% gated n11 +3.2% | 2018-26 all n407 +12.1% gated n19 +10.6%
+  G4 turn confirmed (T2 or T3 in last 20)        2005-09 all n196 -0.2% gated n120 -4.2% | 2010-17 all n220 +3.0% gated n73 +8.0% | 2018-26 all n407 +12.1% gated n215 +12.8%
+G1 deep window (MS <= -2.53)                   Saudi DESIGN+CONFIRM: False | US 2010-17 + 2018-26: True -> adopted as candidate: False
+G2 momentum turning (MS >= 10-day low + 0.5)   Saudi DESIGN+CONFIRM: False | US 2010-17 + 2018-26: True -> adopted as candidate: False
+G3 breadth turning (EMA10 adv ratio >= 0.5)    Saudi DESIGN+CONFIRM: False | US 2010-17 + 2018-26: False -> adopted as candidate: False
+G4 turn confirmed (T2 or T3 in last 20)        Saudi DESIGN+CONFIRM: True | US 2010-17 + 2018-26: True -> adopted as candidate: True
+
+Exploratory (cannot adopt): Zweig breadth thrust turn trade, 25% of the account in the liquid basket for 40 sessions
+  trades: 2013-09-15 +2.7%, 2014-12-28 +5.0%, 2015-04-15 +3.5%, 2015-09-09 -2.9%, 2016-01-31 +12.0%, 2016-04-10 +3.9%, 2016-06-08 -1.6%, 2016-10-12 +33.5%, 2017-07-03 +3.3%, 2017-11-26 +7.7%, 2018-10-29 +1.8%, 2018-12-02 +2.6%, 2019-06-10 +0.2%, 2020-03-31 +11.7%, 2020-11-10 +8.6%, 2022-01-10 +0.1%, 2022-07-21 +2.2%, 2022-10-03 -9.5%, 2023-07-11 -12.1%, 2024-08-18 +2.0%, 2025-06-26 -2.8%, 2025-09-24 -5.6%
+  Z swing (live)         DESIGN +1.9%/y DD 8.3% ratio 0.23 Sh 0.57 | CONFIRM +1.3%/y DD 5.3% ratio 0.25 Sh 0.43 | 2023-26 +0.8%/y DD 5.3% ratio 0.15 Sh 0.32
+  turn trade alone       DESIGN +2.6%/y DD 4.4% ratio 0.58 Sh 0.91 | CONFIRM -0.2%/y DD 9.1% ratio -0.02 Sh -0.09 | 2023-26 -1.2%/y DD 5.0% ratio -0.24 Sh -0.87
+  Z swing + turn trade   DESIGN +4.5%/y DD 9.8% ratio 0.46 Sh 0.96 | CONFIRM +1.1%/y DD 8.8% ratio 0.13 Sh 0.27 | 2023-26 -0.4%/y DD 7.4% ratio -0.06 Sh -0.15

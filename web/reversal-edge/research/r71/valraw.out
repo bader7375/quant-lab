@@ -1,0 +1,6 @@
+median adjustment factor (adjusted / raw close) by year: 2012: 0.83, 2013: 0.83, 2014: 0.84, 2015: 0.86, 2016: 0.89, 2017: 0.91, 2018: 0.90, 2019: 0.91, 2020: 0.92, 2021: 0.93, 2022: 0.94, 2023: 0.95, 2024: 0.97, 2025: 0.98, 2026: 1.00
+market momentum: days on the other side of -1.18 (2013-26): 14
+stock-days 2013-26 whose 'liquid' flag differs: 14714 of 478131 liquid stock-days (3.1%); liquid only with raw value: 14712, only with adjusted: 2
+Z score signals 2013-26: adjusted 724, raw 750, only raw 26, only adjusted 0
+  adjusted value (live)  2013-19 +3.2% DD 6.1% | 2020-26 +4.5% DD 4.9% | trades 67, winners 70%, average +8.5%
+  raw value              2013-19 +3.1% DD 7.6% | 2020-26 +4.5% DD 4.9% | trades 69, winners 68%, average +7.9%

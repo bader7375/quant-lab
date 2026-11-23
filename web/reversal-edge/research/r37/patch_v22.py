@@ -1,0 +1,38 @@
+"""v21 -> v22: scanner tables - Saudi stretch-Z scan and US stretch-Z scan (next session), from the daily export (ml/latest: zscan, us_scan)."""
+import os
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../v22"))
+def patch(fn, pairs):
+    s = open(fn).read()
+    for a, b in pairs:
+        assert s.count(a) == 1, (fn, a[:100], s.count(a)); s = s.replace(a, b)
+    open(fn, "w").write(s)
+BOXES = '''<div class="planbox" id="zsa-box" hidden><div class="ai-head"><b>Saudi stretch-Z scan · next session</b><span class="note">the 25 most stretched liquid stocks at the last close and what each needs for a Z-swing buy</span></div><div class="note" id="zsa-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="zsa-t"></table></div></div>
+<div class="planbox" id="zus-box" hidden><div class="ai-head"><b>US stretch-Z scan · next US session</b><span class="note">115 US large caps, the same stretch Z with US lines; buys only while the US sell-off window is open</span></div><div class="note" id="zus-note" style="margin:6px 0"></div><div class="tw"><table class="bl" id="zus-t"></table></div></div>
+<h3 style="font-size:13px;margin:16px 0 6px;color:var(--muted,#8a8a85);letter-spacing:.06em">ALL SYMBOLS · LATEST BAR</h3>'''
+patch("body.html", [('<h3 style="font-size:13px;margin:16px 0 6px;color:var(--muted,#8a8a85);letter-spacing:.06em">ALL SYMBOLS · LATEST BAR</h3>', BOXES),
+                    ("reversal edge v21 · Saudi Z swing (profitable companies) + US", "reversal edge v22 · Saudi + US stretch-Z scanner")])
+JS = r'''
+// ------------------------------------------------ v22: scanner tables (Saudi and US stretch Z, next session) from the daily export
+function drawZScans(){if(typeof MLPF==="undefined"||!MLPF)return;
+ const Z=MLPF.zscan;if(Array.isArray(Z)&&Z.length){$("zsa-box").hidden=false;const on=MLPF.pm>0,mok=isF(MLPF.ms)&&MLPF.ms<=MS_GATE,nb=Z.filter(r=>r.fd||r.fw).length;
+  $("zsa-note").innerHTML=`Prices to the ${esc(MLPF.date)} close. Market model ${on?'<span class="up">positive</span>':'<span class="down">negative</span>'} · market momentum <b>${isF(MLPF.ms)?MLPF.ms.toFixed(2):"—"}</b> (${isF(MLPF.ms)?msZone(MLPF.ms).txt:"unknown"}). A Z-swing buy needs the <b>first</b> close at or below −2.62 (daily) or −2.08 (weekly, on the week's last session), ML rank ≥ 50%, the market model positive, market momentum ≤ −1.18 and a profitable company (your rule). Record: 2013–19 86% winners, 2020–26 70% (daily); weekly 85% / 86%. ${nb?`<b>${nb} fresh touch${nb>1?"es":""} at this close.</b> Signals cluster in sell-offs: hold at most 5 Z-swing positions, taking the rows from the top (highest ML rank first).`:"No fresh touch at this close among these stocks."}`;
+  const st_=r=>{if(r.fd||r.fw){const why=[];if(!(r.pct>=.5))why.push("ML rank below 50%");if(!on)why.push("market model negative");if(!mok)why.push("market momentum above −1.18");if(r.loss)why.push("loss-making (your rule)");
+     return why.length?`<span class="note">fresh ${r.fd?"daily":"weekly"} touch · skip: ${why.join(", ")}</span>`:`<span class="up"><b>BUY next open</b> · ${r.fd?"Z swing":"weekly Z swing"} · 5%, hold 40 sessions</span>`}
+    if(r.zc<=ZC_LINE)return '<span class="note">below the line but not a fresh touch: no new entry</span>';
+    if(r.zc<=ZC_LINE+.4)return `<span class="note">near the line (${(r.zc-ZC_LINE).toFixed(2)} above it): watch</span>`;return '<span class="note">stretched, not at the line</span>'};
+  $("zsa-t").innerHTML=`<tr><th>#</th><th style="text-align:left">stock</th><th>close</th><th>day</th><th>stretch Z</th><th>weekly Z${MLPF.wk_done?"":" (forming)"}</th><th>ML rank</th><th>accounts</th><th style="text-align:left">next session</th></tr>`+
+   Z.map((r,i)=>{const f=MLPF.fin?MLPF.fin[r.sym]:null;return `<tr data-s="${esc(r.sym)}"><td>${i+1}</td><td style="text-align:left"><b>${esc(nameOf(r.sym))}</b> <span class="note">${esc(r.sector||"")}</span></td><td>${fp(r.close)}</td><td class="${cl(r.chg)}">${spct(r.chg,1)}</td><td title="${esc(zcRareTxt(r.zc))}"><b style="color:${zcColor(r.zc)}">${r.zc.toFixed(2)}</b></td><td>${r.zw!=null?`<span style="color:${r.zw<=-2.08?"#4f96f0":"inherit"}">${r.zw.toFixed(2)}</span>`:"—"}</td><td>${Math.round(100*r.pct)}%</td><td>${f?(f.ni>0?`<span class="up">profit</span>`:`<span class="down">loss</span>`)+` <span class="note">FY${String(f.fy).slice(0,4)}</span>`:'<span class="note">—</span>'}</td><td style="text-align:left">${st_(r)}</td></tr>`}).join("")}
+ const U=MLPF.us_scan;if(U&&Array.isArray(U.rows)&&U.rows.length){$("zus-box").hidden=false;const win=U.ms<=U.gate,nb=U.rows.filter(r=>r.fd||r.fw).length,E=MLPF.us&&MLPF.us.etf;
+  $("zus-note").innerHTML=`Prices to the ${esc(U.date)} US close. US large-cap market momentum <b>${U.ms.toFixed(2)}</b>: ${win?'<span class="up"><b>sell-off window OPEN</b></span> (at or below −1.18)':'<span class="down">window closed</span> (it opens at −1.18 or lower)'}. Lines: daily stretch Z ${U.dline}, weekly ${U.wline} (2% of 2010–17 values). Rule: buy at the next US open on a fresh touch while the window is open, hold 40 sessions, no stop, small size. Record: 2018–26 76% winners (+11.8% per trade), 2010–17 69% (+3.6%); <b>random large caps bought on the same days did almost as well</b> (+10.0% / +3.5%), so the edge is the timing, not the stock, and it lost in 2008. ${E?`SPY/QQQ dip rule: ${Object.entries(E).map(([k,v])=>`${k} ${esc(v.status)} (RSI(2) ${v.rsi2.toFixed(1)})`).join(" · ")}.`:""} ${nb?`<b>${nb} fresh touch${nb>1?"es":""} at this close.</b>`:""}`;
+  const stU=r=>{if(r.fd||r.fw)return win?`<span class="up"><b>BUY next US open</b> · ${r.fd?"daily":"weekly"} touch · hold 40 sessions</span>`:`<span class="note">fresh ${r.fd?"daily":"weekly"} touch · window closed (momentum ${U.ms.toFixed(2)}): no buy</span>`;
+    if(r.zc<=U.dline)return '<span class="note">below the line but not a fresh touch: no new entry</span>';
+    if(r.zc<=U.dline+.4)return `<span class="note">near the line (${(r.zc-U.dline).toFixed(2)} above it)${win?": watch":"; window closed"}</span>`;return '<span class="note">—</span>'};
+  $("zus-t").innerHTML=`<tr><th>#</th><th style="text-align:left">stock</th><th>close $</th><th>day</th><th>stretch Z</th><th>weekly Z${U.wk_done?"":" (forming)"}</th><th>RSI(2)</th><th>200-day avg</th><th style="text-align:left">next US session</th></tr>`+
+   U.rows.map((r,i)=>`<tr><td>${i+1}</td><td style="text-align:left"><b>${esc(r.sym)}</b> <span class="note">${esc((r.name||"").slice(0,28))}</span></td><td>${r.close.toFixed(2)}</td><td class="${cl(r.chg)}">${spct(r.chg,1)}</td><td><b style="color:${r.zc<=U.dline?"#4f96f0":r.zc<=U.dline+.4?"#7fb2f0":"inherit"}">${r.zc.toFixed(2)}</b></td><td>${r.zw!=null?`<span style="color:${r.zw<=U.wline?"#4f96f0":"inherit"}">${r.zw.toFixed(2)}</span>`:"—"}</td><td>${isF(r.rsi2)?r.rsi2.toFixed(0):"—"}</td><td>${r.above200?'<span class="up">above</span>':'<span class="down">below</span>'}</td><td style="text-align:left">${stU(r)}</td></tr>`).join("")}}
+document.addEventListener("click",e=>{const tr=e.target.closest&&e.target.closest("#zsa-t tr[data-s]");if(!tr)return;const s=tr.dataset.s;
+ if(typeof DS!=="undefined"&&DS[s]){st.sym=s;const sel=$("sym");if(sel)sel.value=s;show("chart");if(typeof refreshOverlays==="function")refreshOverlays()}
+ else{const n=$("scan-note");if(n)n.innerHTML=`${esc(nameOf(s))} is not loaded yet: tick it in the Data tab's library to chart it.`}});
+'''
+patch("app7.js", [('if(d.id==="latest"){MLPF=d.data();try{drawML()}catch(e){};', 'if(d.id==="latest"){MLPF=d.data();try{drawML()}catch(e){};try{drawZScans()}catch(e){console.error(e)};')])
+s = open("app7.js").read(); open("app7.js", "w").write(s + JS)
+print("patched v22")

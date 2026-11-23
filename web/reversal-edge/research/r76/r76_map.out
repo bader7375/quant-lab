@@ -1,0 +1,104 @@
+[     7s] yahoo features ready
+[     7s] shifts (must equal the main run's) [923, 1210, 811, 1423, 732, 1062, 1414, 1108, 1379, 343, 256, 617, 583, 919, 564, 1401, 1306, 515, 1249, 666]
+[    13s] engine check: 7,560 rules recomputed by brute force; worst mean difference 4.7e-16, worst t difference 1.9e-13, count mismatches 0
+[    23s] real search: 9,360 families
+[    33s] placebo  1 (shift 923) done
+[    43s] placebo  2 (shift 1210) done
+[    52s] placebo  3 (shift 811) done
+[    62s] placebo  4 (shift 1423) done
+[    72s] placebo  5 (shift 732) done
+[    82s] placebo  6 (shift 1062) done
+[    92s] placebo  7 (shift 1414) done
+[   103s] placebo  8 (shift 1108) done
+[   112s] placebo  9 (shift 1379) done
+[   121s] placebo 10 (shift 343) done
+[   131s] placebo 11 (shift 256) done
+[   141s] placebo 12 (shift 617) done
+[   150s] placebo 13 (shift 583) done
+[   160s] placebo 14 (shift 919) done
+[   170s] placebo 15 (shift 564) done
+[   180s] placebo 16 (shift 1401) done
+[   190s] placebo 17 (shift 1306) done
+[   200s] placebo 18 (shift 515) done
+[   209s] placebo 19 (shift 1249) done
+[   219s] placebo 20 (shift 666) done
+[   219s] consistency raw10: real best 46.67; placebo bests 31.02 35.77 34.50 47.40 44.13 60.50 38.19 39.27 37.66 41.36 37.83 45.42 54.90 33.49 38.50 42.13 39.68 43.81 43.65 29.62
+[   219s] consistency exc10: real best 11.52; placebo bests 9.49 11.21 7.57 9.11 8.28 7.45 9.05 10.43 9.58 7.00 8.29 6.38 7.14 8.79 9.14 7.33 11.47 7.67 7.56 10.14
+[   219s] consistency raw40: real best 79.03; placebo bests 60.42 80.68 55.98 82.57 63.52 81.98 66.88 77.32 67.55 70.65 60.18 64.81 64.39 69.07 78.77 56.90 76.32 57.93 82.12 56.00
+[   219s] consistency exc40: real best 26.91; placebo bests 24.10 22.11 16.37 48.62 19.67 20.04 38.03 23.99 22.24 19.78 26.76 18.73 17.37 24.79 17.94 23.49 22.15 16.91 23.17 23.47
+[   219s] information raw10: real beats all 20 scrambled in 15.8% of 2,340 families; scrambled 0.0%-24.5% (median 1.2%); real rank 4 of 21
+[   219s] information exc10: real beats all 20 scrambled in 18.5% of 2,340 families; scrambled 1.2%-9.8% (median 2.9%); real rank 1 of 21
+[   219s] information raw40: real beats all 20 scrambled in 7.9% of 2,340 families; scrambled 0.0%-35.0% (median 0.9%); real rank 3 of 21
+[   219s] information exc40: real beats all 20 scrambled in 20.1% of 2,340 families; scrambled 0.0%-32.7% (median 1.3%); real rank 2 of 21
+[   219s] information all: real beats all 20 scrambled in 15.6% of 9,360 families; scrambled 0.5%-15.9% (median 2.0%); real rank 2 of 21
+[   220s] feature map (share of the feature's families where real beats all 20 scrambled; luck max over the 20 scrambled searches):
+[   220s]   ret60          39.3% (luck max  14.5%, rank  1/21)  raw  26.5%/ 28.6%  exc  52.1%/ 12.8%  best: exc10 | all | ret1 >= 0.00655 (top 30%) AND ret60 < -0.231 (lowest 10%) t 3.6 x4.42 of luck
+[   220s]   atrp           34.4% (luck max  15.2%, rank  1/21)  raw  39.3%/ 21.8%  exc  29.5%/ 17.1%  best: exc10 | normal | atrp < 0.0184 (lowest 20%) AND dhi >= -0.0946 (top 30%) t 10.2 x2.17 of luck
+[   220s]   rel20          33.1% (luck max  14.5%, rank  1/21)  raw  11.5%/ 26.9%  exc  54.7%/ 10.3%  best: exc10 | all | nft >= 1 AND rel20 < -0.0853 (lowest 10%) t 7.6 x4.09 of luck
+[   220s]   dhi            31.8% (luck max  16.0%, rank  1/21)  raw  19.7%/ 27.4%  exc  44.0%/ 29.1%  best: exc10 | all | dhi < -0.466 (lowest 10%) AND gap >= 0.00962 (top 10%) t 2.9 x2.88 of luck
+[   220s]   d200           31.6% (luck max  16.9%, rank  1/21)  raw  18.4%/ 33.3%  exc  44.9%/ 15.4%  best: exc10 | all | d200 < -0.224 (lowest 10%) AND rel20 < -0.0853 (lowest 10%) t 9.4 x2.83 of luck
+[   220s]   selloff_days   29.3% (luck max  14.7%, rank  1/21)  raw  42.3%/ 18.8%  exc  16.2%/ 18.4%  best: exc10 | all | ret5 < -0.0541 (lowest 10%) AND selloff_days >= 15 t 2.1 x6.89 of luck
+[   220s]   logp           27.4% (luck max  14.7%, rank  1/21)  raw  19.2%/ 28.2%  exc  35.5%/ 21.8%  best: raw10 | all | logp < 3.15 (lowest 60%) AND vtrend >= 0.137 (top 30%) t 20.9 x1.82 of luck
+[   220s]   d50            24.6% (luck max  16.0%, rank  1/21)  raw  11.1%/ 29.1%  exc  38.0%/ 11.1%  best: exc10 | all | nft < 1 AND d50 < -0.108 (lowest 10%) t 1.1 x69.20 of luck
+[   220s]   vol60          23.1% (luck max  16.2%, rank  1/21)  raw  16.7%/ 21.8%  exc  29.5%/ 14.1%  best: exc10 | normal | vol60 < 0.0113 (lowest 10%) AND rel20 >= 0.011 (top 40%) t 9.5 x1.86 of luck
+[   220s]   bounce         19.0% (luck max  13.2%, rank  1/21)  raw  26.1%/ 18.8%  exc  12.0%/ 19.2%  best: exc10 | all | ret60 < -0.231 (lowest 10%) AND bounce >= 0.0927 (top 10%) t 5.8 x2.40 of luck
+[   220s]   vtrend         18.2% (luck max  16.0%, rank  1/21)  raw  26.5%/ 22.2%  exc   9.8%/ 21.8%  best: raw10 | all | logp < 3.15 (lowest 60%) AND vtrend >= 0.137 (top 30%) t 20.9 x1.82 of luck
+[   220s]   z60            16.5% (luck max  23.9%, rank  2/21)  raw  11.1%/ 30.8%  exc  21.8%/ 17.5%  best: exc10 | all | z60 < -1.52 (lowest 10%) AND ret1 < -0.0208 (lowest 10%) t 3.5 x3.20 of luck
+[   220s]   ms5            16.5% (luck max  15.6%, rank  1/21)  raw  24.4%/ 30.8%  exc   8.5%/ 26.5%  best: exc10 | all | z60 < -1.52 (lowest 10%) AND ms5 >= 0.21 (top 30%) t 3.2 x2.12 of luck
+[   220s]   d20            15.8% (luck max  17.9%, rank  2/21)  raw   4.3%/ 33.3%  exc  27.4%/ 15.4%  best: exc10 | all | ret1 >= 0.0218 (top 10%) AND d20 < -0.0621 (lowest 10%) t 1.4 x4.80 of luck
+[   220s]   ret20          15.6% (luck max  15.8%, rank  2/21)  raw   6.0%/ 29.5%  exc  25.2%/ 13.7%  best: exc10 | all | ret20 >= -0.0397 (top 70%) AND d50 < -0.108 (lowest 10%) t 7.3 x2.72 of luck
+[   220s]   rsi            14.7% (luck max  17.3%, rank  4/21)  raw   5.6%/ 30.8%  exc  23.9%/ 22.2%  best: exc10 | all | ret1 >= 0.012 (top 20%) AND rsi < 32.9 (lowest 10%) t 2.4 x2.08 of luck
+[   220s]   dd250          13.9% (luck max  21.6%, rank  2/21)  raw  17.5%/ 41.0%  exc  10.3%/ 17.9%  best: exc10 | all | acc < -0.517 (lowest 10%) AND dd250 < -0.263 (lowest 20%) t 2.1 x2.09 of luck
+[   220s]   M              13.2% (luck max  17.3%, rank  5/21)  raw   6.8%/ 30.8%  exc  19.7%/ 29.1%  best: exc10 | all | ret1 < -0.0208 (lowest 10%) AND M < -0.946 (lowest 10%) t 2.0 x2.95 of luck
+[   220s]   ndown          12.8% (luck max  17.3%, rank  3/21)  raw   8.5%/ 32.9%  exc  17.1%/ 18.4%  best: exc10 | normal | ret5 < -0.0541 (lowest 10%) AND ndown >= 3 t 0.3 x65.17 of luck
+[   220s]   ret5           12.4% (luck max  20.3%, rank  4/21)  raw   4.7%/ 39.3%  exc  20.1%/ 20.1%  best: exc10 | normal | ret5 < -0.0541 (lowest 10%) AND ndown >= 3 t 0.3 x65.17 of luck
+[   220s]   acc            12.2% (luck max  19.7%, rank  4/21)  raw   6.4%/ 38.9%  exc  17.9%/ 22.2%  best: exc10 | all | acc < -0.517 (lowest 10%) AND nft >= 1 t 1.4 x5.90 of luck
+[   220s]   z250           12.0% (luck max  22.2%, rank  3/21)  raw  11.5%/ 38.5%  exc  12.4%/ 28.2%  best: exc10 | all | z250 < -1.73 (lowest 10%) AND rel20 < -0.0853 (lowest 10%) t 8.5 x2.24 of luck
+[   220s]   z20            11.8% (luck max  18.4%, rank  5/21)  raw   7.7%/ 24.4%  exc  15.8%/ 20.9%  best: exc10 | all | z20 >= -0.456 (top 70%) AND d50 < -0.108 (lowest 10%) t 6.8 x2.21 of luck
+[   220s]   loglq          11.8% (luck max  18.8%, rank  4/21)  raw  10.3%/ 32.1%  exc  13.2%/ 22.6%  best: exc40 | sell | loglq < 17.6 (lowest 90%) AND rel20 < -0.0853 (lowest 10%) t 20.6 x1.96 of luck
+[   220s]   z10            11.1% (luck max  17.9%, rank  5/21)  raw   5.1%/ 33.3%  exc  17.1%/ 22.6%  best: exc10 | all | z10 < -1.32 (lowest 10%) AND gate >= 1 t 2.1 x3.18 of luck
+[   220s]   ret1           10.3% (luck max  19.2%, rank  5/21)  raw   5.1%/ 35.0%  exc  15.4%/ 21.4%  best: exc10 | all | ret1 >= 0.0218 (top 10%) AND d20 < -0.0621 (lowest 10%) t 1.4 x4.80 of luck
+[   220s]   zc             10.0% (luck max  22.2%, rank  5/21)  raw   6.4%/ 28.2%  exc  13.7%/ 29.9%  best: exc40 | sell | zc < -0.164 (lowest 40%) AND rel20 < -0.0853 (lowest 10%) t 20.5 x1.66 of luck
+[   220s]   clv            10.0% (luck max  17.7%, rank  4/21)  raw   9.4%/ 30.3%  exc  10.7%/ 22.2%  best: exc10 | all | ret60 < -0.231 (lowest 10%) AND clv >= 0.533 (top 40%) t 3.1 x4.12 of luck
+[   220s]   rng             9.6% (luck max  17.9%, rank  4/21)  raw  10.3%/ 32.5%  exc   9.0%/ 33.8%  best: exc10 | all | dhi >= -0.0561 (top 20%) AND rng < 0.0174 (lowest 40%) t 5.1 x2.38 of luck
+[   220s]   volz            9.4% (luck max  20.1%, rank  5/21)  raw   7.7%/ 34.2%  exc  11.1%/ 17.9%  best: exc40 | sell | volz >= -1 (top 80%) AND rel20 < -0.0853 (lowest 10%) t 19.8 x2.10 of luck
+[   220s]   dlo             8.8% (luck max  19.2%, rank  5/21)  raw   9.4%/ 35.9%  exc   8.1%/ 36.3%  best: exc10 | all | dlo < 0.121 (lowest 20%) AND rel20 < -0.0853 (lowest 10%) t 7.1 x2.13 of luck
+[   220s]   gap             8.3% (luck max  19.4%, rank  5/21)  raw   5.1%/ 33.8%  exc  11.5%/ 26.5%  best: exc10 | all | ret5 < -0.0541 (lowest 10%) AND gap >= 0.00962 (top 10%) t 0.7 x4.47 of luck
+[   220s]   nft             8.3% (luck max  15.8%, rank  6/21)  raw   3.0%/ 24.8%  exc  13.7%/ 20.1%  best: exc10 | all | nft < 1 AND d50 < -0.108 (lowest 10%) t 1.1 x69.20 of luck
+[   220s]   ms              7.1% (luck max  29.5%, rank  6/21)  raw   3.4%/ 57.7%  exc  10.7%/ 15.0%  best: exc40 | sell | ms < -1.94 (lowest 10%) AND rel20 < -0.0853 (lowest 10%) t 20.6 x1.89 of luck
+[   220s]   breadth         7.1% (luck max  17.5%, rank  7/21)  raw   0.9%/ 33.3%  exc  13.2%/ 15.0%  best: exc10 | all | breadth >= 0.0805 AND ndown >= 3 t 0.8 x7.85 of luck
+[   220s]   secz            6.8% (luck max  17.7%, rank  7/21)  raw   3.0%/ 28.6%  exc  10.7%/ 30.3%  best: exc40 | sell | secz < -0.239 (lowest 30%) AND rel20 < -0.0853 (lowest 10%) t 20.8 x2.21 of luck
+[   220s]   gate            6.0% (luck max  23.5%, rank  6/21)  raw   3.8%/ 45.7%  exc   8.1%/ 35.5%  best: exc10 | all | z10 < -1.32 (lowest 10%) AND gate >= 1 t 2.1 x3.18 of luck
+[   220s]   pre             5.6% (luck max  42.3%, rank  6/21)  raw   6.0%/ 32.9%  exc   5.1%/ 51.7%  best: exc10 | sell | pre >= 0.398 (top 40%) AND d200 < -0.224 (lowest 10%) t 8.2 x1.40 of luck
+[   220s]   ret250          4.5% (luck max  42.1%, rank  6/21)  raw   4.3%/ 31.6%  exc   4.7%/ 52.6%  best: exc10 | all | ret250 < -0.31 (lowest 20%) AND rel20 < -0.0853 (lowest 10%) t 7.0 x1.51 of luck
+[   233s] library ready
+us100: 115 stocks, 2000-01-03..2026-11-13, eligible on 2026-11-13: 115
+us100: 115 stocks, 2000-01-03..2026-11-13, eligible on 2026-11-13: 115
+[   248s] US ready
+[   285s] luck-list raw10: beats the average stock-day in all three unseen sets: real 5%, scrambled mean 16% (max 55%); saudi_2020_26 real 89% vs 63%; saudi_2004_12 real 35% vs 35%; us_2010_26 real 100% vs 72%; average lift real +0.0166 vs +0.0038
+[   285s] luck-list exc10: beats the average stock-day in all three unseen sets: real 60%, scrambled mean 14% (max 65%); saudi_2020_26 real 95% vs 58%; saudi_2004_12 real 85% vs 37%; us_2010_26 real 70% vs 36%; average lift real +0.0060 vs -0.0008
+[   285s] luck-list raw40: beats the average stock-day in all three unseen sets: real 100%, scrambled mean 14% (max 90%); saudi_2020_26 real 100% vs 58%; saudi_2004_12 real 100% vs 51%; us_2010_26 real 100% vs 64%; average lift real +0.0596 vs +0.0088
+[   285s] luck-list exc40: beats the average stock-day in all three unseen sets: real 20%, scrambled mean 22% (max 100%); saudi_2020_26 real 90% vs 68%; saudi_2004_12 real 100% vs 44%; us_2010_26 real 20% vs 47%; average lift real +0.0069 vs +0.0013
+[   285s] luck-list all: beats the average stock-day in all three unseen sets: real 46%, scrambled mean 16% (max 51%); saudi_2020_26 real 94% vs 61%; saudi_2004_12 real 80% vs 42%; us_2010_26 real 68% vs 53%; average lift real +0.0228 vs +0.0029
+[   285s] top 5 real families per target with their unseen-set lifts:
+[   285s]   raw10 | sell | ms < -1.94 (lowest 10%) AND dd250 < -0.368 (lowest 10%)  t 46.7, design +4.58% n 7,785 | lift 2020-26 +nan% (n 0), 2004-12 -1.07% (n 14,360), US +nan% (n 0)
+[   285s]   raw10 | all | ms < -1.94 (lowest 10%) AND dd250 < -0.368 (lowest 10%)  t 46.7, design +4.58% n 7,785 | lift 2020-26 +nan% (n 0), 2004-12 -1.07% (n 14,360), US +nan% (n 0)
+[   285s]   raw10 | sell | dd250 < -0.368 (lowest 10%) AND breadth < 0.0805  t 43.4, design +4.77% n 4,742 | lift 2020-26 +nan% (n 0), 2004-12 +2.40% (n 6,412), US +nan% (n 0)
+[   285s]   raw10 | all | bounce < 0.0927 (lowest 90%) AND dd250 < -0.368 (lowest 10%)  t 42.8, design +3.13% n 14,290 | lift 2020-26 +nan% (n 0), 2004-12 -0.55% (n 26,783), US +nan% (n 0)
+[   285s]   raw10 | sell | dd250 < -0.158 (lowest 30%) AND selloff_days >= 15  t 41.9, design +2.97% n 18,553 | lift 2020-26 +2.15% (n 22,300), 2004-12 -0.34% (n 24,531), US +4.23% (n 4,433)
+[   285s]   exc10 | normal | vol60 < 0.0113 (lowest 10%) AND ms < -0.487 (lowest 30%)  t 11.5, design +1.20% n 1,700 | lift 2020-26 +0.65% (n 3,517), 2004-12 +0.61% (n 1,901), US +0.32% (n 3,228)
+[   285s]   exc10 | normal | atrp < 0.0184 (lowest 20%) AND rel20 >= 0.011 (top 40%)  t 10.5, design +0.41% n 11,724 | lift 2020-26 +0.63% (n 9,275), 2004-12 +0.23% (n 7,619), US -0.11% (n 69,042)
+[   285s]   exc10 | normal | dhi >= -0.0217 (top 10%) AND d50 < 0.0669 (lowest 80%)  t 10.5, design +0.60% n 6,435 | lift 2020-26 +1.00% (n 4,811), 2004-12 +0.75% (n 3,689), US -0.13% (n 67,231)
+[   285s]   exc10 | normal | atrp < 0.0184 (lowest 20%) AND dhi >= -0.0946 (top 30%)  t 10.2, design +0.32% n 17,428 | lift 2020-26 +0.40% (n 13,707), 2004-12 -0.00% (n 10,734), US -0.14% (n 151,247)
+[   285s]   exc10 | sell | ret60 < -0.231 (lowest 10%) AND breadth < 0.00725  t 10.0, design +1.79% n 2,138 | lift 2020-26 -0.11% (n 3,216), 2004-12 -0.12% (n 3,316), US +1.88% (n 421)
+[   285s]   raw40 | sell | atrp >= 0.037 (top 20%) AND dd250 < -0.158 (lowest 30%)  t 79.0, design +12.05% n 16,493 | lift 2020-26 +6.62% (n 13,387), 2004-12 +3.00% (n 26,009), US +11.86% (n 6,152)
+[   285s]   raw40 | sell | bounce >= 0.0927 (top 10%) AND dd250 < -0.158 (lowest 30%)  t 77.6, design +14.35% n 7,747 | lift 2020-26 +3.20% (n 3,512), 2004-12 +6.26% (n 8,215), US +13.05% (n 2,825)
+[   285s]   raw40 | sell | atrp >= 0.037 (top 20%) AND ret60 < 0.00691 (lowest 50%)  t 77.2, design +11.70% n 16,905 | lift 2020-26 +5.45% (n 13,753), 2004-12 +4.11% (n 25,004), US +8.61% (n 10,115)
+[   285s]   raw40 | sell | z60 < 0.0408 (lowest 50%) AND atrp >= 0.037 (top 20%)  t 76.9, design +11.67% n 16,883 | lift 2020-26 +5.28% (n 13,649), 2004-12 +4.05% (n 24,931), US +8.62% (n 10,108)
+[   285s]   raw40 | sell | atrp >= 0.037 (top 20%) AND dhi < -0.138 (lowest 60%)  t 76.8, design +11.47% n 17,403 | lift 2020-26 +5.22% (n 14,317), 2004-12 +3.51% (n 25,517), US +9.08% (n 9,579)
+[   285s]   exc40 | normal | atrp < 0.0289 (lowest 60%) AND dhi >= -0.0946 (top 30%)  t 26.9, design +1.27% n 44,220 | lift 2020-26 +1.37% (n 44,315), 2004-12 +1.04% (n 28,865), US -0.43% (n 258,053)
+[   285s]   exc40 | normal | dhi >= -0.0561 (top 20%) AND ms < 0.849 (lowest 80%)  t 26.8, design +1.92% n 23,320 | lift 2020-26 +2.56% (n 19,987), 2004-12 +2.75% (n 14,411), US -0.35% (n 103,014)
+[   285s]   exc40 | normal | atrp < 0.0209 (lowest 30%) AND d200 >= 0.00336 (top 50%)  t 26.8, design +1.39% n 33,320 | lift 2020-26 +0.56% (n 26,709), 2004-12 +0.46% (n 20,931), US -0.61% (n 192,244)
+[   285s]   exc40 | normal | atrp < 0.0209 (lowest 30%) AND rel20 >= 0.011 (top 40%)  t 26.7, design +1.98% n 18,371 | lift 2020-26 +1.31% (n 15,427), 2004-12 +0.67% (n 11,619), US -0.60% (n 94,487)
+[   285s]   exc40 | normal | dhi >= -0.0946 (top 30%) AND logp < 3.41 (lowest 70%)  t 26.6, design +1.52% n 37,354 | lift 2020-26 +1.92% (n 36,118), 2004-12 +2.63% (n 22,038), US +0.57% (n 56,840)
+[   285s] map done

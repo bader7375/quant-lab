@@ -1,0 +1,31 @@
+T1 - return signal by itself (daily rank IC with the next 20 sessions; ric = IC after removing r20/r60/r120/12-1 momentum)
+  N60   DESIGN IC +0.0325 (t +2.0) resid +0.0073 (t +0.7) top-bottom +0.02% | CONFIRM IC +0.0450 (t +2.6) resid +0.0037 (t +0.4) top-bottom +1.04%
+  B60   DESIGN IC +0.0371 (t +2.3) resid +0.0220 (t +2.1) top-bottom +0.52% | CONFIRM IC +0.0418 (t +2.9) resid +0.0098 (t +1.1) top-bottom +0.84%
+  O60   DESIGN IC +0.0294 (t +1.7) resid +0.0056 (t +0.5) top-bottom -0.27% | CONFIRM IC +0.0469 (t +2.6) resid -0.0005 (t -0.0) top-bottom +0.82%
+  N120  DESIGN IC +0.0432 (t +2.5) resid +0.0163 (t +1.5) top-bottom +0.61% | CONFIRM IC +0.0597 (t +3.2) resid +0.0159 (t +1.4) top-bottom +1.85%
+  B120  DESIGN IC +0.0382 (t +2.2) resid +0.0166 (t +1.5) top-bottom +0.82% | CONFIRM IC +0.0593 (t +3.7) resid +0.0190 (t +2.0) top-bottom +1.52%
+  O120  DESIGN IC +0.0409 (t +2.2) resid +0.0145 (t +1.2) top-bottom +0.37% | CONFIRM IC +0.0522 (t +2.7) resid +0.0080 (t +0.7) top-bottom +1.60%
+  N250  DESIGN IC +0.0456 (t +2.6) resid +0.0210 (t +1.9) top-bottom +0.74% | CONFIRM IC +0.0487 (t +2.5) resid +0.0084 (t +0.9) top-bottom +1.69%
+  B250  DESIGN IC +0.0430 (t +2.2) resid +0.0122 (t +1.1) top-bottom +0.60% | CONFIRM IC +0.0443 (t +2.5) resid +0.0040 (t +0.4) top-bottom +1.03%
+  O250  DESIGN IC +0.0322 (t +1.8) resid +0.0080 (t +0.7) top-bottom +0.34% | CONFIRM IC +0.0376 (t +1.9) resid -0.0041 (t -0.4) top-bottom +1.11%
+T1 pick (largest DESIGN |IC|): N250, works as momentum; CONFIRM IC +0.0487 t +2.5 -> PASS
+  average daily rank correlation of the pick with: {'r20': 0.15, 'r60': 0.34, 'r120': 0.54, 'mom12_1': 0.77}
+
+T2 - Z swing trades: DESIGN 268, CONFIRM 188
+  N60   median -8.00 | DESIGN above 133 +18.2%  85% / below 135 +20.0%  80% gap  -1.7 | CONFIRM above 118  +6.0% / below 66  +9.5% gap  -3.5
+  B60   median -1.00 | DESIGN above 56 +19.5%  93% / below 212 +19.0%  80% gap  +0.5 | CONFIRM above 82  +4.9% / below 102  +9.2% gap  -4.4
+  O60   median -0.42 | DESIGN above 125 +20.2%  86% / below 143 +18.1%  79% gap  +2.1 | CONFIRM above 113  +5.7% / below 71  +9.7% gap  -3.9
+  N120  median -9.00 | DESIGN above 126 +16.3%  78% / below 142 +21.6%  87% gap  -5.3 | CONFIRM above 120  +6.5% / below 64  +8.7% gap  -2.2
+  B120  median -0.84 | DESIGN above 134 +19.1%  83% / below 134 +19.1%  82% gap  -0.1 | CONFIRM above 122  +6.8% / below 62  +8.2% gap  -1.3
+  O120  median -0.34 | DESIGN above 134 +18.2%  82% / below 134 +20.0%  83% gap  -1.8 | CONFIRM above 132  +7.0% / below 52  +7.9% gap  -0.9
+  N250  median -14.00 | DESIGN above 130 +20.0%  85% / below 138 +18.3%  80% gap  +1.6 | CONFIRM above 131  +5.9% / below 53 +10.5% gap  -4.6
+  B250  median -0.67 | DESIGN above 132 +17.8%  80% / below 136 +20.3%  85% gap  -2.5 | CONFIRM above 131  +5.5% / below 53 +11.5% gap  -6.0
+  O250  median -0.28 | DESIGN above 133 +20.0%  86% / below 135 +18.3%  79% gap  +1.7 | CONFIRM above 129  +5.9% / below 55 +10.5% gap  -4.7
+T2 pick: N120 below -9.00 (DESIGN gap 5.3 pts); CONFIRM gap in that direction +2.2 pts
+  DESIGN   live   tr  33/268  +1.6%/y DD  6.5% ratio 0.24 Sh 0.48 worst yr  -2.3% cap avg   4% max  25%
+           filter tr  29/142  +2.2%/y DD  6.3% ratio 0.34 Sh 0.67 worst yr  -1.0% cap avg   3% max  25%
+  CONFIRM  live   tr  36/188  +1.2%/y DD  5.3% ratio 0.23 Sh 0.40 worst yr  -0.8% cap avg   4% max  25%
+           filter tr  28/ 64  +1.3%/y DD  5.0% ratio 0.26 Sh 0.46 worst yr  +0.0% cap avg   3% max  25%
+  2023-26  live   tr  17/ 52  +1.2%/y DD  5.3% ratio 0.22 Sh 0.52 worst yr  +0.4% cap avg   4% max  25%
+           filter tr  13/ 28  +1.3%/y DD  4.3% ratio 0.32 Sh 0.59 worst yr  +0.0% cap avg   3% max  25%
+T2 -> FAIL

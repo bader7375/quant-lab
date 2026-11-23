@@ -1,0 +1,15 @@
+P0 Core v2 alone                         DESIGN  CAGR +12.2% Sh 1.02 DD  -23% | CONFIRM CAGR +17.4% Sh 1.26 DD  -26% | 2023-26 CAGR  +3.6% Sh 0.37 DD  -26%
+Z live 5 x 5% alone (rest T-bills)       DESIGN  CAGR  +2.7% Sh 0.71 DD   -6% | CONFIRM CAGR  +4.4% Sh 1.29 DD   -4% | 2023-26 CAGR  +6.0% Sh 2.08 DD   -3%
+Core v2 + Z live 5 x 5%                  DESIGN  CAGR +12.9% Sh 0.99 DD  -25% | CONFIRM CAGR +18.3% Sh 1.27 DD  -24% | 2023-26 CAGR  +4.8% Sh 0.46 DD  -24%
+Z v2 2 x 5 x 2.5% alone (rest T-bills)   DESIGN  CAGR  +3.3% Sh 0.93 DD   -5% | CONFIRM CAGR  +4.5% Sh 1.78 DD   -3% | 2023-26 CAGR  +5.7% Sh 3.56 DD   -1%
+Core v2 + Z v2 2 x 5 x 2.5%              DESIGN  CAGR +13.4% Sh 1.03 DD  -24% | CONFIRM CAGR +18.4% Sh 1.29 DD  -25% | 2023-26 CAGR  +4.4% Sh 0.44 DD  -25%
+Z live 5 x 10% alone (rest T-bills)      DESIGN  CAGR  +4.6% Sh 0.61 DD  -12% | CONFIRM CAGR  +5.8% Sh 0.87 DD   -9% | 2023-26 CAGR  +7.4% Sh 1.29 DD   -7%
+Core v2 + Z live 5 x 10%                 DESIGN  CAGR +13.4% Sh 0.93 DD  -27% | CONFIRM CAGR +19.1% Sh 1.24 DD  -22% | 2023-26 CAGR  +5.8% Sh 0.52 DD  -22%
+Z v2 2 x 5 x 5% alone (rest T-bills)     DESIGN  CAGR  +5.7% Sh 0.82 DD  -11% | CONFIRM CAGR  +6.2% Sh 1.22 DD   -6% | 2023-26 CAGR  +6.9% Sh 2.14 DD   -3%
+Core v2 + Z v2 2 x 5 x 5%                DESIGN  CAGR +14.5% Sh 1.02 DD  -25% | CONFIRM CAGR +19.4% Sh 1.29 DD  -25% | 2023-26 CAGR  +5.2% Sh 0.50 DD  -25%
+
+v2 the better Z inside the account (5%-equivalent size): True | at 10%-equivalent size (reported): True
+Z live 5 x 5% adds to Core v2 (round 45 rule): False
+Z v2 2 x 5 x 2.5% adds to Core v2 (round 45 rule): True
+Z live 5 x 10% adds to Core v2 (round 45 rule): False
+Z v2 2 x 5 x 5% adds to Core v2 (round 45 rule): True

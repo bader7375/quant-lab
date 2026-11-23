@@ -1,0 +1,8 @@
+Ramadan                            | DESIGN 2013-19  137 days +0.000%/day vs +0.015% (t -0.2) | CONFIRM 2020-26  129 days +0.045%/day vs +0.004% (t +0.3) | 2011-26  297 days +0.035%/day vs +0.020% (t +0.2)
+   -> counts (same sign and |t| >= 2 in both eras): False
+5 sessions before an Eid holiday   | DESIGN 2013-19   70 days +0.135%/day vs +0.009% (t +1.3) | CONFIRM 2020-26   70 days +0.091%/day vs +0.003% (t +0.9) | 2011-26  160 days +0.099%/day vs +0.018% (t +1.2)
+   -> counts (same sign and |t| >= 2 in both eras): False
+first 9 days of Dhu al-Hijjah      | DESIGN 2013-19   38 days -0.168%/day vs +0.018% (t -1.4) | CONFIRM 2020-26   34 days +0.017%/day vs +0.007% (t +0.1) | 2011-26   81 days -0.060%/day vs +0.023% (t -0.9)
+   -> counts (same sign and |t| >= 2 in both eras): False
+turn of the month                  | DESIGN 2013-19  336 days +0.041%/day vs +0.007% (t +0.5) | CONFIRM 2020-26  328 days -0.040%/day vs +0.019% (t -0.8) | 2011-26  760 days +0.024%/day vs +0.021% (t +0.1)
+   -> counts (same sign and |t| >= 2 in both eras): False

@@ -1,0 +1,82 @@
+Saudi: 30 measures x 3909 days x 273 stocks; 9 market states
+random start: 2571 rules in 17s; best fitness 5.71
+generation 5: 3840 rules evaluated, best fitness 7.23, 24s
+generation 10: 4412 rules evaluated, best fitness 7.23, 27s
+generation 15: 4536 rules evaluated, best fitness 7.23, 28s
+generation 20: 4561 rules evaluated, best fitness 7.23, 28s
+generation 25: 4565 rules evaluated, best fitness 7.23, 28s
+us100: 115 stocks, 2000-01-03..2026-11-02, eligible on 2026-11-02: 115
+
+Evaluated 4565 distinct rules on DESIGN 2013-19. Top 10 distinct rules, scored once on the CONFIRM holdout 2020-26 and on US large caps:
+
+  clv pct >= 0.7 | hold 5
+    DESIGN  fit 7.23 | n39608 excess +0.13% (t +7.2) win 45% avg -0.19%
+    CONFIRM n53544 excess +0.00% (t -0.5) win 42% avg -0.30% -> fails
+    US      US 2010-17: n46123 excess -0.02% (t -1.8) win 55% avg +0.26% || US 2018-26: n53751 excess -0.03% (t -1.6) win 53% avg +0.23%
+
+  clv pct >= 0.8 AND ml pct >= 0.7 | hold 5
+    DESIGN  fit 6.51 | n10023 excess +0.35% (t +6.5) win 46% avg -0.06%
+    CONFIRM n14074 excess +0.27% (t +4.3) win 44% avg -0.06% -> fails
+    US      US 2010-17: n 9105 excess +0.05% (t +1.1) win 54% avg +0.34% || US 2018-26: n10780 excess +0.08% (t +1.0) win 53% avg +0.33%
+
+  clv pct >= 0.7 AND ml pct >= 0.8 AND r1 pct >= 0.7 | hold 5
+    DESIGN  fit 6.19 | n 6000 excess +0.47% (t +6.2) win 47% avg +0.01%
+    CONFIRM n 9194 excess +0.32% (t +4.2) win 44% avg -0.03% -> fails
+    US      US 2010-17: n 5309 excess +0.13% (t +1.7) win 54% avg +0.38% || US 2018-26: n 6383 excess +0.04% (t +0.4) win 53% avg +0.30%
+
+  clv pct >= 0.7 AND r5 pct <= 0.3 | hold 5
+    DESIGN  fit 5.74 | n 9395 excess +0.31% (t +5.7) win 46% avg -0.05%
+    CONFIRM n11834 excess +0.03% (t +0.3) win 44% avg -0.19% -> fails
+    US      US 2010-17: n10760 excess +0.06% (t +1.5) win 55% avg +0.37% || US 2018-26: n12727 excess +0.07% (t +1.1) win 53% avg +0.35%
+
+  ml pct >= 0.9 | hold 40
+    DESIGN  fit 5.73 | n 5397 excess +1.70% (t +5.7) win 55% avg +2.29%
+    CONFIRM n 6833 excess +1.64% (t +5.5) win 54% avg +3.06% -> SURVIVES
+    US      US 2010-17: n 7040 excess +0.81% (t +3.5) win 64% avg +3.85% || US 2018-26: n 7443 excess +1.28% (t +3.7) win 58% avg +3.98%
+
+  dhi250 pct >= 0.8 AND ml pct >= 0.9 | hold 40
+    DESIGN  fit 5.65 | n 2410 excess +2.31% (t +5.7) win 56% avg +2.13%
+    CONFIRM n 3464 excess +2.55% (t +5.3) win 56% avg +2.99% -> SURVIVES
+    US      US 2010-17: n 1048 excess +1.90% (t +3.1) win 66% avg +4.63% || US 2018-26: n 1249 excess +3.17% (t +2.8) win 60% avg +5.36%
+
+  ml pct >= 0.9 AND secmom20 pct >= 0.7 | hold 40
+    DESIGN  fit 5.62 | n 2089 excess +2.43% (t +5.6) win 58% avg +2.17%
+    CONFIRM n 3169 excess +1.96% (t +4.8) win 55% avg +2.74% -> SURVIVES
+    US      not transferable (uses the Saudi market model or sector momentum)
+
+  secmom20 pct >= 0.7 AND ml pct >= 0.7 AND clv pct >= 0.7 | hold 40
+    DESIGN  fit 5.59 | n 3860 excess +2.20% (t +5.6) win 57% avg +2.06%
+    CONFIRM n 6538 excess +1.58% (t +4.3) win 53% avg +2.18% -> SURVIVES
+    US      not transferable (uses the Saudi market model or sector momentum)
+
+  model<=0 AND dhi250 pct >= 0.9 AND secmom20 pct >= 0.8 | hold 40
+    DESIGN  fit 5.56 | n 1350 excess +2.71% (t +5.6) win 61% avg +2.91%
+    CONFIRM n 1327 excess +1.64% (t +2.0) win 52% avg +1.34% -> SURVIVES
+    US      not transferable (uses the Saudi market model or sector momentum)
+
+  ml pct >= 0.8 AND clv pct >= 0.7 AND rsi2 pct >= 0.7 | hold 5
+    DESIGN  fit 5.55 | n 4841 excess +0.49% (t +5.6) win 48% avg -0.02%
+    CONFIRM n 7566 excess +0.29% (t +2.9) win 43% avg -0.12% -> fails
+    US      US 2010-17: n 3572 excess +0.11% (t +1.0) win 53% avg +0.40% || US 2018-26: n 4034 excess +0.03% (t +0.0) win 53% avg +0.32%
+
+Deflated Sharpe of the best DESIGN rule (monthly excess Sharpe 0.79, best-of-4264 expected by luck 0.97): probability of real skill 5%
+
+SURVIVORS on the holdout: 5 of 10
+Traceback (most recent call last):
+  File "/tmp/claude-0/-home-user-quant-lab/9205d36d-68a1-5401-8852-b575f8097dc2/scratchpad/r46/gp46.py", line 181, in <module>
+    json.dump({"n_eval": NEVAL, "measures": NAMES, "market": MKN, "top": OUT, "dsr_best": dsr, "sr0": sr0}, open(os.path.join(HERE, "gp46_results.json"), "w"), indent=1, default=float)
+  File "/usr/lib/python3.11/json/__init__.py", line 179, in dump
+    for chunk in iterable:
+  File "/usr/lib/python3.11/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.11/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.11/json/encoder.py", line 326, in _iterencode_list
+    yield from chunks
+  File "/usr/lib/python3.11/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.11/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.11/json/encoder.py", line 377, in _iterencode_dict
+    raise TypeError(f'keys must be str, int, float, bool or None, '
+TypeError: keys must be str, int, float, bool or None, not int32

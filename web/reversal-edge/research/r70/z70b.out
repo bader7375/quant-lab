@@ -1,0 +1,17 @@
+2013-19: all paper trades n 268  winners  82%  average +19.1%  worst 5%  -11.5% | taken n  33  winners  70%  average +10.4%  worst 5%  -13.5% | not taken n 235  winners  84%  average +20.3%  worst 5%  -11.1%
+         before the turn n  79  winners  82%  average +16.6%  worst 5%  -11.1% | after the turn n 189  winners  83%  average +20.1%  worst 5%  -11.5%
+2020-26: all paper trades n 174  winners  74%  average  +8.1%  worst 5%  -11.6% | taken n  36  winners  72%  average  +7.8%  worst 5%  -10.3% | not taken n 138  winners  74%  average  +8.2%  worst 5%  -11.8%
+         before the turn n  65  winners  46%  average  +0.6%  worst 5%  -13.6% | after the turn n 109  winners  90%  average +12.6%  worst 5%   -4.0%
+2013-26: all paper trades n 442  winners  79%  average +14.8%  worst 5%  -11.6% | taken n  69  winners  71%  average  +9.0%  worst 5%  -12.2% | not taken n 373  winners  80%  average +15.8%  worst 5%  -11.2%
+         before the turn n 144  winners  66%  average  +9.4%  worst 5%  -12.5% | after the turn n 298  winners  85%  average +17.4%  worst 5%   -9.9%
+
+sell-off clusters since 2013: 18 | signals by sessions since the cluster's first signal:
+   sessions  0-  0: n  95  winners  69%  average  +8.5%  worst 5%  -12.0% | taken 53 (56%)
+   sessions  1-  5: n 178  winners  75%  average +13.0%  worst 5%  -11.9% | taken 10 (6%)
+   sessions  6- 15: n 113  winners  89%  average +23.3%  worst 5%   -9.1% | taken 2 (2%)
+   sessions 16- 40: n  52  winners  94%  average +15.7%  worst 5%   -2.1% | taken 0 (0%)
+   sessions 41-  +: n   4  winners   0%  average -11.2%  worst 5%  -20.1% | taken 4 (100%)
+   cluster length (first to last signal): median 4 sessions, a quarter longer than 14; signals per cluster median 9; clusters with more than 5 signals: 10 of 18
+
+repeat signals while the paper trade is open (ignored by the rule): n 239  winners  83%  average +17.7%  worst 5%   -8.7%; sessions after the first signal: median 5
+   repeat signals in the last 15 sessions before the planned sale: n  11  winners  91%  average +11.7%  worst 5%   -8.9%

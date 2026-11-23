@@ -1,0 +1,70 @@
+//@version=6
+// Z bands (reversal edge research, round 61): the close at which the stretch Z lands exactly on a line.
+// Stretch Z at a close = average over k = 10, 20, 60 of (sum of the last k log returns, clipped at +/-25%)
+//   / (60-bar standard deviation of returns measured k bars earlier x sqrt(k))  - the scanner's formula.
+// Only the newest return depends on the new close, so Z = A + B x (newest return) and the close for a level L is
+//   previous close x exp((L - A) / B). Exact, not a forecast.
+// Blue dashed band: the close for stretch Z = -2.62 (the daily Z-swing line). A close at or below it is a daily stretch-Z touch.
+// Grey dotted band: the close for stretch Z = 0 (the stretch fully gone).
+// Light-blue step line: the Thursday close for weekly stretch Z = -2.08 (the weekly Z-swing line) during this week.
+// The bands are drawn one bar ahead, so the right edge shows the levels for the next session.
+// A Z-swing buy also needs ML rank >= 50%, a positive market model, market momentum <= -1.18 and a profitable company: check the daily list.
+indicator("Z bands", overlay = true)
+
+// ---------------------------------------------------------------- inputs
+lineD  = input.float(-2.62, "Daily buy line (stretch Z)", step = 0.01)
+show0  = input.bool(true, "Show the Z 0 band")
+showW  = input.bool(true, "Show the weekly line")
+lineW  = input.float(-2.08, "Weekly buy line (weekly stretch Z)", step = 0.01)
+clipD  = input.float(0.25, "Clip daily returns at +/-", step = 0.05)
+clipW  = input.float(0.60, "Clip weekly returns at +/-", step = 0.05)
+limitP = input.float(10.0, "Daily price limit (%)", step = 0.5, tooltip = "Saudi stocks: 10%. A band further away than this cannot be reached in one session.")
+
+// ---------------------------------------------------------------- the close at the NEXT bar for stretch Z = lvl (data up to this bar)
+bandNext(float src, float lvl, float c) =>
+    float r   = math.max(math.min(math.log(src / src[1]), c), -c)
+    float sd  = ta.stdev(r, 60, false)
+    float d10 = sd[9] * math.sqrt(10)
+    float d20 = sd[19] * math.sqrt(20)
+    float d60 = sd[59] * math.sqrt(60)
+    float a   = (math.sum(r, 9) / d10 + math.sum(r, 19) / d20 + math.sum(r, 59) / d60) / 3
+    float b   = (1 / d10 + 1 / d20 + 1 / d60) / 3
+    float x   = (lvl - a) / b
+    math.abs(x) <= c ? src * math.exp(x) : na
+
+// weekly: the band computed at the last completed week = the band for this week's close (no repainting)
+wPrev() =>
+    float w = bandNext(close, lineW, clipW)
+    w[1]
+
+float bD = bandNext(close, lineD, clipD)
+float b0 = bandNext(close, 0.0, clipD)
+float bW = request.security(syminfo.tickerid, "W", wPrev(), lookahead = barmerge.lookahead_on)
+
+// first close at or below the band = the first close with stretch Z <= the line
+bool touch = close <= bD[1] and not (close[1] <= bD[2])
+
+// ---------------------------------------------------------------- plots
+plot(bD, "Z -2.62 band (next close)", color = color.new(#4f96f0, 0), linewidth = 2, style = plot.style_stepline, offset = 1)
+plot(show0 ? b0 : na, "Z 0 band (next close)", color = color.new(#c3c2b7, 35), linewidth = 1, style = plot.style_stepline, offset = 1)
+plot(showW and timeframe.isdaily ? bW : na, "Weekly -2.08 line (this week's close)", color = color.new(#7fb2f0, 20), linewidth = 1, style = plot.style_stepline)
+plotshape(touch, "Daily stretch-Z touch", shape.triangleup, location.belowbar, color.new(#4f96f0, 0), size = size.small)
+
+// ---------------------------------------------------------------- next-session table
+pctTxt(float p) =>
+    float ch = (p / close - 1) * 100
+    str.tostring(p, format.mintick) + "  (" + (ch >= 0 ? "+" : "") + str.tostring(ch, "#.0") + "%" + (math.abs(ch) > limitP ? ", beyond the limit" : "") + ")"
+
+var table t = table.new(position.top_right, 2, 4, bgcolor = color.new(color.black, 85), border_width = 1)
+if barstate.islast
+    table.cell(t, 0, 0, "Close needed", text_color = color.gray)
+    table.cell(t, 1, 0, timeframe.isdaily ? "next session" : "use a daily chart", text_color = color.gray)
+    table.cell(t, 0, 1, "stretch Z " + str.tostring(lineD, "#.00"), text_color = #4f96f0)
+    table.cell(t, 1, 1, na(bD) ? "-" : pctTxt(bD), text_color = #4f96f0)
+    table.cell(t, 0, 2, "stretch Z 0")
+    table.cell(t, 1, 2, na(b0) ? "-" : pctTxt(b0))
+    table.cell(t, 0, 3, "weekly " + str.tostring(lineW, "#.00") + " (Thu close)", text_color = #7fb2f0)
+    table.cell(t, 1, 3, na(bW) ? "-" : pctTxt(bW), text_color = #7fb2f0)
+
+// ---------------------------------------------------------------- alerts
+alertcondition(touch, "Daily stretch-Z touch", "Close at or below the Z -2.62 band: a daily stretch-Z touch. Check the daily list for the other Z-swing filters.")

@@ -1,0 +1,31 @@
+
+== all signals
+  DESIGN: 63 signals with a complete 40-day trade
+    open (live)              entry vs open +0.00% | trade avg  +0.94% win  46%
+    day-1 VWAP               entry vs open -1.13% | trade avg  -0.29% win  41%
+    day-1 close              entry vs open -1.50% | trade avg  -0.65% win  41%
+    limit -1%, else close    entry vs open -0.00% | trade avg  +0.89% win  49% | trigger hit 70%
+    hourly stretch trigger   entry vs open +0.55% | trade avg  +1.43% win  54% | trigger hit 62%
+  CONFIRM: 57 signals with a complete 40-day trade
+    open (live)              entry vs open +0.00% | trade avg  +1.75% win  56%
+    day-1 VWAP               entry vs open -0.91% | trade avg  +0.71% win  53%
+    day-1 close              entry vs open -0.95% | trade avg  +0.61% win  51%
+    limit -1%, else close    entry vs open -1.14% | trade avg  +0.46% win  53% | trigger hit 33%
+    hourly stretch trigger   entry vs open -1.49% | trade avg  +0.10% win  53% | trigger hit 40%
+
+== live subset (ML >= 0.5, market model > 0)
+  DESIGN: 41 signals with a complete 40-day trade
+    open (live)              entry vs open +0.00% | trade avg  +3.06% win  51%
+    day-1 VWAP               entry vs open -1.68% | trade avg  +1.23% win  46%
+    day-1 close              entry vs open -2.03% | trade avg  +0.89% win  46%
+    limit -1%, else close    entry vs open -0.14% | trade avg  +2.86% win  59% | trigger hit 71%
+    hourly stretch trigger   entry vs open +0.31% | trade avg  +3.32% win  59% | trigger hit 63%
+  CONFIRM: 17 signals with a complete 40-day trade
+    open (live)              entry vs open +0.00% | trade avg  +9.04% win  82%
+    day-1 VWAP               entry vs open -0.30% | trade avg  +8.63% win  88%
+    day-1 close              entry vs open -0.90% | trade avg  +7.97% win  82%
+    limit -1%, else close    entry vs open -1.14% | trade avg  +7.72% win  88% | trigger hit 41%
+    hourly stretch trigger   entry vs open -1.73% | trade avg  +7.08% win  82% | trigger hit 35%
+
+Passes (all signals, both periods): {'day-1 VWAP': False, 'day-1 close': False, 'limit -1%, else close': False, 'hourly stretch trigger': False}
+DECISION A: keep buying at the open

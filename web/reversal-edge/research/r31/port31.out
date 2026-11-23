@@ -1,0 +1,6 @@
+trend sleeve vs round-29 file, mean abs weight diff: 0.0005606099436186571
+Z swing 5x5% (round 28)              | ALL  +3.4% Sh 0.85 DD -10% | DESIGN  +3.2% Sh 0.73 DD -10% | CONFIRM  +3.5% Sh 1.02 DD  -5% | C1  +1.9% Sh 0.48 DD  -5% | C2  +4.9% Sh 1.66 DD  -4%
+Z swing 5x5% gated                   | ALL  +3.3% Sh 0.91 DD  -7% | DESIGN  +3.4% Sh 0.83 DD  -5% | CONFIRM  +3.2% Sh 1.04 DD  -7% | C1  +0.6% Sh 0.17 DD  -7% | C2  +5.4% Sh 2.01 DD  -4%
+Z + trend 10x5% (round 29)           | ALL  +7.8% Sh 1.09 DD -12% | DESIGN  +6.6% Sh 0.98 DD -12% | CONFIRM  +9.2% Sh 1.20 DD -12% | C1 +14.7% Sh 1.64 DD -12% | C2  +4.9% Sh 0.76 DD -11%
+Z gated + trend 10x5%                | ALL  +7.8% Sh 1.14 DD -11% | DESIGN  +6.8% Sh 1.07 DD -10% | CONFIRM  +8.9% Sh 1.21 DD -11% | C1 +13.3% Sh 1.57 DD -11% | C2  +5.4% Sh 0.87 DD -10%
+by year pair (ungated / gated): 2013:+10/+11 2014:-0/+5 2015:+2/-2 2016:+19/+20 2017:+1/+1 2018:+6/+6 2019:+7/+7 2020:+31/+27 2021:+20/+18 2022:-5/-4 2023:+14/+14 2024:-2/-0 2025:+4/+4 2026:+2/+3

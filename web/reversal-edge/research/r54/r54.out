@@ -1,0 +1,20 @@
+Saudi done
+us100: 115 stocks, 2000-01-03..2026-11-02, eligible on 2026-11-02: 115
+US done
+India done
+GCC done
+
+Sleeve ratio (return per year / max drawdown) by market-era; '*' = beats base
+                         Saudi 2013-19 Saudi 2020-26    US 2005-09    US 2010-17    US 2018-26 India 2005-09 India 2010-17 India 2018-26   GCC 2011-17   GCC 2018-26
+base                              0.28          0.34         -0.09          0.12          0.48         -0.02          0.96          0.18          0.72          0.03
+K2 split                         0.28*         0.38*        -0.04*         0.16*         0.51*         0.01*         0.78          0.16          0.59          0.06*  | beats 7/10, return >= 90% in 6/10 -> GENERAL
+K2+K3 split + deep -2.53         0.33*         0.42*         0.07*         0.30*         0.20          0.21*         0.29          0.19*         0.42          0.01   | beats 6/10, return >= 90% in 4/10 -> not general
+K2+K3' split + deep -1.85         0.46*         0.43*        -0.07*         0.04          0.40          0.13*         0.43          0.22*         0.70          0.05*  | beats 6/10, return >= 90% in 6/10 -> not general
+
+Return per year (% of the account) by market-era:
+base                               1.8           1.5          -1.0           0.7           2.7          -0.2           3.4           1.5           5.5           0.7
+K2 split                           1.6           1.7          -0.4           0.7           2.3           0.1           2.7           1.2           4.3           1.1
+K2+K3 split + deep -2.53           1.7           1.7           0.4           0.5           0.9           1.6           0.3           1.2           2.3           0.2
+K2+K3' split + deep -1.85           2.1           1.7          -0.5           0.2           1.8           1.1           1.9           1.4           4.3           0.8
+K2+K3 split + deep -2.53: beats K2 alone in 6/10 -> not better than the split exit alone
+K2+K3' split + deep -1.85: beats K2 alone in 5/10 -> not better than the split exit alone

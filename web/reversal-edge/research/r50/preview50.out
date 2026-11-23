@@ -1,0 +1,43 @@
+Latest close 2026-11-03: TASI proxy +nan% from its 1-year high; turn rule (4% bounce in last 20 sessions) ON; market momentum -3.81; market model +0.122
+
+live (ML >= 0.5, hold 40), hold-40 positions open or signalled (no slot limit applied, newest last):
+  7020 signal 2026-10-25 (ML 81%)
+  2281 signal 2026-10-25 (ML 86%)
+  1820 signal 2026-10-25 (ML 77%)
+  2320 signal 2026-10-25 (ML 80%)
+  4130 signal 2026-10-25 (ML 69%)
+  4140 signal 2026-10-25 (ML 92%)
+  4210 signal 2026-10-25 (ML 93%)
+  4083 signal 2026-10-25 (ML 73%)
+  4262 signal 2026-11-01 (ML 96%)
+  1214 signal 2026-11-01 (ML 97%)
+  2160 signal 2026-11-01 (ML 97%)
+  4326 signal 2026-11-01 (ML 89%)
+
+v2 shadow book (ML >= 0.7), hold-40 positions open or signalled (no slot limit applied, newest last):
+  6017 signal 2026-10-25 (ML 89%) [v2 skips: before the turn]
+  2281 signal 2026-10-25 (ML 86%) [v2 skips: before the turn]
+  4004 signal 2026-10-25 (ML 82%) [v2 skips: before the turn]
+  2320 signal 2026-10-25 (ML 80%) [v2 skips: before the turn]
+  4210 signal 2026-10-25 (ML 93%) [v2 skips: before the turn]
+  7020 signal 2026-10-25 (ML 81%) [v2 skips: before the turn]
+  1820 signal 2026-10-25 (ML 77%) [v2 skips: before the turn]
+  4322 signal 2026-10-29 (ML 87%) [v2 HOLDS: after a turn]
+  4326 signal 2026-11-01 (ML 89%) [v2 HOLDS: after a turn]
+  1214 signal 2026-11-01 (ML 97%) [v2 HOLDS: after a turn]
+  2160 signal 2026-11-01 (ML 97%) [v2 HOLDS: after a turn]
+  4262 signal 2026-11-01 (ML 96%) [v2 HOLDS: after a turn]
+
+v2 shadow book (ML >= 0.7), Z-exit positions open or signalled (no slot limit applied, newest last):
+  6017 signal 2026-10-25 (ML 89%) [v2 skips: before the turn]
+  2281 signal 2026-10-25 (ML 86%) [v2 skips: before the turn]
+  4004 signal 2026-10-25 (ML 82%) [v2 skips: before the turn]
+  2320 signal 2026-10-25 (ML 80%) [v2 skips: before the turn]
+  4210 signal 2026-10-25 (ML 93%) [v2 skips: before the turn]
+  7020 signal 2026-10-25 (ML 81%) [v2 skips: before the turn]
+  1820 signal 2026-10-25 (ML 77%) [v2 skips: before the turn]
+  4322 signal 2026-10-29 (ML 87%) [v2 HOLDS: after a turn]
+  4326 signal 2026-11-01 (ML 89%) [v2 HOLDS: after a turn]
+  1214 signal 2026-11-01 (ML 97%) [v2 HOLDS: after a turn]
+  2160 signal 2026-11-01 (ML 97%) [v2 HOLDS: after a turn]
+  4262 signal 2026-11-01 (ML 96%) [v2 HOLDS: after a turn]

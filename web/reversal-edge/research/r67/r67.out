@@ -1,0 +1,95 @@
+building Z books ...
+building engines ...
+112 mixes simulated
+
+reference: cash only (T-bill)  2013-19 +0.8%/y | 2020-26 +2.9%/y | 2023-26 +4.6%/y | 2016-26 +2.3%/y
+
+all mixes without a second engine (Z book alone, rest in cash):
+  Z0 live 5% + none                                2013-19  +3.3%/y DD  5.9% Sh 0.82 worst yr  -1.8% inv   4% | 2020-26  +4.9%/y DD  4.5% Sh 1.46 worst yr  +0.2% inv   4% | 2023-26 +6.6% DD 2.9%
+  Z0 live 10% + none                               2013-19  +5.7%/y DD 11.5% Sh 0.73 worst yr  -3.8% inv   8% | 2020-26  +6.8%/y DD  8.9% Sh 1.03 worst yr  +0.3% inv   9% | 2023-26 +8.5% DD 5.8%
+  Z0 live 15% + none                               2013-19  +8.0%/y DD 16.9% Sh 0.70 worst yr  -5.9% inv  12% | 2020-26  +8.7%/y DD 13.2% Sh 0.89 worst yr  -0.1% inv  13% | 2023-26 +10.5% DD 9.2%
+  Z0 live 20% + none                               2013-19 +10.2%/y DD 22.0% Sh 0.68 worst yr  -8.3% inv  16% | 2020-26 +10.5%/y DD 17.4% Sh 0.82 worst yr  -1.0% inv  18% | 2023-26 +12.4% DD 13.1%
+  Z1 split exit 5% + none                          2013-19  +3.4%/y DD  4.8% Sh 0.87 worst yr  +0.0% inv   3% | 2020-26  +5.3%/y DD  4.5% Sh 1.76 worst yr  +0.0% inv   4% | 2023-26 +7.3% DD 2.2%
+  Z1 split exit 10% + none                         2013-19  +5.9%/y DD  9.5% Sh 0.77 worst yr  +0.0% inv   7% | 2020-26  +7.7%/y DD  8.9% Sh 1.29 worst yr  +0.0% inv   8% | 2023-26 +10.0% DD 4.5%
+  Z1 split exit 15% + none                         2013-19  +8.3%/y DD 13.9% Sh 0.74 worst yr  -0.1% inv  10% | 2020-26 +10.1%/y DD 13.2% Sh 1.13 worst yr  +0.0% inv  12% | 2023-26 +12.8% DD 6.8%
+  Z1 split exit 20% + none                         2013-19 +10.6%/y DD 18.3% Sh 0.72 worst yr  -0.7% inv  14% | 2020-26 +12.4%/y DD 17.4% Sh 1.05 worst yr  -0.0% inv  15% | 2023-26 +15.6% DD 9.1%
+  Z2 v2 (turn gate + ML70 + split) 5% + none       2013-19  +3.2%/y DD  4.7% Sh 0.92 worst yr  -0.9% inv   3% | 2020-26  +4.3%/y DD  3.4% Sh 1.70 worst yr  +0.0% inv   2% | 2023-26 +5.7% DD 1.4%
+  Z2 v2 (turn gate + ML70 + split) 10% + none      2013-19  +5.5%/y DD  9.3% Sh 0.80 worst yr  -2.0% inv   5% | 2020-26  +5.7%/y DD  6.7% Sh 1.13 worst yr  +0.0% inv   4% | 2023-26 +6.7% DD 2.8%
+  Z2 v2 (turn gate + ML70 + split) 15% + none      2013-19  +7.7%/y DD 13.8% Sh 0.77 worst yr  -3.3% inv   8% | 2020-26  +7.1%/y DD 10.0% Sh 0.94 worst yr  +0.0% inv   6% | 2023-26 +7.8% DD 4.2%
+  Z2 v2 (turn gate + ML70 + split) 20% + none      2013-19  +9.8%/y DD 18.1% Sh 0.75 worst yr  -4.9% inv  11% | 2020-26  +8.4%/y DD 13.3% Sh 0.85 worst yr  +0.0% inv   8% | 2023-26 +8.9% DD 5.6%
+  Z3 Market returned only 5% + none                2013-19  +3.8%/y DD  4.9% Sh 0.99 worst yr  -0.4% inv   3% | 2020-26  +4.7%/y DD  3.2% Sh 1.64 worst yr  +0.0% inv   3% | 2023-26 +5.5% DD 1.7%
+  Z3 Market returned only 10% + none               2013-19  +6.8%/y DD  9.7% Sh 0.89 worst yr  -1.0% inv   6% | 2020-26  +6.5%/y DD  6.3% Sh 1.14 worst yr  +0.0% inv   7% | 2023-26 +6.4% DD 3.4%
+  Z3 Market returned only 15% + none               2013-19  +9.7%/y DD 14.4% Sh 0.85 worst yr  -1.8% inv   9% | 2020-26  +8.3%/y DD  9.4% Sh 0.98 worst yr  +0.0% inv  10% | 2023-26 +7.3% DD 5.2%
+  Z3 Market returned only 20% + none               2013-19 +12.6%/y DD 18.8% Sh 0.84 worst yr  -2.8% inv  12% | 2020-26  +9.9%/y DD 12.5% Sh 0.89 worst yr  +0.0% inv  13% | 2023-26 +8.2% DD 6.9%
+
+BUDGET worst drawdown 5%: pick Z3 Market returned only 5% + none
+  2013-19  pick  +3.8%/y DD  4.9% Sh 0.99 worst yr  -0.4% inv   3%
+           ref a (live 5%, cash)    +3.3%/y DD  5.9% Sh 0.82 worst yr  -1.8% inv   4%
+           ref b (Z0 live 5% + none)   +3.3%/y DD  5.9% Sh 0.82 worst yr  -1.8% inv   4%
+  2020-26  pick  +4.7%/y DD  3.2% Sh 1.64 worst yr  +0.0% inv   3%
+           ref a (live 5%, cash)    +4.9%/y DD  4.5% Sh 1.46 worst yr  +0.2% inv   4%
+           ref b (Z0 live 5% + none)   +4.9%/y DD  4.5% Sh 1.46 worst yr  +0.2% inv   4%
+  2023-26  pick  +5.5%/y DD  1.7% Sh 2.82 worst yr  +3.3% inv   2%
+           ref a (live 5%, cash)    +6.6%/y DD  2.9% Sh 2.49 worst yr  +5.2% inv   4%
+           ref b (Z0 live 5% + none)   +6.6%/y DD  2.9% Sh 2.49 worst yr  +5.2% inv   4%
+  2016-26  pick  +5.5%/y DD  3.2% Sh 1.66 worst yr  +0.0% inv   3%
+           ref a (live 5%, cash)    +5.4%/y DD  4.5% Sh 1.48 worst yr  +0.2% inv   4%
+           ref b (Z0 live 5% + none)   +5.4%/y DD  4.5% Sh 1.48 worst yr  +0.2% inv   4%
+  -> CONFIRMED in 2020-26: False
+  walk-forward 2016-26 +5.1%/y DD 3.2% Sh 1.69 (2016-20 +5.7% DD 3.2%, 2021-26 +4.6% DD 2.0%) vs ref a +5.4% -> does NOT beat ref a
+  walk-forward choices: 2016: Z2 v2 (turn gate + ML70 + split) 5% + none; 2017: Z3 Market returned only 5% + none; 2018: Z3 Market returned only 5% + none; 2019: Z3 Market returned only 5% + none; 2020: Z3 Market returned only 5% + none; 2021: Z3 Market returned only 5% + none; 2022: Z3 Market returned only 5% + none; 2023: Z3 Market returned only 5% + none; 2024: Z3 Market returned only 5% + none; 2025: Z3 Market returned only 5% + none; 2026: Z1 split exit 5% + none
+  next best in 2013-19 (2013-19 / 2020-26 CAGR, DD): Z1 split exit 5% + none +3.4% / +5.3% DD 4%; Z2 v2 (turn gate + ML70 + split) 5% + none +3.2% / +4.3% DD 3%
+
+BUDGET worst drawdown 10%: pick Z3 Market returned only 10% + none
+  2013-19  pick  +6.8%/y DD  9.7% Sh 0.89 worst yr  -1.0% inv   6%
+           ref a (live 5%, cash)    +3.3%/y DD  5.9% Sh 0.82 worst yr  -1.8% inv   4%
+           ref b (Z0 live 5% + none)   +3.3%/y DD  5.9% Sh 0.82 worst yr  -1.8% inv   4%
+  2020-26  pick  +6.5%/y DD  6.3% Sh 1.14 worst yr  +0.0% inv   7%
+           ref a (live 5%, cash)    +4.9%/y DD  4.5% Sh 1.46 worst yr  +0.2% inv   4%
+           ref b (Z0 live 5% + none)   +4.9%/y DD  4.5% Sh 1.46 worst yr  +0.2% inv   4%
+  2023-26  pick  +6.4%/y DD  3.4% Sh 1.65 worst yr  +2.5% inv   4%
+           ref a (live 5%, cash)    +6.6%/y DD  2.9% Sh 2.49 worst yr  +5.2% inv   4%
+           ref b (Z0 live 5% + none)   +6.6%/y DD  2.9% Sh 2.49 worst yr  +5.2% inv   4%
+  2016-26  pick  +8.7%/y DD  6.3% Sh 1.31 worst yr  +0.0% inv   6%
+           ref a (live 5%, cash)    +5.4%/y DD  4.5% Sh 1.48 worst yr  +0.2% inv   4%
+           ref b (Z0 live 5% + none)   +5.4%/y DD  4.5% Sh 1.48 worst yr  +0.2% inv   4%
+  -> CONFIRMED in 2020-26: True
+  walk-forward 2016-26 +7.8%/y DD 10.0% Sh 1.23 (2016-20 +8.3% DD 6.3%, 2021-26 +7.3% DD 10.0%) vs ref a +5.4% -> beats ref a
+  walk-forward choices: 2016: Z2 v2 (turn gate + ML70 + split) 5% + trend 50%; 2017: Z3 Market returned only 5% + trend 50%; 2018: Z3 Market returned only 10% + none; 2019: Z3 Market returned only 10% + none; 2020: Z3 Market returned only 10% + none; 2021: Z3 Market returned only 5% + trend 50%; 2022: Z3 Market returned only 5% + trend 50%; 2023: Z3 Market returned only 5% + trend 50%; 2024: Z3 Market returned only 5% + trend 50%; 2025: Z3 Market returned only 5% + trend 50%; 2026: Z1 split exit 5% + trend 50%
+  next best in 2013-19 (2013-19 / 2020-26 CAGR, DD): Z1 split exit 10% + none +5.9% / +7.7% DD 9%; Z3 Market returned only 5% + trend 50% +5.9% / +10.2% DD 10%; Z3 Market returned only 5% + Core v2 25% +5.8% / +8.4% DD 5%; Z2 v2 (turn gate + ML70 + split) 10% + none +5.5% / +5.7% DD 7%
+
+BUDGET worst drawdown 15%: pick Z3 Market returned only 15% + none
+  2013-19  pick  +9.7%/y DD 14.4% Sh 0.85 worst yr  -1.8% inv   9%
+           ref a (live 5%, cash)    +3.3%/y DD  5.9% Sh 0.82 worst yr  -1.8% inv   4%
+           ref b (Z0 live 10% + none)   +5.7%/y DD 11.5% Sh 0.73 worst yr  -3.8% inv   8%
+  2020-26  pick  +8.3%/y DD  9.4% Sh 0.98 worst yr  +0.0% inv  10%
+           ref a (live 5%, cash)    +4.9%/y DD  4.5% Sh 1.46 worst yr  +0.2% inv   4%
+           ref b (Z0 live 10% + none)   +6.8%/y DD  8.9% Sh 1.03 worst yr  +0.3% inv   9%
+  2023-26  pick  +7.3%/y DD  5.2% Sh 1.26 worst yr  +1.7% inv   6%
+           ref a (live 5%, cash)    +6.6%/y DD  2.9% Sh 2.49 worst yr  +5.2% inv   4%
+           ref b (Z0 live 10% + none)   +8.5%/y DD  5.8% Sh 1.62 worst yr  +5.8% inv   8%
+  2016-26  pick +11.8%/y DD  9.4% Sh 1.20 worst yr  +0.0% inv  10%
+           ref a (live 5%, cash)    +5.4%/y DD  4.5% Sh 1.48 worst yr  +0.2% inv   4%
+           ref b (Z0 live 10% + none)   +8.4%/y DD  8.9% Sh 1.16 worst yr  +0.3% inv   8%
+  -> CONFIRMED in 2020-26: True
+  walk-forward 2016-26 +9.6%/y DD 11.3% Sh 1.11 (2016-20 +12.1% DD 9.4%, 2021-26 +7.4% DD 11.3%) vs ref a +5.4% -> beats ref a
+  walk-forward choices: 2016: Z2 v2 (turn gate + ML70 + split) 10% + trend 100%; 2017: Z2 v2 (turn gate + ML70 + split) 15% + trend 25%; 2018: Z2 v2 (turn gate + ML70 + split) 15% + trend 25%; 2019: Z3 Market returned only 15% + none; 2020: Z3 Market returned only 15% + none; 2021: Z1 split exit 15% + trend 25%; 2022: Z3 Market returned only 10% + trend 50%; 2023: Z3 Market returned only 10% + trend 50%; 2024: Z3 Market returned only 10% + trend 50%; 2025: Z3 Market returned only 10% + trend 50%; 2026: Z1 split exit 15% + trend 25%
+  next best in 2013-19 (2013-19 / 2020-26 CAGR, DD): Z1 split exit 15% + trend 25% +9.3% / +13.0% DD 13%; Z3 Market returned only 10% + trend 50% +8.9% / +12.1% DD 10%; Z3 Market returned only 10% + Core v2 25% +8.8% / +10.2% DD 8%; Z2 v2 (turn gate + ML70 + split) 15% + trend 25% +8.8% / +9.9% DD 10%
+
+BUDGET worst drawdown 20%: pick Z3 Market returned only 20% + trend 25%
+  2013-19  pick +13.0%/y DD 19.4% Sh 0.86 worst yr  -3.9% inv  21%
+           ref a (live 5%, cash)    +3.3%/y DD  5.9% Sh 0.82 worst yr  -1.8% inv   4%
+           ref b (Z0 live 15% + none)   +8.0%/y DD 16.9% Sh 0.70 worst yr  -5.9% inv  12%
+  2020-26  pick +12.4%/y DD 12.5% Sh 1.05 worst yr  -0.5% inv  26%
+           ref a (live 5%, cash)    +4.9%/y DD  4.5% Sh 1.46 worst yr  +0.2% inv   4%
+           ref b (Z0 live 15% + none)   +8.7%/y DD 13.2% Sh 0.89 worst yr  -0.1% inv  13%
+  2023-26  pick  +8.1%/y DD  8.2% Sh 1.00 worst yr  -0.5% inv  21%
+           ref a (live 5%, cash)    +6.6%/y DD  2.9% Sh 2.49 worst yr  +5.2% inv   4%
+           ref b (Z0 live 15% + none)  +10.5%/y DD  9.2% Sh 1.33 worst yr  +6.3% inv  11%
+  2016-26  pick +16.3%/y DD 12.5% Sh 1.21 worst yr  -0.5% inv  24%
+           ref a (live 5%, cash)    +5.4%/y DD  4.5% Sh 1.48 worst yr  +0.2% inv   4%
+           ref b (Z0 live 15% + none)  +11.4%/y DD 13.2% Sh 1.06 worst yr  -0.1% inv  13%
+  -> CONFIRMED in 2020-26: True
+  walk-forward 2016-26 +12.2%/y DD 23.5% Sh 0.98 (2016-20 +16.3% DD 12.5%, 2021-26 +8.7% DD 23.5%) vs ref a +5.4% -> beats ref a
+  walk-forward choices: 2016: Z2 v2 (turn gate + ML70 + split) 15% + trend 100%; 2017: Z2 v2 (turn gate + ML70 + split) 15% + trend 100%; 2018: Z2 v2 (turn gate + ML70 + split) 20% + trend 50%; 2019: Z3 Market returned only 20% + trend 25%; 2020: Z3 Market returned only 20% + trend 25%; 2021: Z1 split exit 20% + trend 50%; 2022: Z2 v2 (turn gate + ML70 + split) 15% + trend 100%; 2023: Z2 v2 (turn gate + ML70 + split) 15% + trend 100%; 2024: Z2 v2 (turn gate + ML70 + split) 15% + trend 100%; 2025: Z2 v2 (turn gate + ML70 + split) 15% + trend 100%; 2026: Z1 split exit 20% + trend 50%
+  next best in 2013-19 (2013-19 / 2020-26 CAGR, DD): Z3 Market returned only 20% + none +12.6% / +9.9% DD 13%; Z1 split exit 20% + trend 50% +12.3% / +18.0% DD 17%; Z3 Market returned only 15% + Core v2 25% +11.7% / +12.0% DD 11%; Z3 Market returned only 15% + trend 50% +11.6% / +13.5% DD 11%

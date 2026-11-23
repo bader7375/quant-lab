@@ -1,0 +1,50 @@
+Saudi broad dips: design 798, confirm 825 | live Z swing 467 | design: median further fall -11.7%, deep 58%
+
+Step 1 (design 2013-19): Spearman with FURTHER FALL (higher = falls less), t from monthly means; kept |t| >= 2.5
+  mkt_share      corr +0.080  t  -2.3   | confirm corr +0.215
+  value_attn     corr +0.176  t  +1.8   | confirm corr +0.052
+  decel          corr +0.054  t  +1.7   | confirm corr +0.082
+  idio20         corr +0.108  t  -1.4   | confirm corr +0.192
+  atr_ratio      corr +0.068  t  -1.2   | confirm corr +0.003
+  rsi14          corr -0.001  t  +1.2   | confirm corr +0.062
+  lower_wick     corr -0.031  t  -1.0   | confirm corr +0.019
+  gapdn5         corr +0.005  t  -0.9   | confirm corr -0.009
+  newlows10      corr -0.017  t  -0.7   | confirm corr -0.037
+  dlow250        corr +0.023  t  +0.6   | confirm corr +0.034
+  clv1           corr -0.022  t  -0.6   | confirm corr +0.015
+  limdn5         corr -0.006  t  +0.5   | confirm corr -0.107
+  speed          corr -0.033  t  -0.5   | confirm corr +0.064
+  vol_trend      corr +0.040  t  -0.5   | confirm corr -0.009
+  vol_climax     corr +0.038  t  -0.3   | confirm corr -0.071
+  vol_regime     corr +0.091  t  +0.2   | confirm corr +0.004
+  mfi14          corr +0.005  t  +0.2   | confirm corr +0.047
+  down_streak    corr +0.029  t  +0.2   | confirm corr -0.028
+  cmf10          corr +0.005  t  -0.2   | confirm corr +0.098
+  semidev        corr -0.065  t  +0.2   | confirm corr -0.047
+  up_close       corr -0.029  t  -0.1   | confirm corr -0.005
+  downvol_share  corr +0.051  t  -0.1   | confirm corr -0.041
+  clv3           corr -0.042  t  +0.1   | confirm corr +0.056
+
+No measure reached |t| >= 2.5 on the design set: the pre-registered REBOUND SCORE cannot be built.
+
+Walk-forward LightGBM halves (comparison):
+  ML broad design 2013-19            high n 134 deep  40% fall  -8.0% (-0.70 sd) win  75% avg +13.6% || low n 280 deep  54% fall -10.7% (-0.88 sd) win  62% avg  +6.7%
+  ML broad confirm 2020-26           high n 391 deep  41% fall  -8.1% (-0.68 sd) win  58% avg  +3.5% || low n 434 deep  50% fall -10.1% (-0.83 sd) win  51% avg  +0.7%
+  ML live Z swing 2013-19            high n  58 deep  40% fall  -7.9% (-0.53 sd) win  91% avg +23.1% || low n  84 deep  38% fall  -7.9% (-0.47 sd) win  92% avg +27.1%
+  ML live Z swing 2020-26            high n 106 deep  38% fall  -7.5% (-0.45 sd) win  74% avg  +7.5% || low n  94 deep  26% fall  -6.1% (-0.44 sd) win  71% avg  +7.7%
+  ML live Z swing 2023-26            high n  17 deep  12% fall  -3.0% (-0.30 sd) win  82% avg  +5.5% || low n  43 deep  19% fall  -4.9% (-0.35 sd) win  63% avg  +4.3%
+
+DECISION REBOUND SCORE accepted: False
+(comparison) walk-forward LightGBM would pass: False
+
+AFTER THE FACT (not a decision): halves at each measure's design median for the two strongest pooled measures
+  idio20 broad design 2013-19        high n 380 deep  55% fall -11.1% (-0.87 sd) win  60% avg  +6.5% || low n 379 deep  61% fall -12.6% (-0.92 sd) win  51% avg  +2.4%
+  idio20 broad confirm 2020-26       high n 354 deep  36% fall  -7.6% (-0.64 sd) win  65% avg  +4.9% || low n 452 deep  52% fall -10.5% (-0.84 sd) win  46% avg  +0.0%
+  idio20 live Z swing 2013-19        high n 134 deep  38% fall  -8.8% (-0.51 sd) win  79% avg +16.3% || low n 126 deep  48% fall  -9.8% (-0.55 sd) win  87% avg +22.4%
+  idio20 live Z swing 2020-26        high n  91 deep  32% fall  -7.2% (-0.49 sd) win  70% avg  +7.2% || low n 107 deep  32% fall  -6.5% (-0.43 sd) win  74% avg  +7.8%
+  idio20 live Z swing 2023-26        high n  16 deep  12% fall  -3.1% (-0.35 sd) win  69% avg  +2.8% || low n  44 deep  18% fall  -4.4% (-0.32 sd) win  68% avg  +5.3%
+  mkt_share broad design 2013-19     high n 397 deep  57% fall -11.5% (-0.86 sd) win  64% avg  +8.3% || low n 397 deep  59% fall -12.2% (-0.95 sd) win  47% avg  +0.6%
+  mkt_share broad confirm 2020-26    high n 351 deep  35% fall  -7.2% (-0.60 sd) win  66% avg  +5.0% || low n 473 deep  54% fall -10.7% (-0.91 sd) win  46% avg  -0.2%
+  mkt_share live Z swing 2013-19     high n 187 deep  41% fall  -9.2% (-0.53 sd) win  80% avg +17.9% || low n  78 deep  44% fall  -8.4% (-0.48 sd) win  94% avg +23.8%
+  mkt_share live Z swing 2020-26     high n 107 deep  39% fall  -8.1% (-0.52 sd) win  68% avg  +5.7% || low n  92 deep  23% fall  -5.5% (-0.37 sd) win  77% avg  +9.8%
+  mkt_share live Z swing 2023-26     high n  15 deep  13% fall  -3.3% (-0.38 sd) win  67% avg  +1.6% || low n  45 deep  18% fall  -4.4% (-0.31 sd) win  69% avg  +5.7%

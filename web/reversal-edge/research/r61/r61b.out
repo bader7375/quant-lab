@@ -1,0 +1,28 @@
+us100: 115 stocks, 2000-01-03..2026-11-05, eligible on 2026-11-05: 115
+US stretch Z rebuilt from its parts: max |diff| 0.00e+00 over 713003 values
+
+H1r grind beats shock (keep slope > median): US median -0.744, 823 trades
+  2005-26: kept 411 +6.9% 68% / other 412 +6.6% -> gap +0.4
+  2005-09: kept 115 +0.5% / other 81 -1.1% -> gap +1.6
+  2010-17: kept 86 +3.1% / other 134 +2.9% -> gap +0.2
+  2018-26: kept 210 +12.0% / other 197 +12.2% -> gap -0.2
+  sleeve 2005-09  live   tr  27/196  -1.0%/y DD 11.3% ratio -0.09 Sh -0.21 worst yr  -4.1% cap avg   4% max  25%
+                  helper tr  26/115  -0.4%/y DD 12.0% ratio -0.03 Sh -0.08 worst yr  -4.9% cap avg   4% max  25%
+  sleeve 2010-17  live   tr  31/220  +0.7%/y DD  5.7% ratio 0.12 Sh 0.26 worst yr  -1.4% cap avg   3% max  25%
+                  helper tr  30/ 86  +0.9%/y DD  5.3% ratio 0.17 Sh 0.37 worst yr  +0.0% cap avg   3% max  25%
+  sleeve 2018-26  live   tr  50/407  +2.7%/y DD  5.6% ratio 0.48 Sh 0.68 worst yr  +0.0% cap avg   4% max  25%
+                  helper tr  50/210  +2.6%/y DD  6.4% ratio 0.41 Sh 0.65 worst yr  +0.0% cap avg   4% max  25%
+  -> not confirmed in the US (gap +0.4 pts, ahead in 2/3 eras, sleeve better in 2/3)
+
+H3r quiet dip (keep value ratio < median): US median +1.530, 823 trades
+  2005-26: kept 411 +5.7% 65% / other 412 +7.8% -> gap -2.1
+  2005-09: kept 127 +0.1% / other 69 -0.7% -> gap +0.9
+  2010-17: kept 82 +3.3% / other 138 +2.8% -> gap +0.6
+  2018-26: kept 202 +10.2% / other 205 +14.0% -> gap -3.9
+  sleeve 2005-09  live   tr  27/196  -1.0%/y DD 11.3% ratio -0.09 Sh -0.21 worst yr  -4.1% cap avg   4% max  25%
+                  helper tr  27/127  -1.2%/y DD 13.9% ratio -0.08 Sh -0.24 worst yr  -3.6% cap avg   4% max  25%
+  sleeve 2010-17  live   tr  31/220  +0.7%/y DD  5.7% ratio 0.12 Sh 0.26 worst yr  -1.4% cap avg   3% max  25%
+                  helper tr  25/ 82  +0.6%/y DD  5.1% ratio 0.12 Sh 0.26 worst yr  +0.0% cap avg   2% max  25%
+  sleeve 2018-26  live   tr  50/407  +2.7%/y DD  5.6% ratio 0.48 Sh 0.68 worst yr  +0.0% cap avg   4% max  25%
+                  helper tr  50/202  +1.7%/y DD  7.6% ratio 0.23 Sh 0.44 worst yr  +0.0% cap avg   4% max  25%
+  -> not confirmed in the US (gap -2.1 pts, ahead in 2/3 eras, sleeve better in 2/3)

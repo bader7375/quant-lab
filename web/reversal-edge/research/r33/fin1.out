@@ -1,0 +1,27 @@
+
+(i) Z swing, live filters, hold 40
+  steady payer   | DESIGN n  90 win 78% exp +14.4% | CONFIRM n  56 win 73% exp +6.7% | C1 n  40 win 72% exp +7.9% | C2 n  16 win 75% exp +3.8%
+  recent payer   | DESIGN n  25 win 88% exp +21.3% | CONFIRM n<10 | C1 n<10 | C2 n<10
+  non-payer      | DESIGN n 123 win 91% exp +24.2% | CONFIRM n 100 win 69% exp +7.1% | C1 n  74 win 74% exp +8.9% | C2 n  26 win 54% exp +1.9%
+  short history  | DESIGN n<10 | CONFIRM n  11 win 64% exp +6.7% | C1 n<10 | C2 n<10
+
+(ii) price-only dips (stretch Z <= -2.0), hold 20
+  steady payer   | DESIGN n 358 win 44% exp -1.2% | CONFIRM n 320 win 57% exp +2.1% | C1 n 166 win 58% exp +2.4% | C2 n 154 win 55% exp +1.8%
+  recent payer   | DESIGN n  94 win 50% exp -0.5% | CONFIRM n  67 win 51% exp +1.9% | C1 n  34 win 56% exp +1.1% | C2 n  33 win 45% exp +2.7%
+  non-payer      | DESIGN n 400 win 48% exp +0.6% | CONFIRM n 444 win 50% exp -0.1% | C1 n 260 win 54% exp +1.4% | C2 n 184 win 43% exp -2.2%
+  short history  | DESIGN n  32 win 47% exp -1.3% | CONFIRM n  86 win 51% exp +0.9% | C1 n  32 win 56% exp +2.4% | C2 n  54 win 48% exp -0.1%
+
+(ii) price-only dips (stretch Z <= -2.0), hold 40
+  steady payer   | DESIGN n 316 win 47% exp +2.0% | CONFIRM n 284 win 61% exp +2.8% | C1 n 143 win 62% exp +3.9% | C2 n 141 win 60% exp +1.7%
+  recent payer   | DESIGN n  84 win 61% exp +4.5% | CONFIRM n  64 win 55% exp +4.2% | C1 n  33 win 55% exp +3.4% | C2 n  31 win 55% exp +5.0%
+  non-payer      | DESIGN n 371 win 63% exp +6.9% | CONFIRM n 398 win 50% exp +1.1% | C1 n 243 win 55% exp +2.8% | C2 n 155 win 43% exp -1.5%
+  short history  | DESIGN n  27 win 37% exp -1.4% | CONFIRM n  79 win 51% exp +2.4% | C1 n  30 win 73% exp +8.3% | C2 n  49 win 37% exp -1.3%
+
+(desc) weekly Z swing, live filters, hold 40
+  steady payer   | DESIGN n  37 win 73% exp +11.7% | CONFIRM n  17 win 94% exp +14.8% | C1 n  16 win 94% exp +13.9% | C2 n<10
+  recent payer   | DESIGN n<10 | CONFIRM n<10 | C1 n<10 | C2 n<10
+  non-payer      | DESIGN n  50 win 94% exp +24.3% | CONFIRM n  43 win 84% exp +10.0% | C1 n  37 win 92% exp +12.1% | C2 n<10
+  short history  | DESIGN n<10 | CONFIRM n<10 | C1 n<10 | C2 n<10
+
+B1 decision: steady payers beat non-payers on Z swing (exp and win, both periods): False; on price-only dips hold 40 (exp, both periods): False
+ADOPT 'prefer steady payers': False

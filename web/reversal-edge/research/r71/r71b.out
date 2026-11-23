@@ -1,0 +1,12 @@
+check: the stretch formula here equals the scanner's stretch Z (2013-26, max difference 0.00e+00)
+S5 thresholds (2013-19 paper trades): 40th pct +1.57, 50th pct +1.85, 60th pct +2.02
+  live  2013-19  +3.2% DD  6.1% r 0.53 | 2020-26  +4.5% DD  4.9% r 0.92 | 2023-26  +6.3% DD  2.7% r 2.36 | 2013-26  +3.9% DD  6.1% r 0.63 | trades 67, winners 70%, average +8.5%, worst -21.6%
+  B1    2013-19  +2.6% DD  6.6% r 0.40 | 2020-26  +4.3% DD  4.9% r 0.88 | 2023-26  +6.4% DD  2.8% r 2.30 | 2013-26  +3.5% DD  6.6% r 0.53 | trades 67, winners 63%, average +7.0%, worst -21.6%
+  B2    2013-19  +2.5% DD  4.9% r 0.50 | 2020-26  +3.2% DD  4.4% r 0.73 | 2023-26  +5.2% DD  2.8% r 1.89 | 2013-26  +2.8% DD  4.9% r 0.58 | trades 38, winners 61%, average +7.4%, worst -17.5%
+  B1: better than live in 2013-19 False, in 2020-26 False
+  B2: better than live in 2013-19 False, in 2020-26 False
+us100: 115 stocks, 2000-01-03..2026-11-12, eligible on 2026-11-12: 115
+
+US sell-off swing, 5 slots x 5%, default order (threshold +0.56): 2005-09 default r -0.09 (-1.0%/y) vs with S5 r -0.00 (-0.0%/y) | 2010-17 default r 0.12 (+0.7%/y) vs with S5 r 0.14 (+0.7%/y) | 2018-26 default r 0.48 (+2.7%/y) vs with S5 r 0.30 (+2.0%/y) -> better in 2 of 3
+
+honesty check, yearly re-choice 2016-26:  +4.0% DD  4.9% r 0.82 vs live  +5.2% DD  4.9% r 1.06 -> WORSE; choices: 2016: B2; 2017: B2; 2018: B2; 2019: B2; 2020: live; 2021: live; 2022: live; 2023: live; 2024: live; 2025: live; 2026: live

@@ -1,0 +1,51 @@
+library features: 193 stocks (10s)
+yahoo features: 273 stocks (14s)
+events: library 2004-12 514, yahoo 2013-26 997; median fall 10.1%, median result +4.7%
+  2013: trained on 511 events; 0 live signal days predicted
+  2014: trained on 520 events; 100 live signal days predicted
+  2015: trained on 574 events; 100 live signal days predicted
+  2016: trained on 807 events; 194 live signal days predicted
+  2017: trained on 983 events; 2 live signal days predicted
+  2018: trained on 999 events; 19 live signal days predicted
+  2019: trained on 1047 events; 2 live signal days predicted
+  2020: trained on 1081 events; 145 live signal days predicted
+  2021: trained on 1194 events; 2 live signal days predicted
+  2022: trained on 1205 events; 75 live signal days predicted
+  2023: trained on 1356 events; 1 live signal days predicted
+  2024: trained on 1381 events; 2 live signal days predicted
+  2025: trained on 1393 events; 29 live signal days predicted
+  2026: trained on 1461 events; 58 live signal days predicted
+
+MODEL QUALITY (rank correlation of the walk-forward prediction with what happened; RISK = how far the trade fell, EDGE = its 40-session result)
+  all stretch-Z events 2013-19: n   569 | RISK model -0.12 (simple 60-day volatility +0.04) | EDGE model +0.01
+  all stretch-Z events 2020-26: n   428 | RISK model +0.17 (simple 60-day volatility +0.13) | EDGE model +0.36
+  all stretch-Z events 2023-26: n   144 | RISK model +0.04 (simple 60-day volatility +0.03) | EDGE model +0.24
+  live plan signals    2013-19: n   268 | RISK model -0.13 (simple 60-day volatility -0.08) | EDGE model +0.10
+  live plan signals    2020-26: n   176 | RISK model +0.20 (simple 60-day volatility +0.24) | EDGE model +0.23
+  live plan signals    2023-26: n    38 | RISK model -0.07 (simple 60-day volatility +0.03) | EDGE model +0.15
+
+THE ACCOUNT, WALK-FORWARD (growth a year · worst drawdown · Calmar), live plan's signals, plan book engine
+  live plan (5 x 5%, most volatile first)      trades  70, average size 5.0%, worst trade -1.1% of the account | 2013-19 +3.2% · 6.1% · 0.53 | 2020-26 +5.1% · 4.9% · 1.04 | 2023-26 +7.1% · 2.7% · 2.66 || at 0.80% costs: 2013-19 +3.1% · 6.2% | 2020-26 +4.9% · 4.9%
+  U1 size by RISK model                        trades  70, average size 5.1%, worst trade -1.6% of the account | 2013-19 +2.5% · 6.4% · 0.40 | 2020-26 +5.5% · 4.5% · 1.23 | 2023-26 +7.2% · 2.2% · 3.23 || at 0.80% costs: 2013-19 +2.4% · 6.6% | 2020-26 +5.3% · 4.4%
+  C1 size by 60-day volatility (no model)      trades  70, average size 5.8%, worst trade -1.1% of the account | 2013-19 +3.5% · 7.1% · 0.48 | 2020-26 +5.2% · 5.4% · 0.98 | 2023-26 +7.8% · 2.8% · 2.77 || at 0.80% costs: 2013-19 +3.3% · 7.4% | 2020-26 +5.1% · 5.4%
+  U2 skip the riskiest fifth (RISK model)      trades  70, average size 5.0%, worst trade -1.1% of the account | 2013-19 +2.9% · 7.6% · 0.38 | 2020-26 +5.1% · 4.9% · 1.05 | 2023-26 +7.1% · 3.0% · 2.36 || at 0.80% costs: 2013-19 +2.8% · 7.8% | 2020-26 +5.0% · 4.9%
+  C2 skip the most volatile fifth (no model)   trades  69, average size 5.0%, worst trade -1.1% of the account | 2013-19 +3.2% · 6.1% · 0.53 | 2020-26 +4.8% · 4.9% · 0.98 | 2023-26 +7.1% · 2.7% · 2.66 || at 0.80% costs: 2013-19 +3.1% · 6.2% | 2020-26 +4.7% · 4.9%
+  U3 choose by EDGE model                      trades  70, average size 5.0%, worst trade -1.1% of the account | 2013-19 +2.8% · 6.0% · 0.46 | 2020-26 +4.7% · 4.1% · 1.15 | 2023-26 +6.7% · 2.1% · 3.21 || at 0.80% costs: 2013-19 +2.6% · 6.2% | 2020-26 +4.6% · 4.1%
+  U4 = U1 + U3                                 trades  70, average size 5.3%, worst trade -1.6% of the account | 2013-19 +2.3% · 6.2% · 0.38 | 2020-26 +5.2% · 4.5% · 1.16 | 2023-26 +7.0% · 2.2% · 3.14 || at 0.80% costs: 2013-19 +2.2% · 6.4% | 2020-26 +5.0% · 4.4%
+  U5 skip the lowest-EDGE fifth                trades  71, average size 5.0%, worst trade -1.1% of the account | 2013-19 +3.0% · 6.5% · 0.46 | 2020-26 +5.1% · 4.9% · 1.04 | 2023-26 +7.1% · 2.7% · 2.66 || at 0.80% costs: 2013-19 +2.9% · 6.7% | 2020-26 +4.9% · 4.9%
+
+ACCEPTANCE (frozen): (1) Calmar up, drawdown not deeper (2) growth not more than 0.5 points lower (3) beats its simple control (4) the model ranks the outcome on live signals in both periods (5) (1) at 0.80% costs
+  U1 size by RISK model                        (1) fail (2) fail (3) fail (4) fail (5) fail -> fails
+  C1 size by 60-day volatility (no model)      (1) fail (2) pass (3) – (4) – (5) fail -> fails
+  U2 skip the riskiest fifth (RISK model)      (1) fail (2) pass (3) fail (4) fail (5) fail -> fails
+  C2 skip the most volatile fifth (no model)   (1) fail (2) pass (3) – (4) – (5) fail -> fails
+  U3 choose by EDGE model                      (1) fail (2) pass (3) fail (4) pass (5) fail -> fails
+  U4 = U1 + U3                                 (1) fail (2) fail (3) fail (4) fail (5) fail -> fails
+  U5 skip the lowest-EDGE fifth                (1) fail (2) pass (3) fail (4) pass (5) fail -> fails
+us100: 115 stocks, 2000-01-03..2026-11-13, eligible on 2026-11-13: 115
+
+US CHECK (Saudi-trained models on US large-cap events): 2010-17 n 201 RISK -0.07 (volatility +0.30) EDGE -0.18 | 2018-26 n 307 RISK -0.07 (volatility +0.05) EDGE +0.42
+
+what the models lean on (share of split gain, model fit on all events): RISK dd250 10%, pre 9%, loglq 8%, ms 7%, logp 6%, ret20 5% | EDGE ms 17%, ms5 15%, dd250 7%, breadth 4%, z10 4%, loglq 4%
+
+done in 59s

@@ -1,0 +1,18 @@
+5 x 10% (plan A)   2013-19  +6.8% DD  9.8% r 0.69 Sh 1.06 | 2020-26  +6.3% DD  6.3% r 1.00 Sh 1.21 | 2023-26  +6.2% DD  3.1% r 2.03 Sh 2.06 | 2013-26  +6.5% DD  9.8% r 0.66 Sh 1.12 | trades 51 win 78% avg +13.2% worst -12.6% | worst yr -1.5% losing yrs 2
+8 x 6.25%          2013-19  +5.5% DD 13.0% r 0.42 Sh 0.90 | 2020-26  +6.5% DD  5.9% r 1.11 Sh 1.37 | 2023-26  +6.2% DD  2.5% r 2.49 Sh 2.42 | 2013-26  +6.0% DD 13.0% r 0.46 Sh 1.09 | trades 78 win 76% avg +12.3% worst -17.5% | worst yr -2.8% losing yrs 2
+10 x 5%            2013-19  +4.6% DD 13.5% r 0.34 Sh 0.80 | 2020-26  +6.1% DD  5.9% r 1.03 Sh 1.32 | 2023-26  +6.0% DD  2.3% r 2.56 Sh 2.49 | 2013-26  +5.4% DD 13.5% r 0.40 Sh 1.01 | trades 92 win 73% avg +11.0% worst -17.5% | worst yr -2.6% losing yrs 2
+15 x 3.33%         2013-19  +4.8% DD 11.0% r 0.44 Sh 0.89 | 2020-26  +5.7% DD  6.9% r 0.82 Sh 1.29 | 2023-26  +5.5% DD  1.5% r 3.60 Sh 3.40 | 2013-26  +5.2% DD 11.0% r 0.47 Sh 1.06 | trades 122 win 76% avg +11.7% worst -17.5% | worst yr -2.8% losing yrs 1
+20 x 2.5%          2013-19  +4.7% DD 10.2% r 0.46 Sh 0.89 | 2020-26  +5.5% DD  5.1% r 1.09 Sh 1.37 | 2023-26  +5.3% DD  1.1% r 4.73 Sh 4.32 | 2013-26  +5.1% DD 10.2% r 0.50 Sh 1.08 | trades 148 win 77% avg +12.2% worst -21.6% | worst yr -2.8% losing yrs 1
+
+pick (best 2013-19 return / drawdown among the new variants): 20 x 2.5% | better than plan A by the rule in 2013-19: False, in 2020-26: False -> CONFIRMED: False
+  by the rule, each variant (2013-19 / 2020-26): 8 x 6.25%: False / False; 10 x 5%: False / False; 15 x 3.33%: False / False; 20 x 2.5%: False / False
+
+stress (return / drawdown 2013-26, variant vs plan A under the same stress)
+  0.8% costs                       plan A  +6.4% DD  9.8% r 0.65 Sh 1.09 | 8 x 6.25%  +5.8% DD 13.3% r 0.44 Sh 1.06 | 10 x 5%  +5.2% DD 13.8% r 0.38 Sh 0.99 | 15 x 3.33%  +5.1% DD 11.2% r 0.46 Sh 1.03 | 20 x 2.5%  +5.0% DD 10.3% r 0.48 Sh 1.06
+  ML order instead of volatility   plan A  +6.3% DD 10.3% r 0.60 Sh 1.12 | 8 x 6.25%  +6.0% DD 11.2% r 0.54 Sh 1.09 | 10 x 5%  +5.5% DD 11.4% r 0.48 Sh 1.06 | 15 x 3.33%  +5.4% DD 11.2% r 0.48 Sh 1.10 | 20 x 2.5%  +5.0% DD 10.1% r 0.50 Sh 1.07
+  idle money earning nothing       plan A  +4.7% DD  9.8% r 0.48 Sh 0.82 | 8 x 6.25%  +4.2% DD 13.0% r 0.32 Sh 0.78 | 10 x 5%  +3.6% DD 13.6% r 0.26 Sh 0.69 | 15 x 3.33%  +3.4% DD 11.1% r 0.31 Sh 0.71 | 20 x 2.5%  +3.3% DD 10.2% r 0.32 Sh 0.71
+  pick passes 0 of 3
+
+honesty check, yearly re-choice 2016-26 (spliced yearly returns):  +7.3% DD  6.3% r 1.16 Sh 1.36 vs plan A  +8.6% DD  6.3% r 1.37 Sh 1.49 -> WORSE; choices: 2016: 20 x 2.5%; 2017: 5 x 10% (plan A); 2018: 5 x 10% (plan A); 2019: 5 x 10% (plan A); 2020: 5 x 10% (plan A); 2021: 5 x 10% (plan A); 2022: 5 x 10% (plan A); 2023: 5 x 10% (plan A); 2024: 5 x 10% (plan A); 2025: 5 x 10% (plan A); 2026: 5 x 10% (plan A)
+
+trades per year: 5 x 10% (plan A): {2014: 5, 2015: 6, 2016: 10, 2018: 5, 2020: 10, 2022: 8, 2024: 2, 2026: 5} | 20 x 2.5%: {2014: 20, 2015: 21, 2016: 28, 2018: 16, 2020: 28, 2022: 23, 2024: 2, 2026: 10}

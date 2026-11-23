@@ -1,0 +1,20 @@
+us100: 115 stocks, 2000-01-03..2026-11-12, eligible on 2026-11-12: 115
+EXTRA 1: entry-day stop counted on the day's LOW (pessimistic: a dip below the stop after the fill = stopped). Expectancy R, profit factor, payoff
+  base        B3·X1·re: Era 1 2004-12 0.36R pf 1.3 payoff 1.9 | Era 2 2013-19 0.56R pf 1.9 payoff 2.2 | Era 3 2020-26 0.75R pf 2.3 payoff 2.0 | 2023-26 0.24R pf 1.3 payoff 1.6 | US 2010-17 0.26R pf 1.4 payoff 1.7 | US 2018-26 0.35R pf 1.5 payoff 2.0
+  base        B3·X1: Era 1 2004-12 0.40R pf 1.4 payoff 2.0 | Era 2 2013-19 0.44R pf 1.7 payoff 2.1 | Era 3 2020-26 0.68R pf 2.2 payoff 2.0 | 2023-26 0.27R pf 1.4 payoff 1.7 | US 2010-17 0.27R pf 1.5 payoff 1.6 | US 2018-26 0.31R pf 1.4 payoff 2.0
+  base        B2·X2·re: Era 1 2004-12 0.61R pf 1.7 payoff 5.0 | Era 2 2013-19 0.34R pf 1.5 payoff 5.6 | Era 3 2020-26 0.35R pf 1.5 payoff 3.3 | 2023-26 -0.15R pf 0.8 payoff 2.7 | US 2010-17 -0.40R pf 0.4 payoff 2.2 | US 2018-26 0.76R pf 2.5 payoff 3.4
+  base        B2·X3: Era 1 2004-12 0.49R pf 1.6 payoff 2.2 | Era 2 2013-19 0.24R pf 1.4 payoff 1.9 | Era 3 2020-26 0.20R pf 1.3 payoff 1.9 | 2023-26 -0.10R pf 0.8 payoff 1.8 | US 2010-17 -0.20R pf 0.7 payoff 1.7 | US 2018-26 0.56R pf 2.1 payoff 2.5
+  base        B1·X2·re: Era 1 2004-12 0.11R pf 1.1 payoff 3.2 | Era 2 2013-19 0.52R pf 1.8 payoff 4.4 | Era 3 2020-26 0.37R pf 1.6 payoff 2.9 | 2023-26 0.14R pf 1.3 payoff 2.7 | US 2010-17 -0.14R pf 0.7 payoff 2.0 | US 2018-26 0.39R pf 1.6 payoff 2.7
+  pessimistic B3·X1·re: Era 1 2004-12 -0.01R pf 1.0 payoff 2.1 | Era 2 2013-19 0.37R pf 1.6 payoff 2.3 | Era 3 2020-26 0.69R pf 2.2 payoff 2.1 | 2023-26 0.18R pf 1.3 payoff 1.6 | US 2010-17 0.23R pf 1.4 payoff 1.7 | US 2018-26 0.18R pf 1.2 payoff 2.0
+  pessimistic B3·X1: Era 1 2004-12 -0.07R pf 0.9 payoff 2.1 | Era 2 2013-19 0.24R pf 1.3 payoff 2.2 | Era 3 2020-26 0.66R pf 2.1 payoff 2.0 | 2023-26 0.27R pf 1.4 payoff 1.7 | US 2010-17 0.19R pf 1.3 payoff 1.6 | US 2018-26 -0.09R pf 0.9 payoff 2.0
+  pessimistic B2·X2·re: Era 1 2004-12 0.43R pf 1.5 payoff 5.8 | Era 2 2013-19 0.12R pf 1.2 payoff 5.0 | Era 3 2020-26 0.18R pf 1.2 payoff 3.1 | 2023-26 -0.20R pf 0.7 payoff 2.7 | US 2010-17 -0.44R pf 0.4 payoff 2.1 | US 2018-26 0.48R pf 1.8 payoff 3.3
+  pessimistic B2·X3: Era 1 2004-12 0.28R pf 1.4 payoff 2.5 | Era 2 2013-19 0.07R pf 1.1 payoff 1.9 | Era 3 2020-26 0.08R pf 1.1 payoff 1.9 | 2023-26 -0.15R pf 0.8 payoff 1.8 | US 2010-17 -0.25R pf 0.6 payoff 1.6 | US 2018-26 0.26R pf 1.4 payoff 2.3
+  pessimistic B1·X2·re: Era 1 2004-12 0.05R pf 1.1 payoff 3.6 | Era 2 2013-19 0.29R pf 1.4 payoff 3.9 | Era 3 2020-26 0.31R pf 1.5 payoff 2.9 | 2023-26 0.11R pf 1.2 payoff 2.7 | US 2010-17 -0.16R pf 0.7 payoff 1.9 | US 2018-26 0.14R pf 1.2 payoff 2.4
+
+EXTRA 2: account at the risk per trade that gives the live plan's 2013-19 worst drawdown (6.1%); live signals; average share of the account invested
+  live plan 5 x 5%: 2013-19 +3.2% DD 6.1% Calmar 0.53 | 2020-26 +4.5% DD 4.9% Calmar 0.92 | invested on average 4.0% (peak 25%)
+  B3·X1·re: risk 0.18% per trade | 2013-19 +2.7% DD 6.1% Calmar 0.44 | 2020-26 +3.9% DD 4.6% Calmar 0.84 | invested on average 2.8% (peak 43%)
+  B3·X1: risk 0.22% per trade | 2013-19 +3.0% DD 6.1% Calmar 0.50 | 2020-26 +4.2% DD 5.2% Calmar 0.80 | invested on average 3.0% (peak 53%)
+  B2·X2·re: risk 0.24% per trade | 2013-19 +4.8% DD 6.1% Calmar 0.78 | 2020-26 +6.7% DD 5.6% Calmar 1.21 | invested on average 7.4% (peak 92%)
+  B2·X3: risk 0.37% per trade | 2013-19 +5.1% DD 6.1% Calmar 0.84 | 2020-26 +6.4% DD 5.2% Calmar 1.24 | invested on average 10.4% (peak 127%)
+  B1·X2·re: risk 0.13% per trade | 2013-19 +2.0% DD 6.1% Calmar 0.34 | 2020-26 +3.8% DD 3.3% Calmar 1.15 | invested on average 3.3% (peak 40%)
