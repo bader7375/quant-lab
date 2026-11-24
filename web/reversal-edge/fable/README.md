@@ -67,7 +67,7 @@ the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule)
 Five views, one page, built for the phone:
 - **Today**: the market weather, the swing's orders for the 10:00 open, your live plan, the stocks nearest the buy zone.
 - **Scanner**: every liquid stock with its stretch Z, the close that puts it on the buy line tomorrow, the gates, its state (buy, sell, held, in the zone, near). Search, filters, sorting, your own starred list.
-- **Chart**: candlesticks for any stock you choose, with the buy line and the sell level as prices, the weather behind, the tested swing's buys and sales with their results, crosses that were not bought and why, the stretch Z below, the Rebound Edge under it, and a cone of where similar past cases stood 1 to 40 sessions on.
+- **Chart**: candlesticks for any stock you choose, with the buy line and the sell level as prices, the weather behind, the tested swing's buys and sales with their results, crosses that were not bought and why, the stretch Z below, an Edge pane under it (bars: Rebound Edge on every stretched session; line: Hold Edge on every session a trade was held), and a cone of where similar past cases stood 1 to 40 sessions on. A Swing / Live switch shows your live rule's trades instead (tested book, 40-session hold) with the 40-session versions of both indicators, the ones in your daily list.
 - **Books**: the swing, the live rule and the ladder: orders, positions, the record by year.
 - **Research**: the evidence tables, every change that was tested and rejected (Ideas), every sell-off since 2013, a position-size calculator, and the edge map (average next 5 sessions by stretch and weather).
 

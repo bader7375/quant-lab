@@ -87,9 +87,9 @@ for rule, Bk in BOOKS.items():
     Bk["free"] = int(Bk["slots"] - len(Bk["held"])); Bk["invested"] = R(sum(p["w"] for p in Bk["held"]) + sum(b["w"] for b in Bk["buys"]), 4)
 json.dump(LED, open(LEDF, "w"), indent=1)
 # the same two rules had they been running through this sell-off (no start date): tells the episode's story; it is a replay, not your account
-REPLAY = {}
+REPLAY = {}; REPLAY_S = {}
 for rule in ("live", "fable"):
-    s = book.state(PB, start=None, week_complete=bool(wk_ok), rule=rule); REPLAY[rule] = dict(held=[row(p, "held") for p in s["held"]], buys=[cols[b["j"]] for b in s["buys"]], free=s["free"], invested=R(sum(p["w"] for p in s["held"]), 4),
+    s = book.state(PB, start=None, week_complete=bool(wk_ok), rule=rule); REPLAY_S[rule] = s; REPLAY[rule] = dict(held=[row(p, "held") for p in s["held"]], buys=[cols[b["j"]] for b in s["buys"]], free=s["free"], invested=R(sum(p["w"] for p in s["held"]), 4),
                                                                                          pnl=R(sum(p["w"] * (Cl[i, p["j"]] / Of[p["d1"], p["j"]] - 1) for p in s["held"]), 5))
 # ---------------------------------------------------------------- 4. signals at this close, with "why this stock"
 C_ = PB.C; BDn = band_next(C_, ZLINE).iloc[-1]; B0 = band_next(C_, 0.0).iloc[-1]; fresh = set(int(j) for j in np.where(SIG[i])[0])
@@ -258,6 +258,25 @@ def he40_of(p):
     except Exception: return None
 for bk_ in (BOOKS["live"], BOOKS["fable"], REPLAY["live"], REPLAY["fable"]):
     for p_ in bk_.get("held", []): p_["he40"] = he40_of(p_)
+# Rebound Edge 40 (round 83): its group (0-9) on every stretched liquid stock-day; the chart's Live view and the cards show the group's past average
+R4M, R4A = RBD.load("live", RBD.MODEL_FILE_40); R4S = R4A.get("saudi")
+if R4S is not None:
+    E4 = np.where((np.nan_to_num(RF["Z"], nan=9.) <= RBD.LINE) & np.isfinite(RF["MS"]) & PB.EL, RBD.edge(R4M, RF, saudi=R4S, gated=G_), np.nan)
+    E4B = np.where(np.isfinite(E4), np.searchsorted(np.asarray(R4S["band_edges"]), np.nan_to_num(E4, nan=0.0), side="right"), -1)
+else: E4B = np.full(RF["Z"].shape, -1)
+def he_path(j, d1, end, kind):
+    """Hold Edge on every close of a held trade (bar index in the chart window, value): kind "swing" = the formula value (in %) while the sale
+    is not yet due; kind "40" = its group (0-9) of the 40-session version. end = the exit open (the last close read is end - 1)."""
+    out = []
+    for t in range(max(d1, a0), min(end, T_)):
+        n = t - d1 + 1
+        if not (np.isfinite(Zs[t, j]) and np.isfinite(MS[t])): continue
+        if kind == "swing":
+            x = HED.read(HM, HSA, float(Zs[t, j]), float(MS[t]), n, gated=bool(G_[t, j]))
+            if x is not None: out += [int(t - a0), round(100 * x["edge"], 1)]
+        elif H4S is not None and 1 <= n < 40:
+            e = float(RBD.edge(H4M, HED.readings(float(Zs[t, j]), float(MS[t]), n), saudi=H4S, gated=bool(G_[t, j]))); out += [int(t - a0), int(RBD.band_of(H4S, e))]
+    return out
 # ---- the scanner: every liquid stock at this close
 inzL, ageL = SBk.zone_age(B, SR.LINE); fw_h = {p["sym"] for p in SWB["held"]}; fw_s = {p["sym"] for p in SWB["due"]}; fw_b = {b["sym"] for b in SWB["buys"]}; rp_h = {p["sym"] for p in SWR["held"] + SWR["due"]}; cand_now = set(cols[j] for j in ORF["cands"])
 scan = []; liqj = [j for j in range(len(cols)) if PB.EL[i, j] and np.isfinite(Zs[i, j])]
@@ -266,7 +285,7 @@ for j in liqj:
     st_ = "sell" if s_ in fw_s else "held" if s_ in fw_h else "buy" if s_ in fw_b else "cand" if s_ in cand_now else "zone" if inz else "near" if need is not None and need >= -.05 else ""
     scan.append(dict(sym=s_, name=nm(j)[:26], sec=industry(s_), c=R(c, 3), chg=R(c / Cl[i - 1, j] - 1, 4), z=R(z, 2), zp=R(Zs[i - 1, j], 2), line=R(BLn[j], 3), need=R(need, 4), inz=inz, age=int(ageL[i, j]) if inz else None,
                      cross=bool(inz and ageL[i, j] == 0), ml=R(PB.PCTv[i, j], 2), loss=bool(PB.LOSS[i, j]), vr=R(VOLP[i, j], 2), gb=int(bits), e=edge_of(j), st=st_, rp=bool(s_ in rp_h), sellpx=R(SLn[j], 3),
-                     re=rb_of(j)[0], ru=rb_of(j)[1], rg=bool(G_[i, j])))
+                     re=rb_of(j)[0], ru=rb_of(j)[1], rg=bool(G_[i, j]), r4=(int(E4B[i, j]) if E4B[i, j] >= 0 else None)))
 scan.sort(key=lambda r: (r["z"] if r["z"] is not None else 9))
 scan_sum = dict(n=len(scan), inzone=int(sum(r["inz"] for r in scan)), crossed=int(sum(r["cross"] for r in scan)), cands=int(len(cand_now)), near=int(sum(r["st"] == "near" for r in scan)), window=bool(wnow in SR.WPLAN), pm_ok=bool(pmv > 0))
 # ---- chart data: the last NB sessions of every liquid stock (and every stock a book holds), in a few documents
@@ -279,8 +298,18 @@ def chart_doc(j):
     for p in ORT["held"]:
         if p["j"] == j: tr.append([int(p["d1"] - a0), None, rp(p["entry"]), None, R(Cl[i, j] / p["entry"] - 1, 4), R(p["w"], 4), -1, int((p["i"], j) in fwd_set)])
     xs = [[int(t - a0), 0 if (t, j) in bought else (-1 if SR.gate_bits(B, t, j) == 0 else int(SR.gate_bits(B, t, j)))] for t in range(a0, T_) if CIN[t, j]]
+    hv = []
+    for r in TRT[(TRT.j == j) & (TRT.ex > a0)].itertuples(): hv += he_path(j, int(r.d1), int(r.ex), "swing")
+    for p in ORT["held"]:
+        if p["j"] == j: hv += he_path(j, int(p["d1"]), T_, "swing")
+    lt = []; h4 = []                                                            # your live rule, the tested book: 5 values a trade (bar in, bar out or None, entry, exit or None, result)
+    for r in PLl[PLl.taken & (PLl.j == j) & (PLl.xo > a0)].itertuples():
+        lt += [int(r.d1 - a0), int(r.xo - a0), rp(Of[r.d1, j]), rp(Of[r.xo, j]), R(Of[r.xo, j] / Of[r.d1, j] - 1 - .004, 4)]; h4 += he_path(j, int(r.d1), int(r.xo), "40")
+    for p in REPLAY_S["live"]["held"]:
+        if p["j"] == j: lt += [int(p["d1"] - a0), None, rp(Of[p["d1"], j]), None, R(Cl[i, j] / Of[p["d1"], j] - 1, 4)]; h4 += he_path(j, int(p["d1"]), T_, "40")
     return dict(o=[rp(x) for x in Oo[sl, j]], h=[rp(x) for x in Hh[sl, j]], l=[rp(x) for x in Ll[sl, j]], c=[rp(x) for x in Cl[sl, j]], z=[R(x, 2) for x in Zs[sl, j]], bl=[rp(x) for x in BLs[sl, j]], sl=[rp(x) for x in SLs[sl, j]],
-                nbl=rp(BLn[j]), nsl=rp(SLn[j]), tr=[v for r in tr for v in r], x=[v for r in xs for v in r], ev=[v for t in range(a0, T_) if np.isfinite(REDGE[t, j]) for v in (int(t - a0), round(float(100 * REDGE[t, j]), 1))], name=nm(j)[:34], sec=industry(cols[j]))    # tr: 8 values a trade, x: 2 values a cross (flat: the database takes no list inside a list)
+                nbl=rp(BLn[j]), nsl=rp(SLn[j]), tr=[v for r in tr for v in r], x=[v for r in xs for v in r], ev=[v for t in range(a0, T_) if np.isfinite(REDGE[t, j]) for v in (int(t - a0), round(float(100 * REDGE[t, j]), 1))],
+                hv=hv, lt=lt, h4=h4, e4=[v for t in range(a0, T_) if E4B[t, j] >= 0 for v in (int(t - a0), int(E4B[t, j]))], name=nm(j)[:34], sec=industry(cols[j]))    # tr: 8 values a trade, x: 2 values a cross (flat: the database takes no list inside a list)
 extra = {cols.index(p["sym"]) for g_ in (BOOKS["live"], BOOKS["fable"], REPLAY["live"], REPLAY["fable"], SWB, SWR) for p in list(g_.get("held", [])) + list(g_.get("due", []))}
 cj = sorted(set(liqj) | extra, key=lambda j: cols[j]); CH = 12; chart_index = {}; outdir_ = os.path.join(WORK, "fable"); os.makedirs(outdir_, exist_ok=True)
 for f_ in glob.glob(os.path.join(outdir_, "chart_*.json")): os.remove(f_)
@@ -327,6 +356,8 @@ if r80d and r80c and r80f:
                                weather=[dict(w=x["weather"], n=int(x["n"]), stated=R(x["stated"], 5), realized=R(x["realized"], 5), wins=R(x["wins"], 3)) for x in r80c["weather"]],
                                weather_design=[dict(w=x["weather"], n=int(x["n"]), realized=R(x["realized"], 5), wins=R(x["wins"], 3)) for x in r80d["weather"]],
                                thirds=[dict(stated=R(x["stated"], 5), realized=R(x["realized"], 5), wins=R(x["wins"], 3)) for x in r80c["table"]["thirds"]], inside=dict(design=r80d["inside"], confirm=r80c["inside"]))
+rebound40 = dict(bands=[dict(gain=R(b["gain"], 4), win=R(b["win"], 3), dz=R(b["dipz_med"], 3), dzb=R(b["dipz_bad"], 3), cone={q: rnd(v, 3) for q, v in b["cone"].items()}) for b in R4S["bands"]], horizons=list(RBD.HORIZONS)) if R4S else None
+hold40 = dict(bands=[dict(rest=R(b["rest"], 4), up=R(b["up"], 3), togo=R(b["togo"], 0)) for b in H4S["bands"]]) if H4S else None
 r82d = rj("r82", "saudi82_design.json"); r82c = rj("r82", "saudi82_confirm.json"); r82f = rj("r82", "fit82.json"); r82a = rj("r82", "acct82.json")
 hold = dict(saudi=bool(HSA), zones=rnd(HT["zones"], 4), gate=R(HSA["c"], 4) if HSA else 0.0, raw={k: (R(v, 5) if not isinstance(v, dict) else None) for k, v in (HSA["raw"] if HSA else HM.get("raw", {})).items() if k != "clips"},
             bands=[dict(edge=R(b["edge"], 4), rest=R(b["rest"], 4), up=R(b["up"], 3), togo=R(b["togo"], 0), fz=R(b["furz_med"], 3), fzb=R(b["furz_bad"], 3)) for b in HT["bands"]], cases=int(HSA["cases"]) if HSA else 0, trades=int(HSA.get("trades", 0)) if HSA else 0, cases_world=int(HM["cases"]), markets=int(HM["markets"]))
@@ -361,7 +392,7 @@ after_close = today.dayofweek in (6, 0, 1, 2, 3) and (now.hour, now.minute) >= (
 expected = today if after_close else today - BD; stale = bool(last < expected)                    # the newest close should be the last finished session
 OUT = dict(v=1, asof=fdate(last), day=fdate(day), made=now.strftime("%Y-%m-%d %H:%M") + " Riyadh", stocks=nlast, stale=stale,
            rule=dict(live=dict(slots=book.LIVE_SLOTS, size=book.LIVE_SIZE, most=.25), fable=dict(slots=book.SLOTS, per_day=1, size=R(book.BASE, 4), deep_size=R(book.BASE * book.MULT, 4), deep=book.DEEP, most=.50, status="paper")),
-           weather=weather, episode=episode, past=past, live=BOOKS["live"], fable=BOOKS["fable"], swing=swing, scan=scan, scan_sum=scan_sum, rebound=rebound, hold=hold, edge=dict(rows=edge_rows, labels=ELAB, k=KSH), chart=dict(index=chart_index, chunks=int(max(chart_index.values()) + 1) if chart_index else 0, bars=NB), record_warn=RECW, replay=REPLAY, signals=signals, watch=watch, cards=CARDS, expect=expect, sizing=sizing, record=record, scorecard=scorecard, evidence=evidence, us=us)
+           weather=weather, episode=episode, past=past, live=BOOKS["live"], fable=BOOKS["fable"], swing=swing, scan=scan, scan_sum=scan_sum, rebound=rebound, hold=hold, rebound40=rebound40, hold40=hold40, edge=dict(rows=edge_rows, labels=ELAB, k=KSH), chart=dict(index=chart_index, chunks=int(max(chart_index.values()) + 1) if chart_index else 0, bars=NB), record_warn=RECW, replay=REPLAY, signals=signals, watch=watch, cards=CARDS, expect=expect, sizing=sizing, record=record, scorecard=scorecard, evidence=evidence, us=us)
 def clean(x):
     if isinstance(x, dict): return {k: clean(v) for k, v in x.items()}
     if isinstance(x, (list, tuple)): return [clean(v) for v in x]
