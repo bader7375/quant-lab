@@ -2,6 +2,12 @@
 LIVE SINCE 2026-11-10 (the user: "Let's go back to previous strategy stretch with ML"): plan Z = the Z score rule (stretch Z touch, ML rank 50%+,
 market model positive, market momentum -1.18 or lower, profitable), 5 positions of 5%, most volatile first, hold 40 sessions, no stop; reported
 through the plan book (daily/planbook.py kind "Z"). Plan A (below) was live on 2026-11-09 only and made no trade.
+17. BUILT 2026-11-24 at the user's request ("let us add 200 USA stocks. that high in options trade like nvda and aapl and tsla"): round 84
+   (r84/RESULTS.md). The list: Yahoo's option screeners, top 200 US-listed stocks by open interest and contract volume. Description only:
+   the swing on them (no history cut, the honest version) -0.7% / +1.4% / +5.8% a year in 2001-09 / 2010-19 / 2020-26, worst trade -72%;
+   both indicators descriptive at best. The Fable terminal has a Saudi | US 200 switch (scanner, charts, paper book), data to the
+   2026-11-23 close. OPEN: the US view does not refresh by itself; refreshing it daily needs a new scheduled task or a change to an
+   existing one, and either needs the user's yes. Nothing US is traded.
 16. BUILT 2026-11-23 at the user's request ("Yes add it" to Hold Edge in the live list; "refresh it and update it"): round 83 rebuilt Rebound
    Edge and Hold Edge for the live plan's own sale (a fixed 40-session hold; r83/RESULTS.md). Both DESCRIPTIVE; weaker than the swing
    versions (abroad rank link 0.13 vs 0.22); in Saudi 2023-26 alone neither separates. Selling early on Hold Edge 40: 2013-19 +2.6% vs +3.1%

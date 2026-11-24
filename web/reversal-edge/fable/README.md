@@ -27,7 +27,7 @@ scheduled tasks are untouched.
 
 Research: `research/r71` (reproduce, no look-ahead, ranges, gate test), `r72` (24 other markets), `r73` (the ladder on Saudi), `r74`
 (entry timing), `r75` (the idle-money assumption), `r76` (anatomy of a buy-zone cross), `r77` (the swing chosen abroad: stopped at
-the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule), `r79` (36 changes to the swing: none adopted), `r80` (Rebound Edge: tested, verdict descriptive), `r81` (the swing with and without Rebound Edge: no rule that uses it is better), `r82` (Hold Edge: descriptive, not an exit rule; the stop question), `r83` (both indicators for the live plan's 40-session hold: descriptive; in the live list). Each has PREREG.md written before its run and RESULTS.md.
+the Saudi design gate), `r78` (the Fable swing: confirmed against the live rule), `r79` (36 changes to the swing: none adopted), `r80` (Rebound Edge: tested, verdict descriptive), `r81` (the swing with and without Rebound Edge: no rule that uses it is better), `r82` (Hold Edge: descriptive, not an exit rule; the stop question), `r83` (both indicators for the live plan's 40-session hold: descriptive; in the live list), `r84` (the 200 US stocks with the most options activity: the swing, the live plan's shape and both indicators, description only). Each has PREREG.md written before its run and RESULTS.md.
 
 ## The three rules side by side
 | | live (plan Z, what you trade) | **the Fable swing (on paper)** | the ladder (on paper) |
@@ -69,7 +69,13 @@ Five views, one page, built for the phone:
 - **Scanner**: every liquid stock with its stretch Z, the close that puts it on the buy line tomorrow, the gates, its state (buy, sell, held, in the zone, near). Search, filters, sorting, your own starred list.
 - **Chart**: candlesticks for any stock you choose, with the buy line and the sell level as prices, the weather behind, the tested swing's buys and sales with their results, crosses that were not bought and why, the stretch Z below, an Edge pane under it (bars: Rebound Edge on every stretched session; line: Hold Edge on every session a trade was held), and a cone of where similar past cases stood 1 to 40 sessions on. A Swing / Live switch shows your live rule's trades instead (tested book, 40-session hold) with the 40-session versions of both indicators, the ones in your daily list.
 - **Books**: the swing, the live rule and the ladder: orders, positions, the record by year.
-- **Research**: the evidence tables, every change that was tested and rejected (Ideas), every sell-off since 2013, a position-size calculator, and the edge map (average next 5 sessions by stretch and weather).
+- **Research**: the evidence tables, every change that was tested and rejected (Ideas), the US 200 results (round 84), every sell-off since 2013, a position-size calculator, and the edge map (average next 5 sessions by stretch and weather).
+
+**US 200** (round 84, on paper, for watching): a Saudi | US 200 switch on the Scanner and the Chart shows the 200 US-listed stocks with
+the most options activity (Yahoo's option screeners, 2026-11-24: NVDA, INTC, AAPL, TSLA ...). Same swing rule, price-only (the US has
+no ML rank, market model or company-accounts check), the US weather from the equal-weight average of the 183 stocks with 3+ years of
+prices; stocks with less history are shown and marked new, never bought. Today has a US 200 card (weather, paper orders, positions).
+Nothing in the US view is traded. Rebound Edge and Hold Edge there use formulas fitted on 23 markets outside the US (`fable/us_model.json`).
 
 ## How the terminal gets its data
 The terminal reads from its own database: `fable/latest` (the export), `chart/market` and `chart/c0` ... `chart/c13` (380 sessions
@@ -80,11 +86,15 @@ of candles, lines and trades for 12 stocks each), and `days/<close date>` (a sma
   work folder the 16:41 run has just refreshed, writes the documents, and replies with the brief. The exact task text is in
   `SCHEDULE.md`.
 
+The US view reads `us/latest`, `uschart/market` and `uschart/c0` ... `uschart/c19` (10 stocks each), written by hand from
+`fable/run_us.sh` (last: the 2026-11-23 New York close). **It does not refresh by itself** either: no scheduled task was added.
+
 ## Running it by hand
 ```
 sh web/reversal-edge/research/daily/bootstrap.sh <work folder>     # once, about 35 minutes
 sh <work folder>/daily/run.sh                                        # the live pipeline's refresh (about 6-10 minutes)
 sh web/reversal-edge/fable/run.sh <work folder>                      # export + brief
+sh web/reversal-edge/fable/run_us.sh <work folder>                   # the US 200: Yahoo prices + the US documents (about 2 minutes)
 ```
 Research scripts take the work folder from `RE_WORK`, e.g. `RE_WORK=<work folder> python3 research/r73/r73.py`.
 
@@ -98,6 +108,7 @@ RE_WORK=<work folder> python3 pine/check_rebound_edge.py         # the TradingVi
 RE_WORK=<work folder> python3 research/r82/trunc82.py            # Hold Edge uses no future data (30 past closes)
 RE_WORK=<work folder> python3 research/r83/trunc83.py            # the 40-session versions use no future data
 RE_WORK=<work folder> python3 pine/check_hold_edge.py            # the Hold Edge script's arithmetic against the product
+RE_WORK=<work folder> python3 research/r84/r84_nocut.py          # the US 200 tests the US view replays (export_us.py checks it reproduces them)
 ```
 
 ## Known limits
@@ -106,6 +117,9 @@ RE_WORK=<work folder> python3 pine/check_hold_edge.py            # the Hold Edge
 - The buy line -2.5 sits at the shallow edge of what works: -2.25 failed the stress test (drawdown 8.0%). Two buys a day failed too.
 - 2020-26 was not a blind test for the swing's exit: earlier rounds had already reported that selling at stretch Z 0 held up there.
 - The price panel holds only stocks listed today (survivorship bias).
+- US 200: the list is today's options favourites, so every US number is flattered by the choice; the swing there lost money in 2001-09
+  and one US stock can lose 40-70% in a few sessions (worst US swing trade -72%). Yahoo sometimes leaves a day empty (SNDK on 20 and
+  23 Nov 2026): such a stock drops out of the scanner until Yahoo fills it.
 - A fresh refit of the ML ranker and the market model moves the yearly figures by about 0.2 point and can change a few past
   signals (round 71). The `days/` record exists so that what you were told on a day stays what it was.
 - The market model is refit every day, so a past signal that sat on its line can flip between two daily runs (round 71,

@@ -113,6 +113,7 @@ svg.ch{width:100%;height:auto;display:block}
 .seg{display:inline-grid;grid-auto-flow:column;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
 .seg button{padding:8px 14px;font-size:13px;font-weight:600;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.mseg{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:340px}.mseg button{padding:9px 14px;font-size:14px}
 .ladder{display:grid;gap:0;position:relative;padding:6px 0 6px 0}
 .ladder::before,.ladder::after{content:"";position:absolute;top:0;bottom:0;width:3px;background:var(--line);border-radius:2px}
 .ladder::before{left:10px}.ladder::after{right:10px}
@@ -235,9 +236,15 @@ table.heat td{text-align:center}table.heat td:first-child{text-align:left;font-f
 (function(){
 "use strict";
 var D=null, LOG=[], view="today", bookRule="swing", sizeRule="swing", sizeIdx={live:2,fable:2,swing:2}, acct=0;
-var M=null, CHUNK={}, DB=null, DBOK=false, CH={sym:null,data:null,view:null,hover:null,range:126,cone:null,bk:"swing",o:{bl:true,sl:true,tr:true,wx:true,cone:true}}, FAV=[], scanF="all", scanSort="need", scanQ="", resTab="evidence", LINE=-2.5, TARGET=0;
-try{ acct=+localStorage.getItem("fable.acct")||0; bookRule=localStorage.getItem("fable.book")||"swing"; FAV=JSON.parse(localStorage.getItem("fable.fav")||"[]")||[]; CH.sym=localStorage.getItem("fable.sym")||null; CH.bk=localStorage.getItem("fable.cbk")=="live"?"live":"swing"; }catch(e){}
+var MKT="sa", U=null, UM=null, UCHUNK={}, UERR=null;
+var M=null, CHUNK={}, DB=null, DBOK=false, CH={sym:null,data:null,view:null,hover:null,range:126,cone:null,bk:"swing",o:{bl:true,sl:true,tr:true,wx:true,cone:true},by:{sa:null,us:null}}, FAV=[], scanF="all", scanSort="need", scanQ="", resTab="evidence", LINE=-2.5, TARGET=0;
+try{ acct=+localStorage.getItem("fable.acct")||0; bookRule=localStorage.getItem("fable.book")||"swing"; FAV=JSON.parse(localStorage.getItem("fable.fav")||"[]")||[]; CH.by.sa=localStorage.getItem("fable.sym")||null; CH.by.us=localStorage.getItem("fable.usym")||null; MKT=localStorage.getItem("fable.mkt")=="us"?"us":"sa"; CH.sym=CH.by[MKT]; CH.bk=localStorage.getItem("fable.cbk")=="live"?"live":"swing"; }catch(e){}
 var $=function(s){return document.querySelector(s)}, main=$("#main");
+/* the market the scanner and the chart show: Saudi (MKT "sa", data D / M / CHUNK) or the US 200 (MKT "us", data U / UM / UCHUNK; round 84, on paper) */
+function XD(){ return MKT=="us"?U:D; } function XM(){ return MKT=="us"?UM:M; } function XC(){ return MKT=="us"?UCHUNK:CHUNK; }
+function setMkt(k){ k=k=="us"?"us":"sa"; if(MKT==k) return; CH.by[MKT]=CH.sym; MKT=k; CH.sym=CH.by[k]; CH.data=null; CH.cone=null; CH.view=null; CH.hover=null; try{localStorage.setItem("fable.mkt",k)}catch(x){} }
+function mktSeg(){ return '<div class="seg mseg" role="group" aria-label="Market"><button data-mset="sa" aria-pressed="'+(MKT=="sa")+'">Saudi</button><button data-mset="us" aria-pressed="'+(MKT=="us")+'">US 200</button></div>'; }
+function usWait(){ return '<section class="view"><div class="block">'+mktSeg()+'<div class="eyebrow" style="margin-top:14px">US 200</div><p class="lead">'+(UERR?'The US view could not be loaded ('+esc(UERR)+').':'Loading the US 200…')+'</p></div></section>'; }
 var esc=function(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
 var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], DAY=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 function dt(s){ if(!s) return "n/a"; var p=s.split("-"), d=new Date(Date.UTC(+p[0],+p[1]-1,+p[2])); return DAY[d.getUTCDay()]+" "+(+p[2])+" "+MON[+p[1]-1]; }
@@ -311,15 +318,15 @@ function rbar(q,max,col,act){
 }
 
 /* ---------- candlestick chart (own canvas drawing: candles, buy line, sell level, trades, crosses, weather, stretch Z pane) ---------- */
-var GB=[[1,"the weather was calm"],[2,"the market model was negative"],[4,"ML rank below 50%"],[8,"loss-making"],[16,"not liquid"]];
+var GB=[[1,"the weather was calm"],[2,"the market model was negative"],[4,"ML rank below 50%"],[8,"loss-making"],[16,"not liquid"],[32,"under 3 years of prices: not in the tested book"]];
 function gbText(b){ var a=[]; GB.forEach(function(x){ if(b&x[0]) a.push(x[1]) }); return a.join(", "); }
 function cssv(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-function mdate(k){ var v=M&&M.d?M.d[k]:null; if(!v) return ""; var s=String(v); return s.slice(0,4)+"-"+s.slice(4,6)+"-"+s.slice(6,8); }
+function mdate(k){ var MM=XM(), v=MM&&MM.d?MM.d[k]:null; if(!v) return ""; var s=String(v); return s.slice(0,4)+"-"+s.slice(4,6)+"-"+s.slice(6,8); }
 function niceStep(x){ var p=Math.pow(10,Math.floor(Math.log(x)/Math.LN10)), f=x/p; return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p; }
 function setView(a,len){ var n=CH.data.c.length; len=Math.max(20,Math.min(n,len)); a=Math.max(0,Math.min(n-len,a)); CH.view=[a,a+len-1]; }
 function chartGeom(cv){ var W=cv.clientWidth, Hp=W<500?300:400, Hz=W<500?96:120, He=W<500?88:104, G=12, AX=52, BX=20; return {W:W,Hp:Hp,Hz:Hz,He:He,G:G,AX:AX,BX:BX,Hall:Hp+G+Hz+G+He,H:Hp+G+Hz+G+He+BX,PW:W-AX-4}; }
 /* Rebound Edge of a scanner row: null when the stock is not stretched. Band = how many band edges the edge has reached. */
-function rbRead(r){ var RB=D&&D.rebound; if(!RB||!r||r.re==null) return null; var k=0; while(k<RB.band_edges.length&&r.re>=RB.band_edges[k]) k++; var b=RB.bands[k], u=r.ru;
+function rbRead(r,src){ var X_=src||XD(), RB=X_&&X_.rebound; if(!RB||!r||r.re==null) return null; var k=0; while(k<RB.band_edges.length&&r.re>=RB.band_edges[k]) k++; var b=RB.bands[k], u=r.ru;
   return {e:r.re,band:k,win:b.win,days:b.days,dip:u!=null?b.dz*u:null,bad:u!=null?b.dzb*u:null,cone:b.cone,u:u,g:r.rg,word:r.re<RB.zones[0]?"weak":(r.re>=RB.zones[1]?"strong":"fair")}; }
 function rbRead40(r){ var R4=D&&D.rebound40; if(!R4||!r||r.r4==null) return null; var b=R4.bands[r.r4], u=r.ru; return {k:r.r4,gain:b.gain,win:b.win,dip:u!=null?b.dz*u:null,bad:u!=null?b.dzb*u:null,cone:b.cone,u:u,g:r.rg,word:r.r4<=2?"weak":(r.r4>=7?"strong":"fair")}; }
 function rbCol(w){ return w=="strong"?"var(--good)":(w=="weak"?"var(--bad)":"var(--ink2)"); }
@@ -327,8 +334,8 @@ function rbCol(w){ return w=="strong"?"var(--good)":(w=="weak"?"var(--bad)":"var
 function futSlots(){ return (CH.o.cone&&CH.cone&&CH.view&&CH.data&&CH.view[1]==CH.data.c.length-1)?CH.cone.h[CH.cone.h.length-1]+1:0; }
 function indexAt(cv,x){ var q=chartGeom(cv), a=CH.view[0], b=CH.view[1], bw=q.PW/(b-a+1+futSlots()); return Math.max(a,Math.min(b,a+Math.floor((x-2)/bw))); }
 function chartDraw(){
-  var cv=document.getElementById("cv"); if(!cv) return; var S=CH.data; if(!S||!M||!CH.view) return; if(cv.clientWidth<=40) return;   /* not laid out yet: the size watcher draws it when it is */
-  var q=chartGeom(cv), W=q.W, Hp=q.Hp, Hz=q.Hz, H=q.H, dpr=window.devicePixelRatio||1, live=CH.bk=="live";
+  var cv=document.getElementById("cv"); if(!cv) return; var S=CH.data, MM=XM(), DD=XD(); if(!S||!MM||!DD||!CH.view) return; if(cv.clientWidth<=40) return;   /* not laid out yet: the size watcher draws it when it is */
+  var q=chartGeom(cv), W=q.W, Hp=q.Hp, Hz=q.Hz, H=q.H, dpr=window.devicePixelRatio||1, live=CH.bk=="live"&&MKT!="us";
   if(cv.width!=Math.round(W*dpr)||cv.height!=Math.round(H*dpr)){ cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); cv.style.height=H+"px"; }
   var g=cv.getContext("2d"); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
   var a=CH.view[0], b=CH.view[1], nb=b-a+1, fut=futSlots(), bw=q.PW/(nb+fut), X=function(k){return 2+(k-a+.5)*bw}, k, v;
@@ -342,12 +349,12 @@ function chartDraw(){
   var pad=(hi-lo)*.07||hi*.02; lo-=pad; hi+=pad; var Y=function(p){return 6+(hi-p)/(hi-lo)*(Hp-12)};
   var zlo=-4, zhi=2.5; for(k=a;k<=b;k++){ v=S.z[k]; if(v!=null){ zlo=Math.min(zlo,v); zhi=Math.max(zhi,v); } } zlo=Math.max(zlo,-9); var Z0=Hp+q.G, Yz=function(z){return Z0+4+(zhi-Math.max(zlo,Math.min(zhi,z)))/(zhi-zlo)*(Hz-8)};
   /* weather columns */
-  if(CH.o.wx){ for(k=a;k<=b;k++){ var w=M.wx[k]; if(w>=2){ g.globalAlpha=w==3?.17:.10; g.fillStyle=w==3?c.deep:c.storm; g.fillRect(X(k)-bw/2,0,bw+.6,q.Hall); } } g.globalAlpha=1; }
+  if(CH.o.wx){ for(k=a;k<=b;k++){ var w=MM.wx[k]; if(w>=2){ g.globalAlpha=w==3?.17:.10; g.fillStyle=w==3?c.deep:c.storm; g.fillRect(X(k)-bw/2,0,bw+.6,q.Hall); } } g.globalAlpha=1; }
   /* grid and price labels */
   g.font="11px "+cssv("--mono"); g.textBaseline="middle"; g.lineWidth=1; var st=niceStep((hi-lo)/5), p0=Math.ceil(lo/st)*st;
   for(var p=p0;p<=hi;p+=st){ g.strokeStyle=c.line; g.beginPath(); g.moveTo(2,Math.round(Y(p))+.5); g.lineTo(2+q.PW,Math.round(Y(p))+.5); g.stroke(); g.fillStyle=c.mut; g.textAlign="left"; g.fillText(p>=100?p.toFixed(0):p.toFixed(st<.1?2:st<1?2:1),q.PW+8,Y(p)); }
   /* month labels */
-  g.textAlign="center"; var lastM=-1, lastX=-99; for(k=a;k<=b;k++){ var dd=String(M.d[k]||""), mo=+dd.slice(4,6); if(mo!=lastM){ lastM=mo; var xx=X(k); if(k>a&&xx-lastX>44){ g.strokeStyle=c.line; g.beginPath(); g.moveTo(Math.round(xx-bw/2)+.5,q.Hall); g.lineTo(Math.round(xx-bw/2)+.5,q.Hall+4); g.stroke(); g.fillStyle=c.mut; g.fillText(MON[mo-1]+(mo==1?" "+dd.slice(2,4):""),Math.max(16,Math.min(q.PW-12,xx)),H-9); lastX=xx; } } }
+  g.textAlign="center"; var lastM=-1, lastX=-99; for(k=a;k<=b;k++){ var dd=String(MM.d[k]||""), mo=+dd.slice(4,6); if(mo!=lastM){ lastM=mo; var xx=X(k); if(k>a&&xx-lastX>44){ g.strokeStyle=c.line; g.beginPath(); g.moveTo(Math.round(xx-bw/2)+.5,q.Hall); g.lineTo(Math.round(xx-bw/2)+.5,q.Hall+4); g.stroke(); g.fillStyle=c.mut; g.fillText(MON[mo-1]+(mo==1?" "+dd.slice(2,4):""),Math.max(16,Math.min(q.PW-12,xx)),H-9); lastX=xx; } } }
   /* buy line and sell level */
   var path=function(arr,color,dash,wd){ g.strokeStyle=color; g.lineWidth=wd||1.4; g.setLineDash(dash||[]); g.beginPath(); var pen=false; for(var i=a;i<=b;i++){ var y=arr[i]; if(y==null||y<lo||y>hi){ pen=false; continue; } if(pen) g.lineTo(X(i),Y(y)); else g.moveTo(X(i),Y(y)); pen=true; } g.stroke(); g.setLineDash([]); };
   if(CH.o.sl&&!live) path(S.sl,c.sea,[2,3],1.2); if(CH.o.bl&&!live) path(S.bl,c.lamp,[5,4],1.6);
@@ -377,7 +384,7 @@ function chartDraw(){
   g.strokeStyle=c.ink; g.lineWidth=1.5; g.beginPath(); var pen=false; for(k=a;k<=b;k++){ v=S.z[k]; if(v==null){ pen=false; continue; } if(pen) g.lineTo(X(k),Yz(v)); else g.moveTo(X(k),Yz(v)); pen=true; } g.stroke();
   g.fillStyle=c.mut; g.textAlign="left"; g.font="600 10px "+cssv("--sans"); g.fillText("STRETCH Z",6,Z0+10); g.font="11px "+cssv("--mono");
   /* Edge pane: bars = Rebound Edge on every stretched session; line = Hold Edge on every session a trade was held (until its sale was due) */
-  var E0=Z0+Hz+q.G, R40=D.rebound40, H40=D.hold40, zs=(D.rebound&&D.rebound.zones)||[0,.05], hzz=(D.hold&&D.hold.zones)||[0,.04];
+  var E0=Z0+Hz+q.G, R40=DD.rebound40, H40=DD.hold40, zs=(DD.rebound&&DD.rebound.zones)||[0,.05], hzz=(DD.hold&&DD.hold.zones)||[0,.04];
   var ebar=function(k){ if(live){ var bk=S.e4[k]; return (bk==null||!R40)?null:R40.bands[bk].gain; } return S.e[k]; };
   var ecol=function(k,v){ if(live){ var bk=S.e4[k]; return bk<=2?c.bad:(bk>=7?c.good:c.mut); } return v<zs[0]?c.bad:(v>=zs[1]?c.good:c.mut); };
   var hval=function(k){ if(live){ var bk=S.h4[k]; return (bk==null||!H40)?null:H40.bands[bk].rest; } return S.hv[k]; };
@@ -399,8 +406,8 @@ function chartDraw(){
   chartReadout(hk!=null?hk:S.c.length-1);
 }
 function chartReadout(k){
-  var el=document.getElementById("readout"), S=CH.data; if(!el||!S) return; var cl=S.c[k], pc=k>0?S.c[k-1]:null, w=M.wx[k], wn=["calm","clouds","storm","deep storm"][w]||"";
-  var live=CH.bk=="live", note=""; (live?S.lt:S.tr).forEach(function(t){ if(t[0]==k) note="bought at "+px(t[2])+(live?" (your live rule, tested: 5% of the account)":" ("+pct(t[5],1,false)+" of the account)"); if(t[1]==k) note="sold at "+px(t[3])+", "+pct(t[4])+" ("+(live||t[6]!=0?"40 sessions":"the stretch was gone")+")"; });
+  var el=document.getElementById("readout"), S=CH.data, MM=XM(); if(!el||!S||!MM) return; var cl=S.c[k], pc=k>0?S.c[k-1]:null, w=MM.wx[k], wn=["calm","clouds","storm","deep storm"][w]||"";
+  var live=CH.bk=="live"&&MKT!="us", note=""; (live?S.lt:S.tr).forEach(function(t){ if(t[0]==k) note="bought at "+px(t[2])+(live?" (your live rule, tested: 5% of the account)":" ("+pct(t[5],1,false)+" of the account)"); if(t[1]==k) note="sold at "+px(t[3])+", "+pct(t[4])+" ("+(live||t[6]!=0?"40 sessions":"the stretch was gone")+")"; });
   var evv=live?((S.e4[k]!=null&&D.rebound40)?D.rebound40.bands[S.e4[k]].gain:null):S.e[k], hvv=live?((S.h4[k]!=null&&D.hold40)?D.hold40.bands[S.h4[k]].rest:null):S.hv[k];
   if(!live) S.x.forEach(function(e){ if(e[0]==k&&e[1]!=0) note="crossed into the buy zone: not bought, "+(e[1]<0?"one buy a day or no free slot":gbText(e[1])); });
   el.innerHTML='<span><b>'+dt(mdate(k))+'</b></span>'+(cl!=null?'<span>O '+px(S.o[k]!=null?S.o[k]:cl)+' H '+px(S.h[k])+' L '+px(S.l[k])+' C <b>'+px(cl)+'</b>'+(pc?' <span class="'+cls(cl/pc-1)+'">'+pct(cl/pc-1)+'</span>':'')+'</span>':'<span>no trade</span>')
@@ -421,16 +428,17 @@ function chartBind(){
   cv.addEventListener("wheel",function(e){ if(!CH.data) return; e.preventDefault(); var r=cv.getBoundingClientRect(), k=indexAt(cv,e.clientX-r.left), len=CH.view[1]-CH.view[0]+1, nl=Math.round(len*(e.deltaY>0?1.2:.83)), f=(k-CH.view[0])/len; setView(Math.round(k-f*nl),nl); chartDraw(); },{passive:false});
 }
 function chartMount(){
-  if(!D||!D.chart) return; var idx=D.chart.index||{}; if(!CH.sym||idx[CH.sym]==null){ var first=(D.scan||[])[0]; CH.sym=first?first.sym:Object.keys(idx)[0]; }
-  var n=idx[CH.sym], note=document.getElementById("chartnote"); if(n==null){ if(note) note.textContent="No chart data for this stock."; return; }
-  var ready=function(){ var doc=CHUNK[n]; CH.data=doc&&doc.stocks?doc.stocks[CH.sym]:null; if(!CH.data||!M){ var bad=LOADERR["c"+n]||LOADERR.market; if(note) note.textContent=!DBOK?"Charts need the terminal's data. Open the page inside Claude, signed in.":bad?"The prices for this chart could not be loaded ("+bad+"). Choose the stock again to retry.":(doc&&doc.stocks&&!CH.data)?"No chart data for this stock.":"Loading prices…"; return; }
+  var X_=XD(), mk=MKT, us=mk=="us"; if(!X_||!X_.chart) return; var idx=X_.chart.index||{}; if(!CH.sym||idx[CH.sym]==null){ var first=(X_.scan||[])[0]; CH.sym=first?first.sym:Object.keys(idx)[0]; CH.by[mk]=CH.sym; }
+  var n=idx[CH.sym], note=document.getElementById("chartnote"), C_=XC(), ek=us?"u":""; if(n==null){ if(note) note.textContent="No chart data for this stock."; return; }
+  var ready=function(){ var doc=C_[n], MM=XM(); CH.data=doc&&doc.stocks?doc.stocks[CH.sym]:null; if(!CH.data||!MM){ var bad=LOADERR[ek+"c"+n]||LOADERR[ek+"market"]; if(note) note.textContent=!DBOK?"Charts need the terminal's data. Open the page inside Claude, signed in.":bad?"The prices for this chart could not be loaded ("+bad+"). Choose the stock again to retry.":(doc&&doc.stocks&&!CH.data)?"No chart data for this stock.":"Loading prices…"; return; }
     if(note) note.textContent=""; var len=CH.range||126; CH.hover=null; CH.view=null; var N=CH.data.c.length; CH.view=[Math.max(0,N-len),N-1];
-    var r0=null; (D.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r0=x }); var rr=CH.bk=="live"?rbRead40(r0):rbRead(r0), p0=CH.data.c[N-1]; CH.cone=null;
-    if(rr&&rr.u!=null&&p0!=null){ var cq={}; Object.keys(rr.cone).forEach(function(qn){ cq[qn]=rr.cone[qn].map(function(v){return v*rr.u}); }); CH.cone={h:D.rebound.horizons,q:cq,p0:p0}; }
+    var r0=null; (X_.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r0=x }); var rr=(CH.bk=="live"&&!us)?rbRead40(r0):rbRead(r0,X_), p0=CH.data.c[N-1]; CH.cone=null;
+    if(rr&&rr.u!=null&&p0!=null){ var cq={}; Object.keys(rr.cone).forEach(function(qn){ cq[qn]=rr.cone[qn].map(function(v){return v*rr.u}); }); CH.cone={h:X_.rebound.horizons,q:cq,p0:p0}; }
     chartBind(); chartDraw(); chartSide(); };
-  if(CHUNK[n]&&M) ready(); else { var sym0=CH.sym; Promise.all([loadChunk(n),loadMarket()]).then(function(){ if(view=="chart"&&CH.sym==sym0) ready(); }); }
+  if(C_[n]&&XM()) ready(); else { var sym0=CH.sym; Promise.all([loadChunk(n,mk),loadMarket(mk)]).then(function(){ if(view=="chart"&&CH.sym==sym0&&MKT==mk) ready(); }); }
 }
 function chartSide(){
+  if(MKT=="us"){ chartSideUS(); return; }
   var el=document.getElementById("chartside"), S=CH.data; if(!el||!S) return; var r=null; (D.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r=x }); var W=D.weather, h="";
   var live=CH.bk=="live", r4=live?rbRead40(r):null;
   if(live){ if(r4){ var c4=rbCol(r4.word);
@@ -460,16 +468,39 @@ function chartSide(){
     h+='<div class="block"><div class="eyebrow">'+esc(r.sec||"")+' · where it stands</div><p class="lead">Stretch Z <b class="num">'+String(r.z).replace("-","−")+'</b> (line '+(live?'−2.62':String(LINE).replace("-","−"))+'). '+say+'</p>'
       +'<div>'+G.map(function(x){return '<div class="gate"><i class="'+(x[0]?"y":"n")+'">'+(x[0]?"✓":"✕")+'</i><span>'+x[1]+(x[2]?'<small>'+x[2]+'</small>':'')+'</span><b>'+esc(x[3])+'</b></div>'}).join("")+'</div>'
       +(r.e!=null?'<p class="note">Edge score '+pct(r.e)+': the average next 5 sessions of a gated stock with this stretch in this weather (Saudi 2013-26, pulled toward 24 other markets). A description, not a forecast for this stock.</p>':'')+'</div>'; }
+  el.innerHTML=h+tradesBlock(S,live);
+}
+function tradesBlock(S,live){
   var tr=(live?S.lt:S.tr).slice().sort(function(a,b){return b[0]-a[0]});
-  h+='<div class="block"><div class="eyebrow">'+(live?'Your live rule\'s trades':'Swings')+' in this stock, last '+S.c.length+' sessions (tested book)</div>'+(tr.length?'<div class="scroll"><table class="tb"><thead><tr><th>Bought</th><th>Sold</th><th>Result</th><th>Sessions</th></tr></thead><tbody>'+tr.map(function(t){var k1=Math.max(0,t[0]);return '<tr><td>'+(t[0]<0?"earlier":dshort(mdate(k1)))+'<br><small style="color:var(--muted)">'+px(t[2])+'</small></td><td>'+(t[1]==null?'<span class="st held">held</span>':dshort(mdate(t[1]))+'<br><small>'+px(t[3])+'</small>')+'</td><td class="'+cls(t[4])+'">'+pct(t[4])+'</td><td>'+(t[1]==null?(S.c.length-t[0]):(t[1]-t[0]))+'</td></tr>'}).join("")+'</tbody></table></div>':'<p class="note">'+(live?'None. No Z score signal in this stock was bought by the tested book in this window.':'None. The stock did not cross into the buy zone with every gate open in this window, or another signal was taken that day.')+'</p>');
-  var xs=live?[]:S.x.filter(function(e){return e[1]!=0}).slice(-5).reverse(); if(xs.length) h+='<p class="note">Crosses not bought: '+xs.map(function(e){return dshort(mdate(e[0]))+" ("+(e[1]<0?"one buy a day or no free slot":gbText(e[1]))+")"}).join("; ")+'.</p>';
-  el.innerHTML=h+'</div>';
+  var h='<div class="block"><div class="eyebrow">'+(live?'Your live rule\'s trades':'Swings')+' in this stock, last '+S.c.length+' sessions (tested book)</div>'+(tr.length?'<div class="scroll"><table class="tb"><thead><tr><th>Bought</th><th>Sold</th><th>Result</th><th>Sessions</th></tr></thead><tbody>'+tr.map(function(t){var k1=Math.max(0,t[0]);return '<tr><td>'+(t[0]<0?"earlier":dshort(mdate(k1)))+'<br><small style="color:var(--muted)">'+px(t[2])+'</small></td><td>'+(t[1]==null?'<span class="st held">held</span>':dshort(mdate(t[1]))+'<br><small>'+px(t[3])+'</small>')+'</td><td class="'+cls(t[4])+'">'+pct(t[4])+'</td><td>'+(t[1]==null?(S.c.length-t[0]):(t[1]-t[0]))+'</td></tr>'}).join("")+'</tbody></table></div>':'<p class="note">'+(live?'None. No Z score signal in this stock was bought by the tested book in this window.':'None. The stock did not cross into the buy zone with every gate open in this window, or another signal was taken that day.')+'</p>');
+  var xs=live?[]:S.x.filter(function(e){return e[1]!=0}).slice(-5).reverse(); if(xs.length) h+='<p class="note">Crosses not bought: '+xs.map(function(e){return dshort(mdate(e[0]))+" ("+(e[1]<0?"one buy a day, no free slot or already held":gbText(e[1]))+")"}).join("; ")+'.</p>';
+  return h+'</div>';
+}
+var zs_=function(z){ return z==null?"n/a":String(z).replace("-","−"); };
+function chartSideUS(){
+  var el=document.getElementById("chartside"), S=CH.data; if(!el||!S||!U) return; var r=null; (U.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r=x }); var W=U.weather, RB=U.rebound, rb=rbRead(r,U), h="";
+  if(RB){ if(rb){ var wc=rbCol(rb.word);
+      h+='<div class="block"><div class="eyebrow">Rebound Edge · what usually followed</div><div class="edgecard"><b class="num" style="color:'+wc+'">'+pct(rb.e)+'</b><span><em style="color:'+wc+'">'+rb.word+'</em>the average result of a buy at the next open in past cases like this one, after costs</span></div>'
+        +'<div class="facts"><div class="fact"><b>'+Math.round(100*rb.win)+' in 100</b><span>ended in profit</span></div><div class="fact"><b>'+Math.round(rb.days)+'</b><span>sessions, typical</span></div><div class="fact"><b>'+(rb.dip!=null?pct(rb.dip):"n/a")+'</b><span>typical dip on the way</span></div><div class="fact"><b>'+(rb.bad!=null?pct(rb.bad):"n/a")+'</b><span>1 case in 10 dipped below this</span></div></div>'
+        +'<p class="note">From '+RB.cases_world.toLocaleString()+' cases in '+RB.markets+' markets outside the US: no US data went into the formula. On these 200 stocks it sorted trades the right way, but no better than US market momentum alone (round 84). <b>Descriptive</b>, not a forecast for this stock.</p></div>'; }
+    else h+='<div class="block"><div class="eyebrow">Rebound Edge</div><p class="note">Read only when a stock is stretched: stretch Z −1.5 or lower.'+(r?' '+esc(r.sym)+' is at '+zs_(r.z)+'.':'')+'</p></div>'; }
+  var hp=null; ((U.swing.book||{}).held||[]).concat((U.swing.book||{}).due||[]).forEach(function(q){ if(q.sym==CH.sym) hp=q; });
+  if(hp&&hp.he){ var e_=hp.he, hc=rbCol(e_.word);
+    h+='<div class="block"><div class="eyebrow">Hold Edge · the rest of this trade (US paper book)</div><div class="edgecard"><b class="num" style="color:'+hc+'">'+pct(e_.edge)+'</b><span><em style="color:'+hc+'">'+e_.word+'</em>the average result from this close to the sale, in past trades abroad that stood where this one stands</span></div>'
+      +'<div class="facts"><div class="fact"><b>'+Math.round(100*e_.up)+' in 100</b><span>were sold above this close</span></div><div class="fact"><b>'+Math.round(e_.togo)+'</b><span>sessions to the sale, typical</span></div><div class="fact"><b>'+(e_.fur!=null?pct(e_.fur):"n/a")+'</b><span>typical further dip</span></div><div class="fact"><b>'+(e_.fur_bad!=null?pct(e_.fur_bad):"n/a")+'</b><span>1 trade in 10 dipped below this</span></div></div>'
+      +'<p class="note">Bought '+dt(hp.bought)+' at '+px(hp.entry)+', held '+hp.held+' sessions, '+pct(hp.ret)+' so far. Sells at the open after a close of '+(hp.sellpx!=null?'<b class="num">'+px(hp.sellpx)+'</b> or higher (stretch Z 0)':'more than 25% above this one (stretch Z 0)')+', or by '+dt(hp.latest)+'. <b>Descriptive, and not a stop.</b></p></div>'; }
+  if(r){ var say=r.inz?('In the buy zone for '+(r.age==0?'the first session: it crossed at this close':r.age+' sessions')+'. The swing sells when it closes at or above '+(r.sellpx!=null?'<b class="num">'+px(r.sellpx)+'</b>':'a price more than 25% above')+' (stretch Z 0).'):(r.line!=null?('A close at or below <b class="num">'+px(r.line)+'</b> at the next close ('+pct(r.need)+') crosses into the buy zone.'):'The buy line for the next close is more than a 25% move away.');
+    var G=[[U.scan_sum.window,"Storm or deep weather","US 200 market momentum −1.18 or lower",String(W.ms)],[!r.new,"3 years of prices or more","the tested book buys only these",r.new?"new":"yes"]];
+    h+='<div class="block"><div class="eyebrow">'+(r.opt?'#'+r.opt+' in US options activity':'US 200')+' · where it stands</div><p class="lead">Stretch Z <b class="num">'+zs_(r.z)+'</b> (line '+zs_(LINE)+'). '+say+'</p>'
+      +'<div>'+G.map(function(x){return '<div class="gate"><i class="'+(x[0]?"y":"n")+'">'+(x[0]?"✓":"✕")+'</i><span>'+x[1]+(x[2]?'<small>'+x[2]+'</small>':'')+'</span><b>'+esc(x[3])+'</b></div>'}).join("")+'</div>'
+      +'<p class="note">Price-only: the US has no ML rank, market model or company-accounts check, so a first close in the buy zone in storm weather is a signal; one buy a day, the most volatile first, 12 positions of 2.1% (4.2% in a deep storm). On paper, for watching: nothing here is traded.</p></div>'; }
+  el.innerHTML=h+tradesBlock(S,false);
 }
 
 /* ---------- views ---------- */
-function orderRows(b,tagc,swing){
+function orderRows(b,tagc,swing,mk){
   return b.map(function(o){ var sub=tagc=="buy"?(pct(o.w,1,false)+" of the account"+(swing?" · sells when the stretch is gone, by "+dt(o.latest):" · sells "+dt(o.sell))):("bought "+dt(o.bought)+" · "+pct(o.ret)+" so far"+(o.why?" · "+o.why:""));
-    return '<button class="row" data-chart="'+esc(o.sym)+'"><span class="t"><span class="tag '+tagc+'">'+(tagc=="buy"?"Buy":"Sell")+'</span> '+esc(o.sym)+'<small>'+esc(o.name)+'</small></span><span class="s">'+sub+'</span><span class="v">'+px(tagc=="buy"?o.close:o.last)+'<small>last close</small></span></button>'}).join("");
+    return '<button class="row" data-chart="'+esc(o.sym)+'"'+(mk?' data-mkt="'+mk+'"':'')+'><span class="t"><span class="tag '+tagc+'">'+(tagc=="buy"?"Buy":"Sell")+'</span> '+esc(o.sym)+'<small>'+esc(o.name)+'</small></span><span class="s">'+sub+'</span><span class="v">'+px(tagc=="buy"?o.close:o.last)+'<small>last close</small></span></button>'}).join("");
 }
 function sayOrders(nb,ns){ return (nb?("Buy "+nb):"Nothing to buy")+(ns?(". Sell "+ns+"."):(nb?".":". Nothing to sell.")); }
 function vToday(){
@@ -490,53 +521,60 @@ function vToday(){
   h+='<div class="facts"><div class="fact"><b class="'+cls(E.open?E.since:W.chg20)+'">'+pct(E.open?E.since:W.chg20)+'</b><span>'+(E.open?"market since the sell-off began":"market in 20 sessions")+'</span></div><div class="fact"><b>'+pct(W.dd,0)+'</b><span>from the 1-year high</span></div>'
     +'<div class="fact"><b>'+pct(W.fear,0,false)+'</b><span>of '+W.n_liquid+' liquid stocks stretched below −2</span></div><div class="fact"><b class="'+cls(W.chg5)+'">'+pct(W.chg5)+'</b><span>market in 5 sessions</span></div></div>';
   var top=(D.scan||[]).filter(function(r){return r.st}).slice(0,6); if(!top.length) top=(D.scan||[]).slice(0,5);
-  h+='<div class="block"><div class="cbar"><div class="eyebrow">Nearest the buy zone</div><button class="lnk" data-go="scanner">Open the scanner</button></div><div class="rows">'+top.map(scanRow).join("")+'</div></div>';
+  h+='<div class="block"><div class="cbar"><div class="eyebrow">Nearest the buy zone</div><button class="lnk" data-go="scanner">Open the scanner</button></div><div class="rows">'+top.map(function(r){return scanRow(r,D)}).join("")+'</div></div>';
   h+='<div class="block"><div class="eyebrow">The storm so far · market momentum, 250 sessions</div>'+strip()+'<p class="note">Market momentum is how far the whole market has moved in 60 sessions, in units of its normal swing. Buys are allowed in the shaded zone ('+W.gate+' or lower). The darker zone ('+W.deep+' or lower) is a deep sell-off: steps are double size.</p></div>';
+  if(U&&U.weather&&U.swing){ var uw=U.weather, ub=U.swing.book, ust=uw.state;
+    h+='<div class="block"><div class="cbar"><div class="eyebrow">US 200 · options favourites · on paper · close of '+dt(U.asof)+'</div><button class="lnk" data-go="scanner" data-mkt="us">Open the US scanner</button></div>'
+      +'<div class="rows"><button class="row" data-go="scanner" data-mkt="us"><span class="t"><span class="word '+(ust=="storm"?"storm":ust=="deep storm"?"deep":"")+'" style="font-size:20px">'+WORD[ust]+'</span><small>US 200 market momentum '+String(uw.ms).replace("-","−")+(uw.storm_since?' · sell-off since '+dt(uw.storm_since):'')+'</small></span><span class="s">'+sayOrders(ub.buys.length,ub.due.length)+' '+(U.opened?'The '+dt(U.day)+' New York open has passed; the next list follows its close.':'For the 9:30 New York open of '+dt(U.day)+'.')+'</span><span class="v">'+ub.held.length+'<small>held</small></span></button>'
+      +orderRows(ub.due,"sell",true,"us")+orderRows(ub.buys,"buy",true,"us")+'</div>'
+      +(ub.held.length?'<div class="chips" style="margin-top:8px">'+ub.held.map(function(p){return '<button class="chip" data-chart="'+esc(p.sym)+'" data-mkt="us"><b>'+esc(p.sym)+'</b>&nbsp;<span class="'+cls(p.ret)+'">'+pct(p.ret)+'</span></button>'}).join("")+'</div>':'')
+      +'<p class="note">The Fable swing on the 200 US stocks with the most options activity, price-only, replayed as round 84 tested it. '+U.scan_sum.inzone+' in the buy zone, '+U.scan_sum.near+' near. Nothing here is traded; it is for watching.</p></div>'; }
   if(D.us&&!D.us.error){ var u=D.us; h+='<div class="block"><div class="eyebrow">US part · close of '+dt(u.date)+'</div><div class="rows">'+Object.keys(u.etf||{}).map(function(k){var e=u.etf[k];return '<div class="row"><span class="t">'+k+'<small>index dip rule</small></span><span class="s">'+esc(e.status)+' · RSI(2) '+e.rsi2+'</span><span class="v">'+px(e.close)+'<small>200-day '+px(e.s200)+'</small></span></div>'}).join("")
     +'<div class="row"><span class="t">US sell-off window<small>115 large caps</small></span><span class="s">US market momentum '+u.ms+' (opens at '+u.gate+')</span><span class="v">'+(u.window?"open":"closed")+'</span></div></div></div>'; }
   return h+'</section>';
 }
 var STN={buy:"Buy",sell:"Sell",held:"Held",cand:"Signal",zone:"In zone",near:"Near"};
-function scanRow(r){
-  var flags=[]; if(r.ml!=null&&r.ml<.5) flags.push("ML "+pct(r.ml,0,false)); if(r.loss) flags.push("loss-making");
-  var sub=r.inz?("in the zone"+(r.age?" "+r.age+" sessions":", crossed today")+" · sells at "+px(r.sellpx)):(r.need!=null?"needs "+pct(r.need)+" to cross":"");
-  return '<button class="srow" data-chart="'+esc(r.sym)+'"><span class="t">'+(FAV.indexOf(r.sym)>=0?'<span style="color:var(--lamp)">★</span> ':'')+esc(r.sym)+'<small>'+esc(r.name)+'</small></span><span class="z '+(r.inz?"in":"")+'">'+String(r.z).replace("-","−")+'</span><span class="v">'+px(r.line)+'<small>buy line</small></span>'
-    +'<span class="s">'+(r.st?'<span class="st '+r.st+'">'+STN[r.st]+'</span> ':'')+sub+(flags.length?' · <span style="color:var(--bad)">'+flags.join(", ")+'</span>':'')+(r.re!=null?' · <b style="font-weight:600;color:'+rbCol(rbRead(r).word)+'">edge '+pct(r.re)+'</b>':'')+'</span></button>';
+function scanRow(r,src){
+  src=src||XD(); var us=!!U&&src===U, flags=[]; if(us){ if(r.new) flags.push("new: under 3 years of prices"); } else { if(r.ml!=null&&r.ml<.5) flags.push("ML "+pct(r.ml,0,false)); if(r.loss) flags.push("loss-making"); }
+  var sub=r.inz?("in the zone"+(r.age?" "+r.age+" sessions":", crossed today")+" · sells at "+(r.sellpx!=null?px(r.sellpx):"25%+ above")):(r.need!=null?"needs "+pct(r.need)+" to cross":(us?"line beyond a 25% move":"")), rr=r.re!=null?rbRead(r,src):null;
+  return '<button class="srow" data-chart="'+esc(r.sym)+'" data-mkt="'+(us?"us":"sa")+'"><span class="t">'+(FAV.indexOf(r.sym)>=0?'<span style="color:var(--lamp)">★</span> ':'')+esc(r.sym)+'<small>'+esc(r.name)+(us&&r.opt?' · options #'+r.opt:'')+'</small></span><span class="z '+(r.inz?"in":"")+'">'+String(r.z).replace("-","−")+'</span><span class="v">'+px(r.line)+'<small>buy line</small></span>'
+    +'<span class="s">'+(r.st?'<span class="st '+r.st+'">'+STN[r.st]+'</span> ':'')+sub+(flags.length?' · <span style="color:var(--bad)">'+flags.join(", ")+'</span>':'')+(rr?' · <b style="font-weight:600;color:'+rbCol(rr.word)+'">edge '+pct(r.re)+'</b>':'')+'</span></button>';
 }
 function vScanner(){
-  var SS=D.scan_sum, rows=(D.scan||[]).slice(), q=scanQ.trim().toLowerCase(), cnt=function(f){return (D.scan||[]).filter(f).length};
-  var F={all:function(){return true},zone:function(r){return r.inz},near:function(r){return r.st=="near"},str:function(r){return r.re!=null},held:function(r){return r.st=="held"||r.st=="sell"||r.st=="buy"||r.rp},fav:function(r){return FAV.indexOf(r.sym)>=0}};
+  var X_=XD(); if(!X_) return usWait(); var us=MKT=="us", SS=X_.scan_sum, rows=(X_.scan||[]).slice(), q=scanQ.trim().toLowerCase(), cnt=function(f){return (X_.scan||[]).filter(f).length};
+  var F={all:function(){return true},nw:function(r){return r.new},zone:function(r){return r.inz},near:function(r){return r.st=="near"},str:function(r){return r.re!=null},held:function(r){return r.st=="held"||r.st=="sell"||r.st=="buy"||r.rp},fav:function(r){return FAV.indexOf(r.sym)>=0}};
   rows=rows.filter(F[scanF]||F.all); if(q) rows=rows.filter(function(r){return r.sym.toLowerCase().indexOf(q)>=0||(r.name||"").toLowerCase().indexOf(q)>=0||(r.sec||"").toLowerCase().indexOf(q)>=0});
-  var S={need:function(a,b){return (b.need==null?-9:b.need)-(a.need==null?-9:a.need)},z:function(a,b){return a.z-b.z},chg:function(a,b){return (a.chg||0)-(b.chg||0)},up:function(a,b){return (b.chg||0)-(a.chg||0)},edge:function(a,b){return (b.re==null?-9:b.re)-(a.re==null?-9:a.re)},code:function(a,b){return a.sym<b.sym?-1:1}};
+  var S={need:function(a,b){return (b.need==null?-9:b.need)-(a.need==null?-9:a.need)},z:function(a,b){return a.z-b.z},chg:function(a,b){return (a.chg||0)-(b.chg||0)},up:function(a,b){return (b.chg||0)-(a.chg||0)},edge:function(a,b){return (b.re==null?-9:b.re)-(a.re==null?-9:a.re)},code:function(a,b){return a.sym<b.sym?-1:1},opt:function(a,b){return (a.opt||999)-(b.opt||999)}};
+  if(!us&&scanSort=="opt") scanSort="need";
   if(scanSort=="need") rows.sort(function(a,b){ return (a.inz?0:1)-(b.inz?0:1) || (a.inz?a.z-b.z:S.need(a,b)) }); else rows.sort(S[scanSort]);
   var chip=function(k,lab,n){return '<button data-scanf="'+k+'" aria-pressed="'+(scanF==k)+'">'+lab+' <span class="num" style="opacity:.7">'+n+'</span></button>'};
-  var h='<section class="view"><div class="block"><div class="eyebrow">Scanner · '+SS.n+' liquid stocks · close of '+dt(D.asof)+'</div><h1 class="h2">'+(SS.window?(SS.inzone?SS.inzone+" in the buy zone, "+SS.crossed+" crossed today":"No stock is in the buy zone"):"The buy window is closed")+'</h1>'
-    +'<p class="lead">The buy zone is stretch Z at '+String(LINE).replace("-","−")+' or lower. The buy line is the close that would put a stock exactly there tomorrow. '+(SS.window?(SS.pm_ok?"Weather and market model allow buys today.":"The market model is negative: no buys today."):"A cross only counts in storm or deep weather.")+'</p></div>'
-    +'<div class="block"><div class="fchips" role="group" aria-label="Filter">'+chip("all","All",SS.n)+chip("zone","In the zone",SS.inzone)+chip("near","Near",SS.near)+chip("str","Stretched",cnt(F.str))+chip("held","Held",cnt(F.held))+chip("fav","My stocks",cnt(F.fav))+'</div>'
-    +'<div class="tools"><input class="inp" id="scan-q" placeholder="Code, name or sector" value="'+esc(scanQ)+'" aria-label="Search the scanner"><select class="inp" id="scan-sort" aria-label="Sort" style="width:auto"><option value="need"'+(scanSort=="need"?" selected":"")+'>Nearest the line</option><option value="z"'+(scanSort=="z"?" selected":"")+'>Deepest stretch</option><option value="chg"'+(scanSort=="chg"?" selected":"")+'>Fell most today</option><option value="up"'+(scanSort=="up"?" selected":"")+'>Rose most today</option><option value="edge"'+(scanSort=="edge"?" selected":"")+'>Rebound Edge</option><option value="code"'+(scanSort=="code"?" selected":"")+'>Code</option></select></div></div>'
-    +'<div class="block"><div class="shead"><span>Stock</span><span>Z</span><span>Buy line</span></div><div class="rows" id="scan-rows">'+(rows.length?rows.slice(0,scanF=="all"&&!q?60:400).map(scanRow).join(""):'<p class="note" style="padding:14px 0">Nothing matches.</p>')+'</div>'
-    +(scanF=="all"&&!q&&rows.length>60?'<p class="note">Showing the 60 nearest of '+rows.length+'. Search or filter to see the rest.</p>':'')+'<p class="note">Tap a stock for its chart. Edge is the average next 5 sessions of a gated stock with that stretch in today\'s weather; it describes the past, it does not forecast the stock.</p></div>';
+  var h='<section class="view"><div class="block">'+mktSeg()+'<div class="eyebrow" style="margin-top:14px">Scanner · '+(us?'US 200 · '+SS.n+' stocks with prices':SS.n+' liquid stocks')+' · close of '+dt(X_.asof)+'</div><h1 class="h2">'+(SS.window?(SS.inzone?SS.inzone+" in the buy zone, "+SS.crossed+" crossed today":"No stock is in the buy zone"):"The buy window is closed")+'</h1>'
+    +'<p class="lead">The buy zone is stretch Z at '+String(LINE).replace("-","−")+' or lower. The buy line is the close that would put a stock exactly there '+(us?'at the next close':'tomorrow')+'. '+(us?(SS.window?"US weather allows buys (price-only: no other gate). On paper, for watching.":"A cross only counts in storm or deep US weather."):(SS.window?(SS.pm_ok?"Weather and market model allow buys today.":"The market model is negative: no buys today."):"A cross only counts in storm or deep weather."))+'</p></div>'
+    +'<div class="block"><div class="fchips" role="group" aria-label="Filter">'+chip("all","All",SS.n)+chip("zone","In the zone",SS.inzone)+chip("near","Near",SS.near)+chip("str","Stretched",cnt(F.str))+chip("held","Held",cnt(F.held))+(us?chip("nw","New",cnt(F.nw)):'')+chip("fav","My stocks",cnt(F.fav))+'</div>'
+    +'<div class="tools"><input class="inp" id="scan-q" placeholder="Code, name or sector" value="'+esc(scanQ)+'" aria-label="Search the scanner"><select class="inp" id="scan-sort" aria-label="Sort" style="width:auto"><option value="need"'+(scanSort=="need"?" selected":"")+'>Nearest the line</option><option value="z"'+(scanSort=="z"?" selected":"")+'>Deepest stretch</option><option value="chg"'+(scanSort=="chg"?" selected":"")+'>Fell most today</option><option value="up"'+(scanSort=="up"?" selected":"")+'>Rose most today</option><option value="edge"'+(scanSort=="edge"?" selected":"")+'>Rebound Edge</option><option value="code"'+(scanSort=="code"?" selected":"")+'>Code</option>'+(us?'<option value="opt"'+(scanSort=="opt"?" selected":"")+'>Options activity</option>':'')+'</select></div></div>'
+    +'<div class="block"><div class="shead"><span>Stock</span><span>Z</span><span>Buy line</span></div><div class="rows" id="scan-rows">'+(rows.length?rows.slice(0,scanF=="all"&&!q?60:400).map(function(r){return scanRow(r,X_)}).join(""):'<p class="note" style="padding:14px 0">Nothing matches.</p>')+'</div>'
+    +(scanF=="all"&&!q&&rows.length>60?'<p class="note">Showing the 60 nearest of '+rows.length+'. Search or filter to see the rest.</p>':'')+(us?'<p class="note">Tap a stock for its chart. The 200 are the US-listed stocks with the most options activity on Yahoo\'s option screeners ('+esc(dshort((U.list.date||"").slice(0,10)))+'); options #1 is the most active. Edge is the Rebound Edge: the average result of past cases abroad with this stretch and this US weather; it describes, it does not forecast. New: under 3 years of prices, never bought by the tested book.'+(SS.missing&&SS.missing.length?' Not shown: '+SS.missing.map(function(m){return esc(m.sym)+' ('+esc(m.why)+')'}).join(", ")+'.':'')+'</p></div>':'<p class="note">Tap a stock for its chart. Edge is the Rebound Edge: the average result of past cases with this stretch in this weather; it describes the past, it does not forecast the stock.</p></div>');
   return h+'</section>';
 }
 function symOptions(){
-  var all=(D.scan||[]).slice().sort(function(a,b){return a.sym<b.sym?-1:1}), idx=D.chart.index||{}, have={}; all.forEach(function(r){have[r.sym]=r});
+  var X_=XD(), us=MKT=="us", all=(X_.scan||[]).slice().sort(function(a,b){return a.sym<b.sym?-1:1}), idx=X_.chart.index||{}, have={}; all.forEach(function(r){have[r.sym]=r});
   var opt=function(s,n){return '<option value="'+esc(s)+'"'+(s==CH.sym?" selected":"")+'>'+esc(s)+' · '+esc(n||"")+'</option>'}, h="";
   var favs=FAV.filter(function(s){return idx[s]!=null}); if(favs.length) h+='<optgroup label="My stocks">'+favs.map(function(s){return opt(s,have[s]?have[s].name:"")}).join("")+'</optgroup>';
   var act=all.filter(function(r){return r.st}); if(act.length) h+='<optgroup label="In or near the buy zone, or held">'+act.map(function(r){return opt(r.sym,r.name)}).join("")+'</optgroup>';
-  h+='<optgroup label="All liquid stocks">'+all.map(function(r){return opt(r.sym,r.name)}).join("")+'</optgroup>';
-  var extra=Object.keys(idx).filter(function(s){return !have[s]}); if(extra.length) h+='<optgroup label="Held, no longer liquid">'+extra.map(function(s){return opt(s,"")}).join("")+'</optgroup>';
+  h+='<optgroup label="'+(us?'All US 200 stocks with prices':'All liquid stocks')+'">'+all.map(function(r){return opt(r.sym,r.name)}).join("")+'</optgroup>';
+  var extra=Object.keys(idx).filter(function(s){return !have[s]}); if(extra.length) h+='<optgroup label="'+(us?'No price at the last close':'Held, no longer liquid')+'">'+extra.map(function(s){return opt(s,"")}).join("")+'</optgroup>';
   return h;
 }
 function vChart(){
-  var idx=D.chart.index||{}; if(!CH.sym||idx[CH.sym]==null){ var f=(D.scan||[]).filter(function(r){return r.st})[0]||(D.scan||[])[0]; CH.sym=f?f.sym:Object.keys(idx)[0]; }
-  var r=null; (D.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r=x }); var fav=FAV.indexOf(CH.sym)>=0, rb=function(n,l){return '<button data-range="'+n+'" aria-pressed="'+(CH.range==n)+'">'+l+'</button>'}, tg=function(k,l){return '<button data-tog="'+k+'" aria-pressed="'+!!CH.o[k]+'">'+l+'</button>'};
-  var live=CH.bk=="live", bkb=function(k,l){return '<button data-cbk="'+k+'" aria-pressed="'+(CH.bk==k)+'">'+l+'</button>'};
-  var h='<section class="view"><div class="block"><div class="eyebrow">Chart · candles with '+(live?'your live rule\'s trades':'the swing\'s signals')+'</div><div class="pick"><button class="step" id="sym-prev" aria-label="Previous stock">‹</button><select class="inp" id="sym" aria-label="Choose a stock">'+symOptions()+'</select><button class="step" id="sym-next" aria-label="Next stock">›</button><button class="star" id="sym-fav" aria-pressed="'+fav+'" aria-label="'+(fav?"Remove from":"Add to")+' my stocks">★</button></div>'
-    +(r?'<div class="chips"><span class="chip"><b class="num" style="color:var(--ink)">'+px(r.c)+'</b>&nbsp;<span class="'+cls(r.chg)+'">'+pct(r.chg)+'</span></span>'+(r.st?'<span class="st '+r.st+'">'+STN[r.st]+'</span>':'')+'<span class="chip">Z '+String(r.z).replace("-","−")+'</span><span class="chip">buy line '+px(r.line)+(r.need!=null&&!r.inz?" ("+pct(r.need)+")":"")+'</span></div>':'')+'</div>'
-    +'<div class="block"><div class="chartbox"><div class="readout" id="readout"></div><canvas id="cv" height="440" aria-label="Candlestick chart of '+esc(CH.sym)+'"></canvas></div><div class="cbar"><div class="seg" role="group" aria-label="Trades of">'+bkb("swing","Swing")+bkb("live","Live")+'</div><div class="seg" role="group" aria-label="Range">'+rb(63,"3M")+rb(126,"6M")+rb(252,"1Y")+rb(380,"All")+'</div><div class="fchips" role="group" aria-label="Show">'+(live?'':tg("bl","Buy line")+tg("sl","Sell level"))+tg("tr","Trades")+tg("wx","Weather")+tg("cone","Cone")+'</div></div>'
+  var X_=XD(); if(!X_) return usWait(); var us=MKT=="us", idx=X_.chart.index||{}; if(!CH.sym||idx[CH.sym]==null){ var f=(X_.scan||[]).filter(function(r){return r.st})[0]||(X_.scan||[])[0]; CH.sym=f?f.sym:Object.keys(idx)[0]; CH.by[MKT]=CH.sym; }
+  var r=null; (X_.scan||[]).forEach(function(x){ if(x.sym==CH.sym) r=x }); var fav=FAV.indexOf(CH.sym)>=0, rb=function(n,l){return '<button data-range="'+n+'" aria-pressed="'+(CH.range==n)+'">'+l+'</button>'}, tg=function(k,l){return '<button data-tog="'+k+'" aria-pressed="'+!!CH.o[k]+'">'+l+'</button>'};
+  var live=CH.bk=="live"&&!us, bkb=function(k,l){return '<button data-cbk="'+k+'" aria-pressed="'+(CH.bk==k)+'">'+l+'</button>'};
+  var h='<section class="view"><div class="block">'+mktSeg()+'<div class="eyebrow" style="margin-top:14px">Chart · '+(us?'US 200 · ':'')+'candles with '+(live?'your live rule\'s trades':'the swing\'s signals')+'</div><div class="pick"><button class="step" id="sym-prev" aria-label="Previous stock">‹</button><select class="inp" id="sym" aria-label="Choose a stock">'+symOptions()+'</select><button class="step" id="sym-next" aria-label="Next stock">›</button><button class="star" id="sym-fav" aria-pressed="'+fav+'" aria-label="'+(fav?"Remove from":"Add to")+' my stocks">★</button></div>'
+    +(r?'<div class="chips"><span class="chip"><b class="num" style="color:var(--ink)">'+px(r.c)+'</b>&nbsp;<span class="'+cls(r.chg)+'">'+pct(r.chg)+'</span></span>'+(r.st?'<span class="st '+r.st+'">'+STN[r.st]+'</span>':'')+'<span class="chip">Z '+String(r.z).replace("-","−")+'</span><span class="chip">buy line '+px(r.line)+(r.need!=null&&!r.inz?" ("+pct(r.need)+")":"")+'</span>'+(us&&r.opt?'<span class="chip">options #'+r.opt+'</span>':'')+(us&&r.new?'<span class="chip" style="color:var(--bad)">new: under 3 years</span>':'')+'</div>':'')+'</div>'
+    +'<div class="block"><div class="chartbox"><div class="readout" id="readout"></div><canvas id="cv" height="440" aria-label="Candlestick chart of '+esc(CH.sym)+'"></canvas></div><div class="cbar">'+(us?'':'<div class="seg" role="group" aria-label="Trades of">'+bkb("swing","Swing")+bkb("live","Live")+'</div>')+'<div class="seg" role="group" aria-label="Range">'+rb(63,"3M")+rb(126,"6M")+rb(252,"1Y")+rb(380,"All")+'</div><div class="fchips" role="group" aria-label="Show">'+(live?'':tg("bl","Buy line")+tg("sl","Sell level"))+tg("tr","Trades")+tg("wx","Weather")+tg("cone","Cone")+'</div></div>'
     +'<p class="note" id="chartnote">Loading prices…</p>'
     +'<div class="chips">'+(live?'':'<span class="chip"><i style="background:var(--lamp)"></i>buy line: the close that puts stretch Z at '+String(LINE).replace("-","−")+'</span><span class="chip"><i style="background:var(--sea)"></i>sell level: stretch Z 0</span>')+'<span class="chip">▲ bought · ▼ sold</span>'+(live?'':'<span class="chip"><i style="background:none;border:1.6px solid var(--lamp)"></i>crossed, not bought</span>')+'<span class="chip"><i style="background:var(--storm)"></i>storm · deep</span><span class="chip"><i style="background:var(--sea);opacity:.45"></i>cone: where similar past cases stood, 1 to 40 sessions on</span><span class="chip"><i style="background:var(--good);opacity:.55"></i>Edge pane: bars Rebound Edge</span><span class="chip"><i style="background:var(--ink2);height:3px;border-radius:2px"></i>line Hold Edge</span></div>'
-    +'<p class="note">Drag to move, pinch or scroll to zoom, tap a candle to read it. Prices are adjusted for dividends. '+(live?'Trades are your live rule replayed on this history (5 positions of 5%, most volatile first, each held 40 sessions): the tested book, not your own record. The Edge pane shows the 40-session versions, the ones in your daily list: bars on every session the stock was stretched (Rebound Edge 40), a line on every session a trade was held (Hold Edge 40). Each shows its group\'s past average: what Saudi trades with a like reading did.':'Trades are the tested swing book replayed on this history; your paper record starts '+dt(D.swing.rule.start)+'. The Edge pane: bars are the Rebound Edge on every session the stock was stretched; the line is the Hold Edge on every session a swing trade was held, until its sale was due.')+' The cone shows only when the stock is stretched now. Green: strong; red: weak. Descriptive: neither pane is a buy or sell signal.</p></div>'
+    +'<p class="note">Drag to move, pinch or scroll to zoom, tap a candle to read it. Prices are adjusted for dividends'+(us?' and splits':'')+'. '+(us?'Trades are the swing replayed on this history exactly as round 84 tested it on the US 200: price-only, from 2001, idle money earning nothing. The US paper record starts after the close of '+dt(U.swing.rule.start)+'. The Edge pane: bars are the Rebound Edge on every session the stock was stretched; the line is the Hold Edge on every session a swing trade was held. Both formulas come from 23 markets outside the US.':live?'Trades are your live rule replayed on this history (5 positions of 5%, most volatile first, each held 40 sessions): the tested book, not your own record. The Edge pane shows the 40-session versions, the ones in your daily list: bars on every session the stock was stretched (Rebound Edge 40), a line on every session a trade was held (Hold Edge 40). Each shows its group\'s past average: what Saudi trades with a like reading did.':'Trades are the tested swing book replayed on this history; your paper record starts '+dt(D.swing.rule.start)+'. The Edge pane: bars are the Rebound Edge on every session the stock was stretched; the line is the Hold Edge on every session a swing trade was held, until its sale was due.')+' The cone shows only when the stock is stretched now. Green: strong; red: weak. Descriptive: neither pane is a buy or sell signal.</p></div>'
     +'<div id="chartside"></div>';
   return h+'</section>';
 }
@@ -693,31 +731,52 @@ function vIdeas(){
     +'<div class="block"><div class="eyebrow">What the failures say</div><ul class="plain"><li><b>More trades cannot be bought with a rule change.</b> Calm-weather dips in an uptrend passed abroad and failed here: 10 to 12 extra trades in 7 years, a higher drawdown.</li><li><b>Size is leverage, not edge.</b> Every bigger-size rule raised growth and drawdown together.</li><li><b>One buy a day stays.</b> Two buys a day in any named state raised the drawdown to 5.7% to 8.9%.</li><li><b>Selling at stretch Z 0 stays.</b> Later sales won on Saudi 2013-19 and lost abroad.</li><li><b>A limit-down close is not a reason to wait.</b> In China, Qatar and Taiwan such crosses were the better buys.</li></ul></div>';
   return h;
 }
+function vUS(){
+  if(!U||!U.evidence) return '<div class="block"><p class="note">'+(UERR?'The US view could not be loaded ('+esc(UERR)+').':'Loading the US 200…')+'</p></div>';
+  var V=U.evidence, A=V.nocut, P=V.planned, ER=["2001-09","2010-19","2020-26","2001-26"], cell=function(x){return x?'<span class="'+cls(x[0])+'">'+pct(x[0])+'</span> / '+pct(x[1],1,false):"n/a"};
+  var acc=function(Z,k){return ER.map(function(e){return '<td>'+cell(Z.acc[k][e])+'</td>'}).join("")}, rec=U.swing.record;
+  var h='<div class="block"><div class="eyebrow">Round 84 · the 200 US stocks with the most options activity</div><h1 class="h2">Description only. Two biases make every number look better than it was.</h1>'
+    +'<p class="lead">1. The list is today\'s winners: stocks that crashed and vanished since 2001 are not on it. 2. The cleaning used for every market cut '+V.cut+' of these histories at real crashes (2008-09 banks, the March 2020 oil crash, earnings crashes); a check with no cut is the honest version, and it is what this terminal replays.</p></div>';
+  h+='<div class="block"><div class="eyebrow">Growth a year / worst drawdown · idle money earning nothing</div><div class="scroll"><table class="tb"><thead><tr><th></th>'+ER.map(function(e){return '<th>'+e+'</th>'}).join("")+'</tr></thead><tbody>'
+    +'<tr><td><b>Swing</b>, no cut</td>'+acc(A,"swing")+'</tr><tr><td>Swing, planned cleaning</td>'+acc(P,"swing")+'</tr><tr><td><b>Live plan\'s shape</b>, no cut</td>'+acc(A,"a0")+'</tr><tr><td>Own all 200, no cut (biased)</td>'+acc(A,"basket")+'</tr></tbody></table></div>'
+    +'<p class="note">Drawdown: the worst fall of the account from a peak. The swing is the Saudi swing as tested abroad (round 78), price-only. The live plan\'s shape is 5 positions of 5% held 40 sessions.</p></div>';
+  var T=A.trades.swing; h+='<div class="block"><div class="eyebrow">The swing\'s trades, no cut</div><div class="scroll"><table class="tb"><thead><tr><th></th><th>Trades</th><th>A year</th><th>Win</th><th>Average</th><th>Held</th><th>Worst</th></tr></thead><tbody>'
+    +ER.map(function(e){var x=T[e];return '<tr><td>'+e+'</td><td>'+x.n+'</td><td>'+x.py+'</td><td>'+pct(x.win,0,false)+'</td><td class="'+cls(x.avg)+'">'+pct(x.avg)+'</td><td>'+x.held+'</td><td class="dn">'+pct(x.worst,0)+'</td></tr>'}).join("")+'</tbody></table></div>'
+    +'<p class="note">The trades are good in 2010-26 and lost money in 2001-09. The account grows little because the whole group was in a sell-off on only 7-8% of days: on average '+pct(V.context["2010-19"].invested,1,false)+' to '+pct(V.context["2020-26"].invested,1,false)+' of the money was at work. One US stock can lose 40-70% in a few sessions; the Saudi swing\'s worst trade was about −20%.</p></div>';
+  var I=A.ind, p1=function(v){return pct(v,1).replace(/^-0\.0%$/,"0.0%")}, row=function(k,lab){var x=I[k];return x?'<tr><td>'+lab+'</td><td>'+x.n.toLocaleString()+'</td><td class="up">'+pct(x.top)+'</td><td>'+pct(x.bottom)+'</td><td>'+p1(x.lo)+' to '+p1(x.hi)+'</td><td>'+(+x.corr).toFixed(2)+' vs '+(+x.corr_ms).toFixed(2)+'</td></tr>':''};
+  var weak=Object.keys(I).filter(function(k){return I[k].lo<=0}), beat=Object.keys(I).filter(function(k){return I[k].lead_p5>0});
+  h+='<div class="block"><div class="eyebrow">The two indicators on the 200 · formulas from 23 markets abroad, no US data</div><div class="scroll"><table class="tb"><thead><tr><th></th><th>Readings</th><th>Top third</th><th>Bottom third</th><th>Gap, 5-95%</th><th>Rank link vs momentum</th></tr></thead><tbody>'
+    +row("Rebound Edge 2001-19","Rebound Edge 2001-19")+row("Rebound Edge 2020-26","Rebound Edge 2020-26")+row("Hold Edge 2001-19","Hold Edge 2001-19")+row("Hold Edge 2020-26","Hold Edge 2020-26")+'</tbody></table></div>'
+    +'<p class="note">Rank link: how well the reading orders the results (0 = not at all), against US market momentum alone. Both sort the trades the right way. '+(weak.length?'Not reliable where the gap\'s 5-95% range reaches 0 or below: '+weak.join(", ")+'. ':'')+(beat.length?'Better than momentum alone only in '+beat.join(", ")+', by a hair. ':'Neither beats momentum alone. ')+'<b>Descriptive at best</b>, as in Saudi.</p></div>';
+  h+='<div class="block"><div class="eyebrow">This terminal\'s US book, replayed to '+dt(U.asof)+'</div><p class="note">'+rec.expect.n+' closed trades since 2001: '+pct(rec.expect.win,0,false)+' won, '+pct(rec.expect.avg)+' on average, typical hold '+rec.expect.held[1]+' sessions. '+(U.repro&&U.repro.length?'<b style="color:var(--bad)">Does not match round 84 exactly: '+esc(U.repro.join("; "))+'.</b>':'It reproduces round 84\'s trades in every closed era.')+' Nothing here changes what you trade.</p></div>';
+  return h;
+}
 function vResearch(){
-  var tabs=[["evidence","Evidence"],["edge","Rebound Edge"],["hold","Hold Edge"],["ideas","Ideas"],["selloffs","Sell-offs"],["sizing","Sizing"]];
+  var tabs=[["evidence","Evidence"],["edge","Rebound Edge"],["hold","Hold Edge"],["ideas","Ideas"],["us","US 200"],["selloffs","Sell-offs"],["sizing","Sizing"]];
   var h='<section class="view"><div class="block"><div class="eyebrow">Research</div><div class="fchips" role="group" aria-label="Research section">'+tabs.map(function(t){return '<button data-res="'+t[0]+'" aria-pressed="'+(resTab==t[0])+'">'+t[1]+'</button>'}).join("")+'</div></div>';
-  return h+({evidence:vEvidence,ideas:vIdeas,selloffs:vSelloffs,sizing:vSizing,edge:vEdge,hold:vHold}[resTab]||vEvidence)()+'</section>';
+  return h+({evidence:vEvidence,ideas:vIdeas,selloffs:vSelloffs,sizing:vSizing,edge:vEdge,hold:vHold,us:vUS}[resTab]||vEvidence)()+'</section>';
 }
 /* ---------- shell ---------- */
 var VIEWS={today:vToday,scanner:vScanner,chart:vChart,books:vBooks,research:vResearch};
 function render(){
   document.querySelectorAll("#tabs button").forEach(function(b){ if(b.dataset.v==view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
   if(!D) return;
-  $("#dayline").innerHTML='<b>For '+dt(D.day)+'</b>prices to '+dt(D.asof)+' close';
+  var X_=((view=="scanner"||view=="chart")&&MKT=="us"&&U)?U:D; $("#dayline").innerHTML='<b>For '+dt(X_.day)+'</b>'+(X_===U?'US prices to ':'prices to ')+dt(X_.asof)+' close';
   main.innerHTML=VIEWS[view]();
   if(view=="chart") chartMount();
 }
 function go(v){ if((location.hash||"").replace("#","")==v) route(); else location.hash=v; }
 function route(){ var h=(location.hash||"").replace("#",""); view=VIEWS[h]?h:"today"; render(); window.scrollTo(0,0); }
-function pickSym(s){ CH.sym=s; try{localStorage.setItem("fable.sym",s)}catch(x){} }
-function stepSym(dir){ var list=(D.scan||[]).map(function(r){return r.sym}), i=list.indexOf(CH.sym); if(!list.length) return; pickSym(list[(i+dir+list.length)%list.length]); render(); }
+function pickSym(s){ CH.sym=s; CH.by[MKT]=s; try{localStorage.setItem(MKT=="us"?"fable.usym":"fable.sym",s)}catch(x){} }
+function stepSym(dir){ var X_=XD(); if(!X_) return; var list=(X_.scan||[]).map(function(r){return r.sym}), i=list.indexOf(CH.sym); if(!list.length) return; pickSym(list[(i+dir+list.length)%list.length]); render(); }
 window.addEventListener("hashchange",route);
 $("#tabs").addEventListener("click",function(e){ var b=e.target.closest("button[data-v]"); if(b) go(b.dataset.v); });
 main.addEventListener("click",function(e){
-  var t=e.target.closest("[data-chart],[data-go],[data-book],[data-size],[data-scanf],[data-range],[data-tog],[data-res],[data-cbk],#sz-minus,#sz-plus,#sym-prev,#sym-next,#sym-fav"); if(!t||!D) return;
+  var t=e.target.closest("[data-chart],[data-go],[data-book],[data-size],[data-scanf],[data-range],[data-tog],[data-res],[data-cbk],[data-mset],#sz-minus,#sz-plus,#sym-prev,#sym-next,#sym-fav"); if(!t||!D) return;
+  if(t.dataset.mset){ setMkt(t.dataset.mset); scanF="all"; scanQ=""; render(); return; }
   if(t.dataset.cbk){ CH.bk=t.dataset.cbk=="live"?"live":"swing"; try{localStorage.setItem("fable.cbk",CH.bk)}catch(x){} render(); return; }
-  if(t.dataset.chart){ pickSym(t.dataset.chart); go("chart"); return; }
-  if(t.dataset.go){ if(t.dataset.go=="books") bookRule="swing"; go(t.dataset.go); return; }
+  if(t.dataset.chart){ setMkt(t.dataset.mkt||"sa"); pickSym(t.dataset.chart); go("chart"); return; }
+  if(t.dataset.go){ if(t.dataset.mkt) setMkt(t.dataset.mkt); if(t.dataset.go=="books") bookRule="swing"; go(t.dataset.go); return; }
   if(t.dataset.book){ bookRule=t.dataset.book; try{localStorage.setItem("fable.book",bookRule)}catch(x){} render(); return; }
   if(t.dataset.size){ sizeRule=t.dataset.size; render(); return; }
   if(t.dataset.scanf){ scanF=t.dataset.scanf; render(); return; }
@@ -741,19 +800,23 @@ try{ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change"
 function gone(msg){ var w=$("#wait"); if(w&&!D) w.textContent=msg; }
 var LOADERR={};
 function why(e){ return (e&&(e.code||e.message))||"no answer"; }
-function loadMarket(){ if(!DB) return Promise.resolve(null); if(M) return Promise.resolve(M);
-  return DB.doc("chart/market").get().then(function(s){ if(s.exists){ M=s.data(); delete LOADERR.market; } else LOADERR.market="not written yet"; return M; }).catch(function(e){ LOADERR.market=why(e); return null; }); }
+function loadMarket(mk){ mk=mk||MKT; var us=mk=="us", key=us?"umarket":"market"; if(!DB) return Promise.resolve(null); if(us?UM:M) return Promise.resolve(us?UM:M);
+  return DB.doc(us?"uschart/market":"chart/market").get().then(function(s){ if(s.exists){ if(us) UM=s.data(); else M=s.data(); delete LOADERR[key]; } else LOADERR[key]="not written yet"; return us?UM:M; }).catch(function(e){ LOADERR[key]=why(e); return null; }); }
 function rows(f,n){ if(!f||!f.length||Array.isArray(f[0])) return f||[]; var o=[]; for(var i=0;i+n<=f.length;i+=n) o.push(f.slice(i,i+n)); return o; }
 function unflat(doc){ var st=(doc&&doc.stocks)||{}, out={n:doc.n,asof:doc.asof,stocks:{}};   /* the store hands out read-only data: build new objects, never change its own */
   Object.keys(st).forEach(function(k){ var o={}, s0=st[k]; Object.keys(s0).forEach(function(a){ o[a]=s0[a]; }); o.tr=rows(s0.tr,8); o.x=rows(s0.x,2); o.lt=rows(s0.lt||[],5); var n=(s0.c||[]).length, i, dense=function(f,div){ var a=new Array(n); for(i=0;i<n;i++) a[i]=null; f=f||[]; for(i=0;i+1<f.length;i+=2) if(f[i]>=0&&f[i]<n) a[f[i]]=div?f[i+1]/div:f[i+1]; return a; };
     o.e=dense(s0.ev,100); o.hv=dense(s0.hv,100); o.h4=dense(s0.h4,0); o.e4=dense(s0.e4,0); out.stocks[k]=o; }); return out; }
-function loadChunk(n){ if(!DB) return Promise.resolve(null); if(CHUNK[n]) return Promise.resolve(CHUNK[n]); return DB.doc("chart/c"+n).get().then(function(s){ if(s.exists){ CHUNK[n]=unflat(s.data()); delete LOADERR["c"+n]; } else LOADERR["c"+n]="not written yet"; return CHUNK[n]||null; }).catch(function(e){ LOADERR["c"+n]=why(e); return null; }); }
+function loadChunk(n,mk){ mk=mk||MKT; var us=mk=="us", C_=us?UCHUNK:CHUNK, key=(us?"u":"")+"c"+n; if(!DB) return Promise.resolve(null); if(C_[n]) return Promise.resolve(C_[n]);
+  return DB.doc((us?"uschart/c":"chart/c")+n).get().then(function(s){ if(s.exists){ C_[n]=unflat(s.data()); delete LOADERR[key]; } else LOADERR[key]="not written yet"; return C_[n]||null; }).catch(function(e){ LOADERR[key]=why(e); return null; }); }
 (window.claude&&window.claude.use?window.claude.use("db"):Promise.resolve(null)).then(function(db){
   if(!db){ gone("This view cannot reach the terminal's data. Open the page inside Claude, signed in."); return; }
   DB=db; DBOK=true; var seen=null;
   db.doc("fable/latest").onSnapshot(function(s){ if(!s.exists){ gone("No export has been written yet. It arrives after the daily run."); return; }
     D=s.data(); if(D.swing&&D.swing.rule){ LINE=D.swing.rule.line; TARGET=D.swing.rule.target; } if(D.asof!=seen){ seen=D.asof; CHUNK={}; CH.data=null; M=null; LOADERR={}; loadMarket(); } render(); }, function(){ gone("The data connection stopped. Reload the page."); });
   db.collection("days").orderBy("asof","desc").limit(30).onSnapshot(function(q){ LOG=q.docs.map(function(x){return x.data()}); if(D&&view=="books") render(); }, function(){});
+  var useen=null; db.doc("us/latest").onSnapshot(function(s){ if(!s.exists){ UERR="not written yet"; if(D&&MKT=="us") render(); return; }
+    U=s.data(); UERR=null; if(U.asof!=useen){ useen=U.asof; UCHUNK={}; UM=null; Object.keys(LOADERR).forEach(function(k){ if(k.charAt(0)=="u") delete LOADERR[k]; }); if(MKT=="us"){ CH.data=null; } }
+    if(D&&(view=="today"||(MKT=="us"&&(view=="scanner"||view=="chart"))||(view=="research"&&resTab=="us"))) render(); }, function(e){ UERR=why(e); if(D&&MKT=="us") render(); });
 }).catch(function(){ gone("The data could not be loaded. Reload the page."); });
 })();
 </script>

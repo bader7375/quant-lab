@@ -151,6 +151,25 @@ hold, with the same tests, and went into your live daily list (your yes, 2026-11
 
 Verdict: descriptive for both, weaker than the swing versions, and no early sale improves the plan. Details: `research/r83/RESULTS.md`.
 
+## Round 84: the 200 US stocks with the most options activity (2026-11-24)
+You asked to add 200 US stocks "that high in options trade like nvda and aapl and tsla". The list: Yahoo's option screeners (open
+interest and contract volume), US-listed stocks only, price $5+, $20m+ traded a day, ETFs left out. NVDA, INTC, AAPL, TSLA are 1-4.
+
+Two biases flatter every number: the list is today's winners, and the planned cleaning cut 57 histories at real crashes. The honest
+version (no cut) is the one below and the one the terminal replays. Price-only, idle money earning nothing:
+
+| growth a year / worst drawdown | 2001-09 | 2010-19 | 2020-26 |
+|---|---|---|---|
+| Swing | -0.7% / 21.9% | +1.4% / 5.5% | +5.8% / 7.8% |
+| Live plan's shape (5 x 5%, hold 40) | +1.3% / 20.6% | -0.1% / 13.8% | -0.2% / 13.4% |
+| Own all 200 (biased by the choice) | +17.2% / 55.7% | +16.1% / 23.8% | +26.2% / 40.8% |
+
+Swing trades: 70% won, +7.4% on average, 9 a year; but 2001-09 lost (57% won, -1.2%) and the worst trade was -72%. Only 2-3% of the
+money was at work on average: the whole group is in a sell-off on 7-8% of days. Rebound Edge and Hold Edge: descriptive at best (clear
+in 2020-26, not reliable in 2001-19, not better than momentum alone). Details: `research/r84/RESULTS.md`.
+
+In the terminal: a Saudi | US 200 switch on the Scanner and the Chart, a US 200 card on Today, Research -> US 200. On paper only.
+
 ## Honesty checks on the swing
 | check | result |
 |---|---|
@@ -176,6 +195,7 @@ Verdict: descriptive for both, weaker than the swing versions, and no early sale
 | Hold Edge: terminal (Books, chart card, Research), brief, `pine/hold_edge.pine` | built and tested; verdict descriptive, not an exit | paste the Pine script into TradingView and send me any error |
 | The swing as your live rule | confirmed against live; on paper since the 2026-11-11 close | your yes, later. I suggest watching it on paper through one sell-off first |
 | The ladder | on paper | nothing now |
+| US 200 in the terminal (scanner, charts, paper book, research) | published, data to the 2026-11-23 New York close; not refreshed by itself | a refresh by hand (`fable/run_us.sh` + upload), or your yes to a scheduled task |
 | Pacing 3 sessions apart (round 70 offer) | failed abroad | my advice: close it with a no |
 | TradingView scripts `pine/fable_swing.pine`, `pine/fable_ladder.pine` | written; logic checked in Python; not compiled from here | paste into TradingView and send me any error |
 

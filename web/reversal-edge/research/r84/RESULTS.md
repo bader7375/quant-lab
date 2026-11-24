@@ -61,8 +61,9 @@ reading orders the results; 0 = not at all) against market momentum alone:
 
 Planned cleaning: Rebound Edge +3.9 / +12.7 points, Hold Edge +3.5 / +10.5 points, same pattern (r84.out).
 
-Both indicators sort US trades the right way, clearly in 2020-26 and weakly in 2001-19, but they do not beat market momentum alone,
-the same verdict as in Saudi: **DESCRIPTIVE** (it describes; it does not add a reason to trade).
+Both indicators sort US trades the right way, clearly in 2020-26. In 2001-19 the gap is small and its range reaches 0 or below
+(Rebound Edge -0.6, Hold Edge 0.0), so there the separation is not reliable. Neither beats market momentum alone, except Hold Edge in
+2001-19 by a hair. Verdict: **DESCRIPTIVE at best**, as in Saudi (it describes; it does not add a reason to trade).
 
 ## 4. Stocks not in the tested book
 
