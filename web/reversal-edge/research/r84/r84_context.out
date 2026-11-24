@@ -1,0 +1,5 @@
+2001-09: sell-off weather on 8% of days, deep on 3%; money at work on average 1.9%, at most 45.8%
+2010-19: sell-off weather on 8% of days, deep on 1%; money at work on average 2.0%, at most 39.6%
+2020-26: sell-off weather on 7% of days, deep on 3%; money at work on average 2.7%, at most 50.0%
+not in the tested panel (under 3 years of prices after cleaning): 38: APLD ASST ASTS BHVN BMNR CHYM CNC CORZ CRCL CRWV ECHO FISV FLG GLXY GME IONQ IOVA MMED MRNA NBIS OKLO PURR QXO RDDT RGTI RUN SKHY SLS SMMT SNDK SPCX TEM TTD ULS USAR VG WOLF XP
+stocks whose early history the cleaning cut (a one-day move above 60%, kept only the part after it): 57

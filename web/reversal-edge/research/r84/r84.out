@@ -1,0 +1,14 @@
+US 200 panel: 162 stocks with 3+ years of history, 1970-01-02 to 2026-11-23; eligible stocks per day: 2001 61, 2010 86, 2020 112, now 162
+
+growth a year / worst drawdown (return per drawdown); idle money earning nothing
+swing (round 78 rule, price-only)          2001-09 +0.9% / 16.9% (0.06) | 2010-19 +1.2% / 4.9% (0.24) | 2020-26 +5.3% / 7.6% (0.70) | 2001-26 +2.2% / 16.9% (0.13)
+                                           2001-09: 60 trades (6.7 a year), 67% win, +5.7%, held 28, worst -55.2% | 2010-19: 83 trades (8.3 a year), 71% win, +5.3%, held 25, worst -45.7% | 2020-26: 71 trades (10.1 a year), 79% win, +17.6%, held 25, worst -47.2% | 2001-26: 214 trades (8.2 a year), 72% win, +9.5%, held 26, worst -55.2%
+live plan's shape (A0: 5 x 5%, hold 40)    2001-09 +1.7% / 17.5% (0.10) | 2010-19 +0.2% / 13.4% (0.02) | 2020-26 -0.3% / 13.4% (-0.02) | 2001-26 +0.6% / 20.7% (0.03)
+                                           2001-09: 36 trades (4.0 a year), 67% win, +9.1%, held 40, worst -55.2% | 2010-19: 47 trades (4.7 a year), 51% win, +1.2%, held 40, worst -50.6% | 2020-26: 32 trades (4.6 a year), 50% win, -0.8%, held 40, worst -50.8% | 2001-26: 115 trades (4.4 a year), 56% win, +3.1%, held 40, worst -55.2%
+the 200 held, equal weight                 2001-09 +16.7% / 52.8% (0.32) | 2010-19 +15.6% / 23.7% (0.66) | 2020-26 +20.7% / 40.6% (0.51) | 2001-26 +17.4% / 52.8% (0.33)
+
+indicators (formulas from the 23 foreign markets, no US data): 27031 stretched-stock cases, 215185 hold readings
+Rebound Edge  2001-19:  16456 | top third +5.0% vs bottom third +1.1% = +3.9 points (range +0.5 to +8.1) | rank link 0.16 vs momentum alone 0.16 (lead 5th pct -0.005), stretch alone 0.05
+Rebound Edge  2020-26:  10575 | top third +13.8% vs bottom third +1.1% = +12.7 points (range +7.7 to +17.8) | rank link 0.33 vs momentum alone 0.35 (lead 5th pct -0.038), stretch alone 0.14
+Hold Edge     2001-19: 130238 | top third +4.1% vs bottom third +0.6% = +3.5 points (range +1.2 to +6.7) | rank link 0.16 vs momentum alone 0.13 (lead 5th pct +0.007), stretch alone 0.10
+Hold Edge     2020-26:  84947 | top third +11.7% vs bottom third +1.2% = +10.5 points (range +7.3 to +12.7) | rank link 0.31 vs momentum alone 0.32 (lead 5th pct -0.033), stretch alone 0.20
